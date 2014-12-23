@@ -1,0 +1,1202 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>20.&nbsp;Portlet MVC Framework</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="web-integration.html" title="19.&nbsp;Integrating with other web frameworks"><link rel="next" href="websocket.html" title="21.&nbsp;WebSocket Support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">20.&nbsp;Portlet MVC Framework</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="portlet" href="#portlet"></a>20.&nbsp;Portlet MVC Framework</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-introduction" href="#portlet-introduction"></a>20.1&nbsp;Introduction</h2></div></div></div>
+
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>JSR-168 The Java Portlet Specification</b></p></div></div></div>
+
+<p>For more general information about portlet development, please review a whitepaper from
+Oracle entitled
+<a class="ulink" href="http://www.oracle.com/technetwork/java/index-raji-test-141933.html" target="_top">"Introduction
+to JSR 168"</a>, and of course the
+<a class="ulink" href="http://jcp.org/aboutJava/communityprocess/final/jsr168/" target="_top">JSR-168 Specification</a> itself.</p>
+</div>
+
+<p>In addition to supporting conventional (servlet-based) Web development, Spring also
+supports JSR-168 Portlet development. As much as possible, the Portlet MVC framework is
+a mirror image of the Web MVC framework, and also uses the same underlying view
+abstractions and integration technology. So, be sure to review the chapters entitled
+<a class="xref" href="mvc.html" title="17.&nbsp;Web MVC framework">Chapter&nbsp;17, <i>Web MVC framework</i></a> and <a class="xref" href="view.html" title="18.&nbsp;View technologies">Chapter&nbsp;18, <i>View technologies</i></a> before continuing with this chapter.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Bear in mind that while the concepts of Spring MVC are the same in Spring Portlet MVC,
+there are some notable differences created by the unique workflow of JSR-168 portlets.</p>
+</td></tr></table></div>
+
+<p>The main way in which portlet workflow differs from servlet workflow is that the request
+to the portlet can have two distinct phases: the action phase and the render phase. The
+action phase is executed only once and is where any <span class="emphasis"><em>backend</em></span> changes or actions occur,
+such as making changes in a database. The render phase then produces what is displayed
+to the user each time the display is refreshed. The critical point here is that for a
+single overall request, the action phase is executed only once, but the render phase may
+be executed multiple times. This provides (and requires) a clean separation between the
+activities that modify the persistent state of your system and the activities that
+generate what is displayed to the user.</p>
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Spring Web Flow</b></p></div></div></div>
+
+<p>Spring Web Flow (SWF) aims to be the best solution for the management of web application
+page flow.</p>
+<p>SWF integrates with existing frameworks like Spring MVC and JSF, in both Servlet and
+Portlet environments. If you have a business process (or processes) that would benefit
+from a conversational model as opposed to a purely request model, then SWF may be the
+solution.</p>
+<p>SWF allows you to capture logical page flows as self-contained modules that are reusable
+in different situations, and as such is ideal for building web application modules that
+guide the user through controlled navigations that drive business processes.</p>
+<p>For more information about SWF, consult the Spring Web Flow website.</p>
+</div>
+
+<p>The dual phases of portlet requests are one of the real strengths of the JSR-168
+specification. For example, dynamic search results can be updated routinely on the
+display without the user explicitly rerunning the search. Most other portlet MVC
+frameworks attempt to completely hide the two phases from the developer and make it look
+as much like traditional servlet development as possible - we think this approach
+removes one of the main benefits of using portlets. So, the separation of the two phases
+is preserved throughout the Spring Portlet MVC framework. The primary manifestation of
+this approach is that where the servlet version of the MVC classes will have one method
+that deals with the request, the portlet version of the MVC classes will have two
+methods that deal with the request: one for the action phase and one for the render
+phase. For example, where the servlet version of <code class="literal">AbstractController</code> has the
+<code class="literal">handleRequestInternal(..)</code> method, the portlet version of <code class="literal">AbstractController</code> has
+<code class="literal">handleActionRequestInternal(..)</code> and <code class="literal">handleRenderRequestInternal(..)</code> methods.</p>
+<p>The framework is designed around a <code class="literal">DispatcherPortlet</code> that dispatches requests to
+handlers, with configurable handler mappings and view resolution, just as the
+<code class="literal">DispatcherServlet</code> in the web framework does. File upload is also supported in the same
+way.</p>
+<p>Locale resolution and theme resolution are not supported in Portlet MVC - these areas
+are in the purview of the portal/portlet container and are not appropriate at the Spring
+level. However, all mechanisms in Spring that depend on the locale (such as
+internationalization of messages) will still function properly because
+<code class="literal">DispatcherPortlet</code> exposes the current locale in the same way as <code class="literal">DispatcherServlet</code>.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-controller" href="#portlet-introduction-controller"></a>20.1.1&nbsp;Controllers - The C in MVC</h3></div></div></div>
+
+<p>The default handler is still a very simple <code class="literal">Controller</code> interface, offering just two
+methods:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">void handleActionRequest(request,response)</code>
+</li><li class="listitem">
+<code class="literal">ModelAndView handleRenderRequest(request,response)</code>
+</li></ul></div>
+
+<p>The framework also includes most of the same controller implementation hierarchy, such
+as <code class="literal">AbstractController</code>, <code class="literal">SimpleFormController</code>, and so on. Data binding, command object
+usage, model handling, and view resolution are all the same as in the servlet framework.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-view" href="#portlet-introduction-view"></a>20.1.2&nbsp;Views - The V in MVC</h3></div></div></div>
+
+<p>All the view rendering capabilities of the servlet framework are used directly via a
+special bridge servlet named <code class="literal">ViewRendererServlet</code>. By using this servlet, the portlet
+request is converted into a servlet request and the view can be rendered using the
+entire normal servlet infrastructure. This means all the existing renderers, such as
+JSP, Velocity, etc., can still be used within the portlet.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-scope" href="#portlet-introduction-scope"></a>20.1.3&nbsp;Web-scoped beans</h3></div></div></div>
+
+<p>Spring Portlet MVC supports beans whose lifecycle is scoped to the current HTTP request
+or HTTP <code class="literal">Session</code> (both normal and global). This is not a specific feature of Spring
+Portlet MVC itself, but rather of the <code class="literal">WebApplicationContext</code> container(s) that Spring
+Portlet MVC uses. These bean scopes are described in detail in
+<a class="xref" href="beans.html#beans-factory-scopes-other" title="5.5.4&nbsp;Request, session, and global session scopes">Section&nbsp;5.5.4, &#8220;Request, session, and global session scopes&#8221;</a></p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-dispatcher" href="#portlet-dispatcher"></a>20.2&nbsp;The DispatcherPortlet</h2></div></div></div>
+
+<p>Portlet MVC is a request-driven web MVC framework, designed around a portlet that
+dispatches requests to controllers and offers other functionality facilitating the
+development of portlet applications. Spring&#8217;s <code class="literal">DispatcherPortlet</code> however, does more
+than just that. It is completely integrated with the Spring <code class="literal">ApplicationContext</code> and
+allows you to use every other feature Spring has.</p>
+<p>Like ordinary portlets, the <code class="literal">DispatcherPortlet</code> is declared in the <code class="literal">portlet.xml</code> file of
+your web application:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;portlet&gt;</span>
+    <span class="hl-tag">&lt;portlet-name&gt;</span>sample<span class="hl-tag">&lt;/portlet-name&gt;</span>
+    <span class="hl-tag">&lt;portlet-class&gt;</span>org.springframework.web.portlet.DispatcherPortlet<span class="hl-tag">&lt;/portlet-class&gt;</span>
+    <span class="hl-tag">&lt;supports&gt;</span>
+        <span class="hl-tag">&lt;mime-type&gt;</span>text/html<span class="hl-tag">&lt;/mime-type&gt;</span>
+        <span class="hl-tag">&lt;portlet-mode&gt;</span>view<span class="hl-tag">&lt;/portlet-mode&gt;</span>
+    <span class="hl-tag">&lt;/supports&gt;</span>
+    <span class="hl-tag">&lt;portlet-info&gt;</span>
+        <span class="hl-tag">&lt;title&gt;</span>Sample Portlet<span class="hl-tag">&lt;/title&gt;</span>
+    <span class="hl-tag">&lt;/portlet-info&gt;</span>
+<span class="hl-tag">&lt;/portlet&gt;</span></pre>
+
+<p>The <code class="literal">DispatcherPortlet</code> now needs to be configured.</p>
+<p>In the Portlet MVC framework, each <code class="literal">DispatcherPortlet</code> has its own
+<code class="literal">WebApplicationContext</code>, which inherits all the beans already defined in the Root
+<code class="literal">WebApplicationContext</code>. These inherited beans can be overridden in the portlet-specific
+scope, and new scope-specific beans can be defined local to a given portlet instance.</p>
+<p>The framework will, on initialization of a <code class="literal">DispatcherPortlet</code>, look for a file named
+<code class="literal">[portlet-name]-portlet.xml</code> in the <code class="literal">WEB-INF</code> directory of your web application and
+create the beans defined there (overriding the definitions of any beans defined with the
+same name in the global scope).</p>
+<p>The config location used by the <code class="literal">DispatcherPortlet</code> can be modified through a portlet
+initialization parameter (see below for details).</p>
+<p>The Spring <code class="literal">DispatcherPortlet</code> has a few special beans it uses, in order to be able to
+process requests and render the appropriate views. These beans are included in the
+Spring framework and can be configured in the <code class="literal">WebApplicationContext</code>, just as any other
+bean would be configured. Each of those beans is described in more detail below. Right
+now, we&#8217;ll just mention them, just to let you know they exist and to enable us to go on
+talking about the <code class="literal">DispatcherPortlet</code>. For most of the beans, defaults are provided so
+you don&#8217;t have to worry about configuring them.</p>
+<div class="table"><a name="portlet-webappctx-special-beans-tbl" href="#portlet-webappctx-special-beans-tbl"></a><p class="title"><b>Table&nbsp;20.1.&nbsp;Special beans in the WebApplicationContext</b></p><div class="table-contents">
+
+  <table summary="Special beans in the WebApplicationContext" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Expression</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>handler mapping(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-handlermapping" title="20.5&nbsp;Handler mappings">Section&nbsp;20.5, &#8220;Handler mappings&#8221;</a>) a list of pre- and post-processors and controllers that
+  will be executed if they match certain criteria (for instance a matching portlet mode
+  specified with the controller)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>controller(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-controller" title="20.4&nbsp;Controllers">Section&nbsp;20.4, &#8220;Controllers&#8221;</a>) the beans providing the actual functionality (or at least,
+  access to the functionality) as part of the MVC triad</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>view resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-viewresolver" title="20.6&nbsp;Views and resolving them">Section&nbsp;20.6, &#8220;Views and resolving them&#8221;</a>) capable of resolving view names to view definitions</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>multipart resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-multipart" title="20.7&nbsp;Multipart (file upload) support">Section&nbsp;20.7, &#8220;Multipart (file upload) support&#8221;</a>) offers functionality to process file uploads from HTML forms</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>handler exception resolver</p></td><td style="" align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-exceptionresolver" title="20.8&nbsp;Handling exceptions">Section&nbsp;20.8, &#8220;Handling exceptions&#8221;</a>) offers functionality to map exceptions to views or
+  implement other more complex exception handling code</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>When a <code class="literal">DispatcherPortlet</code> is setup for use and a request comes in for that specific
+<code class="literal">DispatcherPortlet</code>, it starts processing the request. The list below describes the
+complete process a request goes through if handled by a <code class="literal">DispatcherPortlet</code>:</p>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+The locale returned by <code class="literal">PortletRequest.getLocale()</code> is bound to the request to let
+elements in the process resolve the locale to use when processing the request (rendering
+the view, preparing data, etc.).
+</li><li class="listitem">
+If a multipart resolver is specified and this is an <code class="literal">ActionRequest</code>, the request is
+inspected for multiparts and if they are found, it is wrapped in a
+<code class="literal">MultipartActionRequest</code> for further processing by other elements in the process. (See
+<a class="xref" href="portlet.html#portlet-multipart" title="20.7&nbsp;Multipart (file upload) support">Section&nbsp;20.7, &#8220;Multipart (file upload) support&#8221;</a> for further information about multipart handling).
+</li><li class="listitem">
+An appropriate handler is searched for. If a handler is found, the execution chain
+associated with the handler (pre-processors, post-processors, controllers) will be
+executed in order to prepare a model.
+</li><li class="listitem">
+If a model is returned, the view is rendered, using the view resolver that has been
+configured with the <code class="literal">WebApplicationContext</code>. If no model is returned (which could be due
+to a pre- or post-processor intercepting the request, for example, for security
+reasons), no view is rendered, since the request could already have been fulfilled.
+</li></ol></div>
+
+<p>Exceptions that are thrown during processing of the request get picked up by any of the
+handler exception resolvers that are declared in the <code class="literal">WebApplicationContext</code>. Using
+these exception resolvers you can define custom behavior in case such exceptions get
+thrown.</p>
+<p>You can customize Spring&#8217;s <code class="literal">DispatcherPortlet</code> by adding context parameters in the
+<code class="literal">portlet.xml</code> file or portlet init-parameters. The possibilities are listed below.</p>
+<div class="table"><a name="portlet-dpp-init-params" href="#portlet-dpp-init-params"></a><p class="title"><b>Table&nbsp;20.2.&nbsp;DispatcherPortlet initialization parameters</b></p><div class="table-contents">
+
+  <table summary="DispatcherPortlet initialization parameters" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">contextClass</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Class that implements <code class="literal">WebApplicationContext</code>, which will be used to instantiate the
+  context used by this portlet. If this parameter isn&#8217;t specified, the
+  <code class="literal">XmlPortletApplicationContext</code> will be used.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">contextConfigLocation</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>String which is passed to the context instance (specified by <code class="literal">contextClass</code>) to
+  indicate where context(s) can be found. The String is potentially split up into
+  multiple Strings (using a comma as a delimiter) to support multiple contexts (in case
+  of multiple context locations, for beans that are defined twice, the latest takes
+  precedence).</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">namespace</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The namespace of the <code class="literal">WebApplicationContext</code>. Defaults to <code class="literal">[portlet-name]-portlet</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">viewRendererUrl</code></p></td><td style="" align="left" valign="top"><p>The URL at which <code class="literal">DispatcherPortlet</code> can access an instance of <code class="literal">ViewRendererServlet</code>
+  (see <a class="xref" href="portlet.html#portlet-viewservlet" title="20.3&nbsp;The ViewRendererServlet">Section&nbsp;20.3, &#8220;The ViewRendererServlet&#8221;</a>).</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewservlet" href="#portlet-viewservlet"></a>20.3&nbsp;The ViewRendererServlet</h2></div></div></div>
+
+<p>The rendering process in Portlet MVC is a bit more complex than in Web MVC. In order to
+reuse all the <a class="link" href="view.html" title="18.&nbsp;View technologies">view technologies</a> from Spring Web MVC, we must convert the
+<code class="literal">PortletRequest</code> / <code class="literal">PortletResponse</code> to <code class="literal">HttpServletRequest</code> / <code class="literal">HttpServletResponse</code> and
+then call the <code class="literal">render</code> method of the <code class="literal">View</code>. To do this, <code class="literal">DispatcherPortlet</code> uses a
+special servlet that exists for just this purpose: the <code class="literal">ViewRendererServlet</code>.</p>
+<p>In order for <code class="literal">DispatcherPortlet</code> rendering to work, you must declare an instance of the
+<code class="literal">ViewRendererServlet</code> in the <code class="literal">web.xml</code> file for your web application as follows:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;servlet&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>ViewRendererServlet<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;servlet-class&gt;</span>org.springframework.web.servlet.ViewRendererServlet<span class="hl-tag">&lt;/servlet-class&gt;</span>
+<span class="hl-tag">&lt;/servlet&gt;</span>
+
+<span class="hl-tag">&lt;servlet-mapping&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>ViewRendererServlet<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;url-pattern&gt;</span>/WEB-INF/servlet/view<span class="hl-tag">&lt;/url-pattern&gt;</span>
+<span class="hl-tag">&lt;/servlet-mapping&gt;</span></pre>
+
+<p>To perform the actual rendering, <code class="literal">DispatcherPortlet</code> does the following:</p>
+<div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
+Binds the <code class="literal">WebApplicationContext</code> to the request as an attribute under the same
+<code class="literal">WEB_APPLICATION_CONTEXT_ATTRIBUTE</code> key that <code class="literal">DispatcherServlet</code> uses.
+</li><li class="listitem">
+Binds the <code class="literal">Model</code> and <code class="literal">View</code> objects to the request to make them available to the
+<code class="literal">ViewRendererServlet</code>.
+</li><li class="listitem">
+Constructs a <code class="literal">PortletRequestDispatcher</code> and performs an <code class="literal">include</code> using the <code class="literal">/WEB-
+INF/servlet/view</code> URL that is mapped to the <code class="literal">ViewRendererServlet</code>.
+</li></ol></div>
+
+<p>The <code class="literal">ViewRendererServlet</code> is then able to call the <code class="literal">render</code> method on the <code class="literal">View</code> with
+the appropriate arguments.</p>
+<p>The actual URL for the <code class="literal">ViewRendererServlet</code> can be changed using <code class="literal">DispatcherPortlet</code>'s
+<code class="literal">viewRendererUrl</code> configuration parameter.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-controller" href="#portlet-controller"></a>20.4&nbsp;Controllers</h2></div></div></div>
+
+<p>The controllers in Portlet MVC are very similar to the Web MVC Controllers, and porting
+code from one to the other should be simple.</p>
+<p>The basis for the Portlet MVC controller architecture is the
+<code class="literal">org.springframework.web.portlet.mvc.Controller</code> interface, which is listed below.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Controller {
+
+    <strong class="hl-tag" style="color: blue">/**
+     * Process the render request and return a ModelAndView object which the
+     * DispatcherPortlet will render.
+     */</strong>
+    ModelAndView handleRenderRequest(RenderRequest request,
+            RenderResponse response) <span class="hl-keyword">throws</span> Exception;
+
+    <strong class="hl-tag" style="color: blue">/**
+     * Process the action request. There is nothing to return.
+     */</strong>
+    <span class="hl-keyword">void</span> handleActionRequest(ActionRequest request,
+            ActionResponse response) <span class="hl-keyword">throws</span> Exception;
+
+}</pre>
+
+<p>As you can see, the Portlet <code class="literal">Controller</code> interface requires two methods that handle the
+two phases of a portlet request: the action request and the render request. The action
+phase should be capable of handling an action request, and the render phase should be
+capable of handling a render request and returning an appropriate model and view. While
+the <code class="literal">Controller</code> interface is quite abstract, Spring Portlet MVC offers several
+controllers that already contain a lot of the functionality you might need; most of
+these are very similar to controllers from Spring Web MVC. The <code class="literal">Controller</code> interface
+just defines the most common functionality required of every controller: handling an
+action request, handling a render request, and returning a model and a view.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-abstractcontroller" href="#portlet-controller-abstractcontroller"></a>20.4.1&nbsp;AbstractController and PortletContentGenerator</h3></div></div></div>
+
+<p>Of course, just a <code class="literal">Controller</code> interface isn&#8217;t enough. To provide a basic
+infrastructure, all of Spring Portlet MVC&#8217;s <code class="literal">Controller</code>s inherit from
+<code class="literal">AbstractController</code>, a class offering access to Spring&#8217;s <code class="literal">ApplicationContext</code> and
+control over caching.</p>
+<div class="table"><a name="portlet-ac-features" href="#portlet-ac-features"></a><p class="title"><b>Table&nbsp;20.3.&nbsp;Features offered by the AbstractController</b></p><div class="table-contents">
+
+  <table summary="Features offered by the AbstractController" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">requireSession</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Indicates whether or not this <code class="literal">Controller</code> requires a session to do its work. This
+  feature is offered to all controllers. If a session is not present when such a
+  controller receives a request, the user is informed using a <code class="literal">SessionRequiredException</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">synchronizeSession</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Use this if you want handling by this controller to be synchronized on the user&#8217;s
+  session. To be more specific, the extending controller will override the
+  <code class="literal">handleRenderRequestInternal(..)</code> and <code class="literal">handleActionRequestInternal(..)</code> methods, which
+  will be synchronized on the user&#8217;s session if you specify this variable.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">renderWhenMinimized</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>If you want your controller to actually render the view when the portlet is in a
+  minimized state, set this to true. By default, this is set to false so that portlets
+  that are in a minimized state don&#8217;t display any content.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">cacheSeconds</code></p></td><td style="" align="left" valign="top"><p>When you want a controller to override the default cache expiration defined for the
+  portlet, specify a positive integer here. By default it is set to <code class="literal">-1</code>, which does not
+  change the default caching. Setting it to <code class="literal">0</code> will ensure the result is never cached.</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>The <code class="literal">requireSession</code> and <code class="literal">cacheSeconds</code> properties are declared on the
+<code class="literal">PortletContentGenerator</code> class, which is the superclass of <code class="literal">AbstractController</code>) but
+are included here for completeness.</p>
+<p>When using the <code class="literal">AbstractController</code> as a base class for your controllers (which is not
+recommended since there are a lot of other controllers that might already do the job for
+you) you only have to override either the <code class="literal">handleActionRequestInternal(ActionRequest,
+ActionResponse)</code> method or the <code class="literal">handleRenderRequestInternal(RenderRequest,
+RenderResponse)</code> method (or both), implement your logic, and return a <code class="literal">ModelAndView</code>
+object (in the case of <code class="literal">handleRenderRequestInternal</code>).</p>
+<p>The default implementations of both <code class="literal">handleActionRequestInternal(..)</code> and
+<code class="literal">handleRenderRequestInternal(..)</code> throw a <code class="literal">PortletException</code>. This is consistent with
+the behavior of <code class="literal">GenericPortlet</code> from the JSR- 168 Specification API. So you only need
+to override the method that your controller is intended to handle.</p>
+<p>Here is short example consisting of a class and a declaration in the web application
+context.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> samples;
+
+<span class="hl-keyword">import</span> javax.portlet.RenderRequest;
+<span class="hl-keyword">import</span> javax.portlet.RenderResponse;
+
+<span class="hl-keyword">import</span> org.springframework.web.portlet.mvc.AbstractController;
+<span class="hl-keyword">import</span> org.springframework.web.portlet.ModelAndView;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SampleController <span class="hl-keyword">extends</span> AbstractController {
+
+    <span class="hl-keyword">public</span> ModelAndView handleRenderRequestInternal(RenderRequest request, RenderResponse response) {
+        ModelAndView mav = <span class="hl-keyword">new</span> ModelAndView(<span class="hl-string">"foo"</span>);
+        mav.addObject(<span class="hl-string">"message"</span>, <span class="hl-string">"Hello World!"</span>);
+        <span class="hl-keyword">return</span> mav;
+    }
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"sampleController"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"samples.SampleController"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"cacheSeconds"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"120"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The class above and the declaration in the web application context is all you need
+besides setting up a handler mapping (see <a class="xref" href="portlet.html#portlet-handlermapping" title="20.5&nbsp;Handler mappings">Section&nbsp;20.5, &#8220;Handler mappings&#8221;</a>) to get this very
+simple controller working.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-simple" href="#portlet-controller-simple"></a>20.4.2&nbsp;Other simple controllers</h3></div></div></div>
+
+<p>Although you can extend <code class="literal">AbstractController</code>, Spring Portlet MVC provides a number of
+concrete implementations which offer functionality that is commonly used in simple MVC
+applications.</p>
+<p>The <code class="literal">ParameterizableViewController</code> is basically the same as the example above, except
+for the fact that you can specify the view name that it will return in the web
+application context (no need to hard-code the view name).</p>
+<p>The <code class="literal">PortletModeNameViewController</code> uses the current mode of the portlet as the view
+name. So, if your portlet is in View mode (i.e. <code class="literal">PortletMode.VIEW</code>) then it uses "view"
+as the view name.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-command" href="#portlet-controller-command"></a>20.4.3&nbsp;Command Controllers</h3></div></div></div>
+
+<p>Spring Portlet MVC has the exact same hierarchy of <span class="emphasis"><em>command controllers</em></span> as Spring Web
+MVC. They provide a way to interact with data objects and dynamically bind parameters
+from the <code class="literal">PortletRequest</code> to the data object specified. Your data objects don&#8217;t have to
+implement a framework-specific interface, so you can directly manipulate your persistent
+objects if you desire. Let&#8217;s examine what command controllers are available, to get an
+overview of what you can do with them:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">AbstractCommandController</code> - a command controller you can use to create your own
+command controller, capable of binding request parameters to a data object you
+specify. This class does not offer form functionality, it does however offer
+validation features and lets you specify in the controller itself what to do with the
+command object that has been filled with the parameters from the request.
+</li><li class="listitem">
+<code class="literal">AbstractFormController</code> - an abstract controller offering form submission support.
+Using this controller you can model forms and populate them using a command object you
+retrieve in the controller. After a user has filled the form, <code class="literal">AbstractFormController</code>
+binds the fields, validates, and hands the object back to the controller to take
+appropriate action. Supported features are: invalid form submission (resubmission),
+validation, and normal form workflow. You implement methods to determine which views
+are used for form presentation and success. Use this controller if you need forms, but
+don&#8217;t want to specify what views you&#8217;re going to show the user in the application
+context.
+</li><li class="listitem">
+<code class="literal">SimpleFormController</code> - a concrete <code class="literal">AbstractFormController</code> that provides even more
+support when creating a form with a corresponding command object. The
+<code class="literal">SimpleFormController</code> lets you specify a command object, a viewname for the form, a
+viewname for the page you want to show the user when form submission has succeeded,
+and more.
+</li><li class="listitem">
+<code class="literal">AbstractWizardFormController</code>&#8201;&#8212;&#8201;a concrete <code class="literal">AbstractFormController</code> that provides a
+wizard-style interface for editing the contents of a command object across multiple
+display pages. Supports multiple user actions: finish, cancel, or page change, all of
+which are easily specified in request parameters from the view.
+</li></ul></div>
+
+<p>These command controllers are quite powerful, but they do require a detailed
+understanding of how they operate in order to use them efficiently. Carefully review the
+javadocs for this entire hierarchy and then look at some sample implementations before
+you start using them.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-wrapping" href="#portlet-controller-wrapping"></a>20.4.4&nbsp;PortletWrappingController</h3></div></div></div>
+
+<p>Instead of developing new controllers, it is possible to use existing portlets and map
+requests to them from a <code class="literal">DispatcherPortlet</code>. Using the <code class="literal">PortletWrappingController</code>, you
+can instantiate an existing <code class="literal">Portlet</code> as a <code class="literal">Controller</code> as follows:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myPortlet"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.mvc.PortletWrappingController"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portletClass"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"sample.MyPortlet"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portletName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"my-portlet"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"initParameters"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;value&gt;</span>config=/WEB-INF/my-portlet-config.xml<span class="hl-tag">&lt;/value&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This can be very valuable since you can then use interceptors to pre-process and
+post-process requests going to these portlets. Since JSR-168 does not support any kind
+of filter mechanism, this is quite handy. For example, this can be used to wrap the
+Hibernate <code class="literal">OpenSessionInViewInterceptor</code> around a MyFaces JSF Portlet.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-handlermapping" href="#portlet-handlermapping"></a>20.5&nbsp;Handler mappings</h2></div></div></div>
+
+<p>Using a handler mapping you can map incoming portlet requests to appropriate handlers.
+There are some handler mappings you can use out of the box, for example, the
+<code class="literal">PortletModeHandlerMapping</code>, but let&#8217;s first examine the general concept of a
+<code class="literal">HandlerMapping</code>.</p>
+<p>Note: We are intentionally using the term "Handler" here instead of "Controller".
+<code class="literal">DispatcherPortlet</code> is designed to be used with other ways to process requests than just
+Spring Portlet MVC&#8217;s own Controllers. A Handler is any Object that can handle portlet
+requests. Controllers are an example of Handlers, and they are of course the default. To
+use some other framework with <code class="literal">DispatcherPortlet</code>, a corresponding implementation of
+<code class="literal">HandlerAdapter</code> is all that is needed.</p>
+<p>The functionality a basic <code class="literal">HandlerMapping</code> provides is the delivering of a
+<code class="literal">HandlerExecutionChain</code>, which must contain the handler that matches the incoming
+request, and may also contain a list of handler interceptors that are applied to the
+request. When a request comes in, the <code class="literal">DispatcherPortlet</code> will hand it over to the
+handler mapping to let it inspect the request and come up with an appropriate
+<code class="literal">HandlerExecutionChain</code>. Then the <code class="literal">DispatcherPortlet</code> will execute the handler and
+interceptors in the chain (if any). These concepts are all exactly the same as in Spring
+Web MVC.</p>
+<p>The concept of configurable handler mappings that can optionally contain interceptors
+(executed before or after the actual handler was executed, or both) is extremely
+powerful. A lot of supporting functionality can be built into a custom <code class="literal">HandlerMapping</code>.
+Think of a custom handler mapping that chooses a handler not only based on the portlet
+mode of the request coming in, but also on a specific state of the session associated
+with the request.</p>
+<p>In Spring Web MVC, handler mappings are commonly based on URLs. Since there is really no
+such thing as a URL within a Portlet, we must use other mechanisms to control mappings.
+The two most common are the portlet mode and a request parameter, but anything available
+to the portlet request can be used in a custom handler mapping.</p>
+<p>The rest of this section describes three of Spring Portlet MVC&#8217;s most commonly used
+handler mappings. They all extend <code class="literal">AbstractHandlerMapping</code> and share the following
+properties:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">interceptors</code>: The list of interceptors to use. <code class="literal">HandlerInterceptor</code>s are discussed
+in <a class="xref" href="portlet.html#portlet-handlermapping-interceptor" title="20.5.4&nbsp;Adding HandlerInterceptors">Section&nbsp;20.5.4, &#8220;Adding HandlerInterceptors&#8221;</a>.
+</li><li class="listitem">
+<code class="literal">defaultHandler</code>: The default handler to use, when this handler mapping does not
+result in a matching handler.
+</li><li class="listitem">
+<code class="literal">order</code>: Based on the value of the order property (see the
+<code class="literal">org.springframework.core.Ordered</code> interface), Spring will sort all handler mappings
+available in the context and apply the first matching handler.
+</li><li class="listitem">
+<code class="literal">lazyInitHandlers</code>: Allows for lazy initialization of singleton handlers (prototype
+handlers are always lazily initialized). Default value is false. This property is
+directly implemented in the three concrete Handlers.
+</li></ul></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmode" href="#portlet-handlermapping-portletmode"></a>20.5.1&nbsp;PortletModeHandlerMapping</h3></div></div></div>
+
+<p>This is a simple handler mapping that maps incoming requests based on the current mode
+of the portlet (e.g. <span class="emphasis"><em>view</em></span>, <span class="emphasis"><em>edit</em></span>, <span class="emphasis"><em>help</em></span>). An example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.handler.PortletModeHandlerMapping"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portletModeMap"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"view"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"viewHandler"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"edit"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"editHandler"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"help"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"helpHandler"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameter" href="#portlet-handlermapping-parameter"></a>20.5.2&nbsp;ParameterHandlerMapping</h3></div></div></div>
+
+<p>If we need to navigate around to multiple controllers without changing portlet mode, the
+simplest way to do this is with a request parameter that is used as the key to control
+the mapping.</p>
+<p><code class="literal">ParameterHandlerMapping</code> uses the value of a specific request parameter to control the
+mapping. The default name of the parameter is <code class="literal">'action'</code>, but can be changed using the
+<code class="literal">'parameterName'</code> property.</p>
+<p>The bean configuration for this mapping will look something like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.handler.ParameterHandlerMapping"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"parameterMap"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"add"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"addItemHandler"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"edit"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"editItemHandler"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"delete"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"deleteItemHandler"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmodeparameter" href="#portlet-handlermapping-portletmodeparameter"></a>20.5.3&nbsp;PortletModeParameterHandlerMapping</h3></div></div></div>
+
+<p>The most powerful built-in handler mapping, <code class="literal">PortletModeParameterHandlerMapping</code>
+combines the capabilities of the two previous ones to allow different navigation within
+each portlet mode.</p>
+<p>Again the default name of the parameter is "action", but can be changed using the
+<code class="literal">parameterName</code> property.</p>
+<p>By default, the same parameter value may not be used in two different portlet modes.
+This is so that if the portal itself changes the portlet mode, the request will no
+longer be valid in the mapping. This behavior can be changed by setting the
+<code class="literal">allowDupParameters</code> property to true. However, this is not recommended.</p>
+<p>The bean configuration for this mapping will look something like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.handler.PortletModeParameterHandlerMapping"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portletModeParameterMap"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"view"</span><span class="hl-tag">&gt;</span> <span class="hl-comment">&lt;!-- </span><span class="emphasis"><em>view</em></span> portlet mode --&gt;
+                <span class="hl-tag">&lt;map&gt;</span>
+                    <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"add"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"addItemHandler"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"edit"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"editItemHandler"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"delete"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"deleteItemHandler"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/map&gt;</span>
+            <span class="hl-tag">&lt;/entry&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"edit"</span><span class="hl-tag">&gt;</span> <span class="hl-comment">&lt;!-- </span><span class="emphasis"><em>edit</em></span> portlet mode --&gt;
+                <span class="hl-tag">&lt;map&gt;</span>
+                    <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"prefs"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"prefsHandler"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"resetPrefs"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"resetPrefsHandler"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/map&gt;</span>
+            <span class="hl-tag">&lt;/entry&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This mapping can be chained ahead of a <code class="literal">PortletModeHandlerMapping</code>, which can then
+provide defaults for each mode and an overall default as well.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptor" href="#portlet-handlermapping-interceptor"></a>20.5.4&nbsp;Adding HandlerInterceptors</h3></div></div></div>
+
+<p>Spring&#8217;s handler mapping mechanism has a notion of handler interceptors, which can be
+extremely useful when you want to apply specific functionality to certain requests, for
+example, checking for a principal. Again Spring Portlet MVC implements these concepts in
+the same way as Web MVC.</p>
+<p>Interceptors located in the handler mapping must implement <code class="literal">HandlerInterceptor</code> from the
+<code class="literal">org.springframework.web.portlet</code> package. Just like the servlet version, this interface
+defines three methods: one that will be called before the actual handler will be
+executed ( <code class="literal">preHandle</code>), one that will be called after the handler is executed (
+<code class="literal">postHandle</code>), and one that is called after the complete request has finished (
+<code class="literal">afterCompletion</code>). These three methods should provide enough flexibility to do all
+kinds of pre- and post- processing.</p>
+<p>The <code class="literal">preHandle</code> method returns a boolean value. You can use this method to break or
+continue the processing of the execution chain. When this method returns <code class="literal">true</code>, the
+handler execution chain will continue. When it returns <code class="literal">false</code>, the <code class="literal">DispatcherPortlet</code>
+assumes the interceptor itself has taken care of requests (and, for example, rendered an
+appropriate view) and does not continue executing the other interceptors and the actual
+handler in the execution chain.</p>
+<p>The <code class="literal">postHandle</code> method is only called on a <code class="literal">RenderRequest</code>. The <code class="literal">preHandle</code> and
+<code class="literal">afterCompletion</code> methods are called on both an <code class="literal">ActionRequest</code> and a <code class="literal">RenderRequest</code>.
+If you need to execute logic in these methods for just one type of request, be sure to
+check what kind of request it is before processing it.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptoradapter" href="#portlet-handlermapping-interceptoradapter"></a>20.5.5&nbsp;HandlerInterceptorAdapter</h3></div></div></div>
+
+<p>As with the servlet package, the portlet package has a concrete implementation of
+<code class="literal">HandlerInterceptor</code> called <code class="literal">HandlerInterceptorAdapter</code>. This class has empty versions
+of all the methods so that you can inherit from this class and implement just one or two
+methods when that is all you need.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameterinterceptor" href="#portlet-handlermapping-parameterinterceptor"></a>20.5.6&nbsp;ParameterMappingInterceptor</h3></div></div></div>
+
+<p>The portlet package also has a concrete interceptor named <code class="literal">ParameterMappingInterceptor</code>
+that is meant to be used directly with <code class="literal">ParameterHandlerMapping</code> and
+<code class="literal">PortletModeParameterHandlerMapping</code>. This interceptor will cause the parameter that is
+being used to control the mapping to be forwarded from an <code class="literal">ActionRequest</code> to the
+subsequent <code class="literal">RenderRequest</code>. This will help ensure that the <code class="literal">RenderRequest</code> is mapped to
+the same Handler as the <code class="literal">ActionRequest</code>. This is done in the <code class="literal">preHandle</code> method of the
+interceptor, so you can still modify the parameter value in your handler to change where
+the <code class="literal">RenderRequest</code> will be mapped.</p>
+<p>Be aware that this interceptor is calling <code class="literal">setRenderParameter</code> on the <code class="literal">ActionResponse</code>,
+which means that you cannot call <code class="literal">sendRedirect</code> in your handler when using this
+interceptor. If you need to do external redirects then you will either need to forward
+the mapping parameter manually or write a different interceptor to handle this for you.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewresolver" href="#portlet-viewresolver"></a>20.6&nbsp;Views and resolving them</h2></div></div></div>
+
+<p>As mentioned previously, Spring Portlet MVC directly reuses all the view technologies
+from Spring Web MVC. This includes not only the various <code class="literal">View</code> implementations
+themselves, but also the <code class="literal">ViewResolver</code> implementations. For more information, refer to
+<a class="xref" href="view.html" title="18.&nbsp;View technologies">Chapter&nbsp;18, <i>View technologies</i></a> and <a class="xref" href="mvc.html#mvc-viewresolver" title="17.5&nbsp;Resolving views">Section&nbsp;17.5, &#8220;Resolving views&#8221;</a> respectively.</p>
+<p>A few items on using the existing <code class="literal">View</code> and <code class="literal">ViewResolver</code> implementations are worth
+mentioning:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Most portals expect the result of rendering a portlet to be an HTML fragment. So,
+things like JSP/JSTL, Velocity, FreeMarker, and XSLT all make sense. But it is
+unlikely that views that return other document types will make any sense in a portlet
+context.
+</li><li class="listitem">
+There is no such thing as an HTTP redirect from within a portlet (the
+<code class="literal">sendRedirect(..)</code> method of <code class="literal">ActionResponse</code> cannot be used to stay within the
+portal). So, <code class="literal">RedirectView</code> and use of the <code class="literal">'redirect:'</code> prefix will <span class="emphasis"><em>not</em></span> work
+correctly from within Portlet MVC.
+</li><li class="listitem">
+It may be possible to use the <code class="literal">'forward:'</code> prefix from within Portlet MVC. However,
+remember that since you are in a portlet, you have no idea what the current URL looks
+like. This means you cannot use a relative URL to access other resources in your web
+application and that you will have to use an absolute URL.
+</li></ul></div>
+
+<p>Also, for JSP development, the new Spring Taglib and the new Spring Form Taglib both
+work in portlet views in exactly the same way that they work in servlet views.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-multipart" href="#portlet-multipart"></a>20.7&nbsp;Multipart (file upload) support</h2></div></div></div>
+
+<p>Spring Portlet MVC has built-in multipart support to handle file uploads in portlet
+applications, just like Web MVC does. The design for the multipart support is done with
+pluggable <code class="literal">PortletMultipartResolver</code> objects, defined in the
+<code class="literal">org.springframework.web.portlet.multipart</code> package. Spring provides a
+<code class="literal">PortletMultipartResolver</code> for use with
+<a class="ulink" href="http://jakarta.apache.org/commons/fileupload" target="_top">Commons FileUpload</a>. How uploading files is
+supported will be described in the rest of this section.</p>
+<p>By default, no multipart handling will be done by Spring Portlet MVC, as some developers
+will want to handle multiparts themselves. You will have to enable it yourself by adding
+a multipart resolver to the web application&#8217;s context. After you have done that,
+<code class="literal">DispatcherPortlet</code> will inspect each request to see if it contains a multipart. If no
+multipart is found, the request will continue as expected. However, if a multipart is
+found in the request, the <code class="literal">PortletMultipartResolver</code> that has been declared in your
+context will be used. After that, the multipart attribute in your request will be
+treated like any other attribute.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Any configured <code class="literal">PortletMultipartResolver</code> bean <span class="emphasis"><em>must</em></span> have the following id (or name):
+" <code class="literal">portletMultipartResolver</code>". If you have defined your <code class="literal">PortletMultipartResolver</code> with
+any other name, then the <code class="literal">DispatcherPortlet</code> will <span class="emphasis"><em>not</em></span> find your
+<code class="literal">PortletMultipartResolver</code>, and consequently no multipart support will be in effect.</p>
+</td></tr></table></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-resolver" href="#portlet-multipart-resolver"></a>20.7.1&nbsp;Using the PortletMultipartResolver</h3></div></div></div>
+
+<p>The following example shows how to use the <code class="literal">CommonsPortletMultipartResolver</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"portletMultipartResolver"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- one of the properties available; the maximum file size in bytes --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"maxUploadSize"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100000"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Of course you also need to put the appropriate jars in your classpath for the multipart
+resolver to work. In the case of the <code class="literal">CommonsMultipartResolver</code>, you need to use
+<code class="literal">commons-fileupload.jar</code>. Be sure to use at least version 1.1 of Commons FileUpload as
+previous versions do not support JSR-168 Portlet applications.</p>
+<p>Now that you have seen how to set Portlet MVC up to handle multipart requests, let&#8217;s
+talk about how to actually use it. When <code class="literal">DispatcherPortlet</code> detects a multipart request,
+it activates the resolver that has been declared in your context and hands over the
+request. What the resolver then does is wrap the current <code class="literal">ActionRequest</code> in a
+<code class="literal">MultipartActionRequest</code> that has support for multipart file uploads. Using the
+<code class="literal">MultipartActionRequest</code> you can get information about the multiparts contained by this
+request and actually get access to the multipart files themselves in your controllers.</p>
+<p>Note that you can only receive multipart file uploads as part of an <code class="literal">ActionRequest</code>, not
+as part of a <code class="literal">RenderRequest</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-forms" href="#portlet-multipart-forms"></a>20.7.2&nbsp;Handling a file upload in a form</h3></div></div></div>
+
+<p>After the <code class="literal">PortletMultipartResolver</code> has finished doing its job, the request will be
+processed like any other. To use the <code class="literal">PortletMultipartResolver</code>, create a form with an
+upload field (see example below), then let Spring bind the file onto your form (backing
+object). To actually let the user upload a file, we have to create a (JSP/HTML) form:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;h1&gt;</span>Please upload a file<span class="hl-tag">&lt;/h1&gt;</span>
+<span class="hl-tag">&lt;form</span> <span class="hl-attribute">method</span>=<span class="hl-value">"post"</span> <span class="hl-attribute">action</span>=<span class="hl-value">"&lt;portlet:actionURL/&gt;"</span> <span class="hl-attribute">enctype</span>=<span class="hl-value">"multipart/form-data"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;input</span> <span class="hl-attribute">type</span>=<span class="hl-value">"file"</span> <span class="hl-attribute">name</span>=<span class="hl-value">"file"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;input</span> <span class="hl-attribute">type</span>=<span class="hl-value">"submit"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/form&gt;</span></pre>
+
+<p>As you can see, we&#8217;ve created a field named "file" that matches the property of the bean
+that holds the <code class="literal">byte[]</code> array. Furthermore we&#8217;ve added the encoding attribute (
+<code class="literal">enctype="multipart/form-data"</code>), which is necessary to let the browser know how to
+encode the multipart fields (do not forget this!).</p>
+<p>Just as with any other property that&#8217;s not automagically convertible to a string or
+primitive type, to be able to put binary data in your objects you have to register a
+custom editor with the <code class="literal">PortletRequestDataBinder</code>. There are a couple of editors
+available for handling files and setting the results on an object. There&#8217;s a
+<code class="literal">StringMultipartFileEditor</code> capable of converting files to Strings (using a user-defined
+character set), and there is a <code class="literal">ByteArrayMultipartFileEditor</code> which converts files to
+byte arrays. They function analogous to the <code class="literal">CustomDateEditor</code>.</p>
+<p>So, to be able to upload files using a form, declare the resolver, a mapping to a
+controller that will process the bean, and the controller itself.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"portletMultipartResolver"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.multipart.CommonsPortletMultipartResolver"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.handler.PortletModeHandlerMapping"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portletModeMap"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"view"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"fileUploadController"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fileUploadController"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"examples.FileUploadController"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"commandClass"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"examples.FileUploadBean"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"formView"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"fileuploadform"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"successView"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"confirmation"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>After that, create the controller and the actual class to hold the file property.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadController <span class="hl-keyword">extends</span> SimpleFormController {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> onSubmitAction(ActionRequest request, ActionResponse response,
+            Object command, BindException errors) <span class="hl-keyword">throws</span> Exception {
+
+        <span class="hl-comment">// cast the bean</span>
+        FileUploadBean bean = (FileUploadBean) command;
+
+        <span class="hl-comment">// let's see if there's content there</span>
+        <span class="hl-keyword">byte</span>[] file = bean.getFile();
+        <span class="hl-keyword">if</span> (file == null) {
+            <span class="hl-comment">// hmm, that's strange, the user did not upload anything</span>
+        }
+
+        <span class="hl-comment">// do something with the file here</span>
+    }
+
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> initBinder(PortletRequest request,
+            PortletRequestDataBinder binder) <span class="hl-keyword">throws</span> Exception {
+        <span class="hl-comment">// to actually be able to convert Multipart instance to byte[]</span>
+        <span class="hl-comment">// we have to register a custom editor</span>
+        binder.registerCustomEditor(<span class="hl-keyword">byte</span>[].<span class="hl-keyword">class</span>, <span class="hl-keyword">new</span> ByteArrayMultipartFileEditor());
+        <span class="hl-comment">// now Spring knows how to handle multipart object and convert</span>
+    }
+
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadBean {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">byte</span>[] file;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setFile(<span class="hl-keyword">byte</span>[] file) {
+        <span class="hl-keyword">this</span>.file = file;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">byte</span>[] getFile() {
+        <span class="hl-keyword">return</span> file;
+    }
+
+}</pre>
+
+<p>As you can see, the <code class="literal">FileUploadBean</code> has a property of type <code class="literal">byte[]</code> that holds the
+file. The controller registers a custom editor to let Spring know how to actually
+convert the multipart objects the resolver has found to properties specified by the
+bean. In this example, nothing is done with the <code class="literal">byte[]</code> property of the bean itself,
+but in practice you can do whatever you want (save it in a database, mail it to
+somebody, etc).</p>
+<p>An equivalent example in which a file is bound straight to a String-typed property on a
+form backing object might look like this:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadController <span class="hl-keyword">extends</span> SimpleFormController {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> onSubmitAction(ActionRequest request, ActionResponse response,
+            Object command, BindException errors) <span class="hl-keyword">throws</span> Exception {
+
+        <span class="hl-comment">// cast the bean</span>
+        FileUploadBean bean = (FileUploadBean) command;
+
+        <span class="hl-comment">// let's see if there's content there</span>
+        String file = bean.getFile();
+        <span class="hl-keyword">if</span> (file == null) {
+            <span class="hl-comment">// hmm, that's strange, the user did not upload anything</span>
+        }
+
+        <span class="hl-comment">// do something with the file here</span>
+    }
+
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> initBinder(PortletRequest request,
+            PortletRequestDataBinder binder) <span class="hl-keyword">throws</span> Exception {
+
+        <span class="hl-comment">// to actually be able to convert Multipart instance to a String</span>
+        <span class="hl-comment">// we have to register a custom editor</span>
+        binder.registerCustomEditor(String.<span class="hl-keyword">class</span>, <span class="hl-keyword">new</span> StringMultipartFileEditor());
+        <span class="hl-comment">// now Spring knows how to handle multipart objects and convert</span>
+    }
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadBean {
+
+    <span class="hl-keyword">private</span> String file;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setFile(String file) {
+        <span class="hl-keyword">this</span>.file = file;
+    }
+
+    <span class="hl-keyword">public</span> String getFile() {
+        <span class="hl-keyword">return</span> file;
+    }
+}</pre>
+
+<p>Of course, this last example only makes (logical) sense in the context of uploading a
+plain text file (it wouldn&#8217;t work so well in the case of uploading an image file).</p>
+<p>The third (and final) option is where one binds directly to a <code class="literal">MultipartFile</code> property
+declared on the (form backing) object&#8217;s class. In this case one does not need to
+register any custom property editor because there is no type conversion to be performed.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadController <span class="hl-keyword">extends</span> SimpleFormController {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> onSubmitAction(ActionRequest request, ActionResponse response,
+            Object command, BindException errors) <span class="hl-keyword">throws</span> Exception {
+
+        <span class="hl-comment">// cast the bean</span>
+        FileUploadBean bean = (FileUploadBean) command;
+
+        <span class="hl-comment">// let's see if there's content there</span>
+        MultipartFile file = bean.getFile();
+        <span class="hl-keyword">if</span> (file == null) {
+            <span class="hl-comment">// hmm, that's strange, the user did not upload anything</span>
+        }
+
+        <span class="hl-comment">// do something with the file here</span>
+    }
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> FileUploadBean {
+
+    <span class="hl-keyword">private</span> MultipartFile file;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setFile(MultipartFile file) {
+        <span class="hl-keyword">this</span>.file = file;
+    }
+
+    <span class="hl-keyword">public</span> MultipartFile getFile() {
+        <span class="hl-keyword">return</span> file;
+    }
+
+}</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-exceptionresolver" href="#portlet-exceptionresolver"></a>20.8&nbsp;Handling exceptions</h2></div></div></div>
+
+<p>Just like Servlet MVC, Portlet MVC provides <code class="literal">HandlerExceptionResolver</code>s to ease the
+pain of unexpected exceptions that occur while your request is being processed by a
+handler that matched the request. Portlet MVC also provides a portlet-specific, concrete
+<code class="literal">SimpleMappingExceptionResolver</code> that enables you to take the class name of any
+exception that might be thrown and map it to a view name.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-annotation" href="#portlet-annotation"></a>20.9&nbsp;Annotation-based controller configuration</h2></div></div></div>
+
+<p>Spring 2.5 introduced an annotation-based programming model for MVC controllers, using
+annotations such as <code class="literal">@RequestMapping</code>, <code class="literal">@RequestParam</code>, <code class="literal">@ModelAttribute</code>, etc. This
+annotation support is available for both Servlet MVC and Portlet MVC. Controllers
+implemented in this style do not have to extend specific base classes or implement
+specific interfaces. Furthermore, they do not usually have direct dependencies on
+Servlet or Portlet API&#8217;s, although they can easily get access to Servlet or Portlet
+facilities if desired.</p>
+<p>The following sections document these annotations and how they are most commonly used in
+a Portlet environment.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-setup" href="#portlet-ann-setup"></a>20.9.1&nbsp;Setting up the dispatcher for annotation support</h3></div></div></div>
+
+<p><span class="emphasis"><em>`@RequestMapping` will only be processed if a corresponding <code class="literal">HandlerMapping</code> (for
+type level annotations) and/or <code class="literal">HandlerAdapter</code> (for method level annotations) is
+present in the dispatcher.</em></span> This is the case by default in both <code class="literal">DispatcherServlet</code> and
+<code class="literal">DispatcherPortlet</code>.</p>
+<p>However, if you are defining custom <code class="literal">HandlerMappings</code> or <code class="literal">HandlerAdapters</code>, then you
+need to make sure that a corresponding custom <code class="literal">DefaultAnnotationHandlerMapping</code> and/or
+<code class="literal">AnnotationMethodHandlerAdapter</code> is defined as well - provided that you intend to use
+<code class="literal">@RequestMapping</code>.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.mvc.annotation.DefaultAnnotationHandlerMapping"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.portlet.mvc.annotation.AnnotationMethodHandlerAdapter"</span><span class="hl-tag">/&gt;</span>
+
+    // ... (controller bean definitions) ...
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Defining a <code class="literal">DefaultAnnotationHandlerMapping</code> and/or <code class="literal">AnnotationMethodHandlerAdapter</code>
+explicitly also makes sense if you would like to customize the mapping strategy, e.g.
+specifying a custom <code class="literal">WebBindingInitializer</code> (see below).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-controller" href="#portlet-ann-controller"></a>20.9.2&nbsp;Defining a controller with @Controller</h3></div></div></div>
+
+<p>The <code class="literal">@Controller</code> annotation indicates that a particular class serves the role of a
+<span class="emphasis"><em>controller</em></span>. There is no need to extend any controller base class or reference the
+Portlet API. You are of course still able to reference Portlet-specific features if you
+need to.</p>
+<p>The basic purpose of the <code class="literal">@Controller</code> annotation is to act as a stereotype for the
+annotated class, indicating its role. The dispatcher will scan such annotated classes
+for mapped methods, detecting <code class="literal">@RequestMapping</code> annotations (see the next section).</p>
+<p>Annotated controller beans may be defined explicitly, using a standard Spring bean
+definition in the dispatcher&#8217;s context. However, the <code class="literal">@Controller</code> stereotype also
+allows for autodetection, aligned with Spring 2.5&#8217;s general support for detecting
+component classes in the classpath and auto-registering bean definitions for them.</p>
+<p>To enable autodetection of such annotated controllers, you have to add component
+scanning to your configuration. This is easily achieved by using the <span class="emphasis"><em>spring-context</em></span>
+schema as shown in the following XML snippet:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:p</span>=<span class="hl-value">"http://www.springframework.org/schema/p"</span>
+    <span class="hl-attribute">xmlns:context</span>=<span class="hl-value">"http://www.springframework.org/schema/context"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;context:component-scan</span> <span class="hl-attribute">base-package</span>=<span class="hl-value">"org.springframework.samples.petportal.portlet"</span><span class="hl-tag">/&gt;</span>
+
+    // ...
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping" href="#portlet-ann-requestmapping"></a>20.9.3&nbsp;Mapping requests with @RequestMapping</h3></div></div></div>
+
+<p>The <code class="literal">@RequestMapping</code> annotation is used to map portlet modes like <span class="emphasis"><em>VIEW</em></span>/<span class="emphasis"><em>EDIT</em></span> onto an
+entire class or a particular handler method. Typically the type-level annotation maps a
+specific mode (or mode plus parameter condition) onto a form controller, with additional
+method-level annotations <span class="emphasis"><em>narrowing</em></span> the primary mapping for specific portlet request
+parameters.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p><code class="literal">@RequestMapping</code> at the type level may be used for plain implementations of the
+<code class="literal">Controller</code> interface as well. In this case, the request processing code would follow
+the traditional <code class="literal">handle(Action|Render)Request</code> signature, while the controller&#8217;s mapping
+would be expressed through an <code class="literal">@RequestMapping</code> annotation. This works for pre-built
+<code class="literal">Controller</code> base classes, such as <code class="literal">SimpleFormController</code>, too.</p>
+<p>In the following discussion, we&#8217;ll focus on controllers that are based on annotated
+handler methods.</p>
+</td></tr></table></div>
+
+<p>The following is an example of a form controller from the PetPortal sample application
+using this annotation:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
+<em><span class="hl-annotation" style="color: gray">@RequestMapping("EDIT")</span></em>
+<em><span class="hl-annotation" style="color: gray">@SessionAttributes("site")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> PetSitesEditController {
+
+    <span class="hl-keyword">private</span> Properties petSites;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setPetSites(Properties petSites) {
+        <span class="hl-keyword">this</span>.petSites = petSites;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@ModelAttribute("petSites")</span></em>
+    <span class="hl-keyword">public</span> Properties getPetSites() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.petSites;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@RequestMapping</span></em> <span class="hl-comment">// default (action=list)</span>
+    <span class="hl-keyword">public</span> String showPetSites() {
+        <span class="hl-keyword">return</span> <span class="hl-string">"petSitesEdit"</span>;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@RequestMapping(params = "action=add")</span></em> <span class="hl-comment">// render phase</span>
+    <span class="hl-keyword">public</span> String showSiteForm(Model model) {
+        <span class="hl-comment">// Used for the initial form as well as for redisplaying with errors.</span>
+        <span class="hl-keyword">if</span> (!model.containsAttribute(<span class="hl-string">"site"</span>)) {
+            model.addAttribute(<span class="hl-string">"site"</span>, <span class="hl-keyword">new</span> PetSite());
+        }
+
+        <span class="hl-keyword">return</span> <span class="hl-string">"petSitesAdd"</span>;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@RequestMapping(params = "action=add")</span></em> <span class="hl-comment">// action phase</span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> populateSite(<em><span class="hl-annotation" style="color: gray">@ModelAttribute("site")</span></em> PetSite petSite,
+            BindingResult result, SessionStatus status, ActionResponse response) {
+        <span class="hl-keyword">new</span> PetSiteValidator().validate(petSite, result);
+        <span class="hl-keyword">if</span> (!result.hasErrors()) {
+            <span class="hl-keyword">this</span>.petSites.put(petSite.getName(), petSite.getUrl());
+            status.setComplete();
+            response.setRenderParameter(<span class="hl-string">"action"</span>, <span class="hl-string">"list"</span>);
+        }
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@RequestMapping(params = "action=delete")</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> removeSite(<em><span class="hl-annotation" style="color: gray">@RequestParam("site")</span></em> String site, ActionResponse response) {
+        <span class="hl-keyword">this</span>.petSites.remove(site);
+        response.setRenderParameter(<span class="hl-string">"action"</span>, <span class="hl-string">"list"</span>);
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping-arguments" href="#portlet-ann-requestmapping-arguments"></a>20.9.4&nbsp;Supported handler method arguments</h3></div></div></div>
+
+<p>Handler methods which are annotated with <code class="literal">@RequestMapping</code> are allowed to have very
+flexible signatures. They may have arguments of the following types, in arbitrary order
+(except for validation results, which need to follow right after the corresponding
+command object, if desired):</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Request and/or response objects (Portlet API). You may choose any specific
+request/response type, e.g. PortletRequest / ActionRequest / RenderRequest. An
+explicitly declared action/render argument is also used for mapping specific request
+types onto a handler method (in case of no other information given that differentiates
+between action and render requests).
+</li><li class="listitem">
+Session object (Portlet API): of type PortletSession. An argument of this type will
+enforce the presence of a corresponding session. As a consequence, such an argument
+will never be <code class="literal">null</code>.
+</li><li class="listitem">
+<code class="literal">org.springframework.web.context.request.WebRequest</code> or
+<code class="literal">org.springframework.web.context.request.NativeWebRequest</code>. Allows for generic request
+parameter access as well as request/session attribute access, without ties to the
+native Servlet/Portlet API.
+</li><li class="listitem">
+<code class="literal">java.util.Locale</code> for the current request locale (the portal locale in a Portlet
+environment).
+</li><li class="listitem">
+<code class="literal">java.util.TimeZone</code> / <code class="literal">java.time.ZoneId</code> for the current request time zone.
+</li><li class="listitem">
+<code class="literal">java.io.InputStream</code> / <code class="literal">java.io.Reader</code> for access to the request&#8217;s content. This
+will be the raw InputStream/Reader as exposed by the Portlet API.
+</li><li class="listitem">
+<code class="literal">java.io.OutputStream</code> / <code class="literal">java.io.Writer</code> for generating the response&#8217;s content. This
+will be the raw OutputStream/Writer as exposed by the Portlet API.
+</li><li class="listitem">
+<code class="literal">@RequestParam</code> annotated parameters for access to specific Portlet request
+parameters. Parameter values will be converted to the declared method argument type.
+</li><li class="listitem">
+<code class="literal">java.util.Map</code> / <code class="literal">org.springframework.ui.Model</code> / <code class="literal">org.springframework.ui.ModelMap</code>
+for enriching the implicit model that will be exposed to the web view.
+</li><li class="listitem">
+Command/form objects to bind parameters to: as bean properties or fields, with
+customizable type conversion, depending on <code class="literal">@InitBinder</code> methods and/or the
+HandlerAdapter configuration - see the " <code class="literal">webBindingInitializer</code>" property on
+<code class="literal">AnnotationMethodHandlerAdapter</code>. Such command objects along with their validation
+results will be exposed as model attributes, by default using the non-qualified
+command class name in property notation (e.g. "orderAddress" for type
+"mypackage.OrderAddress"). Specify a parameter-level <code class="literal">ModelAttribute</code> annotation for
+declaring a specific model attribute name.
+</li><li class="listitem">
+<code class="literal">org.springframework.validation.Errors</code> /
+<code class="literal">org.springframework.validation.BindingResult</code> validation results for a preceding
+command/form object (the immediate preceding argument).
+</li><li class="listitem">
+<code class="literal">org.springframework.web.bind.support.SessionStatus</code> status handle for marking form
+processing as complete (triggering the cleanup of session attributes that have been
+indicated by the <code class="literal">@SessionAttributes</code> annotation at the handler type level).
+</li></ul></div>
+
+<p>The following return types are supported for handler methods:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+A <code class="literal">ModelAndView</code> object, with the model implicitly enriched with command objects and
+the results of <code class="literal">@ModelAttribute</code> annotated reference data accessor methods.
+</li><li class="listitem">
+A <code class="literal">Model</code> object, with the view name implicitly determined through a
+<code class="literal">RequestToViewNameTranslator</code> and the model implicitly enriched with command objects
+and the results of <code class="literal">@ModelAttribute</code> annotated reference data accessor methods.
+</li><li class="listitem">
+A <code class="literal">Map</code> object for exposing a model, with the view name implicitly determined through
+a <code class="literal">RequestToViewNameTranslator</code> and the model implicitly enriched with command objects
+and the results of <code class="literal">@ModelAttribute</code> annotated reference data accessor methods.
+</li><li class="listitem">
+A <code class="literal">View</code> object, with the model implicitly determined through command objects and
+<code class="literal">@ModelAttribute</code> annotated reference data accessor methods. The handler method may
+also programmatically enrich the model by declaring a <code class="literal">Model</code> argument (see above).
+</li><li class="listitem">
+A <code class="literal">String</code> value which is interpreted as view name, with the model implicitly
+determined through command objects and <code class="literal">@ModelAttribute</code> annotated reference data
+accessor methods. The handler method may also programmatically enrich the model by
+declaring a <code class="literal">Model</code> argument (see above).
+</li><li class="listitem">
+<code class="literal">void</code> if the method handles the response itself (e.g. by writing the response content
+directly).
+</li><li class="listitem">
+Any other return type will be considered a single model attribute to be exposed to the
+view, using the attribute name specified through <code class="literal">@ModelAttribute</code> at the method level
+(or the default attribute name based on the return type&#8217;s class name otherwise). The
+model will be implicitly enriched with command objects and the results of
+<code class="literal">@ModelAttribute</code> annotated reference data accessor methods.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestparam" href="#portlet-ann-requestparam"></a>20.9.5&nbsp;Binding request parameters to method parameters with @RequestParam</h3></div></div></div>
+
+<p>The <code class="literal">@RequestParam</code> annotation is used to bind request parameters to a method parameter
+in your controller.</p>
+<p>The following code snippet from the PetPortal sample application shows the usage:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
+<em><span class="hl-annotation" style="color: gray">@RequestMapping("EDIT")</span></em>
+<em><span class="hl-annotation" style="color: gray">@SessionAttributes("site")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> PetSitesEditController {
+
+    <span class="hl-comment">// ...</span>
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> removeSite(<em><span class="hl-annotation" style="color: gray">@RequestParam("site")</span></em> String site, ActionResponse response) {
+        <span class="hl-keyword">this</span>.petSites.remove(site);
+        response.setRenderParameter(<span class="hl-string">"action"</span>, <span class="hl-string">"list"</span>);
+    }
+
+    <span class="hl-comment">// ...</span>
+
+}</pre>
+
+<p>Parameters using this annotation are required by default, but you can specify that a
+parameter is optional by setting <code class="literal">@RequestParam</code>'s <code class="literal">required</code> attribute to <code class="literal">false</code>
+(e.g., <code class="literal">@RequestParam(value="id", required=false)</code>).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-modelattrib" href="#portlet-ann-modelattrib"></a>20.9.6&nbsp;Providing a link to data from the model with @ModelAttribute</h3></div></div></div>
+
+<p><code class="literal">@ModelAttribute</code> has two usage scenarios in controllers. When placed on a method
+parameter, <code class="literal">@ModelAttribute</code> is used to map a model attribute to the specific, annotated
+method parameter (see the <code class="literal">populateSite()</code> method below). This is how the controller
+gets a reference to the object holding the data entered in the form. In addition, the
+parameter can be declared as the specific type of the form backing object rather than as
+a generic <code class="literal">java.lang.Object</code>, thus increasing type safety.</p>
+<p><code class="literal">@ModelAttribute</code> is also used at the method level to provide <span class="emphasis"><em>reference data</em></span> for the
+model (see the <code class="literal">getPetSites()</code> method below). For this usage the method signature can
+contain the same types as documented above for the <code class="literal">@RequestMapping</code> annotation.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p><code class="literal">@ModelAttribute</code> annotated methods will be executed <span class="emphasis"><em>before</em></span> the chosen
+<code class="literal">@RequestMapping</code> annotated handler method. They effectively pre-populate the implicit
+model with specific attributes, often loaded from a database. Such an attribute can then
+already be accessed through <code class="literal">@ModelAttribute</code> annotated handler method parameters in the
+chosen handler method, potentially with binding and validation applied to it.</p>
+</td></tr></table></div>
+
+<p>The following code snippet shows these two usages of this annotation:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
+<em><span class="hl-annotation" style="color: gray">@RequestMapping("EDIT")</span></em>
+<em><span class="hl-annotation" style="color: gray">@SessionAttributes("site")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> PetSitesEditController {
+
+    <span class="hl-comment">// ...</span>
+
+    <em><span class="hl-annotation" style="color: gray">@ModelAttribute("petSites")</span></em>
+    <span class="hl-keyword">public</span> Properties getPetSites() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.petSites;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@RequestMapping(params = "action=add")</span></em> <span class="hl-comment">// action phase</span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> populateSite( <em><span class="hl-annotation" style="color: gray">@ModelAttribute("site")</span></em> PetSite petSite, BindingResult result, SessionStatus status, ActionResponse response) {
+        <span class="hl-keyword">new</span> PetSiteValidator().validate(petSite, result);
+        <span class="hl-keyword">if</span> (!result.hasErrors()) {
+            <span class="hl-keyword">this</span>.petSites.put(petSite.getName(), petSite.getUrl());
+            status.setComplete();
+            response.setRenderParameter(<span class="hl-string">"action"</span>, <span class="hl-string">"list"</span>);
+        }
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-sessionattrib" href="#portlet-ann-sessionattrib"></a>20.9.7&nbsp;Specifying attributes to store in a Session with @SessionAttributes</h3></div></div></div>
+
+<p>The type-level <code class="literal">@SessionAttributes</code> annotation declares session attributes used by a
+specific handler. This will typically list the names of model attributes or types of
+model attributes which should be transparently stored in the session or some
+conversational storage, serving as form-backing beans between subsequent requests.</p>
+<p>The following code snippet shows the usage of this annotation:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
+<em><span class="hl-annotation" style="color: gray">@RequestMapping("EDIT")</span></em>
+<em><span class="hl-annotation" style="color: gray">@SessionAttributes("site")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> PetSitesEditController {
+    <span class="hl-comment">// ...</span>
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-webdatabinder" href="#portlet-ann-webdatabinder"></a>20.9.8&nbsp;Customizing WebDataBinder initialization</h3></div></div></div>
+
+<p>To customize request parameter binding with PropertyEditors, etc. via Spring&#8217;s
+<code class="literal">WebDataBinder</code>, you can either use <code class="literal">@InitBinder</code>-annotated methods within your
+controller or externalize your configuration by providing a custom
+<code class="literal">WebBindingInitializer</code>.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="portlet-ann-initbinder" href="#portlet-ann-initbinder"></a>Customizing data binding with @InitBinder</h4></div></div></div>
+
+<p>Annotating controller methods with <code class="literal">@InitBinder</code> allows you to configure web data
+binding directly within your controller class. <code class="literal">@InitBinder</code> identifies methods which
+initialize the <code class="literal">WebDataBinder</code> which will be used for populating command and form object
+arguments of annotated handler methods.</p>
+<p>Such init-binder methods support all arguments that <code class="literal">@RequestMapping</code> supports, except
+for command/form objects and corresponding validation result objects. Init-binder
+methods must not have a return value. Thus, they are usually declared as <code class="literal">void</code>. Typical
+arguments include <code class="literal">WebDataBinder</code> in combination with <code class="literal">WebRequest</code> or
+<code class="literal">java.util.Locale</code>, allowing code to register context-specific editors.</p>
+<p>The following example demonstrates the use of <code class="literal">@InitBinder</code> for configuring a
+<code class="literal">CustomDateEditor</code> for all <code class="literal">java.util.Date</code> form properties.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> MyFormController {
+
+    <em><span class="hl-annotation" style="color: gray">@InitBinder</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> initBinder(WebDataBinder binder) {
+    SimpleDateFormat dateFormat = <span class="hl-keyword">new</span> SimpleDateFormat(<span class="hl-string">"yyyy-MM-dd"</span>);
+        dateFormat.setLenient(false);
+        binder.registerCustomEditor(Date.<span class="hl-keyword">class</span>, <span class="hl-keyword">new</span> CustomDateEditor(dateFormat, false));
+    }
+
+    <span class="hl-comment">// ...</span>
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="portlet-ann-webbindinginitializer" href="#portlet-ann-webbindinginitializer"></a>Configuring a custom WebBindingInitializer</h4></div></div></div>
+
+<p>To externalize data binding initialization, you can provide a custom implementation of
+the <code class="literal">WebBindingInitializer</code> interface, which you then enable by supplying a custom bean
+configuration for an <code class="literal">AnnotationMethodHandlerAdapter</code>, thus overriding the default
+configuration.</p>
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-deployment" href="#portlet-deployment"></a>20.10&nbsp;Portlet application deployment</h2></div></div></div>
+
+<p>The process of deploying a Spring Portlet MVC application is no different than deploying
+any JSR-168 Portlet application. However, this area is confusing enough in general that
+it is worth talking about here briefly.</p>
+<p>Generally, the portal/portlet container runs in one webapp in your servlet container and
+your portlets run in another webapp in your servlet container. In order for the portlet
+container webapp to make calls into your portlet webapp it must make cross-context calls
+to a well-known servlet that provides access to the portlet services defined in your
+<code class="literal">portlet.xml</code> file.</p>
+<p>The JSR-168 specification does not specify exactly how this should happen, so each
+portlet container has its own mechanism for this, which usually involves some kind of
+"deployment process" that makes changes to the portlet webapp itself and then registers
+the portlets within the portlet container.</p>
+<p>At a minimum, the <code class="literal">web.xml</code> file in your portlet webapp is modified to inject the
+well-known servlet that the portlet container will call. In some cases a single servlet
+will service all portlets in the webapp, in other cases there will be an instance of the
+servlet for each portlet.</p>
+<p>Some portlet containers will also inject libraries and/or configuration files into the
+webapp as well. The portlet container must also make its implementation of the Portlet
+JSP Tag Library available to your webapp.</p>
+<p>The bottom line is that it is important to understand the deployment needs of your
+target portal and make sure they are met (usually by following the automated deployment
+process it provides). Be sure to carefully review the documentation from your portal for
+this process.</p>
+<p>Once you have deployed your portlet, review the resulting <code class="literal">web.xml</code> file for sanity.
+Some older portals have been known to corrupt the definition of the
+<code class="literal">ViewRendererServlet</code>, thus breaking the rendering of your portlets.</p>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.&nbsp;Integrating with other web frameworks&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;21.&nbsp;WebSocket Support</td></tr></table></div></body></html>

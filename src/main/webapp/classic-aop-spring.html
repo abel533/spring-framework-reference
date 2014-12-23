@@ -1,0 +1,1391 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>33.&nbsp;Classic Spring AOP Usage</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"><link rel="prev" href="classic-spring.html" title="32.&nbsp;Classic Spring Usage"><link rel="next" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">33.&nbsp;Classic Spring AOP Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VII.&nbsp;Appendices</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="classic-aop-spring" href="#classic-aop-spring"></a>33.&nbsp;Classic Spring AOP Usage</h2></div></div></div>
+
+<p>In this appendix we discuss the lower-level Spring AOP APIs and the AOP support used in
+Spring 1.2 applications. For new applications, we recommend the use of the Spring 2.0
+AOP support described in the <a class="link" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">AOP</a> chapter, but when working with existing
+applications, or when reading books and articles, you may come across Spring 1.2 style
+examples. Spring 2.0 is fully backwards compatible with Spring 1.2 and everything
+described in this appendix is fully supported in Spring 2.0.</p>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-pointcuts" href="#classic-aop-api-pointcuts"></a>33.1&nbsp;Pointcut API in Spring</h2></div></div></div>
+
+<p>Let&#8217;s look at how Spring handles the crucial pointcut concept.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-concepts" href="#classic-aop-api-concepts"></a>33.1.1&nbsp;Concepts</h3></div></div></div>
+
+<p>Spring&#8217;s pointcut model enables pointcut reuse independent of advice types. It&#8217;s
+possible to target different advice using the same pointcut.</p>
+<p>The <code class="literal">org.springframework.aop.Pointcut</code> interface is the central interface, used to
+target advices to particular classes and methods. The complete interface is shown below:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Pointcut {
+
+    ClassFilter getClassFilter();
+
+    MethodMatcher getMethodMatcher();
+
+}</pre>
+
+<p>Splitting the <code class="literal">Pointcut</code> interface into two parts allows reuse of class and method
+matching parts, and fine-grained composition operations (such as performing a "union"
+with another method matcher).</p>
+<p>The <code class="literal">ClassFilter</code> interface is used to restrict the pointcut to a given set of target
+classes. If the <code class="literal">matches()</code> method always returns true, all target classes will be
+matched:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> ClassFilter {
+
+    <span class="hl-keyword">boolean</span> matches(Class clazz);
+
+}</pre>
+
+<p>The <code class="literal">MethodMatcher</code> interface is normally more important. The complete interface is
+shown below:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> MethodMatcher {
+
+    <span class="hl-keyword">boolean</span> matches(Method m, Class targetClass);
+
+    <span class="hl-keyword">boolean</span> isRuntime();
+
+    <span class="hl-keyword">boolean</span> matches(Method m, Class targetClass, Object[] args);
+
+}</pre>
+
+<p>The <code class="literal">matches(Method, Class)</code> method is used to test whether this pointcut will ever
+match a given method on a target class. This evaluation can be performed when an AOP
+proxy is created, to avoid the need for a test on every method invocation. If the
+2-argument matches method returns true for a given method, and the <code class="literal">isRuntime()</code> method
+for the MethodMatcher returns true, the 3-argument matches method will be invoked on
+every method invocation. This enables a pointcut to look at the arguments passed to the
+method invocation immediately before the target advice is to execute.</p>
+<p>Most MethodMatchers are static, meaning that their <code class="literal">isRuntime()</code> method returns false.
+In this case, the 3-argument matches method will never be invoked.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>If possible, try to make pointcuts static, allowing the AOP framework to cache the
+results of pointcut evaluation when an AOP proxy is created.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcut-ops" href="#classic-aop-api-pointcut-ops"></a>33.1.2&nbsp;Operations on pointcuts</h3></div></div></div>
+
+<p>Spring supports operations on pointcuts: notably, <span class="emphasis"><em>union</em></span> and <span class="emphasis"><em>intersection</em></span>.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Union means the methods that either pointcut matches.
+</li><li class="listitem">
+Intersection means the methods that both pointcuts match.
+</li><li class="listitem">
+Union is usually more useful.
+</li><li class="listitem">
+Pointcuts can be composed using the static methods in the
+<span class="emphasis"><em>org.springframework.aop.support.Pointcuts</em></span> class, or using the
+<span class="emphasis"><em>ComposablePointcut</em></span> class in the same package. However, using AspectJ pointcut
+expressions is usually a simpler approach.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-aspectj" href="#classic-aop-api-pointcuts-aspectj"></a>33.1.3&nbsp;AspectJ expression pointcuts</h3></div></div></div>
+
+<p>Since 2.0, the most important type of pointcut used by Spring is
+<code class="literal">org.springframework.aop.aspectj.AspectJExpressionPointcut</code>. This is a pointcut that
+uses an AspectJ supplied library to parse an AspectJ pointcut expression string.</p>
+<p>See the previous chapter for a discussion of supported AspectJ pointcut primitives.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-impls" href="#classic-aop-api-pointcuts-impls"></a>33.1.4&nbsp;Convenience pointcut implementations</h3></div></div></div>
+
+<p>Spring provides several convenient pointcut implementations. Some can be used out of the
+box; others are intended to be subclassed in application-specific pointcuts.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-pointcuts-static" href="#classic-aop-api-pointcuts-static"></a>Static pointcuts</h4></div></div></div>
+
+<p>Static pointcuts are based on method and target class, and cannot take into account the
+method&#8217;s arguments. Static pointcuts are sufficient - <span class="emphasis"><em>and best</em></span> - for most usages.
+It&#8217;s possible for Spring to evaluate a static pointcut only once, when a method is first
+invoked: after that, there is no need to evaluate the pointcut again with each method
+invocation.</p>
+<p>Let&#8217;s consider some static pointcut implementations included with Spring.</p>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="classic-aop-api-pointcuts-regex" href="#classic-aop-api-pointcuts-regex"></a>Regular expression pointcuts</h5></div></div></div>
+
+<p>One obvious way to specify static pointcuts is regular expressions. Several AOP
+frameworks besides Spring make this possible.
+<code class="literal">org.springframework.aop.support.Perl5RegexpMethodPointcut</code> is a generic regular
+expression pointcut, using Perl 5 regular expression syntax. The
+<code class="literal">Perl5RegexpMethodPointcut</code> class depends on Jakarta ORO for regular expression
+matching. Spring also provides the <code class="literal">JdkRegexpMethodPointcut</code> class that uses the regular
+expression support in JDK 1.4+.</p>
+<p>Using the <code class="literal">Perl5RegexpMethodPointcut</code> class, you can provide a list of pattern Strings.
+If any of these is a match, the pointcut will evaluate to true. (So the result is
+effectively the union of these pointcuts.)</p>
+<p>The usage is shown below:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"settersAndAbsquatulatePointcut"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.support.Perl5RegexpMethodPointcut"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"patterns"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>.<span class="strong"><strong>set.</strong></span><span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>.*absquatulate<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Spring provides a convenience class, <code class="literal">RegexpMethodPointcutAdvisor</code>, that allows us to
+also reference an Advice (remember that an Advice can be an interceptor, before advice,
+throws advice etc.). Behind the scenes, Spring will use a <code class="literal">JdkRegexpMethodPointcut</code>.
+Using <code class="literal">RegexpMethodPointcutAdvisor</code> simplifies wiring, as the one bean encapsulates both
+pointcut and advice, as shown below:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"settersAndAbsquatulateAdvisor"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.support.RegexpMethodPointcutAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"advice"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;ref</span> <span class="hl-attribute">bean</span>=<span class="hl-value">"beanNameOfAopAllianceInterceptor"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"patterns"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>.<span class="strong"><strong>set.</strong></span><span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>.*absquatulate<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p><span class="emphasis"><em>RegexpMethodPointcutAdvisor</em></span> can be used with any Advice type.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="classic-aop-api-pointcuts-attribute-driven" href="#classic-aop-api-pointcuts-attribute-driven"></a>Attribute-driven pointcuts</h5></div></div></div>
+
+<p>An important type of static pointcut is a <span class="emphasis"><em>metadata-driven</em></span> pointcut. This uses the
+values of metadata attributes: typically, source-level metadata.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-pointcuts-dynamic" href="#classic-aop-api-pointcuts-dynamic"></a>Dynamic pointcuts</h4></div></div></div>
+
+<p>Dynamic pointcuts are costlier to evaluate than static pointcuts. They take into account
+method<span class="emphasis"><em>arguments</em></span>, as well as static information. This means that they must be
+evaluated with every method invocation; the result cannot be cached, as arguments will
+vary.</p>
+<p>The main example is the <code class="literal">control flow</code> pointcut.</p>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="classic-aop-api-pointcuts-cflow" href="#classic-aop-api-pointcuts-cflow"></a>Control flow pointcuts</h5></div></div></div>
+
+<p>Spring control flow pointcuts are conceptually similar to AspectJ <span class="emphasis"><em>cflow</em></span> pointcuts,
+although less powerful. (There is currently no way to specify that a pointcut executes
+below a join point matched by another pointcut.) A control flow pointcut matches the
+current call stack. For example, it might fire if the join point was invoked by a method
+in the <code class="literal">com.mycompany.web</code> package, or by the <code class="literal">SomeCaller</code> class. Control flow pointcuts
+are specified using the <code class="literal">org.springframework.aop.support.ControlFlowPointcut</code> class.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Control flow pointcuts are significantly more expensive to evaluate at runtime than even
+other dynamic pointcuts. In Java 1.4, the cost is about 5 times that of other dynamic
+pointcuts.</p>
+</td></tr></table></div>
+
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-superclasses" href="#classic-aop-api-pointcuts-superclasses"></a>33.1.5&nbsp;Pointcut superclasses</h3></div></div></div>
+
+<p>Spring provides useful pointcut superclasses to help you to implement your own pointcuts.</p>
+<p>Because static pointcuts are most useful, you&#8217;ll probably subclass
+StaticMethodMatcherPointcut, as shown below. This requires implementing just one
+abstract method (although it&#8217;s possible to override other methods to customize behavior):</p>
+<pre class="programlisting"><span class="hl-keyword">class</span> TestStaticPointcut <span class="hl-keyword">extends</span> StaticMethodMatcherPointcut {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">boolean</span> matches(Method m, Class targetClass) {
+        <span class="hl-comment">// return true if custom criteria match</span>
+    }
+
+}</pre>
+
+<p>There are also superclasses for dynamic pointcuts.</p>
+<p>You can use custom pointcuts with any advice type in Spring 1.0 RC2 and above.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-custom" href="#classic-aop-api-pointcuts-custom"></a>33.1.6&nbsp;Custom pointcuts</h3></div></div></div>
+
+<p>Because pointcuts in Spring AOP are Java classes, rather than language features (as in
+AspectJ) it&#8217;s possible to declare custom pointcuts, whether static or dynamic. Custom
+pointcuts in Spring can be arbitrarily complex. However, using the AspectJ pointcut
+expression language is recommended if possible.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Later versions of Spring may offer support for "semantic pointcuts" as offered by JAC:
+for example, "all methods that change instance variables in the target object."</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advice" href="#classic-aop-api-advice"></a>33.2&nbsp;Advice API in Spring</h2></div></div></div>
+
+<p>Let&#8217;s now look at how Spring AOP handles advice.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-lifecycle" href="#classic-aop-api-advice-lifecycle"></a>33.2.1&nbsp;Advice lifecycles</h3></div></div></div>
+
+<p>Each advice is a Spring bean. An advice instance can be shared across all advised
+objects, or unique to each advised object. This corresponds to <span class="emphasis"><em>per-class</em></span> or
+<span class="emphasis"><em>per-instance</em></span> advice.</p>
+<p>Per-class advice is used most often. It is appropriate for generic advice such as
+transaction advisors. These do not depend on the state of the proxied object or add new
+state; they merely act on the method and arguments.</p>
+<p>Per-instance advice is appropriate for introductions, to support mixins. In this case,
+the advice adds state to the proxied object.</p>
+<p>It&#8217;s possible to use a mix of shared and per-instance advice in the same AOP proxy.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-types" href="#classic-aop-api-advice-types"></a>33.2.2&nbsp;Advice types in Spring</h3></div></div></div>
+
+<p>Spring provides several advice types out of the box, and is extensible to support
+arbitrary advice types. Let us look at the basic concepts and standard advice types.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-advice-around" href="#classic-aop-api-advice-around"></a>Interception around advice</h4></div></div></div>
+
+<p>The most fundamental advice type in Spring is <span class="emphasis"><em>interception around advice</em></span>.</p>
+<p>Spring is compliant with the AOP Alliance interface for around advice using method
+interception. MethodInterceptors implementing around advice should implement the
+following interface:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> MethodInterceptor <span class="hl-keyword">extends</span> Interceptor {
+
+    Object invoke(MethodInvocation invocation) <span class="hl-keyword">throws</span> Throwable;
+
+}</pre>
+
+<p>The <code class="literal">MethodInvocation</code> argument to the <code class="literal">invoke()</code> method exposes the method being
+invoked; the target join point; the AOP proxy; and the arguments to the method. The
+<code class="literal">invoke()</code> method should return the invocation&#8217;s result: the return value of the join
+point.</p>
+<p>A simple <code class="literal">MethodInterceptor</code> implementation looks as follows:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> DebugInterceptor <span class="hl-keyword">implements</span> MethodInterceptor {
+
+    <span class="hl-keyword">public</span> Object invoke(MethodInvocation invocation) <span class="hl-keyword">throws</span> Throwable {
+        System.out.println(<span class="hl-string">"Before: invocation=["</span> + invocation + <span class="hl-string">"]"</span>);
+        Object rval = invocation.proceed();
+        System.out.println(<span class="hl-string">"Invocation returned"</span>);
+        <span class="hl-keyword">return</span> rval;
+    }
+
+}</pre>
+
+<p>Note the call to the MethodInvocation&#8217;s <code class="literal">proceed()</code> method. This proceeds down the
+interceptor chain towards the join point. Most interceptors will invoke this method, and
+return its return value. However, a MethodInterceptor, like any around advice, can
+return a different value or throw an exception rather than invoke the proceed method.
+However, you don&#8217;t want to do this without good reason!</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>MethodInterceptors offer interoperability with other AOP Alliance-compliant AOP
+implementations. The other advice types discussed in the remainder of this section
+implement common AOP concepts, but in a Spring-specific way. While there is an advantage
+in using the most specific advice type, stick with MethodInterceptor around advice if
+you are likely to want to run the aspect in another AOP framework. Note that pointcuts
+are not currently interoperable between frameworks, and the AOP Alliance does not
+currently define pointcut interfaces.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-advice-before" href="#classic-aop-api-advice-before"></a>Before advice</h4></div></div></div>
+
+<p>A simpler advice type is a <span class="emphasis"><em>before advice</em></span>. This does not need a <code class="literal">MethodInvocation</code>
+object, since it will only be called before entering the method.</p>
+<p>The main advantage of a before advice is that there is no need to invoke the <code class="literal">proceed()</code>
+method, and therefore no possibility of inadvertently failing to proceed down the
+interceptor chain.</p>
+<p>The <code class="literal">MethodBeforeAdvice</code> interface is shown below. (Spring&#8217;s API design would allow for
+field before advice, although the usual objects apply to field interception and it&#8217;s
+unlikely that Spring will ever implement it).</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> MethodBeforeAdvice <span class="hl-keyword">extends</span> BeforeAdvice {
+
+    <span class="hl-keyword">void</span> before(Method m, Object[] args, Object target) <span class="hl-keyword">throws</span> Throwable;
+
+}</pre>
+
+<p>Note the return type is <code class="literal">void</code>. Before advice can insert custom behavior before the join
+point executes, but cannot change the return value. If a before advice throws an
+exception, this will abort further execution of the interceptor chain. The exception
+will propagate back up the interceptor chain. If it is unchecked, or on the signature of
+the invoked method, it will be passed directly to the client; otherwise it will be
+wrapped in an unchecked exception by the AOP proxy.</p>
+<p>An example of a before advice in Spring, which counts all method invocations:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> CountingBeforeAdvice <span class="hl-keyword">implements</span> MethodBeforeAdvice {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> count;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> before(Method m, Object[] args, Object target) <span class="hl-keyword">throws</span> Throwable {
+        ++count;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getCount() {
+        <span class="hl-keyword">return</span> count;
+    }
+}</pre>
+
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Before advice can be used with any pointcut.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-advice-throws" href="#classic-aop-api-advice-throws"></a>Throws advice</h4></div></div></div>
+
+<p><span class="emphasis"><em>Throws advice</em></span> is invoked after the return of the join point if the join point threw
+an exception. Spring offers typed throws advice. Note that this means that the
+<code class="literal">org.springframework.aop.ThrowsAdvice</code> interface does not contain any methods: It is a
+tag interface identifying that the given object implements one or more typed throws
+advice methods. These should be in the form of:</p>
+<pre class="programlisting">afterThrowing([Method, args, target], subclassOfThrowable)</pre>
+
+<p>Only the last argument is required. The method signatures may have either one or four
+arguments, depending on whether the advice method is interested in the method and
+arguments. The following classes are examples of throws advice.</p>
+<p>The advice below is invoked if a <code class="literal">RemoteException</code> is thrown (including subclasses):</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> RemoteThrowsAdvice <span class="hl-keyword">implements</span> ThrowsAdvice {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> afterThrowing(RemoteException ex) <span class="hl-keyword">throws</span> Throwable {
+        <span class="hl-comment">// Do something with remote exception</span>
+    }
+
+}</pre>
+
+<p>The following advice is invoked if a <code class="literal">ServletException</code> is thrown. Unlike the above
+advice, it declares 4 arguments, so that it has access to the invoked method, method
+arguments and target object:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ServletThrowsAdviceWithArguments <span class="hl-keyword">implements</span> ThrowsAdvice {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> afterThrowing(Method m, Object[] args, Object target, ServletException ex) {
+        <span class="hl-comment">// Do something with all arguments</span>
+    }
+
+}</pre>
+
+<p>The final example illustrates how these two methods could be used in a single class,
+which handles both <code class="literal">RemoteException</code> and <code class="literal">ServletException</code>. Any number of throws advice
+methods can be combined in a single class.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">class</span> CombinedThrowsAdvice <span class="hl-keyword">implements</span> ThrowsAdvice {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> afterThrowing(RemoteException ex) <span class="hl-keyword">throws</span> Throwable {
+        <span class="hl-comment">// Do something with remote exception</span>
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> afterThrowing(Method m, Object[] args, Object target, ServletException ex) {
+        <span class="hl-comment">// Do something with all arguments</span>
+    }
+}</pre>
+
+<p><span class="emphasis"><em>Note:</em></span> If a throws-advice method throws an exception itself, it will override the
+original exception (i.e. change the exception thrown to the user). The overriding
+exception will typically be a RuntimeException; this is compatible with any method
+signature. However, if a throws-advice method throws a checked exception, it will have
+to match the declared exceptions of the target method and is hence to some degree
+coupled to specific target method signatures. <span class="emphasis"><em>Do not throw an undeclared checked
+exception that is incompatible with the target method&#8217;s signature!</em></span></p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Throws advice can be used with any pointcut.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-advice-after-returning" href="#classic-aop-api-advice-after-returning"></a>After Returning advice</h4></div></div></div>
+
+<p>An after returning advice in Spring must implement the
+<span class="emphasis"><em>org.springframework.aop.AfterReturningAdvice</em></span> interface, shown below:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> AfterReturningAdvice <span class="hl-keyword">extends</span> Advice {
+
+    <span class="hl-keyword">void</span> afterReturning(Object returnValue, Method m, Object[] args,
+            Object target) <span class="hl-keyword">throws</span> Throwable;
+
+}</pre>
+
+<p>An after returning advice has access to the return value (which it cannot modify),
+invoked method, methods arguments and target.</p>
+<p>The following after returning advice counts all successful method invocations that have
+not thrown exceptions:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> CountingAfterReturningAdvice <span class="hl-keyword">implements</span> AfterReturningAdvice {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> count;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> afterReturning(Object returnValue, Method m, Object[] args,
+            Object target) <span class="hl-keyword">throws</span> Throwable {
+        ++count;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getCount() {
+        <span class="hl-keyword">return</span> count;
+    }
+
+}</pre>
+
+<p>This advice doesn&#8217;t change the execution path. If it throws an exception, this will be
+thrown up the interceptor chain instead of the return value.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>After returning advice can be used with any pointcut.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-advice-introduction" href="#classic-aop-api-advice-introduction"></a>Introduction advice</h4></div></div></div>
+
+<p>Spring treats introduction advice as a special kind of interception advice.</p>
+<p>Introduction requires an <code class="literal">IntroductionAdvisor</code>, and an <code class="literal">IntroductionInterceptor</code>,
+implementing the following interface:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> IntroductionInterceptor <span class="hl-keyword">extends</span> MethodInterceptor {
+
+    <span class="hl-keyword">boolean</span> implementsInterface(Class intf);
+
+}</pre>
+
+<p>The <code class="literal">invoke()</code> method inherited from the AOP Alliance <code class="literal">MethodInterceptor</code> interface must
+implement the introduction: that is, if the invoked method is on an introduced
+interface, the introduction interceptor is responsible for handling the method call - it
+cannot invoke <code class="literal">proceed()</code>.</p>
+<p>Introduction advice cannot be used with any pointcut, as it applies only at class,
+rather than method, level. You can only use introduction advice with the
+<code class="literal">IntroductionAdvisor</code>, which has the following methods:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> IntroductionAdvisor <span class="hl-keyword">extends</span> Advisor, IntroductionInfo {
+
+    ClassFilter getClassFilter();
+
+    <span class="hl-keyword">void</span> validateInterfaces() <span class="hl-keyword">throws</span> IllegalArgumentException;
+
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> IntroductionInfo {
+
+    Class[] getInterfaces();
+
+}</pre>
+
+<p>There is no <code class="literal">MethodMatcher</code>, and hence no <code class="literal">Pointcut</code>, associated with introduction
+advice. Only class filtering is logical.</p>
+<p>The <code class="literal">getInterfaces()</code> method returns the interfaces introduced by this advisor.</p>
+<p>The <code class="literal">validateInterfaces()</code> method is used internally to see whether or not the
+introduced interfaces can be implemented by the configured <code class="literal">IntroductionInterceptor</code>.</p>
+<p>Let&#8217;s look at a simple example from the Spring test suite. Let&#8217;s suppose we want to
+introduce the following interface to one or more objects:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Lockable {
+
+    <span class="hl-keyword">void</span> lock();
+
+    <span class="hl-keyword">void</span> unlock();
+
+    <span class="hl-keyword">boolean</span> locked();
+
+}</pre>
+
+<p>This illustrates a <span class="emphasis"><em>mixin</em></span>. We want to be able to cast advised objects to Lockable,
+whatever their type, and call lock and unlock methods. If we call the lock() method, we
+want all setter methods to throw a <code class="literal">LockedException</code>. Thus we can add an aspect that
+provides the ability to make objects immutable, without them having any knowledge of it:
+a good example of AOP.</p>
+<p>Firstly, we&#8217;ll need an <code class="literal">IntroductionInterceptor</code> that does the heavy lifting. In this
+case, we extend the <code class="literal">org.springframework.aop.support.DelegatingIntroductionInterceptor</code>
+convenience class. We could implement IntroductionInterceptor directly, but using
+<code class="literal">DelegatingIntroductionInterceptor</code> is best for most cases.</p>
+<p>The <code class="literal">DelegatingIntroductionInterceptor</code> is designed to delegate an introduction to an
+actual implementation of the introduced interface(s), concealing the use of interception
+to do so. The delegate can be set to any object using a constructor argument; the
+default delegate (when the no-arg constructor is used) is this. Thus in the example
+below, the delegate is the <code class="literal">LockMixin</code> subclass of <code class="literal">DelegatingIntroductionInterceptor</code>.
+Given a delegate (by default itself), a <code class="literal">DelegatingIntroductionInterceptor</code> instance
+looks for all interfaces implemented by the delegate (other than
+IntroductionInterceptor), and will support introductions against any of them. It&#8217;s
+possible for subclasses such as <code class="literal">LockMixin</code> to call the <code class="literal">suppressInterface(Class intf)</code>
+method to suppress interfaces that should not be exposed. However, no matter how many
+interfaces an <code class="literal">IntroductionInterceptor</code> is prepared to support, the
+<code class="literal">IntroductionAdvisor</code> used will control which interfaces are actually exposed. An
+introduced interface will conceal any implementation of the same interface by the target.</p>
+<p>Thus LockMixin subclasses <code class="literal">DelegatingIntroductionInterceptor</code> and implements Lockable
+itself. The superclass automatically picks up that Lockable can be supported for
+introduction, so we don&#8217;t need to specify that. We could introduce any number of
+interfaces in this way.</p>
+<p>Note the use of the <code class="literal">locked</code> instance variable. This effectively adds additional state
+to that held in the target object.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> LockMixin <span class="hl-keyword">extends</span> DelegatingIntroductionInterceptor <span class="hl-keyword">implements</span> Lockable {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">boolean</span> locked;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> lock() {
+        <span class="hl-keyword">this</span>.locked = true;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> unlock() {
+        <span class="hl-keyword">this</span>.locked = false;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">boolean</span> locked() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.locked;
+    }
+
+    <span class="hl-keyword">public</span> Object invoke(MethodInvocation invocation) <span class="hl-keyword">throws</span> Throwable {
+        <span class="hl-keyword">if</span> (locked() &amp;&amp; invocation.getMethod().getName().indexOf(<span class="hl-string">"set"</span>) == <span class="hl-number">0</span>) {
+            <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> LockedException();
+        }
+        <span class="hl-keyword">return</span> <span class="hl-keyword">super</span>.invoke(invocation);
+    }
+
+}</pre>
+
+<p>Often it isn&#8217;t necessary to override the <code class="literal">invoke()</code> method: the
+<code class="literal">DelegatingIntroductionInterceptor</code> implementation - which calls the delegate method if
+the method is introduced, otherwise proceeds towards the join point - is usually
+sufficient. In the present case, we need to add a check: no setter method can be invoked
+if in locked mode.</p>
+<p>The introduction advisor required is simple. All it needs to do is hold a distinct
+<code class="literal">LockMixin</code> instance, and specify the introduced interfaces - in this case, just
+<code class="literal">Lockable</code>. A more complex example might take a reference to the introduction
+interceptor (which would be defined as a prototype): in this case, there&#8217;s no
+configuration relevant for a <code class="literal">LockMixin</code>, so we simply create it using <code class="literal">new</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> LockMixinAdvisor <span class="hl-keyword">extends</span> DefaultIntroductionAdvisor {
+
+    <span class="hl-keyword">public</span> LockMixinAdvisor() {
+        <span class="hl-keyword">super</span>(<span class="hl-keyword">new</span> LockMixin(), Lockable.<span class="hl-keyword">class</span>);
+    }
+
+}</pre>
+
+<p>We can apply this advisor very simply: it requires no configuration. (However, it <span class="emphasis"><em>is</em></span>
+necessary: It&#8217;s impossible to use an <code class="literal">IntroductionInterceptor</code> without an
+<span class="emphasis"><em>IntroductionAdvisor</em></span>.) As usual with introductions, the advisor must be per-instance,
+as it is stateful. We need a different instance of <code class="literal">LockMixinAdvisor</code>, and hence
+<code class="literal">LockMixin</code>, for each advised object. The advisor comprises part of the advised object&#8217;s
+state.</p>
+<p>We can apply this advisor programmatically, using the <code class="literal">Advised.addAdvisor()</code> method, or
+(the recommended way) in XML configuration, like any other advisor. All proxy creation
+choices discussed below, including "auto proxy creators," correctly handle introductions
+and stateful mixins.</p>
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advisor" href="#classic-aop-api-advisor"></a>33.3&nbsp;Advisor API in Spring</h2></div></div></div>
+
+<p>In Spring, an Advisor is an aspect that contains just a single advice object associated
+with a pointcut expression.</p>
+<p>Apart from the special case of introductions, any advisor can be used with any advice.
+<code class="literal">org.springframework.aop.support.DefaultPointcutAdvisor</code> is the most commonly used
+advisor class. For example, it can be used with a <code class="literal">MethodInterceptor</code>, <code class="literal">BeforeAdvice</code> or
+<code class="literal">ThrowsAdvice</code>.</p>
+<p>It is possible to mix advisor and advice types in Spring in the same AOP proxy. For
+example, you could use a interception around advice, throws advice and before advice in
+one proxy configuration: Spring will automatically create the necessary interceptor
+chain.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-pfb" href="#classic-aop-pfb"></a>33.4&nbsp;Using the ProxyFactoryBean to create AOP proxies</h2></div></div></div>
+
+<p>If you&#8217;re using the Spring IoC container (an ApplicationContext or BeanFactory) for your
+business objects - and you should be! - you will want to use one of Spring&#8217;s AOP
+FactoryBeans. (Remember that a factory bean introduces a layer of indirection, enabling
+it to create objects of a different type.)</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The Spring 2.0 AOP support also uses factory beans under the covers.</p>
+</td></tr></table></div>
+
+<p>The basic way to create an AOP proxy in Spring is to use the
+<span class="emphasis"><em>org.springframework.aop.framework.ProxyFactoryBean</em></span>. This gives complete control over
+the pointcuts and advice that will apply, and their ordering. However, there are simpler
+options that are preferable if you don&#8217;t need such control.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-1" href="#classic-aop-pfb-1"></a>33.4.1&nbsp;Basics</h3></div></div></div>
+
+<p>The <code class="literal">ProxyFactoryBean</code>, like other Spring <code class="literal">FactoryBean</code> implementations, introduces a
+level of indirection. If you define a <code class="literal">ProxyFactoryBean</code> with name <code class="literal">foo</code>, what objects
+referencing <code class="literal">foo</code> see is not the <code class="literal">ProxyFactoryBean</code> instance itself, but an object
+created by the <code class="literal">ProxyFactoryBean</code>'s implementation of the <code class="literal">getObject()</code> method. This
+method will create an AOP proxy wrapping a target object.</p>
+<p>One of the most important benefits of using a <code class="literal">ProxyFactoryBean</code> or another IoC-aware
+class to create AOP proxies, is that it means that advices and pointcuts can also be
+managed by IoC. This is a powerful feature, enabling certain approaches that are hard to
+achieve with other AOP frameworks. For example, an advice may itself reference
+application objects (besides the target, which should be available in any AOP
+framework), benefiting from all the pluggability provided by Dependency Injection.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-2" href="#classic-aop-pfb-2"></a>33.4.2&nbsp;JavaBean properties</h3></div></div></div>
+
+<p>In common with most <code class="literal">FactoryBean</code> implementations provided with Spring, the
+<code class="literal">ProxyFactoryBean</code> class is itself a JavaBean. Its properties are used to:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Specify the target you want to proxy.
+</li><li class="listitem">
+Specify whether to use CGLIB (see below and also <a class="xref" href="aop-api.html#aop-pfb-proxy-types" title="10.5.3&nbsp;JDK- and CGLIB-based proxies">Section&nbsp;10.5.3, &#8220;JDK- and CGLIB-based proxies&#8221;</a>).
+</li></ul></div>
+
+<p>Some key properties are inherited from <code class="literal">org.springframework.aop.framework.ProxyConfig</code>
+(the superclass for all AOP proxy factories in Spring). These key properties include:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">proxyTargetClass</code>: <code class="literal">true</code> if the target class is to be proxied, rather than the
+target class' interfaces. If this property value is set to <code class="literal">true</code>, then CGLIB proxies
+will be created (but see also below <a class="xref" href="aop-api.html#aop-pfb-proxy-types" title="10.5.3&nbsp;JDK- and CGLIB-based proxies">Section&nbsp;10.5.3, &#8220;JDK- and CGLIB-based proxies&#8221;</a>).
+</li><li class="listitem">
+<code class="literal">optimize</code>: controls whether or not aggressive optimizations are applied to proxies
+<span class="emphasis"><em>created via CGLIB</em></span>. One should not blithely use this setting unless one fully
+understands how the relevant AOP proxy handles optimization. This is currently used
+only for CGLIB proxies; it has no effect with JDK dynamic proxies.
+</li><li class="listitem">
+<code class="literal">frozen</code>: if a proxy configuration is <code class="literal">frozen</code>, then changes to the configuration are
+no longer allowed. This is useful both as a slight optimization and for those cases
+when you don&#8217;t want callers to be able to manipulate the proxy (via the <code class="literal">Advised</code>
+interface) after the proxy has been created. The default value of this property is
+<code class="literal">false</code>, so changes such as adding additional advice are allowed.
+</li><li class="listitem">
+<code class="literal">exposeProxy</code>: determines whether or not the current proxy should be exposed in a
+<code class="literal">ThreadLocal</code> so that it can be accessed by the target. If a target needs to obtain
+the proxy and the <code class="literal">exposeProxy</code> property is set to <code class="literal">true</code>, the target can use the
+<code class="literal">AopContext.currentProxy()</code> method.
+</li><li class="listitem">
+<code class="literal">aopProxyFactory</code>: the implementation of <code class="literal">AopProxyFactory</code> to use. Offers a way of
+customizing whether to use dynamic proxies, CGLIB or any other proxy strategy. The
+default implementation will choose dynamic proxies or CGLIB appropriately. There
+should be no need to use this property; it is intended to allow the addition of new
+proxy types in Spring 1.1.
+</li></ul></div>
+
+<p>Other properties specific to <code class="literal">ProxyFactoryBean</code> include:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">proxyInterfaces</code>: array of String interface names. If this isn&#8217;t supplied, a CGLIB
+proxy for the target class will be used (but see also below <a class="xref" href="aop-api.html#aop-pfb-proxy-types" title="10.5.3&nbsp;JDK- and CGLIB-based proxies">Section&nbsp;10.5.3, &#8220;JDK- and CGLIB-based proxies&#8221;</a>).
+</li><li class="listitem">
+<code class="literal">interceptorNames</code>: String array of <code class="literal">Advisor</code>, interceptor or other advice names to
+apply. Ordering is significant, on a first come-first served basis. That is to say
+that the first interceptor in the list will be the first to be able to intercept the
+invocation.
+</li></ul></div>
+
+<p>The names are bean names in the current factory, including bean names from ancestor
+factories. You can&#8217;t mention bean references here since doing so would result in the
+<code class="literal">ProxyFactoryBean</code> ignoring the singleton setting of the advice.</p>
+<p>You can append an interceptor name with an asterisk ( <code class="literal">*</code>). This will result in the
+application of all advisor beans with names starting with the part before the asterisk
+to be applied. An example of using this feature can be found in <a class="xref" href="aop-api.html#aop-global-advisors" title="10.5.6&nbsp;Using global advisors">Section&nbsp;10.5.6, &#8220;Using <span class="emphasis"><em>global</em></span> advisors&#8221;</a>.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+singleton: whether or not the factory should return a single object, no matter how
+often the <code class="literal">getObject()</code> method is called. Several <code class="literal">FactoryBean</code> implementations offer
+such a method. The default value is <code class="literal">true</code>. If you    want to use stateful advice - for
+example, for stateful mixins - use    prototype advices along with a singleton value of
+<code class="literal">false</code>.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-proxy-types" href="#classic-aop-pfb-proxy-types"></a>33.4.3&nbsp;JDK- and CGLIB-based proxies</h3></div></div></div>
+
+<p>This section serves as the definitive documentation on how the <code class="literal">ProxyFactoryBean</code>
+chooses to create one of either a JDK- and CGLIB-based proxy for a particular target
+object (that is to be proxied).</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The behavior of the <code class="literal">ProxyFactoryBean</code> with regard to creating JDK- or CGLIB-based
+proxies changed between versions 1.2.x and 2.0 of Spring. The <code class="literal">ProxyFactoryBean</code> now
+exhibits similar semantics with regard to auto-detecting interfaces as those of the
+<code class="literal">TransactionProxyFactoryBean</code> class.</p>
+</td></tr></table></div>
+
+<p>If the class of a target object that is to be proxied (hereafter simply referred to as
+the target class) doesn&#8217;t implement any interfaces, then a CGLIB-based proxy will be
+created. This is the easiest scenario, because JDK proxies are interface based, and no
+interfaces means JDK proxying isn&#8217;t even possible. One simply plugs in the target bean,
+and specifies the list of interceptors via the <code class="literal">interceptorNames</code> property. Note that a
+CGLIB-based proxy will be created even if the <code class="literal">proxyTargetClass</code> property of the
+<code class="literal">ProxyFactoryBean</code> has been set to <code class="literal">false</code>. (Obviously this makes no sense, and is best
+removed from the bean definition because it is at best redundant, and at worst
+confusing.)</p>
+<p>If the target class implements one (or more) interfaces, then the type of proxy that is
+created depends on the configuration of the <code class="literal">ProxyFactoryBean</code>.</p>
+<p>If the <code class="literal">proxyTargetClass</code> property of the <code class="literal">ProxyFactoryBean</code> has been set to <code class="literal">true</code>,
+then a CGLIB-based proxy will be created. This makes sense, and is in keeping with the
+principle of least surprise. Even if the <code class="literal">proxyInterfaces</code> property of the
+<code class="literal">ProxyFactoryBean</code> has been set to one or more fully qualified interface names, the fact
+that the <code class="literal">proxyTargetClass</code> property is set to <code class="literal">true</code> <span class="emphasis"><em>will</em></span> cause CGLIB-based
+proxying to be in effect.</p>
+<p>If the <code class="literal">proxyInterfaces</code> property of the <code class="literal">ProxyFactoryBean</code> has been set to one or more
+fully qualified interface names, then a JDK-based proxy will be created. The created
+proxy will implement all of the interfaces that were specified in the <code class="literal">proxyInterfaces</code>
+property; if the target class happens to implement a whole lot more interfaces than
+those specified in the <code class="literal">proxyInterfaces</code> property, that is all well and good but those
+additional interfaces will not be implemented by the returned proxy.</p>
+<p>If the <code class="literal">proxyInterfaces</code> property of the <code class="literal">ProxyFactoryBean</code> has <span class="emphasis"><em>not</em></span> been set, but
+the target class <span class="emphasis"><em>does implement one (or more)</em></span> interfaces, then the
+<code class="literal">ProxyFactoryBean</code> will auto-detect the fact that the target class does actually
+implement at least one interface, and a JDK-based proxy will be created. The interfaces
+that are actually proxied will be <span class="emphasis"><em>all</em></span> of the interfaces that the target class
+implements; in effect, this is the same as simply supplying a list of each and every
+interface that the target class implements to the <code class="literal">proxyInterfaces</code> property. However,
+it is significantly less work, and less prone to typos.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-intf" href="#classic-aop-api-proxying-intf"></a>33.4.4&nbsp;Proxying interfaces</h3></div></div></div>
+
+<p>Let&#8217;s look at a simple example of <code class="literal">ProxyFactoryBean</code> in action. This example involves:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+A <span class="emphasis"><em>target bean</em></span> that will be proxied. This is the "personTarget" bean definition in
+the example below.
+</li><li class="listitem">
+An Advisor and an Interceptor used to provide advice.
+</li><li class="listitem">
+An AOP proxy bean definition specifying the target object (the personTarget bean) and
+the interfaces to proxy, along with the advices to apply.
+</li></ul></div>
+
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"personTarget"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.PersonImpl"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>Tony<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>51<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myAdvisor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.MyAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"someProperty"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>Custom string property value<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"debugInterceptor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.interceptor.DebugInterceptor"</span><span class="hl-tag">&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"person"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.ProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"proxyInterfaces"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>com.mycompany.Person<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"target"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;ref</span> <span class="hl-attribute">bean</span>=<span class="hl-value">"personTarget"</span><span class="hl-tag">/&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptorNames"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>myAdvisor<span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>debugInterceptor<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Note that the <code class="literal">interceptorNames</code> property takes a list of String: the bean names of the
+interceptor or advisors in the current factory. Advisors, interceptors, before, after
+returning and throws advice objects can be used. The ordering of advisors is significant.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>You might be wondering why the list doesn&#8217;t hold bean references. The reason for this is
+that if the ProxyFactoryBean&#8217;s singleton property is set to false, it must be able to
+return independent proxy instances. If any of the advisors is itself a prototype, an
+independent instance would need to be returned, so it&#8217;s necessary to be able to obtain
+an instance of the prototype from the factory; holding a reference isn&#8217;t sufficient.</p>
+</td></tr></table></div>
+
+<p>The "person" bean definition above can be used in place of a Person implementation, as
+follows:</p>
+<pre class="programlisting">Person person = (Person) factory.getBean(<span class="hl-string">"person"</span>);</pre>
+
+<p>Other beans in the same IoC context can express a strongly typed dependency on it, as
+with an ordinary Java object:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"personUser"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.PersonUser"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"person"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;ref</span> <span class="hl-attribute">bean</span>=<span class="hl-value">"person"</span><span class="hl-tag"> /&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The <code class="literal">PersonUser</code> class in this example would expose a property of type Person. As far as
+it&#8217;s concerned, the AOP proxy can be used transparently in place of a "real" person
+implementation. However, its class would be a dynamic proxy class. It would be possible
+to cast it to the <code class="literal">Advised</code> interface (discussed below).</p>
+<p>It&#8217;s possible to conceal the distinction between target and proxy using an anonymous
+<span class="emphasis"><em>inner bean</em></span>, as follows. Only the <code class="literal">ProxyFactoryBean</code> definition is different; the
+advice is included only for completeness:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myAdvisor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.MyAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"someProperty"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>Custom string property value<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"debugInterceptor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.interceptor.DebugInterceptor"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"person"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.ProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"proxyInterfaces"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>com.mycompany.Person<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-comment">&lt;!-- Use inner bean, not local reference to target --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"target"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.PersonImpl"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>Tony<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+            <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>51<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptorNames"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>myAdvisor<span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>debugInterceptor<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This has the advantage that there&#8217;s only one object of type <code class="literal">Person</code>: useful if we want
+to prevent users of the application context from obtaining a reference to the un-advised
+object, or need to avoid any ambiguity with Spring IoC <span class="emphasis"><em>autowiring</em></span>. There&#8217;s also
+arguably an advantage in that the ProxyFactoryBean definition is self-contained.
+However, there are times when being able to obtain the un-advised target from the
+factory might actually be an <span class="emphasis"><em>advantage</em></span>: for example, in certain test scenarios.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-class" href="#classic-aop-api-proxying-class"></a>33.4.5&nbsp;Proxying classes</h3></div></div></div>
+
+<p>What if you need to proxy a class, rather than one or more interfaces?</p>
+<p>Imagine that in our example above, there was no <code class="literal">Person</code> interface: we needed to advise
+a class called <code class="literal">Person</code> that didn&#8217;t implement any business interface. In this case, you
+can configure Spring to use CGLIB proxying, rather than dynamic proxies. Simply set the
+<code class="literal">proxyTargetClass</code> property on the ProxyFactoryBean above to true. While it&#8217;s best to
+program to interfaces, rather than classes, the ability to advise classes that don&#8217;t
+implement interfaces can be useful when working with legacy code. (In general, Spring
+isn&#8217;t prescriptive. While it makes it easy to apply good practices, it avoids forcing a
+particular approach.)</p>
+<p>If you want to, you can force the use of CGLIB in any case, even if you do have
+interfaces.</p>
+<p>CGLIB proxying works by generating a subclass of the target class at runtime. Spring
+configures this generated subclass to delegate method calls to the original target: the
+subclass is used to implement the <span class="emphasis"><em>Decorator</em></span> pattern, weaving in the advice.</p>
+<p>CGLIB proxying should generally be transparent to users. However, there are some issues
+to consider:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">Final</code> methods can&#8217;t be advised, as they can&#8217;t be overridden.
+</li><li class="listitem">
+As of Spring 3.2 it is no longer required to add CGLIB to your project classpath.
+CGLIB classes have been repackaged under org.springframework and included directly in
+the spring-core JAR. This is both for user convenience as well as to avoid potential
+conflicts with other projects that have dependence on a differing version of CGLIB.
+</li></ul></div>
+
+<p>There&#8217;s little performance difference between CGLIB proxying and dynamic proxies. As of
+Spring 1.0, dynamic proxies are slightly faster. However, this may change in the future.
+Performance should not be a decisive consideration in this case.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-global-advisors" href="#classic-aop-global-advisors"></a>33.4.6&nbsp;Using <span class="emphasis"><em>global</em></span> advisors</h3></div></div></div>
+
+<p>By appending an asterisk to an interceptor name, all advisors with bean names matching
+the part before the asterisk, will be added to the advisor chain. This can come in handy
+if you need to add a standard set of <span class="emphasis"><em>global</em></span> advisors:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"proxy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.ProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"target"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"service"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptorNames"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>global*<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"global_debug"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.interceptor.DebugInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"global_performance"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.interceptor.PerformanceMonitorInterceptor"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-concise-proxy" href="#classic-aop-concise-proxy"></a>33.5&nbsp;Concise proxy definitions</h2></div></div></div>
+
+<p>Especially when defining transactional proxies, you may end up with many similar proxy
+definitions. The use of parent and child bean definitions, along with inner bean
+definitions, can result in much cleaner and more concise proxy definitions.</p>
+<p>First a parent, <span class="emphasis"><em>template</em></span>, bean definition is created for the proxy:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txProxyTemplate"</span> <span class="hl-attribute">abstract</span>=<span class="hl-value">"true"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionManager"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionManager"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionAttributes"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;props&gt;</span>
+            <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"*"</span><span class="hl-tag">&gt;</span>PROPAGATION_REQUIRED<span class="hl-tag">&lt;/prop&gt;</span>
+        <span class="hl-tag">&lt;/props&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This will never be instantiated itself, so may actually be incomplete. Then each proxy
+which needs to be created is just a child bean definition, which wraps the target of the
+proxy as an inner bean definition, since the target will never be used on its own anyway.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myService"</span> <span class="hl-attribute">parent</span>=<span class="hl-value">"txProxyTemplate"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"target"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.samples.MyServiceImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>It is of course possible to override properties from the parent template, such as in
+this case, the transaction propagation settings:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"mySpecialService"</span> <span class="hl-attribute">parent</span>=<span class="hl-value">"txProxyTemplate"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"target"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.samples.MySpecialServiceImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionAttributes"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;props&gt;</span>
+            <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"get*"</span><span class="hl-tag">&gt;</span>PROPAGATION_REQUIRED,readOnly<span class="hl-tag">&lt;/prop&gt;</span>
+            <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"find*"</span><span class="hl-tag">&gt;</span>PROPAGATION_REQUIRED,readOnly<span class="hl-tag">&lt;/prop&gt;</span>
+            <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"load*"</span><span class="hl-tag">&gt;</span>PROPAGATION_REQUIRED,readOnly<span class="hl-tag">&lt;/prop&gt;</span>
+            <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"store*"</span><span class="hl-tag">&gt;</span>PROPAGATION_REQUIRED<span class="hl-tag">&lt;/prop&gt;</span>
+        <span class="hl-tag">&lt;/props&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Note that in the example above, we have explicitly marked the parent bean definition as
+<span class="emphasis"><em>abstract</em></span> by using the <span class="emphasis"><em>abstract</em></span> attribute, as described
+<a class="link" href="beans.html#beans-child-bean-definitions" title="5.7&nbsp;Bean definition inheritance">previously</a>, so that it may not actually ever be
+instantiated. Application contexts (but not simple bean factories) will by default
+pre-instantiate all singletons. It is therefore important (at least for singleton beans)
+that if you have a (parent) bean definition which you intend to use only as a template,
+and this definition specifies a class, you must make sure to set the<span class="emphasis"><em>abstract</em></span>
+attribute to <span class="emphasis"><em>true</em></span>, otherwise the application context will actually try to
+pre-instantiate it.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-prog" href="#classic-aop-prog"></a>33.6&nbsp;Creating AOP proxies programmatically with the ProxyFactory</h2></div></div></div>
+
+<p>It&#8217;s easy to create AOP proxies programmatically using Spring. This enables you to use
+Spring AOP without dependency on Spring IoC.</p>
+<p>The following listing shows creation of a proxy for a target object, with one
+interceptor and one advisor. The interfaces implemented by the target object will
+automatically be proxied:</p>
+<pre class="programlisting">ProxyFactory factory = <span class="hl-keyword">new</span> ProxyFactory(myBusinessInterfaceImpl);
+factory.addInterceptor(myMethodInterceptor);
+factory.addAdvisor(myAdvisor);
+MyBusinessInterface tb = (MyBusinessInterface) factory.getProxy();</pre>
+
+<p>The first step is to construct an object of type
+<code class="literal">org.springframework.aop.framework.ProxyFactory</code>. You can create this with a target
+object, as in the above example, or specify the interfaces to be proxied in an alternate
+constructor.</p>
+<p>You can add interceptors or advisors, and manipulate them for the life of the
+ProxyFactory. If you add an IntroductionInterceptionAroundAdvisor you can cause the
+proxy to implement additional interfaces.</p>
+<p>There are also convenience methods on ProxyFactory (inherited from <code class="literal">AdvisedSupport</code>)
+which allow you to add other advice types such as before and throws advice.
+AdvisedSupport is the superclass of both ProxyFactory and ProxyFactoryBean.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Integrating AOP proxy creation with the IoC framework is best practice in most
+applications. We recommend that you externalize configuration from Java code with AOP,
+as in general.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advised" href="#classic-aop-api-advised"></a>33.7&nbsp;Manipulating advised objects</h2></div></div></div>
+
+<p>However you create AOP proxies, you can manipulate them using the
+<code class="literal">org.springframework.aop.framework.Advised</code> interface. Any AOP proxy can be cast to this
+interface, whichever other interfaces it implements. This interface includes the
+following methods:</p>
+<pre class="programlisting">Advisor[] getAdvisors();
+
+<span class="hl-keyword">void</span> addAdvice(Advice advice) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">void</span> addAdvice(<span class="hl-keyword">int</span> pos, Advice advice) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">void</span> addAdvisor(Advisor advisor) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">void</span> addAdvisor(<span class="hl-keyword">int</span> pos, Advisor advisor) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">int</span> indexOf(Advisor advisor);
+
+<span class="hl-keyword">boolean</span> removeAdvisor(Advisor advisor) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">void</span> removeAdvisor(<span class="hl-keyword">int</span> index) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">boolean</span> replaceAdvisor(Advisor a, Advisor b) <span class="hl-keyword">throws</span> AopConfigException;
+
+<span class="hl-keyword">boolean</span> isFrozen();</pre>
+
+<p>The <code class="literal">getAdvisors()</code> method will return an Advisor for every advisor, interceptor or
+other advice type that has been added to the factory. If you added an Advisor, the
+returned advisor at this index will be the object that you added. If you added an
+interceptor or other advice type, Spring will have wrapped this in an advisor with a
+pointcut that always returns true. Thus if you added a <code class="literal">MethodInterceptor</code>, the advisor
+returned for this index will be an <code class="literal">DefaultPointcutAdvisor</code> returning your
+<code class="literal">MethodInterceptor</code> and a pointcut that matches all classes and methods.</p>
+<p>The <code class="literal">addAdvisor()</code> methods can be used to add any Advisor. Usually the advisor holding
+pointcut and advice will be the generic <code class="literal">DefaultPointcutAdvisor</code>, which can be used with
+any advice or pointcut (but not for introductions).</p>
+<p>By default, it&#8217;s possible to add or remove advisors or interceptors even once a proxy
+has been created. The only restriction is that it&#8217;s impossible to add or remove an
+introduction advisor, as existing proxies from the factory will not show the interface
+change. (You can obtain a new proxy from the factory to avoid this problem.)</p>
+<p>A simple example of casting an AOP proxy to the <code class="literal">Advised</code> interface and examining and
+manipulating its advice:</p>
+<pre class="programlisting">Advised advised = (Advised) myObject;
+Advisor[] advisors = advised.getAdvisors();
+<span class="hl-keyword">int</span> oldAdvisorCount = advisors.length;
+System.out.println(oldAdvisorCount + <span class="hl-string">" advisors"</span>);
+
+<span class="hl-comment">// Add an advice like an interceptor without a pointcut</span>
+<span class="hl-comment">// Will match all proxied methods</span>
+<span class="hl-comment">// Can use for interceptors, before, after returning or throws advice</span>
+advised.addAdvice(<span class="hl-keyword">new</span> DebugInterceptor());
+
+<span class="hl-comment">// Add selective advice using a pointcut</span>
+advised.addAdvisor(<span class="hl-keyword">new</span> DefaultPointcutAdvisor(mySpecialPointcut, myAdvice));
+
+assertEquals(<span class="hl-string">"Added two advisors"</span>, oldAdvisorCount + <span class="hl-number">2</span>, advised.getAdvisors().length);</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>It&#8217;s questionable whether it&#8217;s advisable (no pun intended) to modify advice on a
+business object in production, although there are no doubt legitimate usage cases.
+However, it can be very useful in development: for example, in tests. I have sometimes
+found it very useful to be able to add test code in the form of an interceptor or other
+advice, getting inside a method invocation I want to test. (For example, the advice can
+get inside a transaction created for that method: for example, to run SQL to check that
+a database was correctly updated, before marking the transaction for roll back.)</p>
+</td></tr></table></div>
+
+<p>Depending on how you created the proxy, you can usually set a <code class="literal">frozen</code> flag, in which
+case the <code class="literal">Advised</code> <code class="literal">isFrozen()</code> method will return true, and any attempts to modify
+advice through addition or removal will result in an <code class="literal">AopConfigException</code>. The ability
+to freeze the state of an advised object is useful in some cases, for example, to
+prevent calling code removing a security interceptor. It may also be used in Spring 1.1
+to allow aggressive optimization if runtime advice modification is known not to be
+required.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-autoproxy" href="#classic-aop-autoproxy"></a>33.8&nbsp;Using the "autoproxy" facility</h2></div></div></div>
+
+<p>So far we&#8217;ve considered explicit creation of AOP proxies using a <code class="literal">ProxyFactoryBean</code> or
+similar factory bean.</p>
+<p>Spring also allows us to use "autoproxy" bean definitions, which can automatically proxy
+selected bean definitions. This is built on Spring "bean post processor" infrastructure,
+which enables modification of any bean definition as the container loads.</p>
+<p>In this model, you set up some special bean definitions in your XML bean definition file
+to configure the auto proxy infrastructure. This allows you just to declare the targets
+eligible for autoproxying: you don&#8217;t need to use <code class="literal">ProxyFactoryBean</code>.</p>
+<p>There are two ways to do this:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Using an autoproxy creator that refers to specific beans in the current context.
+</li><li class="listitem">
+A special case of autoproxy creation that deserves to be considered separately;
+autoproxy creation driven by source-level metadata attributes.
+</li></ul></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-choices" href="#classic-aop-autoproxy-choices"></a>33.8.1&nbsp;Autoproxy bean definitions</h3></div></div></div>
+
+<p>The <code class="literal">org.springframework.aop.framework.autoproxy</code> package provides the following
+standard autoproxy creators.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-autoproxy" href="#classic-aop-api-autoproxy"></a>BeanNameAutoProxyCreator</h4></div></div></div>
+
+<p>The <code class="literal">BeanNameAutoProxyCreator</code> class is a <code class="literal">BeanPostProcessor</code> that automatically creates
+AOP proxies for beans with names matching literal values or wildcards.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beanNames"</span><span class="hl-tag">&gt;</span><span class="hl-tag">&lt;value&gt;</span>jdk*,onlyJdk<span class="hl-tag">&lt;/value&gt;</span><span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptorNames"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>myInterceptor<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>As with <code class="literal">ProxyFactoryBean</code>, there is an <code class="literal">interceptorNames</code> property rather than a list
+of interceptors, to allow correct behavior for prototype advisors. Named "interceptors"
+can be advisors or any advice type.</p>
+<p>As with auto proxying in general, the main point of using <code class="literal">BeanNameAutoProxyCreator</code> is
+to apply the same configuration consistently to multiple objects, with minimal volume of
+configuration. It is a popular choice for applying declarative transactions to multiple
+objects.</p>
+<p>Bean definitions whose names match, such as "jdkMyBean" and "onlyJdk" in the above
+example, are plain old bean definitions with the target class. An AOP proxy will be
+created automatically by the <code class="literal">BeanNameAutoProxyCreator</code>. The same advice will be applied
+to all matching beans. Note that if advisors are used (rather than the interceptor in
+the above example), the pointcuts may apply differently to different beans.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-autoproxy-default" href="#classic-aop-api-autoproxy-default"></a>DefaultAdvisorAutoProxyCreator</h4></div></div></div>
+
+<p>A more general and extremely powerful auto proxy creator is
+<code class="literal">DefaultAdvisorAutoProxyCreator</code>. This will automagically apply eligible advisors in the
+current context, without the need to include specific bean names in the autoproxy
+advisor&#8217;s bean definition. It offers the same merit of consistent configuration and
+avoidance of duplication as <code class="literal">BeanNameAutoProxyCreator</code>.</p>
+<p>Using this mechanism involves:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Specifying a <code class="literal">DefaultAdvisorAutoProxyCreator</code> bean definition.
+</li><li class="listitem">
+Specifying any number of Advisors in the same or related contexts. Note that these
+<span class="emphasis"><em>must</em></span> be Advisors, not just interceptors or other advices. This is necessary
+because there must be a pointcut to evaluate, to check the eligibility of each advice
+to candidate bean definitions.
+</li></ul></div>
+
+<p>The <code class="literal">DefaultAdvisorAutoProxyCreator</code> will automatically evaluate the pointcut contained
+in each advisor, to see what (if any) advice it should apply to each business object
+(such as "businessObject1" and "businessObject2" in the example).</p>
+<p>This means that any number of advisors can be applied automatically to each business
+object. If no pointcut in any of the advisors matches any method in a business object,
+the object will not be proxied. As bean definitions are added for new business objects,
+they will automatically be proxied if necessary.</p>
+<p>Autoproxying in general has the advantage of making it impossible for callers or
+dependencies to obtain an un-advised object. Calling getBean("businessObject1") on this
+ApplicationContext will return an AOP proxy, not the target business object. (The "inner
+bean" idiom shown earlier also offers this benefit.)</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionInterceptor"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"customAdvisor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.MyAdvisor"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"businessObject1"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.BusinessObject1"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- Properties omitted --&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"businessObject2"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.BusinessObject2"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>The <code class="literal">DefaultAdvisorAutoProxyCreator</code> is very useful if you want to apply the same advice
+consistently to many business objects. Once the infrastructure definitions are in place,
+you can simply add new business objects without including specific proxy configuration.
+You can also drop in additional aspects very easily - for example, tracing or
+performance monitoring aspects - with minimal change to configuration.</p>
+<p>The DefaultAdvisorAutoProxyCreator offers support for filtering (using a naming
+convention so that only certain advisors are evaluated, allowing use of multiple,
+differently configured, AdvisorAutoProxyCreators in the same factory) and ordering.
+Advisors can implement the <code class="literal">org.springframework.core.Ordered</code> interface to ensure
+correct ordering if this is an issue. The TransactionAttributeSourceAdvisor used in the
+above example has a configurable order value; the default setting is unordered.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="classic-aop-api-autoproxy-abstract" href="#classic-aop-api-autoproxy-abstract"></a>AbstractAdvisorAutoProxyCreator</h4></div></div></div>
+
+<p>This is the superclass of DefaultAdvisorAutoProxyCreator. You can create your own
+autoproxy creators by subclassing this class, in the unlikely event that advisor
+definitions offer insufficient customization to the behavior of the framework
+<code class="literal">DefaultAdvisorAutoProxyCreator</code>.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-metadata" href="#classic-aop-autoproxy-metadata"></a>33.8.2&nbsp;Using metadata-driven auto-proxying</h3></div></div></div>
+
+<p>A particularly important type of autoproxying is driven by metadata. This produces a
+similar programming model to .NET <code class="literal">ServicedComponents</code>. Instead of using XML deployment
+descriptors as in EJB, configuration for transaction management and other enterprise
+services is held in source-level attributes.</p>
+<p>In this case, you use the <code class="literal">DefaultAdvisorAutoProxyCreator</code>, in combination with Advisors
+that understand metadata attributes. The metadata specifics are held in the pointcut
+part of the candidate advisors, rather than in the autoproxy creation class itself.</p>
+<p>This is really a special case of the <code class="literal">DefaultAdvisorAutoProxyCreator</code>, but deserves
+consideration on its own. (The metadata-aware code is in the pointcuts contained in the
+advisors, not the AOP framework itself.)</p>
+<p>The <code class="literal">/attributes</code> directory of the JPetStore sample application shows the use of
+attribute-driven autoproxying. In this case, there&#8217;s no need to use the
+<code class="literal">TransactionProxyFactoryBean</code>. Simply defining transactional attributes on business
+objects is sufficient, because of the use of metadata-aware pointcuts. The bean
+definitions include the following code, in <code class="literal">/WEB-INF/declarativeServices.xml</code>. Note that
+this is generic, and can be used outside the JPetStore:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionInterceptor"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"transactionInterceptor"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionInterceptor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionManager"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionManager"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionAttributeSource"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.AttributesTransactionAttributeSource"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"attributes"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"attributes"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"attributes"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.metadata.commons.CommonsAttributes"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>The <code class="literal">DefaultAdvisorAutoProxyCreator</code> bean definition (the name is not significant, hence
+it can even be omitted) will pick up all eligible pointcuts in the current application
+context. In this case, the "transactionAdvisor" bean definition, of type
+<code class="literal">TransactionAttributeSourceAdvisor</code>, will apply to classes or methods carrying a
+transaction attribute. The TransactionAttributeSourceAdvisor depends on a
+TransactionInterceptor, via constructor dependency. The example resolves this via
+autowiring. The <code class="literal">AttributesTransactionAttributeSource</code> depends on an implementation of
+the <code class="literal">org.springframework.metadata.Attributes</code> interface. In this fragment, the
+"attributes" bean satisfies this, using the Jakarta Commons Attributes API to obtain
+attribute information. (The application code must have been compiled using the Commons
+Attributes compilation task.)</p>
+<p>The <code class="literal">/annotation</code> directory of the JPetStore sample application contains an analogous
+example for auto-proxying driven by JDK 1.5+ annotations. The following configuration
+enables automatic detection of Spring&#8217;s <code class="literal">Transactional</code> annotation, leading to implicit
+proxies for beans containing that annotation:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionInterceptor"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"transactionInterceptor"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.interceptor.TransactionInterceptor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionManager"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"transactionManager"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"transactionAttributeSource"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The <code class="literal">TransactionInterceptor</code> defined here depends on a <code class="literal">PlatformTransactionManager</code>
+definition, which is not included in this generic file (although it could be) because it
+will be specific to the application&#8217;s transaction requirements (typically JTA, as in
+this example, or Hibernate, JDO or JDBC):</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"transactionManager"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.jta.JtaTransactionManager"</span><span class="hl-tag">/&gt;</span></pre>
+
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>If you require only declarative transaction management, using these generic XML
+definitions will result in Spring automatically proxying all classes or methods with
+transaction attributes. You won&#8217;t need to work directly with AOP, and the programming
+model is similar to that of .NET ServicedComponents.</p>
+</td></tr></table></div>
+
+<p>This mechanism is extensible. It&#8217;s possible to do autoproxying based on custom
+attributes. You need to:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Define your custom attribute.
+</li><li class="listitem">
+Specify an Advisor with the necessary advice, including a pointcut that is triggered
+by the presence of the custom attribute on a class or method. You may be able to use
+an existing advice, merely implementing a static pointcut that picks up the custom
+attribute.
+</li></ul></div>
+
+<p>It&#8217;s possible for such advisors to be unique to each advised class (for example,
+mixins): they simply need to be defined as prototype, rather than singleton, bean
+definitions. For example, the <code class="literal">LockMixin</code> introduction interceptor from the Spring test
+suite, shown above, could be used in conjunction with an attribute-driven pointcut to
+target a mixin, as shown here. We use the generic <code class="literal">DefaultPointcutAdvisor</code>, configured
+using JavaBean properties:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"lockMixin"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.LockMixin"</span>
+        <span class="hl-attribute">scope</span>=<span class="hl-value">"prototype"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"lockableAdvisor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.support.DefaultPointcutAdvisor"</span>
+        <span class="hl-attribute">scope</span>=<span class="hl-value">"prototype"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"pointcut"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"myAttributeAwarePointcut"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"advice"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"lockMixin"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"anyBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"anyclass"</span> <span class="hl-attribute">...</span></pre>
+
+<p>If the attribute aware pointcut matches any methods in the <code class="literal">anyBean</code> or other bean
+definitions, the mixin will be applied. Note that both <code class="literal">lockMixin</code> and <code class="literal">lockableAdvisor</code>
+definitions are prototypes. The <code class="literal">myAttributeAwarePointcut</code> pointcut can be a singleton
+definition, as it doesn&#8217;t hold state for individual advised objects.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-targetsource" href="#classic-aop-targetsource"></a>33.9&nbsp;Using TargetSources</h2></div></div></div>
+
+<p>Spring offers the concept of a <span class="emphasis"><em>TargetSource</em></span>, expressed in the
+<code class="literal">org.springframework.aop.TargetSource</code> interface. This interface is responsible for
+returning the "target object" implementing the join point. The <code class="literal">TargetSource</code>
+implementation is asked for a target instance each time the AOP proxy handles a method
+invocation.</p>
+<p>Developers using Spring AOP don&#8217;t normally need to work directly with TargetSources, but
+this provides a powerful means of supporting pooling, hot swappable and other
+sophisticated targets. For example, a pooling TargetSource can return a different target
+instance for each invocation, using a pool to manage instances.</p>
+<p>If you do not specify a TargetSource, a default implementation is used that wraps a
+local object. The same target is returned for each invocation (as you would expect).</p>
+<p>Let&#8217;s look at the standard target sources provided with Spring, and how you can use them.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>When using a custom target source, your target will usually need to be a prototype
+rather than a singleton bean definition. This allows Spring to create a new target
+instance when required.</p>
+</td></tr></table></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-swap" href="#classic-aop-ts-swap"></a>33.9.1&nbsp;Hot swappable target sources</h3></div></div></div>
+
+<p>The <code class="literal">org.springframework.aop.target.HotSwappableTargetSource</code> exists to allow the target
+of an AOP proxy to be switched while allowing callers to keep their references to it.</p>
+<p>Changing the target source&#8217;s target takes effect immediately. The
+<code class="literal">HotSwappableTargetSource</code> is threadsafe.</p>
+<p>You can change the target via the <code class="literal">swap()</code> method on HotSwappableTargetSource as follows:</p>
+<pre class="programlisting">HotSwappableTargetSource swapper = (HotSwappableTargetSource) beanFactory.getBean(<span class="hl-string">"swapper"</span>);
+Object oldTarget = swapper.swap(newTarget);</pre>
+
+<p>The XML definitions required look as follows:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"initialTarget"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"mycompany.OldTarget"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"swapper"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.target.HotSwappableTargetSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"initialTarget"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"swappable"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.ProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"swapper"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The above <code class="literal">swap()</code> call changes the target of the swappable bean. Clients who hold a
+reference to that bean will be unaware of the change, but will immediately start hitting
+the new target.</p>
+<p>Although this example doesn&#8217;t add any advice - and it&#8217;s not necessary to add advice to
+use a <code class="literal">TargetSource</code> - of course any <code class="literal">TargetSource</code> can be used in conjunction with
+arbitrary advice.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-pool" href="#classic-aop-ts-pool"></a>33.9.2&nbsp;Pooling target sources</h3></div></div></div>
+
+<p>Using a pooling target source provides a similar programming model to stateless session
+EJBs, in which a pool of identical instances is maintained, with method invocations
+going to free objects in the pool.</p>
+<p>A crucial difference between Spring pooling and SLSB pooling is that Spring pooling can
+be applied to any POJO. As with Spring in general, this service can be applied in a
+non-invasive way.</p>
+<p>Spring provides out-of-the-box support for Jakarta Commons Pool 1.3, which provides a
+fairly efficient pooling implementation. You&#8217;ll need the commons-pool Jar on your
+application&#8217;s classpath to use this feature. It&#8217;s also possible to subclass
+<code class="literal">org.springframework.aop.target.AbstractPoolingTargetSource</code> to support any other
+pooling API.</p>
+<p>Sample configuration is shown below:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"businessObjectTarget"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.MyBusinessObject"</span> <span class="hl-attribute">scope</span>=<span class="hl-value">"prototype"</span><span class="hl-tag">&gt;</span>
+    ... properties omitted
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"poolTargetSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.target.CommonsPoolTargetSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetBeanName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"businessObjectTarget"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"maxSize"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"25"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"businessObject"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.framework.ProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"poolTargetSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptorNames"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"myInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Note that the target object - "businessObjectTarget" in the example - <span class="emphasis"><em>must</em></span> be a
+prototype. This allows the <code class="literal">PoolingTargetSource</code> implementation to create new instances
+of the target to grow the pool as necessary. See the Javadoc for
+<code class="literal">AbstractPoolingTargetSource</code> and the concrete subclass you wish to use for information
+about its properties: "maxSize" is the most basic, and always guaranteed to be present.</p>
+<p>In this case, "myInterceptor" is the name of an interceptor that would need to be
+defined in the same IoC context. However, it isn&#8217;t necessary to specify interceptors to
+use pooling. If you want only pooling, and no other advice, don&#8217;t set the
+interceptorNames property at all.</p>
+<p>It&#8217;s possible to configure Spring so as to be able to cast any pooled object to the
+<code class="literal">org.springframework.aop.target.PoolingConfig</code> interface, which exposes information
+about the configuration and current size of the pool through an introduction. You&#8217;ll
+need to define an advisor like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"poolConfigAdvisor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.beans.factory.config.MethodInvokingFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetObject"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"poolTargetSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetMethod"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"getPoolingConfigMixin"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This advisor is obtained by calling a convenience method on the
+<code class="literal">AbstractPoolingTargetSource</code> class, hence the use of MethodInvokingFactoryBean. This
+advisor&#8217;s name ("poolConfigAdvisor" here) must be in the list of interceptors names in
+the ProxyFactoryBean exposing the pooled object.</p>
+<p>The cast will look as follows:</p>
+<pre class="programlisting">PoolingConfig conf = (PoolingConfig) beanFactory.getBean(<span class="hl-string">"businessObject"</span>);
+System.out.println(<span class="hl-string">"Max pool size is "</span> + conf.getMaxSize());</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Pooling stateless service objects is not usually necessary. We don&#8217;t believe it should
+be the default choice, as most stateless objects are naturally thread safe, and instance
+pooling is problematic if resources are cached.</p>
+</td></tr></table></div>
+
+<p>Simpler pooling is available using autoproxying. It&#8217;s possible to set the TargetSources
+used by any autoproxy creator.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-prototype" href="#classic-aop-ts-prototype"></a>33.9.3&nbsp;Prototype target sources</h3></div></div></div>
+
+<p>Setting up a "prototype" target source is similar to a pooling TargetSource. In this
+case, a new instance of the target will be created on every method invocation. Although
+the cost of creating a new object isn&#8217;t high in a modern JVM, the cost of wiring up the
+new object (satisfying its IoC dependencies) may be more expensive. Thus you shouldn&#8217;t
+use this approach without very good reason.</p>
+<p>To do this, you could modify the <code class="literal">poolTargetSource</code> definition shown above as follows.
+(I&#8217;ve also changed the name, for clarity.)</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"prototypeTargetSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.target.PrototypeTargetSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetBeanName"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"businessObjectTarget"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>There&#8217;s only one property: the name of the target bean. Inheritance is used in the
+TargetSource implementations to ensure consistent naming. As with the pooling target
+source, the target bean must be a prototype bean definition.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-threadlocal" href="#classic-aop-ts-threadlocal"></a>33.9.4&nbsp;ThreadLocal target sources</h3></div></div></div>
+
+<p><code class="literal">ThreadLocal</code> target sources are useful if you need an object to be created for each
+incoming request (per thread that is). The concept of a <code class="literal">ThreadLocal</code> provide a JDK-wide
+facility to transparently store resource alongside a thread. Setting up a
+<code class="literal">ThreadLocalTargetSource</code> is pretty much the same as was explained for the other types
+of target source:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"threadlocalTargetSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.aop.target.ThreadLocalTargetSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetBeanName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"businessObjectTarget"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>ThreadLocals come with serious issues (potentially resulting in memory leaks) when
+incorrectly using them in a multi-threaded and multi-classloader environments. One
+should always consider wrapping a threadlocal in some other class and never directly use
+the <code class="literal">ThreadLocal</code> itself (except of course in the wrapper class). Also, one should
+always remember to correctly set and unset (where the latter simply involved a call to
+<code class="literal">ThreadLocal.set(null)</code>) the resource local to the thread. Unsetting should be done in
+any case since not unsetting it might result in problematic behavior. Spring&#8217;s
+ThreadLocal support does this for you and should always be considered in favor of using
+ThreadLocals without other proper handling code.</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-extensibility" href="#classic-aop-extensibility"></a>33.10&nbsp;Defining new Advice types</h2></div></div></div>
+
+<p>Spring AOP is designed to be extensible. While the interception implementation strategy
+is presently used internally, it is possible to support arbitrary advice types in
+addition to the out-of-the-box interception around advice, before, throws advice and
+after returning advice.</p>
+<p>The <code class="literal">org.springframework.aop.framework.adapter</code> package is an SPI package allowing
+support for new custom advice types to be added without changing the core framework. The
+only constraint on a custom <code class="literal">Advice</code> type is that it must implement the
+<code class="literal">org.aopalliance.aop.Advice</code> tag interface.</p>
+<p>Please refer to the <code class="literal">org.springframework.aop.framework.adapter</code> package&#8217;s Javadocs for
+further information.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-resources" href="#classic-aop-api-resources"></a>33.11&nbsp;Further resources</h2></div></div></div>
+
+<p>Please refer to the Spring sample applications for further examples of Spring AOP:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The JPetStore&#8217;s default configuration illustrates the use of the
+<code class="literal">TransactionProxyFactoryBean</code> for declarative transaction management.
+</li><li class="listitem">
+The <code class="literal">/attributes</code> directory of the JPetStore illustrates the use of attribute-driven
+declarative transaction management.
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-appendices.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">32.&nbsp;Classic Spring Usage&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;34.&nbsp;XML Schema-based configuration</td></tr></table></div></body></html>

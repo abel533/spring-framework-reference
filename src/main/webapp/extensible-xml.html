@@ -1,0 +1,602 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>35.&nbsp;Extensible XML authoring</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"><link rel="prev" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration"><link rel="next" href="spring.tld.html" title="36.&nbsp;spring.tld"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">35.&nbsp;Extensible XML authoring</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="xsd-config.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VII.&nbsp;Appendices</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring.tld.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="extensible-xml" href="#extensible-xml"></a>35.&nbsp;Extensible XML authoring</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-introduction" href="#extensible-xml-introduction"></a>35.1&nbsp;Introduction</h2></div></div></div>
+
+<p>Since version 2.0, Spring has featured a mechanism for schema-based extensions to the
+basic Spring XML format for defining and configuring beans. This section is devoted to
+detailing how you would go about writing your own custom XML bean definition parsers and
+integrating such parsers into the Spring IoC container.</p>
+<p>To facilitate the authoring of configuration files using a schema-aware XML editor,
+Spring&#8217;s extensible XML configuration mechanism is based on XML Schema. If you are not
+familiar with Spring&#8217;s current XML configuration extensions that come with the standard
+Spring distribution, please first read the appendix entitled<a class="xref" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration">Chapter&nbsp;34, <i>XML Schema-based configuration</i></a>.</p>
+<p>Creating new XML configuration extensions can be done by following these (relatively)
+simple steps:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="extensible-xml.html#extensible-xml-schema" title="35.2&nbsp;Authoring the schema">Authoring</a> an XML schema to describe your custom element(s).
+</li><li class="listitem">
+<a class="link" href="extensible-xml.html#extensible-xml-namespacehandler" title="35.3&nbsp;Coding a NamespaceHandler">Coding</a> a custom <code class="literal">NamespaceHandler</code> implementation
+(this is an easy step, don&#8217;t worry).
+</li><li class="listitem">
+<a class="link" href="extensible-xml.html#extensible-xml-parser" title="35.4&nbsp;BeanDefinitionParser">Coding</a> one or more <code class="literal">BeanDefinitionParser</code> implementations
+(this is where the real work is done).
+</li><li class="listitem">
+<a class="link" href="extensible-xml.html#extensible-xml-registration" title="35.5&nbsp;Registering the handler and the schema">Registering</a> the above artifacts with Spring (this too
+is an easy step).
+</li></ul></div>
+
+<p>What follows is a description of each of these steps. For the example, we will create an
+XML extension (a custom XML element) that allows us to configure objects of the type
+<code class="literal">SimpleDateFormat</code> (from the <code class="literal">java.text</code> package) in an easy manner. When we are done,
+we will be able to define bean definitions of type <code class="literal">SimpleDateFormat</code> like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;myns:dateformat</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dateFormat"</span>
+    <span class="hl-attribute">pattern</span>=<span class="hl-value">"yyyy-MM-dd HH:mm"</span>
+    <span class="hl-attribute">lenient</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p><span class="emphasis"><em>(Don&#8217;t worry about the fact that this example is very simple; much more detailed
+examples follow afterwards. The intent in this first simple example is to walk you
+through the basic steps involved.)</em></span></p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-schema" href="#extensible-xml-schema"></a>35.2&nbsp;Authoring the schema</h2></div></div></div>
+
+<p>Creating an XML configuration extension for use with Spring&#8217;s IoC container starts with
+authoring an XML Schema to describe the extension. What follows is the schema we&#8217;ll use
+to configure <code class="literal">SimpleDateFormat</code> objects.</p>
+<pre class="programlisting"><span class="hl-comment">&lt;!-- myns.xsd (inside package org/springframework/samples/xml) --&gt;</span>
+
+<span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;xsd:schema</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.mycompany.com/schema/myns"</span>
+        <span class="hl-attribute">xmlns:xsd</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema"</span>
+        <span class="hl-attribute">xmlns:beans</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+        <span class="hl-attribute">targetNamespace</span>=<span class="hl-value">"http://www.mycompany.com/schema/myns"</span>
+        <span class="hl-attribute">elementFormDefault</span>=<span class="hl-value">"qualified"</span>
+        <span class="hl-attribute">attributeFormDefault</span>=<span class="hl-value">"unqualified"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;xsd:import</span> <span class="hl-attribute">namespace</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;xsd:element</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dateformat"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;xsd:complexType&gt;</span>
+            <span class="hl-tag">&lt;xsd:complexContent&gt;</span>
+                <span class="hl-tag">&lt;xsd:extension</span> <span class="hl-attribute">base</span>=<span class="hl-value">"beans:identifiedType"</span><span class="hl-tag">&gt;</span>
+                    <span class="hl-tag">&lt;xsd:attribute</span> <span class="hl-attribute">name</span>=<span class="hl-value">"lenient"</span> <span class="hl-attribute">type</span>=<span class="hl-value">"xsd:boolean"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;xsd:attribute</span> <span class="hl-attribute">name</span>=<span class="hl-value">"pattern"</span> <span class="hl-attribute">type</span>=<span class="hl-value">"xsd:string"</span> <span class="hl-attribute">use</span>=<span class="hl-value">"required"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/xsd:extension&gt;</span>
+            <span class="hl-tag">&lt;/xsd:complexContent&gt;</span>
+        <span class="hl-tag">&lt;/xsd:complexType&gt;</span>
+    <span class="hl-tag">&lt;/xsd:element&gt;</span>
+<span class="hl-tag">&lt;/xsd:schema&gt;</span></pre>
+
+<p>(The emphasized line contains an extension base for all tags that will be identifiable
+(meaning they have an <code class="literal">id</code> attribute that will be used as the bean identifier in the
+container). We are able to use this attribute because we imported the Spring-provided
+<code class="literal">'beans'</code> namespace.)</p>
+<p>The above schema will be used to configure <code class="literal">SimpleDateFormat</code> objects, directly in an
+XML application context file using the <code class="literal">&lt;myns:dateformat/&gt;</code> element.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;myns:dateformat</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dateFormat"</span>
+    <span class="hl-attribute">pattern</span>=<span class="hl-value">"yyyy-MM-dd HH:mm"</span>
+    <span class="hl-attribute">lenient</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Note that after we&#8217;ve created the infrastructure classes, the above snippet of XML will
+essentially be exactly the same as the following XML snippet. In other words, we&#8217;re just
+creating a bean in the container, identified by the name <code class="literal">'dateFormat'</code> of type
+<code class="literal">SimpleDateFormat</code>, with a couple of properties set.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dateFormat"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"java.text.SimpleDateFormat"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">value</span>=<span class="hl-value">"yyyy-HH-dd HH:mm"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"lenient"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The schema-based approach to creating configuration format allows for tight integration
+with an IDE that has a schema-aware XML editor. Using a properly authored schema, you
+can use autocompletion to have a user choose between several configuration options
+defined in the enumeration.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-namespacehandler" href="#extensible-xml-namespacehandler"></a>35.3&nbsp;Coding a NamespaceHandler</h2></div></div></div>
+
+<p>In addition to the schema, we need a <code class="literal">NamespaceHandler</code> that will parse all elements of
+this specific namespace Spring encounters while parsing configuration files. The
+<code class="literal">NamespaceHandler</code> should in our case take care of the parsing of the <code class="literal">myns:dateformat</code>
+element.</p>
+<p>The <code class="literal">NamespaceHandler</code> interface is pretty simple in that it features just three methods:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">init()</code> - allows for initialization of the <code class="literal">NamespaceHandler</code> and will be called by
+Spring before the handler is used
+</li><li class="listitem">
+<code class="literal">BeanDefinition parse(Element, ParserContext)</code> - called when Spring encounters a
+top-level element (not nested inside a bean definition or a different namespace). This
+method can register bean definitions itself and/or return a bean definition.
+</li><li class="listitem">
+<code class="literal">BeanDefinitionHolder decorate(Node, BeanDefinitionHolder, ParserContext)</code> - called
+when Spring encounters an attribute or nested element of a different namespace. The
+decoration of one or more bean definitions is used for example with
+the<a class="link" href="beans.html#beans-factory-scopes" title="5.5&nbsp;Bean scopes">out-of-the-box    scopes Spring 2.0 supports</a>. We&#8217;ll start by
+highlighting a simple example, without using decoration, after which we will    show
+decoration in a somewhat more advanced example.
+</li></ul></div>
+
+<p>Although it is perfectly possible to code your own <code class="literal">NamespaceHandler</code> for the entire
+namespace (and hence provide code that parses each and every element in the namespace),
+it is often the case that each top-level XML element in a Spring XML configuration file
+results in a single bean definition (as in our case, where a single <code class="literal">&lt;myns:dateformat/&gt;</code>
+element results in a single <code class="literal">SimpleDateFormat</code> bean definition). Spring features a
+number of convenience classes that support this scenario. In this example, we&#8217;ll make
+use the <code class="literal">NamespaceHandlerSupport</code> class:</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.samples.xml;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> MyNamespaceHandler <span class="hl-keyword">extends</span> NamespaceHandlerSupport {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> init() {
+        <span class="strong"><strong>registerBeanDefinitionParser("dateformat", new SimpleDateFormatBeanDefinitionParser());</strong></span>
+    }
+
+}</pre>
+
+<p>The observant reader will notice that there isn&#8217;t actually a whole lot of parsing logic
+in this class. Indeed&#8230; the <code class="literal">NamespaceHandlerSupport</code> class has a built in notion of
+delegation. It supports the registration of any number of <code class="literal">BeanDefinitionParser</code>
+instances, to which it will delegate to when it needs to parse an element in its
+namespace. This clean separation of concerns allows a <code class="literal">NamespaceHandler</code> to handle the
+orchestration of the parsing of <span class="emphasis"><em>all</em></span> of the custom elements in its namespace, while
+delegating to <code class="literal">BeanDefinitionParsers</code> to do the grunt work of the XML parsing; this
+means that each <code class="literal">BeanDefinitionParser</code> will contain just the logic for parsing a single
+custom element, as we can see in the next step</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-parser" href="#extensible-xml-parser"></a>35.4&nbsp;BeanDefinitionParser</h2></div></div></div>
+
+<p>A <code class="literal">BeanDefinitionParser</code> will be used if the <code class="literal">NamespaceHandler</code> encounters an XML
+element of the type that has been mapped to the specific bean definition parser (which
+is <code class="literal">'dateformat'</code> in this case). In other words, the <code class="literal">BeanDefinitionParser</code> is
+responsible for parsing <span class="emphasis"><em>one</em></span> distinct top-level XML element defined in the schema. In
+the parser, we&#8217;ll have access to the XML element (and thus its subelements too) so that
+we can parse our custom XML content, as can be seen in the following example:</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.samples.xml;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.BeanDefinitionBuilder;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser;
+<span class="hl-keyword">import</span> org.springframework.util.StringUtils;
+<span class="hl-keyword">import</span> org.w3c.dom.Element;
+
+<span class="hl-keyword">import</span> java.text.SimpleDateFormat;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleDateFormatBeanDefinitionParser <span class="hl-keyword">extends</span> AbstractSingleBeanDefinitionParser { <a name="CO3-1" href="#CO3-1"></a><span><img src="images/callouts/1.png" alt="1" border="0"></span>
+
+    <span class="hl-keyword">protected</span> Class getBeanClass(Element element) {
+        <span class="hl-keyword">return</span> SimpleDateFormat.<span class="hl-keyword">class</span>; <a name="CO3-2" href="#CO3-2"></a><span><img src="images/callouts/2.png" alt="2" border="0"></span>
+    }
+
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> doParse(Element element, BeanDefinitionBuilder bean) {
+        <span class="hl-comment">// this will never be null since the schema explicitly requires that a value be supplied</span>
+        String pattern = element.getAttribute(<span class="hl-string">"pattern"</span>);
+        bean.addConstructorArg(pattern);
+
+        <span class="hl-comment">// this however is an optional property</span>
+        String lenient = element.getAttribute(<span class="hl-string">"lenient"</span>);
+        <span class="hl-keyword">if</span> (StringUtils.hasText(lenient)) {
+            bean.addPropertyValue(<span class="hl-string">"lenient"</span>, Boolean.valueOf(lenient));
+        }
+    }
+
+}</pre>
+
+<div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO3-1"><span><img src="images/callouts/1.png" alt="1" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>We use the Spring-provided <code class="literal">AbstractSingleBeanDefinitionParser</code> to handle a lot of
+the basic grunt work of creating a <span class="emphasis"><em>single</em></span> <code class="literal">BeanDefinition</code>.</p>
+  </td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO3-2"><span><img src="images/callouts/2.png" alt="2" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>We supply the <code class="literal">AbstractSingleBeanDefinitionParser</code> superclass with the type that our
+single <code class="literal">BeanDefinition</code> will represent.</p>
+  </td></tr></table></div>
+
+<p>In this simple case, this is all that we need to do. The creation of our single
+<code class="literal">BeanDefinition</code> is handled by the <code class="literal">AbstractSingleBeanDefinitionParser</code> superclass, as
+is the extraction and setting of the bean definition&#8217;s unique identifier.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-registration" href="#extensible-xml-registration"></a>35.5&nbsp;Registering the handler and the schema</h2></div></div></div>
+
+<p>The coding is finished! All that remains to be done is to somehow make the Spring XML
+parsing infrastructure aware of our custom element; we do this by registering our custom
+<code class="literal">namespaceHandler</code> and custom XSD file in two special purpose properties files. These
+properties files are both placed in a <code class="literal">'META-INF'</code> directory in your application, and
+can, for example, be distributed alongside your binary classes in a JAR file. The Spring
+XML parsing infrastructure will automatically pick up your new extension by consuming
+these special properties files, the formats of which are detailed below.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="extensible-xml-registration-spring-handlers" href="#extensible-xml-registration-spring-handlers"></a>35.5.1&nbsp;<span class="emphasis"><em>META-INF/spring.handlers</em></span></h3></div></div></div>
+
+<p>The properties file called <code class="literal">'spring.handlers'</code> contains a mapping of XML Schema URIs to
+namespace handler classes. So for our example, we need to write the following:</p>
+
+<pre class="literallayout">http\://www.mycompany.com/schema/myns=org.springframework.samples.xml.MyNamespaceHandler</pre>
+
+<p><span class="emphasis"><em>(The <code class="literal">':'</code> character is a valid delimiter in the Java properties format, and so the
+<code class="literal">':'</code> character in the URI needs to be escaped with a backslash.)</em></span></p>
+<p>The first part (the key) of the key-value pair is the URI associated with your custom
+namespace extension, and needs to <span class="emphasis"><em>match exactly</em></span> the value of the <code class="literal">'targetNamespace'</code>
+attribute as specified in your custom XSD schema.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="extensible-xml-registration-spring-schemas" href="#extensible-xml-registration-spring-schemas"></a>35.5.2&nbsp;<span class="emphasis"><em>META-INF/spring.schemas</em></span></h3></div></div></div>
+
+<p>The properties file called <code class="literal">'spring.schemas'</code> contains a mapping of XML Schema locations
+(referred to along with the schema declaration in XML files that use the schema as part
+of the <code class="literal">'xsi:schemaLocation'</code> attribute) to <span class="emphasis"><em>classpath</em></span> resources. This file is needed
+to prevent Spring from absolutely having to use a default <code class="literal">EntityResolver</code> that requires
+Internet access to retrieve the schema file. If you specify the mapping in this
+properties file, Spring will search for the schema on the classpath (in this case
+<code class="literal">'myns.xsd'</code> in the <code class="literal">'org.springframework.samples.xml'</code> package):</p>
+
+<pre class="literallayout">http\://www.mycompany.com/schema/myns/myns.xsd=org/springframework/samples/xml/myns.xsd</pre>
+
+<p>The upshot of this is that you are encouraged to deploy your XSD file(s) right alongside
+the <code class="literal">NamespaceHandler</code> and <code class="literal">BeanDefinitionParser</code> classes on the classpath.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-using" href="#extensible-xml-using"></a>35.6&nbsp;Using a custom extension in your Spring XML configuration</h2></div></div></div>
+
+<p>Using a custom extension that you yourself have implemented is no different from using
+one of the <span class="emphasis"><em>custom</em></span> extensions that Spring provides straight out of the box. Find below
+an example of using the custom <code class="literal">&lt;dateformat/&gt;</code> element developed in the previous steps
+in a Spring XML configuration file.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:myns</span>=<span class="hl-value">"http://www.mycompany.com/schema/myns"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.mycompany.com/schema/myns http://www.mycompany.com/schema/myns/myns.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-comment">&lt;!-- as a top-level bean --&gt;</span>
+    <span class="hl-tag">&lt;myns:dateformat</span> <span class="hl-attribute">id</span>=<span class="hl-value">"defaultDateFormat"</span> <span class="hl-attribute">pattern</span>=<span class="hl-value">"yyyy-MM-dd HH:mm"</span> <span class="hl-attribute">lenient</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jobDetailTemplate"</span> <span class="hl-attribute">abstract</span>=<span class="hl-value">"true"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dateFormat"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-comment">&lt;!-- as an inner bean --&gt;</span>
+            <span class="hl-tag">&lt;myns:dateformat</span> <span class="hl-attribute">pattern</span>=<span class="hl-value">"HH:mm MM-dd-yyyy"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-meat" href="#extensible-xml-meat"></a>35.7&nbsp;Meatier examples</h2></div></div></div>
+
+<p>Find below some much meatier examples of custom XML extensions.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="extensible-xml-custom-nested" href="#extensible-xml-custom-nested"></a>35.7.1&nbsp;Nesting custom tags within custom tags</h3></div></div></div>
+
+<p>This example illustrates how you might go about writing the various artifacts required
+to satisfy a target of the following configuration:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:foo</span>=<span class="hl-value">"http://www.foo.com/schema/component"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.foo.com/schema/component http://www.foo.com/schema/component/component.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;foo:component</span> <span class="hl-attribute">id</span>=<span class="hl-value">"bionic-family"</span> <span class="hl-attribute">name</span>=<span class="hl-value">"Bionic-1"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;foo:component</span> <span class="hl-attribute">name</span>=<span class="hl-value">"Mother-1"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;foo:component</span> <span class="hl-attribute">name</span>=<span class="hl-value">"Karate-1"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;foo:component</span> <span class="hl-attribute">name</span>=<span class="hl-value">"Sport-1"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/foo:component&gt;</span>
+        <span class="hl-tag">&lt;foo:component</span> <span class="hl-attribute">name</span>=<span class="hl-value">"Rock-1"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/foo:component&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The above configuration actually nests custom extensions within each other. The class
+that is actually configured by the above <code class="literal">&lt;foo:component/&gt;</code> element is the <code class="literal">Component</code>
+class (shown directly below). Notice how the <code class="literal">Component</code> class does <span class="emphasis"><em>not</em></span> expose a
+setter method for the <code class="literal">'components'</code> property; this makes it hard (or rather impossible)
+to configure a bean definition for the <code class="literal">Component</code> class using setter injection.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> java.util.ArrayList;
+<span class="hl-keyword">import</span> java.util.List;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Component {
+
+    <span class="hl-keyword">private</span> String name;
+    <span class="hl-keyword">private</span> List&lt;Component&gt; components = <span class="hl-keyword">new</span> ArrayList&lt;Component&gt; ();
+
+    <span class="hl-comment">// mmm, there is no setter method for the </span><span class="emphasis"><em>components</em></span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> addComponent(Component component) {
+        <span class="hl-keyword">this</span>.components.add(component);
+    }
+
+    <span class="hl-keyword">public</span> List&lt;Component&gt; getComponents() {
+        <span class="hl-keyword">return</span> components;
+    }
+
+    <span class="hl-keyword">public</span> String getName() {
+        <span class="hl-keyword">return</span> name;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(String name) {
+        <span class="hl-keyword">this</span>.name = name;
+    }
+
+}</pre>
+
+<p>The typical solution to this issue is to create a custom <code class="literal">FactoryBean</code> that exposes a
+setter property for the <code class="literal">'components'</code> property.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.FactoryBean;
+
+<span class="hl-keyword">import</span> java.util.List;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ComponentFactoryBean <span class="hl-keyword">implements</span> FactoryBean&lt;Component&gt; {
+
+    <span class="hl-keyword">private</span> Component parent;
+    <span class="hl-keyword">private</span> List&lt;Component&gt; children;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setParent(Component parent) {
+        <span class="hl-keyword">this</span>.parent = parent;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setChildren(List&lt;Component&gt; children) {
+        <span class="hl-keyword">this</span>.children = children;
+    }
+
+    <span class="hl-keyword">public</span> Component getObject() <span class="hl-keyword">throws</span> Exception {
+        <span class="hl-keyword">if</span> (<span class="hl-keyword">this</span>.children != null &amp;&amp; <span class="hl-keyword">this</span>.children.size() &gt; <span class="hl-number">0</span>) {
+            <span class="hl-keyword">for</span> (Component child : children) {
+                <span class="hl-keyword">this</span>.parent.addComponent(child);
+            }
+        }
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.parent;
+    }
+
+    <span class="hl-keyword">public</span> Class&lt;Component&gt; getObjectType() {
+        <span class="hl-keyword">return</span> Component.<span class="hl-keyword">class</span>;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">boolean</span> isSingleton() {
+        <span class="hl-keyword">return</span> true;
+    }
+
+}</pre>
+
+<p>This is all very well, and does work nicely, but exposes a lot of Spring plumbing to the
+end user. What we are going to do is write a custom extension that hides away all of
+this Spring plumbing. If we stick to <a class="link" href="extensible-xml.html#extensible-xml-introduction" title="35.1&nbsp;Introduction">the steps described
+previously</a>, we&#8217;ll start off by creating the XSD schema to define the structure of our
+custom tag.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;</span>
+
+<span class="hl-tag">&lt;xsd:schema</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.foo.com/schema/component"</span>
+        <span class="hl-attribute">xmlns:xsd</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema"</span>
+        <span class="hl-attribute">targetNamespace</span>=<span class="hl-value">"http://www.foo.com/schema/component"</span>
+        <span class="hl-attribute">elementFormDefault</span>=<span class="hl-value">"qualified"</span>
+        <span class="hl-attribute">attributeFormDefault</span>=<span class="hl-value">"unqualified"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;xsd:element</span> <span class="hl-attribute">name</span>=<span class="hl-value">"component"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;xsd:complexType&gt;</span>
+            <span class="hl-tag">&lt;xsd:choice</span> <span class="hl-attribute">minOccurs</span>=<span class="hl-value">"0"</span> <span class="hl-attribute">maxOccurs</span>=<span class="hl-value">"unbounded"</span><span class="hl-tag">&gt;</span>
+                <span class="hl-tag">&lt;xsd:element</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"component"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/xsd:choice&gt;</span>
+            <span class="hl-tag">&lt;xsd:attribute</span> <span class="hl-attribute">name</span>=<span class="hl-value">"id"</span> <span class="hl-attribute">type</span>=<span class="hl-value">"xsd:ID"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;xsd:attribute</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">use</span>=<span class="hl-value">"required"</span> <span class="hl-attribute">type</span>=<span class="hl-value">"xsd:string"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/xsd:complexType&gt;</span>
+    <span class="hl-tag">&lt;/xsd:element&gt;</span>
+
+<span class="hl-tag">&lt;/xsd:schema&gt;</span></pre>
+
+<p>We&#8217;ll then create a custom <code class="literal">NamespaceHandler</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ComponentNamespaceHandler <span class="hl-keyword">extends</span> NamespaceHandlerSupport {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> init() {
+        registerBeanDefinitionParser(<span class="hl-string">"component"</span>, <span class="hl-keyword">new</span> ComponentBeanDefinitionParser());
+    }
+
+}</pre>
+
+<p>Next up is the custom <code class="literal">BeanDefinitionParser</code>. Remember that what we are creating is a
+<code class="literal">BeanDefinition</code> describing a <code class="literal">ComponentFactoryBean</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.config.BeanDefinition;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.AbstractBeanDefinition;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.BeanDefinitionBuilder;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.ManagedList;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.AbstractBeanDefinitionParser;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.ParserContext;
+<span class="hl-keyword">import</span> org.springframework.util.xml.DomUtils;
+<span class="hl-keyword">import</span> org.w3c.dom.Element;
+
+<span class="hl-keyword">import</span> java.util.List;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ComponentBeanDefinitionParser <span class="hl-keyword">extends</span> AbstractBeanDefinitionParser {
+
+    <span class="hl-keyword">protected</span> AbstractBeanDefinition parseInternal(Element element, ParserContext parserContext) {
+        <span class="hl-keyword">return</span> parseComponentElement(element);
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> AbstractBeanDefinition parseComponentElement(Element element) {
+        BeanDefinitionBuilder factory = BeanDefinitionBuilder.rootBeanDefinition(ComponentFactoryBean.<span class="hl-keyword">class</span>);
+        factory.addPropertyValue(<span class="hl-string">"parent"</span>, parseComponent(element));
+
+        List&lt;Element&gt; childElements = DomUtils.getChildElementsByTagName(element, <span class="hl-string">"component"</span>);
+        <span class="hl-keyword">if</span> (childElements != null &amp;&amp; childElements.size() &gt; <span class="hl-number">0</span>) {
+            parseChildComponents(childElements, factory);
+        }
+
+        <span class="hl-keyword">return</span> factory.getBeanDefinition();
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> BeanDefinition parseComponent(Element element) {
+        BeanDefinitionBuilder component = BeanDefinitionBuilder.rootBeanDefinition(Component.<span class="hl-keyword">class</span>);
+        component.addPropertyValue(<span class="hl-string">"name"</span>, element.getAttribute(<span class="hl-string">"name"</span>));
+        <span class="hl-keyword">return</span> component.getBeanDefinition();
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">void</span> parseChildComponents(List&lt;Element&gt; childElements, BeanDefinitionBuilder factory) {
+        ManagedList&lt;BeanDefinition&gt; children = <span class="hl-keyword">new</span> ManagedList&lt;BeanDefinition&gt;(childElements.size());
+        <span class="hl-keyword">for</span> (Element element : childElements) {
+            children.add(parseComponentElement(element));
+        }
+        factory.addPropertyValue(<span class="hl-string">"children"</span>, children);
+    }
+
+}</pre>
+
+<p>Lastly, the various artifacts need to be registered with the Spring XML infrastructure.</p>
+
+<pre class="literallayout"># in <span class="emphasis"><em>META-INF/spring.handlers</em></span>
+http\://www.foo.com/schema/component=com.foo.ComponentNamespaceHandler</pre>
+
+
+<pre class="literallayout"># in <span class="emphasis"><em>META-INF/spring.schemas</em></span>
+http\://www.foo.com/schema/component/component.xsd=com/foo/component.xsd</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="extensible-xml-custom-just-attributes" href="#extensible-xml-custom-just-attributes"></a>35.7.2&nbsp;Custom attributes on <span class="emphasis"><em>normal</em></span> elements</h3></div></div></div>
+
+<p>Writing your own custom parser and the associated artifacts isn&#8217;t hard, but sometimes it
+is not the right thing to do. Consider the scenario where you need to add metadata to
+already existing bean definitions. In this case you certainly don&#8217;t want to have to go
+off and write your own entire custom extension; rather you just want to add an
+additional attribute to the existing bean definition element.</p>
+<p>By way of another example, let&#8217;s say that the service class that you are defining a bean
+definition for a service object that will (unknown to it) be accessing a clustered
+<a class="ulink" href="http://jcp.org/en/jsr/detail?id=107" target="_top">JCache</a>, and you want to ensure that the named
+JCache instance is eagerly started within the surrounding cluster:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"checkingAccountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.DefaultCheckingAccountService"</span>
+        <span class="hl-attribute">jcache:cache-name</span>=<span class="hl-value">"checking.account"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- other dependencies here... --&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>What we are going to do here is create another <code class="literal">BeanDefinition</code> when the
+<code class="literal">'jcache:cache-name'</code> attribute is parsed; this <code class="literal">BeanDefinition</code> will then initialize
+the named JCache for us. We will also modify the existing <code class="literal">BeanDefinition</code> for the
+<code class="literal">'checkingAccountService'</code> so that it will have a dependency on this new
+JCache-initializing <code class="literal">BeanDefinition</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JCacheInitializer {
+
+    <span class="hl-keyword">private</span> String name;
+
+    <span class="hl-keyword">public</span> JCacheInitializer(String name) {
+        <span class="hl-keyword">this</span>.name = name;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> initialize() {
+        <span class="hl-comment">// lots of JCache API calls to initialize the named cache...</span>
+    }
+
+}</pre>
+
+<p>Now onto the custom extension. Firstly, the authoring of the XSD schema describing the
+custom attribute (quite easy in this case).</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8" standalone="no"?&gt;</span>
+
+<span class="hl-tag">&lt;xsd:schema</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.foo.com/schema/jcache"</span>
+        <span class="hl-attribute">xmlns:xsd</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema"</span>
+        <span class="hl-attribute">targetNamespace</span>=<span class="hl-value">"http://www.foo.com/schema/jcache"</span>
+        <span class="hl-attribute">elementFormDefault</span>=<span class="hl-value">"qualified"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;xsd:attribute</span> <span class="hl-attribute">name</span>=<span class="hl-value">"cache-name"</span> <span class="hl-attribute">type</span>=<span class="hl-value">"xsd:string"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;/xsd:schema&gt;</span></pre>
+
+<p>Next, the associated <code class="literal">NamespaceHandler</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.NamespaceHandlerSupport;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JCacheNamespaceHandler <span class="hl-keyword">extends</span> NamespaceHandlerSupport {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> init() {
+        <span class="hl-keyword">super</span>.registerBeanDefinitionDecoratorForAttribute(<span class="hl-string">"cache-name"</span>,
+            <span class="hl-keyword">new</span> JCacheInitializingBeanDefinitionDecorator());
+    }
+
+}</pre>
+
+<p>Next, the parser. Note that in this case, because we are going to be parsing an XML
+attribute, we write a <code class="literal">BeanDefinitionDecorator</code> rather than a <code class="literal">BeanDefinitionParser</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.config.BeanDefinitionHolder;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.AbstractBeanDefinition;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.support.BeanDefinitionBuilder;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.BeanDefinitionDecorator;
+<span class="hl-keyword">import</span> org.springframework.beans.factory.xml.ParserContext;
+<span class="hl-keyword">import</span> org.w3c.dom.Attr;
+<span class="hl-keyword">import</span> org.w3c.dom.Node;
+
+<span class="hl-keyword">import</span> java.util.ArrayList;
+<span class="hl-keyword">import</span> java.util.Arrays;
+<span class="hl-keyword">import</span> java.util.List;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JCacheInitializingBeanDefinitionDecorator <span class="hl-keyword">implements</span> BeanDefinitionDecorator {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String[] EMPTY_STRING_ARRAY = <span class="hl-keyword">new</span> String[<span class="hl-number">0</span>];
+
+    <span class="hl-keyword">public</span> BeanDefinitionHolder decorate(Node source, BeanDefinitionHolder holder,
+            ParserContext ctx) {
+        String initializerBeanName = registerJCacheInitializer(source, ctx);
+        createDependencyOnJCacheInitializer(holder, initializerBeanName);
+        <span class="hl-keyword">return</span> holder;
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">void</span> createDependencyOnJCacheInitializer(BeanDefinitionHolder holder,
+            String initializerBeanName) {
+        AbstractBeanDefinition definition = ((AbstractBeanDefinition) holder.getBeanDefinition());
+        String[] dependsOn = definition.getDependsOn();
+        <span class="hl-keyword">if</span> (dependsOn == null) {
+            dependsOn = <span class="hl-keyword">new</span> String[]{initializerBeanName};
+        } <span class="hl-keyword">else</span> {
+            List dependencies = <span class="hl-keyword">new</span> ArrayList(Arrays.asList(dependsOn));
+            dependencies.add(initializerBeanName);
+            dependsOn = (String[]) dependencies.toArray(EMPTY_STRING_ARRAY);
+        }
+        definition.setDependsOn(dependsOn);
+    }
+
+    <span class="hl-keyword">private</span> String registerJCacheInitializer(Node source, ParserContext ctx) {
+        String cacheName = ((Attr) source).getValue();
+        String beanName = cacheName + <span class="hl-string">"-initializer"</span>;
+        <span class="hl-keyword">if</span> (!ctx.getRegistry().containsBeanDefinition(beanName)) {
+            BeanDefinitionBuilder initializer = BeanDefinitionBuilder.rootBeanDefinition(JCacheInitializer.<span class="hl-keyword">class</span>);
+            initializer.addConstructorArg(cacheName);
+            ctx.getRegistry().registerBeanDefinition(beanName, initializer.getBeanDefinition());
+        }
+        <span class="hl-keyword">return</span> beanName;
+    }
+
+}</pre>
+
+<p>Lastly, the various artifacts need to be registered with the Spring XML infrastructure.</p>
+
+<pre class="literallayout"># in <span class="emphasis"><em>META-INF/spring.handlers</em></span>
+http\://www.foo.com/schema/jcache=com.foo.JCacheNamespaceHandler</pre>
+
+
+<pre class="literallayout"># in <span class="emphasis"><em>META-INF/spring.schemas</em></span>
+http\://www.foo.com/schema/jcache/jcache.xsd=com/foo/jcache.xsd</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="extensible-xml-resources" href="#extensible-xml-resources"></a>35.8&nbsp;Further Resources</h2></div></div></div>
+
+<p>Find below links to further resources concerning XML Schema and the extensible XML
+support described in this chapter.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <a class="ulink" href="http://www.w3.org/TR/2004/REC-xmlschema-1-20041028/" target="_top">XML Schema Part 1: Structures
+Second Edition</a>
+</li><li class="listitem">
+The <a class="ulink" href="http://www.w3.org/TR/2004/REC-xmlschema-2-20041028/" target="_top">XML Schema Part 2: Datatypes
+Second Edition</a>
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="xsd-config.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-appendices.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring.tld.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">34.&nbsp;XML Schema-based configuration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;36.&nbsp;spring.tld</td></tr></table></div></body></html>

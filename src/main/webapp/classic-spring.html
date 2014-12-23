@@ -1,0 +1,341 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>32.&nbsp;Classic Spring Usage</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"><link rel="prev" href="migration-4.0.html" title="31.&nbsp;Migrating to Spring Framework 4.0"><link rel="next" href="classic-aop-spring.html" title="33.&nbsp;Classic Spring AOP Usage"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">32.&nbsp;Classic Spring Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="migration-4.0.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VII.&nbsp;Appendices</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="classic-aop-spring.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="classic-spring" href="#classic-spring"></a>32.&nbsp;Classic Spring Usage</h2></div></div></div>
+
+<p>This appendix discusses some classic Spring usage patterns as a reference for developers
+maintaining legacy Spring applications. These usage patterns no longer reflect the
+recommended way of using these features and the current recommended usage is covered in
+the respective sections of the reference manual.</p>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-spring-orm" href="#classic-spring-orm"></a>32.1&nbsp;Classic ORM usage</h2></div></div></div>
+
+<p>This section documents the classic usage patterns that you might encounter in a legacy
+Spring application. For the currently recommended usage patterns, please refer to the
+<a class="xref" href="orm.html" title="15.&nbsp;Object Relational Mapping (ORM) Data Access">Chapter&nbsp;15, <i>Object Relational Mapping (ORM) Data Access</i></a> chapter.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-hibernate" href="#classic-spring-hibernate"></a>32.1.1&nbsp;Hibernate</h3></div></div></div>
+
+<p>For the currently recommended usage patterns for Hibernate see <a class="xref" href="orm.html#orm-hibernate" title="15.3&nbsp;Hibernate">Section&nbsp;15.3, &#8220;Hibernate&#8221;</a></p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-hibernate-template" href="#orm-hibernate-template"></a>the HibernateTemplate</h4></div></div></div>
+
+<p>The basic programming model for templating looks as follows, for methods that can be
+part of any custom data access object or business service. There are no restrictions on
+the implementation of the surrounding object at all, it just needs to provide a
+Hibernate <code class="literal">SessionFactory</code>. It can get the latter from anywhere, but preferably as bean
+reference from a Spring IoC container - via a simple <code class="literal">setSessionFactory(..)</code> bean
+property setter. The following snippets show a DAO definition in a Spring container,
+referencing the above defined <code class="literal">SessionFactory</code>, and an example for a DAO method
+implementation.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myProductDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"product.ProductDaoImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"sessionFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"mySessionFactory"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">private</span> HibernateTemplate hibernateTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setSessionFactory(SessionFactory sessionFactory) {
+        <span class="hl-keyword">this</span>.hibernateTemplate = <span class="hl-keyword">new</span> HibernateTemplate(sessionFactory);
+    }
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.hibernateTemplate.find(<span class="hl-string">"from test.Product product where product.category=?"</span>, category);
+    }
+}</pre>
+
+<p>The <code class="literal">HibernateTemplate</code> class provides many methods that mirror the methods exposed on
+the Hibernate <code class="literal">Session</code> interface, in addition to a number of convenience methods such
+as the one shown above. If you need access to the <code class="literal">Session</code> to invoke methods that are
+not exposed on the <code class="literal">HibernateTemplate</code>, you can always drop down to a callback-based
+approach like so.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">private</span> HibernateTemplate hibernateTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setSessionFactory(SessionFactory sessionFactory) {
+        <span class="hl-keyword">this</span>.hibernateTemplate = <span class="hl-keyword">new</span> HibernateTemplate(sessionFactory);
+    }
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(<span class="hl-keyword">final</span> String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.hibernateTemplate.execute(<span class="hl-keyword">new</span> HibernateCallback() {
+            <span class="hl-keyword">public</span> Object doInHibernate(Session session) {
+                Criteria criteria = session.createCriteria(Product.<span class="hl-keyword">class</span>);
+                criteria.add(Expression.eq(<span class="hl-string">"category"</span>, category));
+                criteria.setMaxResults(<span class="hl-number">6</span>);
+                <span class="hl-keyword">return</span> criteria.list();
+            }
+        };
+    }
+
+}</pre>
+
+<p>A callback implementation effectively can be used for any Hibernate data access.
+<code class="literal">HibernateTemplate</code> will ensure that <code class="literal">Session</code> instances are properly opened and closed,
+and automatically participate in transactions. The template instances are thread-safe
+and reusable, they can thus be kept as instance variables of the surrounding class. For
+simple single step actions like a single find, load, saveOrUpdate, or delete call,
+<code class="literal">HibernateTemplate</code> offers alternative convenience methods that can replace such one
+line callback implementations. Furthermore, Spring provides a convenient
+<code class="literal">HibernateDaoSupport</code> base class that provides a <code class="literal">setSessionFactory(..)</code> method for
+receiving a <code class="literal">SessionFactory</code>, and <code class="literal">getSessionFactory()</code> and <code class="literal">getHibernateTemplate()</code> for
+use by subclasses. In combination, this allows for very simple DAO implementations for
+typical requirements:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">extends</span> HibernateDaoSupport <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.getHibernateTemplate().find(
+            <span class="hl-string">"from test.Product product where product.category=?"</span>, category);
+    }
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-hibernate-daos" href="#orm-hibernate-daos"></a>Implementing Spring-based DAOs without callbacks</h4></div></div></div>
+
+<p>As alternative to using Spring&#8217;s <code class="literal">HibernateTemplate</code> to implement DAOs, data access code
+can also be written in a more traditional fashion, without wrapping the Hibernate access
+code in a callback, while still respecting and participating in Spring&#8217;s generic
+<code class="literal">DataAccessException</code> hierarchy. The <code class="literal">HibernateDaoSupport</code> base class offers methods to
+access the current transactional <code class="literal">Session</code> and to convert exceptions in such a scenario;
+similar methods are also available as static helpers on the <code class="literal">SessionFactoryUtils</code> class.
+Note that such code will usually pass <code class="literal">false</code> as the value of the <code class="literal">getSession(..)</code>
+methods <code class="literal">allowCreate</code> argument, to enforce running within a transaction (which avoids
+the need to close the returned <code class="literal">Session</code>, as its lifecycle is managed by the
+transaction).</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> HibernateProductDao <span class="hl-keyword">extends</span> HibernateDaoSupport <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(String category) <span class="hl-keyword">throws</span> DataAccessException, MyException {
+        Session session = getSession(false);
+        <span class="hl-keyword">try</span> {
+            Query query = session.createQuery(<span class="hl-string">"from test.Product product where product.category=?"</span>);
+            query.setString(<span class="hl-number">0</span>, category);
+            List result = query.list();
+            <span class="hl-keyword">if</span> (result == null) {
+                <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> MyException(<span class="hl-string">"No search results."</span>);
+            }
+            <span class="hl-keyword">return</span> result;
+        }
+        <span class="hl-keyword">catch</span> (HibernateException ex) {
+            <span class="hl-keyword">throw</span> convertHibernateAccessException(ex);
+        }
+    }
+}</pre>
+
+<p>The advantage of such direct Hibernate access code is that it allows <span class="emphasis"><em>any</em></span> checked
+application exception to be thrown within the data access code; contrast this to the
+<code class="literal">HibernateTemplate</code> class which is restricted to throwing only unchecked exceptions
+within the callback. Note that you can often defer the corresponding checks and the
+throwing of application exceptions to after the callback, which still allows working
+with <code class="literal">HibernateTemplate</code>. In general, the <code class="literal">HibernateTemplate</code> class' convenience methods
+are simpler and more convenient for many scenarios.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-jdo" href="#classic-spring-jdo"></a>32.1.2&nbsp;JDO</h3></div></div></div>
+
+<p>For the currently recommended usage patterns for JDO see <a class="xref" href="orm.html#orm-jdo" title="15.4&nbsp;JDO">Section&nbsp;15.4, &#8220;JDO&#8221;</a></p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jdo-template" href="#orm-jdo-template"></a>JdoTemplate and <code class="literal">JdoDaoSupport</code></h4></div></div></div>
+
+<p>Each JDO-based DAO will then receive the <code class="literal">PersistenceManagerFactory</code> through dependency
+injection. Such a DAO could be coded against plain JDO API, working with the given
+<code class="literal">PersistenceManagerFactory</code>, but will usually rather be used with the Spring Framework&#8217;s
+<code class="literal">JdoTemplate</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myProductDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"product.ProductDaoImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"persistenceManagerFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"myPmf"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">private</span> JdoTemplate jdoTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setPersistenceManagerFactory(PersistenceManagerFactory pmf) {
+        <span class="hl-keyword">this</span>.jdoTemplate = <span class="hl-keyword">new</span> JdoTemplate(pmf);
+    }
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(<span class="hl-keyword">final</span> String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> (Collection) <span class="hl-keyword">this</span>.jdoTemplate.execute(<span class="hl-keyword">new</span> JdoCallback() {
+            <span class="hl-keyword">public</span> Object doInJdo(PersistenceManager pm) <span class="hl-keyword">throws</span> JDOException {
+                Query query = pm.newQuery(Product.<span class="hl-keyword">class</span>, <span class="hl-string">"category = pCategory"</span>);
+                query.declareParameters(<span class="hl-string">"String pCategory"</span>);
+                List result = query.execute(category);
+                <span class="hl-comment">// do some further stuff with the result list</span>
+                <span class="hl-keyword">return</span> result;
+            }
+        });
+    }
+
+}</pre>
+
+<p>A callback implementation can effectively be used for any JDO data access. <code class="literal">JdoTemplate</code>
+will ensure that <code class="literal">PersistenceManager</code> s are properly opened and closed, and
+automatically participate in transactions. The template instances are thread-safe and
+reusable, they can thus be kept as instance variables of the surrounding class. For
+simple single-step actions such as a single <code class="literal">find</code>, <code class="literal">load</code>, <code class="literal">makePersistent</code>, or
+<code class="literal">delete</code> call, <code class="literal">JdoTemplate</code> offers alternative convenience methods that can replace
+such one line callback implementations. Furthermore, Spring provides a convenient
+<code class="literal">JdoDaoSupport</code> base class that provides a <code class="literal">setPersistenceManagerFactory(..)</code> method for
+receiving a <code class="literal">PersistenceManagerFactory</code>, and <code class="literal">getPersistenceManagerFactory()</code> and
+<code class="literal">getJdoTemplate()</code> for use by subclasses. In combination, this allows for very simple
+DAO implementations for typical requirements:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">extends</span> JdoDaoSupport <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> getJdoTemplate().find(Product.<span class="hl-keyword">class</span>,
+                <span class="hl-string">"category = pCategory"</span>, <span class="hl-string">"String category"</span>, <span class="hl-keyword">new</span> Object[] {category});
+    }
+
+}</pre>
+
+<p>As alternative to working with Spring&#8217;s <code class="literal">JdoTemplate</code>, you can also code Spring-based
+DAOs at the JDO API level, explicitly opening and closing a <code class="literal">PersistenceManager</code>. As
+elaborated in the corresponding Hibernate section, the main advantage of this approach
+is that your data access code is able to throw checked exceptions. <code class="literal">JdoDaoSupport</code>
+offers a variety of support methods for this scenario, for fetching and releasing a
+transactional <code class="literal">PersistenceManager</code> as well as for converting exceptions.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-jpa" href="#classic-spring-jpa"></a>32.1.3&nbsp;JPA</h3></div></div></div>
+
+<p>For the currently recommended usage patterns for JPA see <a class="xref" href="orm.html#orm-jpa" title="15.5&nbsp;JPA">Section&nbsp;15.5, &#8220;JPA&#8221;</a></p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-template" href="#orm-jpa-template"></a>JpaTemplate and <code class="literal">JpaDaoSupport</code></h4></div></div></div>
+
+<p>Each JPA-based DAO will then receive a <code class="literal">EntityManagerFactory</code> via dependency injection.
+Such a DAO can be coded against plain JPA and work with the given <code class="literal">EntityManagerFactory</code>
+or through Spring&#8217;s <code class="literal">JpaTemplate</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myProductDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"product.ProductDaoImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"entityManagerFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"myEmf"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JpaProductDao <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">private</span> JpaTemplate jpaTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setEntityManagerFactory(EntityManagerFactory emf) {
+        <span class="hl-keyword">this</span>.jpaTemplate = <span class="hl-keyword">new</span> JpaTemplate(emf);
+    }
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(<span class="hl-keyword">final</span> String category) <span class="hl-keyword">throws</span> DataAccessException {
+        <span class="hl-keyword">return</span> (Collection) <span class="hl-keyword">this</span>.jpaTemplate.execute(<span class="hl-keyword">new</span> JpaCallback() {
+            <span class="hl-keyword">public</span> Object doInJpa(EntityManager em) <span class="hl-keyword">throws</span> PersistenceException {
+                Query query = em.createQuery(<span class="hl-string">"from Product as p where p.category = :category"</span>);
+                query.setParameter(<span class="hl-string">"category"</span>, category);
+                List result = query.getResultList();
+                <span class="hl-comment">// do some further processing with the result list</span>
+                <span class="hl-keyword">return</span> result;
+            }
+        });
+    }
+
+}</pre>
+
+<p>The <code class="literal">JpaCallback</code> implementation allows any type of JPA data access. The <code class="literal">JpaTemplate</code>
+will ensure that <code class="literal">EntityManager</code> s are properly opened and closed and automatically
+participate in transactions. Moreover, the <code class="literal">JpaTemplate</code> properly handles exceptions,
+making sure resources are cleaned up and the appropriate transactions rolled back. The
+template instances are thread-safe and reusable and they can be kept as instance
+variable of the enclosing class. Note that <code class="literal">JpaTemplate</code> offers single-step actions such
+as find, load, merge, etc along with alternative convenience methods that can replace
+one line callback implementations.</p>
+<p>Furthermore, Spring provides a convenient <code class="literal">JpaDaoSupport</code> base class that provides the
+<code class="literal">get/setEntityManagerFactory</code> and <code class="literal">getJpaTemplate()</code> to be used by subclasses:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">extends</span> JpaDaoSupport <span class="hl-keyword">implements</span> ProductDao {
+
+    <span class="hl-keyword">public</span> Collection loadProductsByCategory(String category) <span class="hl-keyword">throws</span> DataAccessException {
+        Map&lt;String, String&gt; params = <span class="hl-keyword">new</span> HashMap&lt;String, String&gt;();
+        params.put(<span class="hl-string">"category"</span>, category);
+        <span class="hl-keyword">return</span> getJpaTemplate().findByNamedParams(<span class="hl-string">"from Product as p where p.category = :category"</span>, params);
+    }
+
+}</pre>
+
+<p>Besides working with Spring&#8217;s <code class="literal">JpaTemplate</code>, one can also code Spring-based DAOs against
+the JPA, doing one&#8217;s own explicit <code class="literal">EntityManager</code> handling. As also elaborated in the
+corresponding Hibernate section, the main advantage of this approach is that your data
+access code is able to throw checked exceptions. <code class="literal">JpaDaoSupport</code> offers a variety of
+support methods for this scenario, for retrieving and releasing a transaction
+<code class="literal">EntityManager</code>, as well as for converting exceptions.</p>
+<p><span class="emphasis"><em>JpaTemplate mainly exists as a sibling of JdoTemplate and HibernateTemplate, offering
+the same style for people used to it.</em></span></p>
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="clasic-spring-mvc" href="#clasic-spring-mvc"></a>32.2&nbsp;Classic Spring MVC</h2></div></div></div>
+
+<p>&#8230;</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-spring-jms" href="#classic-spring-jms"></a>32.3&nbsp;JMS Usage</h2></div></div></div>
+
+<p>One of the benefits of Spring&#8217;s JMS support is to shield the user from differences
+between the JMS 1.0.2 and 1.1 APIs. (For a description of the differences between the
+two APIs see sidebar on Domain Unification). Since it is now common to encounter only
+the JMS 1.1 API the use of classes that are based on the JMS 1.0.2 API has been
+deprecated in Spring 3.0. This section describes Spring JMS support for the JMS 1.0.2
+deprecated classes.</p>
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Domain Unification</b></p></div></div></div>
+
+<p>There are two major releases of the JMS specification, 1.0.2 and 1.1.</p>
+<p>JMS 1.0.2 defined two types of messaging domains, point-to-point (Queues) and
+publish/subscribe (Topics). The 1.0.2 API reflected these two messaging domains by
+providing a parallel class hierarchy for each domain. As a result, a client application
+became domain specific in its use of the JMS API. JMS 1.1 introduced the concept of
+domain unification that minimized both the functional differences and client API
+differences between the two domains. As an example of a functional difference that was
+removed, if you use a JMS 1.1 provider you can transactionally consume a message from
+one domain and produce a message on the other using the same <code class="literal">Session</code>.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The JMS 1.1 specification was released in April 2002 and incorporated as part of J2EE
+1.4 in November 2003. As a result, common J2EE 1.3 application servers which are still
+in widespread use (such as BEA WebLogic 8.1 and IBM WebSphere 5.1) are based on JMS
+1.0.2.</p>
+</td></tr></table></div>
+
+</div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-jms-template" href="#classic-spring-jms-template"></a>32.3.1&nbsp;JmsTemplate</h3></div></div></div>
+
+<p>Located in the package <code class="literal">org.springframework.jms.core</code> the class <code class="literal">JmsTemplate102</code>
+provides all of the features of the <code class="literal">JmsTemplate</code> described the JMS chapter, but is
+based on the JMS 1.0.2 API instead of the JMS 1.1 API. As a consequence, if you are
+using JmsTemplate102 you need to set the boolean property <code class="literal">pubSubDomain</code> to configure
+the <code class="literal">JmsTemplate</code> with knowledge of what JMS domain is being used. By default the value
+of this property is false, indicating that the point-to-point domain, Queues, will be
+used.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-aysnc-messages" href="#classic-spring-aysnc-messages"></a>32.3.2&nbsp;Asynchronous Message Reception</h3></div></div></div>
+
+<p><a class="link" href="jms.html#jms-receiving-async-message-listener-adapter" title="24.4.4&nbsp;the MessageListenerAdapter">MessageListenerAdapter&#8217;s</a> are used in
+conjunction with Spring&#8217;s <a class="link" href="jms.html#jms-mdp" title="24.2.4&nbsp;Message Listener Containers">message listener containers</a> to support
+asynchronous message reception by exposing almost any class as a Message-driven POJO. If
+you are using the JMS 1.0.2 API, you will want to use the 1.0.2 specific classes such as
+<code class="literal">MessageListenerAdapter102</code>, <code class="literal">SimpleMessageListenerContainer102</code>, and
+<code class="literal">DefaultMessageListenerContainer102</code>. These classes provide the same functionality as
+the JMS 1.1 based counterparts but rely only on the JMS 1.0.2 API.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-jms-connections" href="#classic-spring-jms-connections"></a>32.3.3&nbsp;Connections</h3></div></div></div>
+
+<p>The <code class="literal">ConnectionFactory</code> interface is part of the JMS specification and serves as the
+entry point for working with JMS. Spring provides an implementation of the
+<code class="literal">ConnectionFactory</code> interface, <code class="literal">SingleConnectionFactory102</code>, based on the JMS 1.0.2 API
+that will return the same <code class="literal">Connection</code> on all <code class="literal">createConnection()</code> calls and ignore
+calls to <code class="literal">close()</code>. You will need to set the boolean property <code class="literal">pubSubDomain</code> to indicate
+which messaging domain is used as <code class="literal">SingleConnectionFactory102</code> will always explicitly
+differentiate between a <code class="literal">javax.jms.QueueConnection</code> and a <code class="literal">javax.jmsTopicConnection</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-spring-jms-tx-management" href="#classic-spring-jms-tx-management"></a>32.3.4&nbsp;Transaction Management</h3></div></div></div>
+
+<p>In a JMS 1.0.2 environment the class <code class="literal">JmsTransactionManager102</code> provides support for
+managing JMS transactions for a single Connection Factory. Please refer to the reference
+documentation on <a class="link" href="jms.html#jms-tx" title="24.2.5&nbsp;Transaction management">JMS Transaction Management</a> for more information on this
+functionality.</p>
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="migration-4.0.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-appendices.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="classic-aop-spring.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">31.&nbsp;Migrating to Spring Framework 4.0&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;33.&nbsp;Classic Spring AOP Usage</td></tr></table></div></body></html>

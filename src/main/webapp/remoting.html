@@ -1,0 +1,1078 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>22.&nbsp;Remoting and web services using Spring</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="next" href="ejb.html" title="23.&nbsp;Enterprise JavaBeans (EJB) integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">22.&nbsp;Remoting and web services using Spring</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="remoting" href="#remoting"></a>22.&nbsp;Remoting and web services using Spring</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-introduction" href="#remoting-introduction"></a>22.1&nbsp;Introduction</h2></div></div></div>
+
+<p>Spring features integration classes for remoting support using various technologies. The
+remoting support eases the development of remote-enabled services, implemented by your
+usual (Spring) POJOs. Currently, Spring supports the following remoting technologies:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>Remote Method Invocation (RMI)</em></span>. Through the use of the <code class="literal">RmiProxyFactoryBean</code> and
+the <code class="literal">RmiServiceExporter</code> Spring supports both traditional RMI (with <code class="literal">java.rmi.Remote</code>
+interfaces and <code class="literal">java.rmi.RemoteException</code>) and transparent remoting via RMI invokers
+(with any Java interface).
+</li><li class="listitem">
+<span class="emphasis"><em>Spring&#8217;s HTTP invoker</em></span>. Spring provides a special remoting strategy which allows
+for Java serialization via HTTP, supporting any Java interface (just like the RMI
+invoker). The corresponding support classes are <code class="literal">HttpInvokerProxyFactoryBean</code> and
+<code class="literal">HttpInvokerServiceExporter</code>.
+</li><li class="listitem">
+<span class="emphasis"><em>Hessian</em></span>. By using Spring&#8217;s <code class="literal">HessianProxyFactoryBean</code> and the
+<code class="literal">HessianServiceExporter</code> you can transparently expose your services using the
+lightweight binary HTTP-based protocol provided by Caucho.
+</li><li class="listitem">
+<span class="emphasis"><em>Burlap</em></span>. Burlap is Caucho&#8217;s XML-based alternative to Hessian. Spring provides
+support classes such as <code class="literal">BurlapProxyFactoryBean</code> and <code class="literal">BurlapServiceExporter</code>.
+</li><li class="listitem">
+<span class="emphasis"><em>JAX-WS</em></span>. Spring provides remoting support for web services via JAX-WS (the
+successor of JAX-RPC, as introduced in Java EE 5 and Java 6).
+</li><li class="listitem">
+<span class="emphasis"><em>JMS</em></span>. Remoting using JMS as the underlying protocol is supported via the
+<code class="literal">JmsInvokerServiceExporter</code> and <code class="literal">JmsInvokerProxyFactoryBean</code> classes.
+</li><li class="listitem">
+<span class="emphasis"><em>AMQP</em></span>. Remoting using AMQP as the underlying protocol is supported by the Spring
+AMQP project.
+</li></ul></div>
+
+<p>While discussing the remoting capabilities of Spring, we&#8217;ll use the following domain
+model and corresponding services:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Account <span class="hl-keyword">implements</span> Serializable{
+
+    <span class="hl-keyword">private</span> String name;
+
+    <span class="hl-keyword">public</span> String getName(){
+        <span class="hl-keyword">return</span> name;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(String name) {
+        <span class="hl-keyword">this</span>.name = name;
+    }
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> AccountService {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertAccount(Account account);
+
+    <span class="hl-keyword">public</span> List&lt;Account&gt; getAccounts(String name);
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> RemoteAccountService <span class="hl-keyword">extends</span> Remote {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertAccount(Account account) <span class="hl-keyword">throws</span> RemoteException;
+
+    <span class="hl-keyword">public</span> List&lt;Account&gt; getAccounts(String name) <span class="hl-keyword">throws</span> RemoteException;
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-comment">// the implementation doing nothing at the moment</span>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AccountServiceImpl <span class="hl-keyword">implements</span> AccountService {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertAccount(Account acc) {
+        <span class="hl-comment">// do something...</span>
+    }
+
+    <span class="hl-keyword">public</span> List&lt;Account&gt; getAccounts(String name) {
+        <span class="hl-comment">// do something...</span>
+    }
+
+}</pre>
+
+<p>We will start exposing the service to a remote client by using RMI and talk a bit about
+the drawbacks of using RMI. We&#8217;ll then continue to show an example using Hessian as the
+protocol.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-rmi" href="#remoting-rmi"></a>22.2&nbsp;Exposing services using RMI</h2></div></div></div>
+
+<p>Using Spring&#8217;s support for RMI, you can transparently expose your services through the
+RMI infrastructure. After having this set up, you basically have a configuration similar
+to remote EJBs, except for the fact that there is no standard support for security
+context propagation or remote transaction propagation. Spring does provide hooks for
+such additional invocation context when using the RMI invoker, so you can for example
+plug in security frameworks or custom security credentials here.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-server" href="#remoting-rmi-server"></a>22.2.1&nbsp;Exporting the service using the RmiServiceExporter</h3></div></div></div>
+
+<p>Using the <code class="literal">RmiServiceExporter</code>, we can expose the interface of our AccountService object
+as RMI object. The interface can be accessed by using <code class="literal">RmiProxyFactoryBean</code>, or via
+plain RMI in case of a traditional RMI service. The <code class="literal">RmiServiceExporter</code> explicitly
+supports the exposing of any non-RMI services via RMI invokers.</p>
+<p>Of course, we first have to set up our service in the Spring container:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.AccountServiceImpl"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- any additional properties, maybe a DAO? --&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Next we&#8217;ll have to expose our service using the <code class="literal">RmiServiceExporter</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.rmi.RmiServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- does not necessarily have to be the same name as the bean to be exported --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-comment">&lt;!-- defaults to 1099 --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"registryPort"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"1199"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>As you can see, we&#8217;re overriding the port for the RMI registry. Often, your application
+server also maintains an RMI registry and it is wise to not interfere with that one.
+Furthermore, the service name is used to bind the service under. So right now, the
+service will be bound at <code class="literal">'rmi://HOST:1199/AccountService'</code>. We&#8217;ll use the URL later on
+to link in the service at the client side.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The <code class="literal">servicePort</code> property has been omitted (it defaults to 0). This means that an
+anonymous port will be used to communicate with the service.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-client" href="#remoting-rmi-client"></a>22.2.2&nbsp;Linking in the service at the client</h3></div></div></div>
+
+<p>Our client is a simple object using the <code class="literal">AccountService</code> to manage accounts:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleObject {
+
+    <span class="hl-keyword">private</span> AccountService accountService;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setAccountService(AccountService accountService) {
+        <span class="hl-keyword">this</span>.accountService = accountService;
+    }
+
+    <span class="hl-comment">// additional methods using the accountService</span>
+
+}</pre>
+
+<p>To link in the service on the client, we&#8217;ll create a separate Spring container,
+containing the simple object and the service linking configuration bits:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.SimpleObject"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.rmi.RmiProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"rmi://HOST:1199/AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>That&#8217;s all we need to do to support the remote account service on the client. Spring
+will transparently create an invoker and remotely enable the account service through the
+<code class="literal">RmiServiceExporter</code>. At the client we&#8217;re linking it in using the <code class="literal">RmiProxyFactoryBean</code>.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-caucho-protocols" href="#remoting-caucho-protocols"></a>22.3&nbsp;Using Hessian or Burlap to remotely call services via HTTP</h2></div></div></div>
+
+<p>Hessian offers a binary HTTP-based remoting protocol. It is developed by Caucho and more
+information about Hessian itself can be found at <a class="ulink" href="http://www.caucho.com" target="_top">http://www.caucho.com</a>.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian" href="#remoting-caucho-protocols-hessian"></a>22.3.1&nbsp;Wiring up the DispatcherServlet for Hessian and co.</h3></div></div></div>
+
+<p>Hessian communicates via HTTP and does so using a custom servlet. Using Spring&#8217;s
+<code class="literal">DispatcherServlet</code> principles, as known from Spring Web MVC usage, you can easily wire
+up such a servlet exposing your services. First we&#8217;ll have to create a new servlet in
+your application (this is an excerpt from <code class="literal">'web.xml'</code>):</p>
+<pre class="programlisting"><span class="hl-tag">&lt;servlet&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>remoting<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;servlet-class&gt;</span>org.springframework.web.servlet.DispatcherServlet<span class="hl-tag">&lt;/servlet-class&gt;</span>
+    <span class="hl-tag">&lt;load-on-startup&gt;</span>1<span class="hl-tag">&lt;/load-on-startup&gt;</span>
+<span class="hl-tag">&lt;/servlet&gt;</span>
+
+<span class="hl-tag">&lt;servlet-mapping&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>remoting<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;url-pattern&gt;</span>/remoting/*<span class="hl-tag">&lt;/url-pattern&gt;</span>
+<span class="hl-tag">&lt;/servlet-mapping&gt;</span></pre>
+
+<p>You&#8217;re probably familiar with Spring&#8217;s <code class="literal">DispatcherServlet</code> principles and if so, you
+know that now you&#8217;ll have to create a Spring container configuration resource named
+<code class="literal">'remoting-servlet.xml'</code> (after the name of your servlet) in the <code class="literal">'WEB-INF'</code> directory.
+The application context will be used in the next section.</p>
+<p>Alternatively, consider the use of Spring&#8217;s simpler <code class="literal">HttpRequestHandlerServlet</code>. This
+allows you to embed the remote exporter definitions in your root application context (by
+default in <code class="literal">'WEB-INF/applicationContext.xml'</code>), with individual servlet definitions
+pointing to specific exporter beans. Each servlet name needs to match the bean name of
+its target exporter in this case.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-server" href="#remoting-caucho-protocols-hessian-server"></a>22.3.2&nbsp;Exposing your beans by using the HessianServiceExporter</h3></div></div></div>
+
+<p>In the newly created application context called <code class="literal">remoting-servlet.xml</code>, we&#8217;ll create a
+<code class="literal">HessianServiceExporter</code> exporting your services:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.AccountServiceImpl"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- any additional properties, maybe a DAO? --&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"/AccountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.caucho.HessianServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Now we&#8217;re ready to link in the service at the client. No explicit handler mapping is
+specified, mapping request URLs onto services, so <code class="literal">BeanNameUrlHandlerMapping</code> will be
+used: Hence, the service will be exported at the URL indicated through its bean name
+within the containing <code class="literal">DispatcherServlet</code>'s mapping (as defined above):
+<code class="literal">'http://HOST:8080/remoting/AccountService'</code>.</p>
+<p>Alternatively, create a <code class="literal">HessianServiceExporter</code> in your root application context (e.g.
+in <code class="literal">'WEB-INF/applicationContext.xml'</code>):</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountExporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.caucho.HessianServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>In the latter case, define a corresponding servlet for this exporter in <code class="literal">'web.xml'</code>,
+with the same end result: The exporter getting mapped to the request path
+<code class="literal">/remoting/AccountService</code>. Note that the servlet name needs to match the bean name of
+the target exporter.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;servlet&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>accountExporter<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;servlet-class&gt;</span>org.springframework.web.context.support.HttpRequestHandlerServlet<span class="hl-tag">&lt;/servlet-class&gt;</span>
+<span class="hl-tag">&lt;/servlet&gt;</span>
+
+<span class="hl-tag">&lt;servlet-mapping&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>accountExporter<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;url-pattern&gt;</span>/remoting/AccountService<span class="hl-tag">&lt;/url-pattern&gt;</span>
+<span class="hl-tag">&lt;/servlet-mapping&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-client" href="#remoting-caucho-protocols-hessian-client"></a>22.3.3&nbsp;Linking in the service on the client</h3></div></div></div>
+
+<p>Using the <code class="literal">HessianProxyFactoryBean</code> we can link in the service at the client. The same
+principles apply as with the RMI example. We&#8217;ll create a separate bean factory or
+application context and mention the following beans where the <code class="literal">SimpleObject</code> is using
+the <code class="literal">AccountService</code> to manage accounts:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.SimpleObject"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.caucho.HessianProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"http://remotehost:8080/remoting/AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-burlap" href="#remoting-caucho-protocols-burlap"></a>22.3.4&nbsp;Using Burlap</h3></div></div></div>
+
+<p>We won&#8217;t discuss Burlap, the XML-based equivalent of Hessian, in detail here, since it
+is configured and set up in exactly the same way as the Hessian variant explained above.
+Just replace the word <code class="literal">Hessian</code> with <code class="literal">Burlap</code> and you&#8217;re all set to go.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-security" href="#remoting-caucho-protocols-security"></a>22.3.5&nbsp;Applying HTTP basic authentication to a service exposed through Hessian or Burlap</h3></div></div></div>
+
+<p>One of the advantages of Hessian and Burlap is that we can easily apply HTTP basic
+authentication, because both protocols are HTTP-based. Your normal HTTP server security
+mechanism can easily be applied through using the <code class="literal">web.xml</code> security features, for
+example. Usually, you don&#8217;t use per-user security credentials here, but rather shared
+credentials defined at the <code class="literal">Hessian/BurlapProxyFactoryBean</code> level (similar to a JDBC
+<code class="literal">DataSource</code>).</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.handler.BeanNameUrlHandlerMapping"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptors"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"authorizationInterceptor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"authorizationInterceptor"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.handler.UserRoleAuthorizationInterceptor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"authorizedRoles"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"administrator,operator"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This is an example where we explicitly mention the <code class="literal">BeanNameUrlHandlerMapping</code> and set
+an interceptor allowing only administrators and operators to call the beans mentioned in
+this application context.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Of course, this example doesn&#8217;t show a flexible kind of security infrastructure. For
+more options as far as security is concerned, have a look at the Spring Security project
+at <a class="ulink" href="http://projects.spring.io/spring-security/" target="_top">http://projects.spring.io/spring-security/</a>.</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-httpinvoker" href="#remoting-httpinvoker"></a>22.4&nbsp;Exposing services using HTTP invokers</h2></div></div></div>
+
+<p>As opposed to Burlap and Hessian, which are both lightweight protocols using their own
+slim serialization mechanisms, Spring HTTP invokers use the standard Java serialization
+mechanism to expose services through HTTP. This has a huge advantage if your arguments
+and return types are complex types that cannot be serialized using the serialization
+mechanisms Hessian and Burlap use (refer to the next section for more considerations
+when choosing a remoting technology).</p>
+<p>Under the hood, Spring uses either the standard facilities provided by the JDK or
+Apache <code class="literal">HttpComponents</code> to perform HTTP calls. Use the latter if you need more
+advanced and easier-to-use functionality. Refer to
+<a class="ulink" href="http://hc.apache.org/httpcomponents-client-ga/" target="_top">hc.apache.org/httpcomponents-client-ga/</a>
+for more information.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-server" href="#remoting-httpinvoker-server"></a>22.4.1&nbsp;Exposing the service object</h3></div></div></div>
+
+<p>Setting up the HTTP invoker infrastructure for a service object resembles closely the
+way you would do the same using Hessian or Burlap. Just as Hessian support provides the
+<code class="literal">HessianServiceExporter</code>, Spring&#8217;s HttpInvoker support provides the
+<code class="literal">org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter</code>.</p>
+<p>To expose the <code class="literal">AccountService</code> (mentioned above) within a Spring Web MVC
+<code class="literal">DispatcherServlet</code>, the following configuration needs to be in place in the
+dispatcher&#8217;s application context:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"/AccountService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Such an exporter definition will be exposed through the <code class="literal">DispatcherServlet</code>'s standard
+mapping facilities, as explained in the section on Hessian.</p>
+<p>Alternatively, create an <code class="literal">HttpInvokerServiceExporter</code> in your root application context
+(e.g. in <code class="literal">'WEB-INF/applicationContext.xml'</code>):</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountExporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.httpinvoker.HttpInvokerServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>In addition, define a corresponding servlet for this exporter in <code class="literal">'web.xml'</code>, with the
+servlet name matching the bean name of the target exporter:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;servlet&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>accountExporter<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;servlet-class&gt;</span>org.springframework.web.context.support.HttpRequestHandlerServlet<span class="hl-tag">&lt;/servlet-class&gt;</span>
+<span class="hl-tag">&lt;/servlet&gt;</span>
+
+<span class="hl-tag">&lt;servlet-mapping&gt;</span>
+    <span class="hl-tag">&lt;servlet-name&gt;</span>accountExporter<span class="hl-tag">&lt;/servlet-name&gt;</span>
+    <span class="hl-tag">&lt;url-pattern&gt;</span>/remoting/AccountService<span class="hl-tag">&lt;/url-pattern&gt;</span>
+<span class="hl-tag">&lt;/servlet-mapping&gt;</span></pre>
+
+<p>If you are running outside of a servlet container and are using Oracle&#8217;s Java 6, then you
+can use the built-in HTTP server implementation. You can configure the
+<code class="literal">SimpleHttpServerFactoryBean</code> together with a <code class="literal">SimpleHttpInvokerServiceExporter</code> as is
+shown in this example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountExporter"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.httpinvoker.SimpleHttpInvokerServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"httpServer"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.support.SimpleHttpServerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"contexts"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;util:map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"/remoting/AccountService"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"accountExporter"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/util:map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"port"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"8080"</span><span class="hl-tag"> /&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-client" href="#remoting-httpinvoker-client"></a>22.4.2&nbsp;Linking in the service at the client</h3></div></div></div>
+
+<p>Again, linking in the service from the client much resembles the way you would do it
+when using Hessian or Burlap. Using a proxy, Spring will be able to translate your calls
+to HTTP POST requests to the URL pointing to the exported service.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"httpInvokerProxy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.httpinvoker.HttpInvokerProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"http://remotehost:8080/remoting/AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>As mentioned before, you can choose what HTTP client you want to use. By default, the
+<code class="literal">HttpInvokerProxy</code> uses the JDK&#8217;s HTTP functionality, but you can also use the Apache
+<code class="literal">HttpComponents</code> client by setting the <code class="literal">httpInvokerRequestExecutor</code> property:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"httpInvokerRequestExecutor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.httpinvoker.HttpComponentsHttpInvokerRequestExecutor"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/property&gt;</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-web-services" href="#remoting-web-services"></a>22.5&nbsp;Web services</h2></div></div></div>
+
+<p>Spring provides full support for standard Java web services APIs:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Exposing web services using JAX-WS
+</li><li class="listitem">
+Accessing web services using JAX-WS
+</li></ul></div>
+
+<p>In addition to stock support for JAX-WS in Spring Core, the Spring portfolio also
+features <a class="ulink" href="http://www.springframework.org/spring-ws" target="_top">Spring Web Services</a>, a solution for
+contract-first, document-driven web services - highly recommended for building modern,
+future-proof web services.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-servlet" href="#remoting-web-services-jaxws-export-servlet"></a>22.5.1&nbsp;Exposing servlet-based web services using JAX-WS</h3></div></div></div>
+
+<p>Spring provides a convenient base class for JAX-WS servlet endpoint implementations -
+<code class="literal">SpringBeanAutowiringSupport</code>. To expose our <code class="literal">AccountService</code> we extend Spring&#8217;s
+<code class="literal">SpringBeanAutowiringSupport</code> class and implement our business logic here, usually
+delegating the call to the business layer. We&#8217;ll simply use Spring&#8217;s <code class="literal">@Autowired</code>
+annotation for expressing such dependencies on Spring-managed beans.</p>
+<pre class="programlisting"><strong class="hl-tag" style="color: blue">/**
+ * JAX-WS compliant AccountService implementation that simply delegates
+ * to the AccountService implementation in the root web application context.
+ *
+ * This wrapper class is necessary because JAX-WS requires working with dedicated
+ * endpoint classes. If an existing service needs to be exported, a wrapper that
+ * extends SpringBeanAutowiringSupport for simple Spring bean autowiring (through
+ * the @Autowired annotation) is the simplest JAX-WS compliant way.
+ *
+ * This is the class registered with the server-side JAX-WS implementation.
+ * In the case of a Java EE 5 server, this would simply be defined as a servlet
+ * in web.xml, with the server detecting that this is a JAX-WS endpoint and reacting
+ * accordingly. The servlet name usually needs to match the specified WS service name.
+ *
+ * The web service engine manages the lifecycle of instances of this class.
+ * Spring bean references will just be wired in here.
+ */</strong>
+<span class="hl-keyword">import</span> org.springframework.web.context.support.SpringBeanAutowiringSupport;
+
+<em><span class="hl-annotation" style="color: gray">@WebService(serviceName="AccountService")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AccountServiceEndpoint <span class="hl-keyword">extends</span> SpringBeanAutowiringSupport {
+
+    <em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+    <span class="hl-keyword">private</span> AccountService biz;
+
+    <em><span class="hl-annotation" style="color: gray">@WebMethod</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertAccount(Account acc) {
+        biz.insertAccount(acc);
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@WebMethod</span></em>
+    <span class="hl-keyword">public</span> Account[] getAccounts(String name) {
+        <span class="hl-keyword">return</span> biz.getAccounts(name);
+    }
+
+}</pre>
+
+<p>Our <code class="literal">AccountServletEndpoint</code> needs to run in the same web application as the Spring
+context to allow for access to Spring&#8217;s facilities. This is the case by default in Java
+EE 5 environments, using the standard contract for JAX-WS servlet endpoint deployment.
+See Java EE 5 web service tutorials for details.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-standalone" href="#remoting-web-services-jaxws-export-standalone"></a>22.5.2&nbsp;Exporting standalone web services using JAX-WS</h3></div></div></div>
+
+<p>The built-in JAX-WS provider that comes with Oracle&#8217;s JDK 1.6 supports exposure of web
+services using the built-in HTTP server that&#8217;s included in JDK 1.6 as well. Spring&#8217;s
+<code class="literal">SimpleJaxWsServiceExporter</code> detects all <code class="literal">@WebService</code> annotated beans in the Spring
+application context, exporting them through the default JAX-WS server (the JDK 1.6 HTTP
+server).</p>
+<p>In this scenario, the endpoint instances are defined and managed as Spring beans
+themselves; they will be registered with the JAX-WS engine but their lifecycle will be
+up to the Spring application context. This means that Spring functionality like explicit
+dependency injection may be applied to the endpoint instances. Of course,
+annotation-driven injection through <code class="literal">@Autowired</code> will work as well.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.jaxws.SimpleJaxWsServiceExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"baseAddress"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"http://localhost:8080/"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountServiceEndpoint"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.AccountServiceEndpoint"</span><span class="hl-tag">&gt;</span>
+    ...
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+...</pre>
+
+<p>The <code class="literal">AccountServiceEndpoint</code> may derive from Spring&#8217;s <code class="literal">SpringBeanAutowiringSupport</code> but
+doesn&#8217;t have to since the endpoint is a fully Spring-managed bean here. This means that
+the endpoint implementation may look like as follows, without any superclass declared -
+and Spring&#8217;s <code class="literal">@Autowired</code> configuration annotation still being honored:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@WebService(serviceName="AccountService")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AccountServiceEndpoint {
+
+    <em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+    <span class="hl-keyword">private</span> AccountService biz;
+
+    <em><span class="hl-annotation" style="color: gray">@WebMethod</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertAccount(Account acc) {
+        biz.insertAccount(acc);
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@WebMethod</span></em>
+    <span class="hl-keyword">public</span> List&lt;Account&gt; getAccounts(String name) {
+        <span class="hl-keyword">return</span> biz.getAccounts(name);
+    }
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-ri" href="#remoting-web-services-jaxws-export-ri"></a>22.5.3&nbsp;Exporting web services using the JAX-WS RI&#8217;s Spring support</h3></div></div></div>
+
+<p>Oracle&#8217;s JAX-WS RI, developed as part of the GlassFish project, ships Spring support as
+part of its JAX-WS Commons project. This allows for defining JAX-WS endpoints as
+Spring-managed beans, similar to the standalone mode discussed in the previous section -
+but this time in a Servlet environment. <span class="emphasis"><em>Note that this is not portable in a Java EE 5
+environment; it is mainly intended for non-EE environments such as Tomcat, embedding the
+JAX-WS RI as part of the web application.</em></span></p>
+<p>The difference to the standard style of exporting servlet-based endpoints is that the
+lifecycle of the endpoint instances themselves will be managed by Spring here, and that
+there will be only one JAX-WS servlet defined in <code class="literal">web.xml</code>. With the standard Java EE 5
+style (as illustrated above), you&#8217;ll have one servlet definition per service endpoint,
+with each endpoint typically delegating to Spring beans (through the use of
+<code class="literal">@Autowired</code>, as shown above).</p>
+<p>Check out <a class="ulink" href="https://jax-ws-commons.java.net/spring/" target="_top">https://jax-ws-commons.java.net/spring/</a>
+for details on setup and usage style.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-access" href="#remoting-web-services-jaxws-access"></a>22.5.4&nbsp;Accessing web services using JAX-WS</h3></div></div></div>
+
+<p>Spring provides two factory beans to create JAX-WS web service proxies, namely
+<code class="literal">LocalJaxWsServiceFactoryBean</code> and <code class="literal">JaxWsPortProxyFactoryBean</code>. The former can only
+return a JAX-WS service class for us to work with. The latter is the full-fledged
+version that can return a proxy that implements our business service interface. In this
+example we use the latter to create a proxy for the <code class="literal">AccountService</code> endpoint (again):</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountWebService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.jaxws.JaxWsPortProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"wsdlDocumentUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"http://localhost:8888/AccountServiceEndpoint?WSDL"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"namespaceUri"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"http://example/"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"AccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"portName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"AccountServiceEndpointPort"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Where <code class="literal">serviceInterface</code> is our business interface the clients will use.
+<code class="literal">wsdlDocumentUrl</code> is the URL for the WSDL file. Spring needs this a startup time to
+create the JAX-WS Service. <code class="literal">namespaceUri</code> corresponds to the targetNamespace in the
+.wsdl file. <code class="literal">serviceName</code> corresponds to the service name in the .wsdl file. <code class="literal">portName</code>
+corresponds to the port name in the .wsdl file.</p>
+<p>Accessing the web service is now very easy as we have a bean factory for it that will
+expose it as <code class="literal">AccountService</code> interface. We can wire this up in Spring:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"client"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"example.AccountClientImpl"</span><span class="hl-tag">&gt;</span>
+    ...
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountWebService"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>From the client code we can access the web service just as if it was a normal class:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AccountClientImpl {
+
+    <span class="hl-keyword">private</span> AccountService service;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setService(AccountService service) {
+        <span class="hl-keyword">this</span>.service = service;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> foo() {
+        service.insertAccount(...);
+    }
+}</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The above is slightly simplified in that JAX-WS requires endpoint interfaces
+and implementation classes to be annotated with <code class="literal">@WebService</code>, <code class="literal">@SOAPBinding</code> etc
+annotations. This means that you cannot (easily) use plain Java interfaces and
+implementation classes as JAX-WS endpoint artifacts; you need to annotate them
+accordingly first. Check the JAX-WS documentation for details on those requirements.</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-jms" href="#remoting-jms"></a>22.6&nbsp;JMS</h2></div></div></div>
+
+<p>It is also possible to expose services transparently using JMS as the underlying
+communication protocol. The JMS remoting support in the Spring Framework is pretty basic
+- it sends and receives on the <code class="literal">same thread</code> and in the <span class="emphasis"><em>same non-transactional</em></span>
+<code class="literal">Session</code>, and as such throughput will be very implementation dependent. Note that these
+single-threaded and non-transactional constraints apply only to Spring&#8217;s JMS
+<span class="emphasis"><em>remoting</em></span> support. See <a class="xref" href="jms.html" title="24.&nbsp;JMS (Java Message Service)">Chapter&nbsp;24, <i>JMS (Java Message Service)</i></a> for information on Spring&#8217;s rich support for JMS-based
+<span class="emphasis"><em>messaging</em></span>.</p>
+<p>The following interface is used on both the server and the client side.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> CheckingAccountService {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> cancelAccount(Long accountId);
+
+}</pre>
+
+<p>The following simple implementation of the above interface is used on the server-side.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleCheckingAccountService <span class="hl-keyword">implements</span> CheckingAccountService {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> cancelAccount(Long accountId) {
+        System.out.println(<span class="hl-string">"Cancelling account ["</span> + accountId + <span class="hl-string">"]"</span>);
+    }
+
+}</pre>
+
+<p>This configuration file contains the JMS-infrastructure beans that are shared on both
+the client and server.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"connectionFactory"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.activemq.ActiveMQConnectionFactory"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"brokerURL"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"tcp://ep-t43:61616"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"queue"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.activemq.command.ActiveMQQueue"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">value</span>=<span class="hl-value">"mmm"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-server" href="#remoting-jms-server"></a>22.6.1&nbsp;Server-side configuration</h3></div></div></div>
+
+<p>On the server, you just need to expose the service object using the
+<code class="literal">JmsInvokerServiceExporter</code>.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"checkingAccountService"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jms.remoting.JmsInvokerServiceExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"com.foo.CheckingAccountService"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"service"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.SimpleCheckingAccountService"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jms.listener.SimpleMessageListenerContainer"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"connectionFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"connectionFactory"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"destination"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"queue"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"concurrentConsumers"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"3"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"messageListener"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"checkingAccountService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Server {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">void</span> main(String[] args) <span class="hl-keyword">throws</span> Exception {
+        <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-keyword">new</span> String[]{<span class="hl-string">"com/foo/server.xml"</span>, <span class="hl-string">"com/foo/jms.xml"</span>});
+    }
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-client" href="#remoting-jms-client"></a>22.6.2&nbsp;Client-side configuration</h3></div></div></div>
+
+<p>The client merely needs to create a client-side proxy that will implement the agreed
+upon interface ( <code class="literal">CheckingAccountService</code>). The resulting object created off the back of
+the following bean definition can be injected into other client side objects, and the
+proxy will take care of forwarding the call to the server-side object via JMS.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"checkingAccountService"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jms.remoting.JmsInvokerProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"com.foo.CheckingAccountService"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"connectionFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"connectionFactory"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"queue"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"queue"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.springframework.context.ApplicationContext;
+<span class="hl-keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Client {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">void</span> main(String[] args) <span class="hl-keyword">throws</span> Exception {
+        ApplicationContext ctx = <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(
+                <span class="hl-keyword">new</span> String[] {<span class="hl-string">"com/foo/client.xml"</span>, <span class="hl-string">"com/foo/jms.xml"</span>});
+        CheckingAccountService service = (CheckingAccountService) ctx.getBean(<span class="hl-string">"checkingAccountService"</span>);
+        service.cancelAccount(<span class="hl-keyword">new</span> Long(<span class="hl-number">10</span>));
+    }
+
+}</pre>
+
+<p>You may also wish to investigate the support provided by the
+<a class="ulink" href="http://lingo.codehaus.org/" target="_top">Lingo</a> project, which (to quote the homepage blurb) "<span class="emphasis"><em>&#8230; is
+a lightweight POJO based remoting and messaging library based on the Spring Framework&#8217;s
+remoting libraries which extends it to support JMS.</em></span>"</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-amqp" href="#remoting-amqp"></a>22.7&nbsp;AMQP</h2></div></div></div>
+
+<p>Refer to the <a class="ulink" href="http://docs.spring.io/spring-amqp/reference/html/amqp.html#remoting" target="_top">Spring
+AMQP Reference Document <span class="emphasis"><em>Spring Remoting with AMQP</em></span> section</a> for more information.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-autodection-remote-interfaces" href="#remoting-autodection-remote-interfaces"></a>22.8&nbsp;Auto-detection is not implemented for remote interfaces</h2></div></div></div>
+
+<p>The main reason why auto-detection of implemented interfaces does not occur for remote
+interfaces is to avoid opening too many doors to remote callers. The target object might
+implement internal callback interfaces like <code class="literal">InitializingBean</code> or <code class="literal">DisposableBean</code> which
+one would not want to expose to callers.</p>
+<p>Offering a proxy with all interfaces implemented by the target usually does not matter
+in the local case. But when exporting a remote service, you should expose a specific
+service interface, with specific operations intended for remote usage. Besides internal
+callback interfaces, the target might implement multiple business interfaces, with just
+one of them intended for remote exposure. For these reasons, we <span class="emphasis"><em>require</em></span> such a
+service interface to be specified.</p>
+<p>This is a trade-off between configuration convenience and the risk of accidental
+exposure of internal methods. Always specifying a service interface is not too much
+effort, and puts you on the safe side regarding controlled exposure of specific methods.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-considerations" href="#remoting-considerations"></a>22.9&nbsp;Considerations when choosing a technology</h2></div></div></div>
+
+<p>Each and every technology presented here has its drawbacks. You should carefully
+consider your needs, the services you are exposing and the objects you&#8217;ll be sending
+over the wire when choosing a technology.</p>
+<p>When using RMI, it&#8217;s not possible to access the objects through the HTTP protocol,
+unless you&#8217;re tunneling the RMI traffic. RMI is a fairly heavy-weight protocol in that
+it supports full-object serialization which is important when using a complex data model
+that needs serialization over the wire. However, RMI-JRMP is tied to Java clients: It is
+a Java-to-Java remoting solution.</p>
+<p>Spring&#8217;s HTTP invoker is a good choice if you need HTTP-based remoting but also rely on
+Java serialization. It shares the basic infrastructure with RMI invokers, just using
+HTTP as transport. Note that HTTP invokers are not only limited to Java-to-Java remoting
+but also to Spring on both the client and server side. (The latter also applies to
+Spring&#8217;s RMI invoker for non-RMI interfaces.)</p>
+<p>Hessian and/or Burlap might provide significant value when operating in a heterogeneous
+environment, because they explicitly allow for non-Java clients. However, non-Java
+support is still limited. Known issues include the serialization of Hibernate objects in
+combination with lazily-initialized collections. If you have such a data model, consider
+using RMI or HTTP invokers instead of Hessian.</p>
+<p>JMS can be useful for providing clusters of services and allowing the JMS broker to take
+care of load balancing, discovery and auto-failover. By default: Java serialization is
+used when using JMS remoting but the JMS provider could use a different mechanism for
+the wire formatting, such as XStream to allow servers to be implemented in other
+technologies.</p>
+<p>Last but not least, EJB has an advantage over RMI in that it supports standard
+role-based authentication and authorization and remote transaction propagation. It is
+possible to get RMI invokers or HTTP invokers to support security context propagation as
+well, although this is not provided by core Spring: There are just appropriate hooks for
+plugging in third-party or custom solutions here.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="rest-client-access" href="#rest-client-access"></a>22.10&nbsp;Accessing RESTful services on the Client</h2></div></div></div>
+
+<p>The <code class="literal">RestTemplate</code> is the core class for client-side access to RESTful services. It is
+conceptually similar to other template classes in Spring, such as <code class="literal">JdbcTemplate</code> and
+<code class="literal">JmsTemplate</code> and other template classes found in other Spring portfolio projects.
+<code class="literal">RestTemplate</code>'s behavior is customized by providing callback methods and configuring
+the <code class="literal">HttpMessageConverter</code> used to marshal objects into the HTTP request body and to
+unmarshal any response back into an object. As it is common to use XML as a message
+format, Spring provides a <code class="literal">MarshallingHttpMessageConverter</code> that uses the Object-to-XML
+framework that is part of the <code class="literal">org.springframework.oxm</code> package. This gives you a wide
+range of choices of XML to Object mapping technologies to choose from.</p>
+<p>This section describes how to use the <code class="literal">RestTemplate</code> and its associated
+<code class="literal">HttpMessageConverters</code>.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-resttemplate" href="#rest-resttemplate"></a>22.10.1&nbsp;RestTemplate</h3></div></div></div>
+
+<p>Invoking RESTful services in Java is typically done using a helper class such as Apache
+HttpComponents <code class="literal">HttpClient</code>. For common REST operations this approach is too low level as
+shown below.</p>
+<pre class="programlisting">String uri = <span class="hl-string">"http://example.com/hotels/1/bookings"</span>;
+
+PostMethod post = <span class="hl-keyword">new</span> PostMethod(uri);
+String request = <span class="hl-comment">// create booking request content</span>
+post.setRequestEntity(<span class="hl-keyword">new</span> StringRequestEntity(request));
+
+httpClient.executeMethod(post);
+
+<span class="hl-keyword">if</span> (HttpStatus.SC_CREATED == post.getStatusCode()) {
+    Header location = post.getRequestHeader(<span class="hl-string">"Location"</span>);
+    <span class="hl-keyword">if</span> (location != null) {
+        System.out.println(<span class="hl-string">"Created new booking at :"</span> + location.getValue());
+    }
+}</pre>
+
+<p>RestTemplate provides higher level methods that correspond to each of the six main HTTP
+methods that make invoking many RESTful services a one-liner and enforce REST best
+practices.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>RestTemplate has an asynchronous counter-part: see <a class="xref" href="remoting.html#rest-async-resttemplate" title="22.10.3&nbsp;Async RestTemplate">Section&nbsp;22.10.3, &#8220;Async RestTemplate&#8221;</a>.</p>
+</td></tr></table></div>
+
+<div class="table"><a name="rest-overview-of-resttemplate-methods-tbl" href="#rest-overview-of-resttemplate-methods-tbl"></a><p class="title"><b>Table&nbsp;22.1.&nbsp;Overview of RestTemplate methods</b></p><div class="table-contents">
+
+  <table summary="Overview of RestTemplate methods" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">HTTP Method</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">RestTemplate Method</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>DELETE</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#delete(String,%20Object%E2%80%A6)" target="_top">delete</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>GET</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#getForObject(String,%20Class,%20Object%E2%80%A6)" target="_top">getForObject</a>
+  <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#getForEntity(String,%20Class,%20Object%E2%80%A6)" target="_top">getForEntity</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>HEAD</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#headForHeaders(String,%20Object%E2%80%A6)" target="_top">headForHeaders(String
+  url, String&#8230; urlVariables)</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>OPTIONS</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#optionsForAllow(String,%20Object%E2%80%A6)" target="_top">optionsForAllow(String
+  url, String&#8230; urlVariables)</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>POST</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#postForLocation(String,%20Object,%20Object%E2%80%A6)" target="_top">postForLocation(String
+  url, Object request, String&#8230; urlVariables)</a>
+  <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#postForObject(java.lang.String,%20java.lang.Object,%20java.lang.Class,%20java.lang.String%E2%80%A6)" target="_top">postForObject(String
+  url, Object request, Class&lt;T&gt; responseType, String&#8230; uriVariables)</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>PUT</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#put(String,%20Object,%20Object%E2%80%A6)" target="_top">put(String
+  url, Object request, String&#8230;urlVariables)</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>PATCH and others</p></td><td style="" align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#exchange(java.lang.String,%20org.springframework.http.HttpMethod,%20org.springframework.http.HttpEntity,%20java.lang.Class,%20java.lang.Object%E2%80%A6)" target="_top">exchange</a>
+  <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#execute(java.lang.String,%20org.springframework.http.HttpMethod,%20org.springframework.web.client.RequestCallback,%20org.springframework.web.client.ResponseExtractor,%20java.lang.Object%E2%80%A6)" target="_top">execute</a></p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>The names of <code class="literal">RestTemplate</code> methods follow a naming convention, the first part indicates
+what HTTP method is being invoked and the second part indicates what is returned. For
+example, the method <code class="literal">getForObject()</code> will perform a GET, convert the HTTP response into
+an object type of your choice and return that object. The method <code class="literal">postForLocation()</code>
+will do a POST, converting the given object into a HTTP request and return the response
+HTTP Location header where the newly created object can be found. In case of an
+exception processing the HTTP request, an exception of the type <code class="literal">RestClientException</code>
+will be thrown; this behavior can be changed by plugging in another
+<code class="literal">ResponseErrorHandler</code> implementation into the <code class="literal">RestTemplate</code>.</p>
+<p>The <code class="literal">exchange</code> and <code class="literal">execute</code> methods are generalized versions of the more
+specific methods listed above them and can support additional combinations and methods,
+like HTTP PATCH. However, note that the underlying HTTP library must also support the
+desired combination. The JDK <code class="literal">HttpURLConnection</code> does not support the <code class="literal">PATCH</code> method, but
+Apache HttpComponents HttpClient version 4.2 or later does. They also enable
+<code class="literal">RestTemplate</code> to read an HTTP response to a generic type (e.g. <code class="literal">List&lt;Account&gt;</code>), using a
+<code class="literal">ParameterizedTypeReference</code>, a new class that enables capturing and passing generic
+type info.</p>
+<p>Objects passed to and returned from these methods are converted to and from HTTP
+messages by <code class="literal">HttpMessageConverter</code> instances. Converters for the main mime types are
+registered by default, but you can also write your own converter and register it via the
+<code class="literal">messageConverters()</code> bean property. The default converter instances registered with the
+template are <code class="literal">ByteArrayHttpMessageConverter</code>, <code class="literal">StringHttpMessageConverter</code>,
+<code class="literal">FormHttpMessageConverter</code> and <code class="literal">SourceHttpMessageConverter</code>. You can override these
+defaults using the <code class="literal">messageConverters()</code> bean property as would be required if using the
+<code class="literal">MarshallingHttpMessageConverter</code> or <code class="literal">MappingJackson2HttpMessageConverter</code>.</p>
+<p>Each method takes URI template arguments in two forms, either as a <code class="literal">String</code> variable
+length argument or a <code class="literal">Map&lt;String,String&gt;</code>. For example,</p>
+<pre class="programlisting">String result = restTemplate.getForObject(
+        <span class="hl-string">"http://example.com/hotels/{hotel}/bookings/{booking}"</span>, String.<span class="hl-keyword">class</span>,<span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>);</pre>
+
+<p>using variable length arguments and</p>
+<pre class="programlisting">Map&lt;String, String&gt; vars = Collections.singletonMap(<span class="hl-string">"hotel"</span>, <span class="hl-string">"42"</span>);
+String result = restTemplate.getForObject(
+        <span class="hl-string">"http://example.com/hotels/{hotel}/rooms/{hotel}"</span>, String.<span class="hl-keyword">class</span>, vars);</pre>
+
+<p>using a <code class="literal">Map&lt;String,String&gt;</code>.</p>
+<p>To create an instance of <code class="literal">RestTemplate</code> you can simply call the default no-arg
+constructor. This will use standard Java classes from the <code class="literal">java.net</code> package as the
+underlying implementation to create HTTP requests. This can be overridden by specifying
+an implementation of <code class="literal">ClientHttpRequestFactory</code>. Spring provides the implementation
+<code class="literal">HttpComponentsClientHttpRequestFactory</code> that uses the Apache HttpComponents
+<code class="literal">HttpClient</code> to create requests. <code class="literal">HttpComponentsClientHttpRequestFactory</code> is configured
+using an instance of <code class="literal">org.apache.http.client.HttpClient</code> which can in turn be configured
+with credentials information or connection pooling functionality.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Note that the <code class="literal">java.net</code> implementation for HTTP requests may raise an exception when
+accessing the status of a response that represents an error (e.g. 401). If this is an
+issue, switch to <code class="literal">HttpComponentsClientHttpRequestFactory</code> instead.</p>
+</td></tr></table></div>
+
+<p>The previous example using Apache HttpComponents <code class="literal">HttpClient</code> directly rewritten to use
+the <code class="literal">RestTemplate</code> is shown below</p>
+<pre class="programlisting">uri = <span class="hl-string">"http://example.com/hotels/{id}/bookings"</span>;
+
+RestTemplate template = <span class="hl-keyword">new</span> RestTemplate();
+
+Booking booking = <span class="hl-comment">// create booking object</span>
+
+URI location = template.postForLocation(uri, booking, <span class="hl-string">"1"</span>);</pre>
+
+<p>To use Apache HttpComponents instead of the native <code class="literal">java.net</code> functionality, construct
+the <code class="literal">RestTemplate</code> as follows:</p>
+<pre class="programlisting">RestTemplate template = <span class="hl-keyword">new</span> RestTemplate(<span class="hl-keyword">new</span> HttpComponentsClientHttpRequestFactory());</pre>
+
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Apache HttpClient supports gzip encoding. To use it,
+construct a <code class="literal">HttpComponentsClientHttpRequestFactory</code> like so:</p>
+<pre class="programlisting">HttpClient httpClient = HttpClientBuilder.create().build();
+ClientHttpRequestFactory requestFactory = <span class="hl-keyword">new</span> HttpComponentsClientHttpRequestFactory(httpClient);
+RestTemplate restTemplate = <span class="hl-keyword">new</span> RestTemplate(requestFactory);</pre>
+
+</td></tr></table></div>
+
+<p>The general callback interface is <code class="literal">RequestCallback</code> and is called when the execute
+method is invoked.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> &lt;T&gt; T execute(String url, HttpMethod method, RequestCallback requestCallback,
+        ResponseExtractor&lt;T&gt; responseExtractor, String... urlVariables)
+
+<span class="hl-comment">// also has an overload with urlVariables as a Map&lt;String, String&gt;.</span></pre>
+
+<p>The <code class="literal">RequestCallback</code> interface is defined as</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> RequestCallback {
+ <span class="hl-keyword">void</span> doWithRequest(ClientHttpRequest request) <span class="hl-keyword">throws</span> IOException;
+}</pre>
+
+<p>and allows you to manipulate the request headers and write to the request body. When
+using the execute method you do not have to worry about any resource management, the
+template will always close the request and handle any errors. Refer to the API
+documentation for more information on using the execute method and the meaning of its
+other method arguments.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-resttemplate-uri" href="#rest-resttemplate-uri"></a>Working with the URI</h4></div></div></div>
+
+<p>For each of the main HTTP methods, the <code class="literal">RestTemplate</code> provides variants that either take
+a String URI or <code class="literal">java.net.URI</code> as the first argument.</p>
+<p>The String URI variants accept template arguments as a String variable length argument
+or as a <code class="literal">Map&lt;String,String&gt;</code>. They also assume the URL String is not encoded and needs
+to be encoded. For example the following:</p>
+<pre class="programlisting">restTemplate.getForObject(<span class="hl-string">"http://example.com/hotel list"</span>, String.<span class="hl-keyword">class</span>);</pre>
+
+<p>will perform a GET on <code class="literal">http://example.com/hotel%20list</code>. That means if the input URL
+String is already encoded, it will be encoded twice&#8201;&#8212;&#8201;i.e.
+<code class="literal">http://example.com/hotel%20list</code> will become <code class="literal">http://example.com/hotel%2520list</code>. If
+this is not the intended effect, use the <code class="literal">java.net.URI</code> method variant, which assumes
+the URL is already encoded is also generally useful if you want to reuse a single (fully
+expanded) <code class="literal">URI</code> multiple times.</p>
+<p>The <code class="literal">UriComponentsBuilder</code> class can be used to build and encode the <code class="literal">URI</code> including
+support for URI templates. For example you can start with a URL String:</p>
+<pre class="programlisting">UriComponents uriComponents = UriComponentsBuilder.fromUriString(
+        <span class="hl-string">"http://example.com/hotels/{hotel}/bookings/{booking}"</span>).build()
+        .expand(<span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>)
+        .encode();
+
+URI uri = uriComponents.toUri();</pre>
+
+<p>Or specify each URI component individually:</p>
+<pre class="programlisting">UriComponents uriComponents = UriComponentsBuilder.newInstance()
+        .scheme(<span class="hl-string">"http"</span>).host(<span class="hl-string">"example.com"</span>).path(<span class="hl-string">"/hotels/{hotel}/bookings/{booking}"</span>).build()
+        .expand(<span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>)
+        .encode();
+
+URI uri = uriComponents.toUri();</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-template-headers" href="#rest-template-headers"></a>Dealing with request and response headers</h4></div></div></div>
+
+<p>Besides the methods described above, the <code class="literal">RestTemplate</code> also has the <code class="literal">exchange()</code>
+method, which can be used for arbitrary HTTP method execution based on the <code class="literal">HttpEntity</code>
+class.</p>
+<p>Perhaps most importantly, the <code class="literal">exchange()</code> method can be used to add request headers and
+read response headers. For example:</p>
+<pre class="programlisting">HttpHeaders requestHeaders = <span class="hl-keyword">new</span> HttpHeaders();
+requestHeaders.set(<span class="hl-string">"MyRequestHeader"</span>, <span class="hl-string">"MyValue"</span>);
+HttpEntity&lt;?&gt; requestEntity = <span class="hl-keyword">new</span> HttpEntity(requestHeaders);
+
+HttpEntity&lt;String&gt; response = template.exchange(
+        <span class="hl-string">"http://example.com/hotels/{hotel}"</span>,
+        HttpMethod.GET, requestEntity, String.<span class="hl-keyword">class</span>, <span class="hl-string">"42"</span>);
+
+String responseHeader = response.getHeaders().getFirst(<span class="hl-string">"MyResponseHeader"</span>);
+String body = response.getBody();</pre>
+
+<p>In the above example, we first prepare a request entity that contains the
+<code class="literal">MyRequestHeader</code> header. We then retrieve the response, and read the <code class="literal">MyResponseHeader</code>
+and body.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-template-jsonview" href="#rest-template-jsonview"></a>Jackson JSON Views support</h4></div></div></div>
+
+<p>It is possible to specify a <a class="ulink" href="http://wiki.fasterxml.com/JacksonJsonViews" target="_top">Jackson JSON View</a>
+to serialize only a subset of the object properties. For example:</p>
+<pre class="programlisting">JacksonSerializationValue jsv = <span class="hl-keyword">new</span> JacksonSerializationValue(<span class="hl-keyword">new</span> User(<span class="hl-string">"eric"</span>, <span class="hl-string">"7!jd#h23"</span>),
+    User.WithoutPasswordView.<span class="hl-keyword">class</span>);
+HttpEntity&lt;JacksonSerializationValue&gt; entity = <span class="hl-keyword">new</span> HttpEntity&lt;JacksonSerializationValue&gt;(jsv);
+String s = template.postForObject(<span class="hl-string">"http://example.com/user"</span>, entity, String.<span class="hl-keyword">class</span>);</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-message-conversion" href="#rest-message-conversion"></a>22.10.2&nbsp;HTTP Message Conversion</h3></div></div></div>
+
+<p>Objects passed to and returned from the methods <code class="literal">getForObject()</code>, <code class="literal">postForLocation()</code>,
+and <code class="literal">put()</code> are converted to HTTP requests and from HTTP responses by
+<code class="literal">HttpMessageConverters</code>. The <code class="literal">HttpMessageConverter</code> interface is shown below to give you
+a better feel for its functionality</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> HttpMessageConverter&lt;T&gt; {
+
+    <span class="hl-comment">// Indicate whether the given class and media type can be read by this converter.</span>
+    <span class="hl-keyword">boolean</span> canRead(Class&lt;?&gt; clazz, MediaType mediaType);
+
+    <span class="hl-comment">// Indicate whether the given class and media type can be written by this converter.</span>
+    <span class="hl-keyword">boolean</span> canWrite(Class&lt;?&gt; clazz, MediaType mediaType);
+
+    <span class="hl-comment">// Return the list of MediaType objects supported by this converter.</span>
+    List&lt;MediaType&gt; getSupportedMediaTypes();
+
+    <span class="hl-comment">// Read an object of the given type from the given input message, and returns it.</span>
+    T read(Class&lt;T&gt; clazz, HttpInputMessage inputMessage) <span class="hl-keyword">throws</span> IOException, HttpMessageNotReadableException;
+
+    <span class="hl-comment">// Write an given object to the given output message.</span>
+    <span class="hl-keyword">void</span> write(T t, HttpOutputMessage outputMessage) <span class="hl-keyword">throws</span> IOException, HttpMessageNotWritableException;
+
+}</pre>
+
+<p>Concrete implementations for the main media (mime) types are provided in the framework
+and are registered by default with the <code class="literal">RestTemplate</code> on the client-side and with
+<code class="literal">AnnotationMethodHandlerAdapter</code> on the server-side.</p>
+<p>The implementations of <code class="literal">HttpMessageConverter</code>s are described in the following sections.
+For all converters a default media type is used but can be overridden by setting the
+<code class="literal">supportedMediaTypes</code> bean property</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-string-converter" href="#rest-string-converter"></a>StringHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write Strings from the HTTP
+request and response. By default, this converter supports all text media types (
+<code class="literal">text/*</code>), and writes with a <code class="literal">Content-Type</code> of <code class="literal">text/plain</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-form-converter" href="#rest-form-converter"></a>FormHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write form data from the HTTP
+request and response. By default, this converter reads and writes the media type
+<code class="literal">application/x-www-form-urlencoded</code>. Form data is read from and written into a
+<code class="literal">MultiValueMap&lt;String, String&gt;</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-byte-converter" href="#rest-byte-converter"></a>ByteArrayHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write byte arrays from the
+HTTP request and response. By default, this converter supports all media types ( <code class="literal">*/*</code>),
+and writes with a <code class="literal">Content-Type</code> of <code class="literal">application/octet-stream</code>. This can be overridden
+by setting the <code class="literal">supportedMediaTypes</code> property, and overriding <code class="literal">getContentType(byte[])</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-marhsalling-converter" href="#rest-marhsalling-converter"></a>MarshallingHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write XML using Spring&#8217;s
+<code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code> abstractions from the <code class="literal">org.springframework.oxm</code> package.
+This converter requires a <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code> before it can be used. These
+can be injected via constructor or bean properties. By default this converter supports (
+<code class="literal">text/xml</code>) and ( <code class="literal">application/xml</code>).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-mapping-json-converter" href="#rest-mapping-json-converter"></a>MappingJackson2HttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write JSON using Jackson&#8217;s
+<code class="literal">ObjectMapper</code>. JSON mapping can be customized as needed through the use of Jackson&#8217;s
+provided annotations. When further control is needed, a custom <code class="literal">ObjectMapper</code> can be
+injected through the <code class="literal">ObjectMapper</code> property for cases where custom JSON
+serializers/deserializers need to be provided for specific types. By default this
+converter supports ( <code class="literal">application/json</code>).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-mapping-xml-converter" href="#rest-mapping-xml-converter"></a>MappingJackson2XmlHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write XML using
+<a class="ulink" href="https://github.com/FasterXML/jackson-dataformat-xml" target="_top">Jackson XML</a> extension&#8217;s
+<code class="literal">XmlMapper</code>. XML mapping can be customized as needed through the use of JAXB
+or Jackson&#8217;s provided annotations. When further control is needed, a custom <code class="literal">XmlMapper</code>
+can be injected through the <code class="literal">ObjectMapper</code> property for cases where custom XML
+serializers/deserializers need to be provided for specific types. By default this
+converter supports ( <code class="literal">application/xml</code>).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-source-converter" href="#rest-source-converter"></a>SourceHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write
+<code class="literal">javax.xml.transform.Source</code> from the HTTP request and response. Only <code class="literal">DOMSource</code>,
+<code class="literal">SAXSource</code>, and <code class="literal">StreamSource</code> are supported. By default, this converter supports (
+<code class="literal">text/xml</code>) and ( <code class="literal">application/xml</code>).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="rest-buffered-image-converter" href="#rest-buffered-image-converter"></a>BufferedImageHttpMessageConverter</h4></div></div></div>
+
+<p>An <code class="literal">HttpMessageConverter</code> implementation that can read and write
+<code class="literal">java.awt.image.BufferedImage</code> from the HTTP request and response. This converter reads
+and writes the media type supported by the Java I/O API.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-async-resttemplate" href="#rest-async-resttemplate"></a>22.10.3&nbsp;Async RestTemplate</h3></div></div></div>
+
+<p>Web applications often need to query external REST services those days. The very nature of
+HTTP and synchronous calls can lead up to challenges when scaling applications for those
+needs: multiple threads may be blocked, waiting for remote HTTP responses.</p>
+<p><code class="literal">AsyncRestTemplate</code> and <a class="xref" href="remoting.html#rest-resttemplate" title="22.10.1&nbsp;RestTemplate">Section&nbsp;22.10.1, &#8220;RestTemplate&#8221;</a>'s APIs are very similar; see
+<a class="xref" href="remoting.html#rest-overview-of-resttemplate-methods-tbl" title="Table&nbsp;22.1.&nbsp;Overview of RestTemplate methods">Table&nbsp;22.1, &#8220;Overview of RestTemplate methods&#8221;</a>. The main difference between those APIs is
+that <code class="literal">AsyncRestTemplate</code> returns
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/concurrent/ListenableFuture.html" target="_top"><code class="literal">ListenableFuture</code></a>
+wrappers as opposed to concrete results.</p>
+<p>The previous <code class="literal">RestTemplate</code> example translates to:</p>
+<pre class="programlisting"><span class="hl-comment">// async call</span>
+Future&lt;ResponseEntity&lt;String&gt;&gt; futureEntity = template.getForEntity(
+    <span class="hl-string">"http://example.com/hotels/{hotel}/bookings/{booking}"</span>, String.<span class="hl-keyword">class</span>, <span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>);
+
+<span class="hl-comment">// get the concrete result - synchronous call</span>
+ResponseEntity&lt;String&gt; entity = futureEntity.get();</pre>
+
+<p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/concurrent/ListenableFuture.html" target="_top"><code class="literal">ListenableFuture</code></a>
+accepts completion callbacks:</p>
+<pre class="programlisting">ListenableFuture&lt;ResponseEntity&lt;String&gt;&gt; futureEntity = template.getForEntity(
+    <span class="hl-string">"http://example.com/hotels/{hotel}/bookings/{booking}"</span>, String.<span class="hl-keyword">class</span>, <span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>);
+
+<span class="hl-comment">// register a callback</span>
+futureEntity.addCallback(<span class="hl-keyword">new</span> ListenableFutureCallback&lt;ResponseEntity&lt;String&gt;&gt;() {
+    <em><span class="hl-annotation" style="color: gray">@Override</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> onSuccess(ResponseEntity&lt;String&gt; entity) {
+        <span class="hl-comment">//...</span>
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@Override</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> onFailure(Throwable t) {
+        <span class="hl-comment">//...</span>
+    }
+});</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The default <code class="literal">AsyncRestTemplate</code> constructor registers a
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/task/SimpleAsyncTaskExecutor.html" target="_top"><code class="literal">SimpleAsyncTaskExecutor</code>
+</a> for executing HTTP requests.
+When dealing with a large number of short-lived requests, a thread-pooling TaskExecutor
+implementation like
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/concurrent/ThreadPoolTaskExecutor.html" target="_top"><code class="literal">ThreadPoolTaskExecutor</code></a>
+may be a good choice.</p>
+</td></tr></table></div>
+
+<p>See the
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/concurrent/ListenableFuture.html" target="_top"><code class="literal">ListenableFuture</code> javadocs</a>
+and
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/AsyncRestTemplate.html" target="_top"><code class="literal">AsyncRestTemplate</code> javadocs</a>
+for more details.</p>
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;VI.&nbsp;Integration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;23.&nbsp;Enterprise JavaBeans (EJB) integration</td></tr></table></div></body></html>

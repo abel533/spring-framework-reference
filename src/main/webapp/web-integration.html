@@ -1,0 +1,196 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>19.&nbsp;Integrating with other web frameworks</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="view.html" title="18.&nbsp;View technologies"><link rel="next" href="portlet.html" title="20.&nbsp;Portlet MVC Framework"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.&nbsp;Integrating with other web frameworks</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="view.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="portlet.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="web-integration" href="#web-integration"></a>19.&nbsp;Integrating with other web frameworks</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="intro" href="#intro"></a>19.1&nbsp;Introduction</h2></div></div></div>
+
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Spring Web Flow</b></p></div></div></div>
+
+<p>Spring Web Flow (SWF) aims to be the best solution for the management of web application
+page flow.</p>
+<p>SWF integrates with existing frameworks like Spring MVC and JSF, in both Servlet and
+Portlet environments. If you have a business process (or processes) that would benefit
+from a conversational model as opposed to a purely request model, then SWF may be the
+solution.</p>
+<p>SWF allows you to capture logical page flows as self-contained modules that are reusable
+in different situations, and as such is ideal for building web application modules that
+guide the user through controlled navigations that drive business processes.</p>
+<p>For more information about SWF, consult the
+<a class="ulink" href="http://projects.spring.io/spring-webflow/" target="_top">Spring Web Flow website</a>.</p>
+</div>
+
+<p>This chapter details Spring&#8217;s integration with third party web frameworks, such as
+<a class="ulink" href="http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html" target="_top">JSF</a>.</p>
+<p>One of the core value propositions of the Spring Framework is that of enabling
+<span class="emphasis"><em>choice</em></span>. In a general sense, Spring does not force one to use or buy into any
+particular architecture, technology, or methodology (although it certainly recommends
+some over others). This freedom to pick and choose the architecture, technology, or
+methodology that is most relevant to a developer and their development team is
+arguably most evident in the web area, where Spring provides its own web framework
+(<a class="link" href="mvc.html" title="17.&nbsp;Web MVC framework">Spring MVC</a>), while at the same time providing integration with a number of
+popular third party web frameworks. This allows one to continue to leverage any and all
+of the skills one may have acquired in a particular web framework such as JSF, while
+at the same time being able to enjoy the benefits afforded by Spring in other areas such
+as data access, declarative transaction management, and flexible configuration and
+application assembly.</p>
+<p>Having dispensed with the woolly sales patter (c.f. the previous paragraph), the
+remainder of this chapter will concentrate upon the meaty details of integrating your
+favorite web framework with Spring. One thing that is often commented upon by developers
+coming to Java from other languages is the seeming super-abundance of web frameworks
+available in Java. There are indeed a great number of web frameworks in the Java space;
+in fact there are far too many to cover with any semblance of detail in a single
+chapter. This chapter thus picks four of the more popular web frameworks in Java,
+starting with the Spring configuration that is common to all of the supported web
+frameworks, and then detailing the specific integration options for each supported web
+framework.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Please note that this chapter does not attempt to explain how to use any of the
+supported web frameworks. For example, if you want to use JSF for the presentation
+layer of your web application, the assumption is that you are already familiar with
+JSF itself. If you need further details about any of the supported web frameworks
+themselves, please do consult <a class="xref" href="web-integration.html#web-integration-resources" title="19.6&nbsp;Further Resources">Section&nbsp;19.6, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-common" href="#web-integration-common"></a>19.2&nbsp;Common configuration</h2></div></div></div>
+
+<p>Before diving into the integration specifics of each supported web framework, let us
+first take a look at the Spring configuration that is <span class="emphasis"><em>not</em></span> specific to any one web
+framework. (This section is equally applicable to Spring&#8217;s own web framework, Spring
+MVC.)</p>
+<p>One of the concepts (for want of a better word) espoused by (Spring&#8217;s) lightweight
+application model is that of a layered architecture. Remember that in a <span class="emphasis"><em>classic</em></span>
+layered architecture, the web layer is but one of many layers; it serves as one of the
+entry points into a server side application and it delegates to service objects
+(facades) defined in a service layer to satisfy business specific (and
+presentation-technology agnostic) use cases. In Spring, these service objects, any other
+business-specific objects, data access objects, etc. exist in a distinct <span class="emphasis"><em>business
+context</em></span>, which contains <span class="emphasis"><em>no</em></span> web or presentation layer objects (presentation objects
+such as Spring MVC controllers are typically configured in a distinct <span class="emphasis"><em>presentation
+context</em></span>). This section details how one configures a Spring container (a
+<code class="literal">WebApplicationContext</code>) that contains all of the <span class="emphasis"><em>business beans</em></span> in one&#8217;s application.</p>
+<p>On to specifics: all that one need do is to declare a
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/ContextLoaderListener.html" target="_top"><code class="literal">ContextLoaderListener</code></a>
+in the standard Java EE servlet <code class="literal">web.xml</code> file of one&#8217;s web application, and add a
+<code class="literal">contextConfigLocation</code>&lt;context-param/&gt; section (in the same file) that defines which
+set of Spring XML configuration files to load.</p>
+<p>Find below the &lt;listener/&gt; configuration:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;listener&gt;</span>
+    <span class="hl-tag">&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="hl-tag">&lt;/listener-class&gt;</span>
+<span class="hl-tag">&lt;/listener&gt;</span></pre>
+
+<p>Find below the &lt;context-param/&gt; configuration:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;context-param&gt;</span>
+    <span class="hl-tag">&lt;param-name&gt;</span>contextConfigLocation<span class="hl-tag">&lt;/param-name&gt;</span>
+    <span class="hl-tag">&lt;param-value&gt;</span>/WEB-INF/applicationContext*.xml<span class="hl-tag">&lt;/param-value&gt;</span>
+<span class="hl-tag">&lt;/context-param&gt;</span></pre>
+
+<p>If you don&#8217;t specify the <code class="literal">contextConfigLocation</code> context parameter, the
+<code class="literal">ContextLoaderListener</code> will look for a file called <code class="literal">/WEB-INF/applicationContext.xml</code> to
+load. Once the context files are loaded, Spring creates a
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/WebApplicationContext.html" target="_top"><code class="literal">WebApplicationContext</code></a>
+object based on the bean definitions and stores it in the <code class="literal">ServletContext</code> of the web
+application.</p>
+<p>All Java web frameworks are built on top of the Servlet API, and so one can use the
+following code snippet to get access to this <span class="emphasis"><em>business context</em></span> <code class="literal">ApplicationContext</code>
+created by the <code class="literal">ContextLoaderListener</code>.</p>
+<pre class="programlisting">WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);</pre>
+
+<p>The
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/support/WebApplicationContextUtils.html" target="_top"><code class="literal">WebApplicationContextUtils</code></a>
+class is for convenience, so you don&#8217;t have to remember the name of the <code class="literal">ServletContext</code>
+attribute. Its <span class="emphasis"><em>getWebApplicationContext()</em></span> method will return <code class="literal">null</code> if an object
+doesn&#8217;t exist under the <code class="literal">WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>
+key. Rather than risk getting <code class="literal">NullPointerExceptions</code> in your application, it&#8217;s better
+to use the <code class="literal">getRequiredWebApplicationContext()</code> method. This method throws an exception
+when the <code class="literal">ApplicationContext</code> is missing.</p>
+<p>Once you have a reference to the <code class="literal">WebApplicationContext</code>, you can retrieve beans by
+their name or type. Most developers retrieve beans by name and then cast them to one of
+their implemented interfaces.</p>
+<p>Fortunately, most of the frameworks in this section have simpler ways of looking up
+beans. Not only do they make it easy to get beans from a Spring container, but they also
+allow you to use dependency injection on their controllers. Each web framework section
+has more detail on its specific integration strategies.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jsf" href="#jsf"></a>19.3&nbsp;JavaServer Faces 1.2</h2></div></div></div>
+
+<p>JavaServer Faces (JSF) is the JCP&#8217;s standard component-based, event-driven web user
+interface framework. As of Java EE 5, it is an official part of the Java EE umbrella.</p>
+<p>For a popular JSF runtime as well as for popular JSF component libraries, check out the
+<a class="ulink" href="http://myfaces.apache.org/" target="_top">Apache MyFaces project</a>. The MyFaces project also provides
+common JSF extensions such as <a class="ulink" href="http://myfaces.apache.org/orchestra/" target="_top">MyFaces Orchestra</a>:
+a Spring-based JSF extension that provides rich conversation scope support.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Spring Web Flow 2.0 provides rich JSF support through its newly established Spring Faces
+module, both for JSF-centric usage (as described in this section) and for Spring-centric
+usage (using JSF views within a Spring MVC dispatcher). Check out the
+<a class="ulink" href="http://projects.spring.io/spring-webflow" target="_top">Spring Web Flow website</a> for details!</p>
+</td></tr></table></div>
+
+<p>The key element in Spring&#8217;s JSF integration is the JSF <code class="literal">ELResolver</code> mechanism.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jsf-springbeanfaceselresolver" href="#jsf-springbeanfaceselresolver"></a>19.3.1&nbsp;SpringBeanFacesELResolver (JSF 1.2+)</h3></div></div></div>
+
+<p><code class="literal">SpringBeanFacesELResolver</code> is a JSF 1.2 compliant <code class="literal">ELResolver</code> implementation,
+integrating with the standard Unified EL as used by JSF 1.2 and JSP 2.1. Like
+<code class="literal">SpringBeanVariableResolver</code>, it delegates to the Spring&#8217;s <span class="emphasis"><em>business context</em></span>
+<code class="literal">WebApplicationContext</code> <span class="emphasis"><em>first</em></span>, then to the default resolver of the underlying JSF
+implementation.</p>
+<p>Configuration-wise, simply define <code class="literal">SpringBeanFacesELResolver</code> in your JSF 1.2
+<span class="emphasis"><em>faces-context.xml</em></span> file:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;faces-config&gt;</span>
+    <span class="hl-tag">&lt;application&gt;</span>
+        <span class="hl-tag">&lt;el-resolver&gt;</span>org.springframework.web.jsf.el.SpringBeanFacesELResolver<span class="hl-tag">&lt;/el-resolver&gt;</span>
+        ...
+    <span class="hl-tag">&lt;/application&gt;</span>
+<span class="hl-tag">&lt;/faces-config&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jsf-facescontextutils" href="#jsf-facescontextutils"></a>19.3.2&nbsp;FacesContextUtils</h3></div></div></div>
+
+<p>A custom <code class="literal">VariableResolver</code> works well when mapping one&#8217;s properties to beans
+in <span class="emphasis"><em>faces-config.xml</em></span>, but at times one may need to grab a bean explicitly. The
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/jsf/FacesContextUtils.html" target="_top"><code class="literal">FacesContextUtils</code></a>
+class makes this easy. It is similar to <code class="literal">WebApplicationContextUtils</code>, except that it
+takes a <code class="literal">FacesContext</code> parameter rather than a <code class="literal">ServletContext</code> parameter.</p>
+<pre class="programlisting">ApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="struts" href="#struts"></a>19.4&nbsp;Apache Struts 2.x</h2></div></div></div>
+
+<p>Invented by Craig McClanahan, <a class="ulink" href="http://struts.apache.org" target="_top">Struts</a> is an open source project
+hosted by the Apache Software Foundation. At the time, it greatly simplified the
+JSP/Servlet programming paradigm and won over many developers who were using proprietary
+frameworks. It simplified the programming model, it was open source (and thus free as in
+beer), and it had a large community, which allowed the project to grow and become popular
+among Java web developers.</p>
+<p>Check out the Struts
+<a class="ulink" href="https://struts.apache.org/release/2.3.x/docs/spring-plugin.html" target="_top">Spring Plugin</a> for the
+built-in Spring integration shipped with Struts.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tapestry" href="#tapestry"></a>19.5&nbsp;Tapestry 5.x</h2></div></div></div>
+
+<p>From the <a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry homepage</a>:</p>
+<p>Tapestry is a "<span class="emphasis"><em>Component oriented framework for creating dynamic, robust,
+highly scalable web applications in Java.</em></span>"</p>
+<p>While Spring has its own <a class="link" href="mvc.html" title="17.&nbsp;Web MVC framework">powerful web layer</a>, there are a number of unique
+advantages to building an enterprise Java application using a combination of Tapestry
+for the web user interface and the Spring container for the lower layers.</p>
+<p>For more information, check out Tapestry&#8217;s dedicated
+<a class="ulink" href="https://tapestry.apache.org/integrating-with-spring-framework.html" target="_top">integration module for
+Spring</a>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-resources" href="#web-integration-resources"></a>19.6&nbsp;Further Resources</h2></div></div></div>
+
+<p>Find below links to further resources about the various web frameworks described in this
+chapter.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <a class="ulink" href="http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html" target="_top">JSF</a> homepage
+</li><li class="listitem">
+The <a class="ulink" href="http://struts.apache.org/" target="_top">Struts</a> homepage
+</li><li class="listitem">
+The <a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry</a> homepage
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="view.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="portlet.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.&nbsp;View technologies&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;20.&nbsp;Portlet MVC Framework</td></tr></table></div></body></html>

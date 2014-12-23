@@ -1,0 +1,206 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>3.&nbsp;New Features and Enhancements in Spring Framework 4.0</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-whats-new.html" title="Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x"><link rel="prev" href="spring-whats-new.html" title="Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x"><link rel="next" href="new-in-4.1.html" title="4.&nbsp;New Features and Enhancements in Spring Framework 4.1"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">3.&nbsp;New Features and Enhancements in Spring Framework 4.0</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-whats-new.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="new-in-4.1.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="new-in-4.0" href="#new-in-4.0"></a>3.&nbsp;New Features and Enhancements in Spring Framework 4.0</h2></div></div></div>
+
+<p>The Spring Framework was first released in 2004; since then there have been significant
+major revisions: Spring 2.0 provided XML namespaces and AspectJ support; Spring 2.5
+embraced annotation-driven configuration; Spring 3.0 introduced a strong Java 5+ foundation
+across the framework codebase, and features such as the Java-based <code class="literal">@Configuration</code> model.</p>
+<p>Version 4.0 is the latest major release of the Spring Framework and the first to fully
+support Java 8 features. You can still use Spring with older versions of Java, however,
+the minimum requirement has now been raised to Java SE 6. We have also taken the
+opportunity of a major release to remove many deprecated classes and methods.</p>
+<p>A <a class="ulink" href="https://github.com/spring-projects/spring-framework/wiki/Migrating-from-earlier-versions-of-the-spring-framework" target="_top">migration guide for upgrading to Spring 4.0</a>
+is available on the <a class="ulink" href="https://github.com/spring-projects/spring-framework/wiki" target="_top">Spring Framework GitHub Wiki</a>.</p>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_improved_getting_started_experience" href="#_improved_getting_started_experience"></a>3.1&nbsp;Improved Getting Started Experience</h2></div></div></div>
+
+<p>The new <a class="ulink" href="https://spring.io" target="_top">spring.io</a> website provides a whole series of
+<a class="ulink" href="https://spring.io/guides" target="_top">"Getting Started"</a> guides to help you learn Spring. You
+can read more about the guides in the <a class="xref" href="overview-getting-started-with-spring.html" title="1.&nbsp;Getting Started With Spring">Chapter&nbsp;1, <i>Getting Started With Spring</i></a> section
+in this document. The new website also provides a comprehensive overview of the many
+additional projects that are released under the Spring umbrella.</p>
+<p>If you are a Maven user you may also be interested in the helpful
+<a class="link" href="overview.html#overview-maven-bom" title="Maven &#34;Bill Of Materials&#34; Dependency">bill of materials</a> POM file that is now published with each Spring
+Framework release.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_removed_deprecated_packages_and_methods" href="#_removed_deprecated_packages_and_methods"></a>3.2&nbsp;Removed Deprecated Packages and Methods</h2></div></div></div>
+
+<p>All deprecated packages, and many deprecated classes and methods have been removed with
+version 4.0. If you are upgrading from a previous release of Spring, you should ensure
+that you have fixed any deprecated calls that you were making to outdated APIs.</p>
+<p>For a complete set of changes, check out the
+<a class="ulink" href="http://docs.spring.io/spring-framework/docs/3.2.4.RELEASE_to_4.0.0.RELEASE/" target="_top">API
+Differences Report</a>.</p>
+<p>Note that optional third-party dependencies have been raised to a 2010/2011 minimum
+(i.e. Spring 4 generally only supports versions released in late 2010 or later now):
+notably, Hibernate 3.6+, EhCache 2.1+, Quartz 1.8+, Groovy 1.8+, and Joda-Time 2.0+.
+As an exception to the rule, Spring 4 requires the recent Hibernate Validator 4.3+,
+and support for Jackson has been focused on 2.0+ now (with Jackson 1.8/1.9 support
+retained for the time being where Spring 3.2 had it; now just in deprecated form).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_java_8_as_well_as_6_and_7" href="#_java_8_as_well_as_6_and_7"></a>3.3&nbsp;Java 8 (as well as 6 and 7)</h2></div></div></div>
+
+<p>Spring Framework 4.0 provides support for several Java 8 features. You can make use of
+<span class="emphasis"><em>lambda expressions</em></span> and <span class="emphasis"><em>method references</em></span> with Spring&#8217;s callback interfaces. There
+is first-class support for <code class="literal">java.time</code> (<a class="ulink" href="http://jcp.org/en/jsr/detail?id=310" target="_top">JSR-310</a>),
+and several existing annotations have been retrofitted as <code class="literal">@Repeatable</code>. You can also
+use Java 8&#8217;s parameter name discovery (based on the <code class="literal">-parameters</code> compiler flag) as an
+alternative to compiling your code with debug information enabled.</p>
+<p>Spring remains compatible with older versions of Java and the JDK: concretely, Java SE 6
+(specifically, a minimum level equivalent to JDK 6 update 18, as released in January 2010)
+and above are still fully supported. However, for newly started development projects
+based on Spring 4, we recommend the use of Java 7 or 8.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_java_ee_6_and_7" href="#_java_ee_6_and_7"></a>3.4&nbsp;Java EE 6 and 7</h2></div></div></div>
+
+<p>Java EE version 6 or above is now considered the baseline for Spring Framework 4, with
+the JPA 2.0 and Servlet 3.0 specifications being of particular relevance. In order to
+remain compatible with Google App Engine and older application servers, it is possible
+to deploy a Spring 4 application into a Servlet 2.5 environment. However, Servlet 3.0+
+is strongly recommended and a prerequisite in Spring&#8217;s test and mock packages for test
+setups in development environments.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>If you are a WebSphere 7 user, be sure to install the JPA 2.0 feature pack. On
+WebLogic 10.3.4 or higher, install the JPA 2.0 patch that comes with it. This turns
+both of those server generations into Spring 4 compatible deployment environments.</p>
+</td></tr></table></div>
+
+<p>On a more forward-looking note, Spring Framework 4.0 supports the Java EE 7 level of
+applicable specifications now: in particular, JMS 2.0, JTA 1.2, JPA 2.1, Bean Validation
+1.1, and JSR-236 Concurrency Utilities. As usual, this support focuses on individual
+use of those specifications, e.g. on Tomcat or in standalone environments. However,
+it works equally well when a Spring application is deployed to a Java EE 7 server.</p>
+<p>Note that Hibernate 4.3 is a JPA 2.1 provider and therefore only supported as of
+Spring Framework 4.0. The same applies to Hibernate Validator 5.0 as a Bean Validation
+1.1 provider. Neither of the two are officially supported with Spring Framework 3.2.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="groovy-bean-definition-dsl" href="#groovy-bean-definition-dsl"></a>3.5&nbsp;Groovy Bean Definition DSL</h2></div></div></div>
+
+<p>With Spring Framework 4.0 it is now possible to define external bean configuration using
+a Groovy DSL. This is similar in concept to using XML bean definitions, but allows for
+a more concise syntax. Using Groovy also allows you to easily embed bean definitions
+directly in your bootstrap code. For example:</p>
+<pre class="programlisting">def reader = new GroovyBeanDefinitionReader(myApplicationContext)
+reader.beans {
+    dataSource(BasicDataSource) {
+        driverClassName = "org.hsqldb.jdbcDriver"
+        url = "jdbc:hsqldb:mem:grailsDB"
+        username = "sa"
+        password = ""
+        settings = [mynew:"setting"]
+    }
+    sessionFactory(SessionFactory) {
+        dataSource = dataSource
+    }
+    myService(MyService) {
+        nestedBean = { AnotherBean bean -&gt;
+            dataSource = dataSource
+        }
+    }
+}</pre>
+
+<p>For more information consult the <code class="literal">GroovyBeanDefinitionReader</code>
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/groovy/GroovyBeanDefinitionReader.html" target="_top">javadocs</a>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_core_container_improvements" href="#_core_container_improvements"></a>3.6&nbsp;Core Container Improvements</h2></div></div></div>
+
+<p>There have been several general improvements to the core container:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Spring now treats <a class="link" href="beans.html#beans-generics-as-qualifiers" title="5.9.4&nbsp;Using generics as autowiring qualifiers"><span class="emphasis"><em>generic types</em></span> as a form of
+<span class="emphasis"><em>qualifier</em></span></a> when injecting Beans. For example, if you are using a Spring Data
+<code class="literal">Repository</code> you can now easily inject a specific implementation:
+<code class="literal">@Autowired Repository&lt;Customer&gt; customerRepository</code>.
+</li><li class="listitem">
+If you use Spring&#8217;s meta-annotation support, you can now develop custom annotations that
+<a class="link" href="beans.html#beans-meta-annotations" title="5.10.2&nbsp;Meta-annotations">expose specific attributes from the source annotation</a>.
+</li><li class="listitem">
+Beans can now be <span class="emphasis"><em>ordered</em></span> when they are <a class="link" href="beans.html#beans-autowired-annotation" title="5.9.2&nbsp;@Autowired">autowired into
+lists and arrays</a>. Both the <code class="literal">@Order</code> annotation and <code class="literal">Ordered</code> interface are
+supported.
+</li><li class="listitem">
+The <code class="literal">@Lazy</code> annotation can now be used on injection points, as well as on <code class="literal">@Bean</code>
+definitions.
+</li><li class="listitem">
+The <a class="link" href="beans.html#beans-java-bean-description" title="Bean description"><code class="literal">@Description</code> annotation has been introduced</a> for
+developers using Java-based configuration.
+</li><li class="listitem">
+A generalized model for <a class="link" href="beans.html#beans-java-conditional" title="Conditionally including @Configuration classes or @Beans">conditionally filtering beans</a> has
+been added via the <code class="literal">@Conditional</code> annotation. This is similar to <code class="literal">@Profile</code> support but
+allows for user-defined strategies to be developed programmatically.
+</li><li class="listitem">
+<a class="link" href="aop-api.html#aop-pfb-proxy-types" title="10.5.3&nbsp;JDK- and CGLIB-based proxies">CGLIB-based proxy classes</a> no longer require a default
+constructor. Support is provided via the <a class="ulink" href="http://code.google.com/p/objenesis/" target="_top">objenesis</a>
+library which is repackaged <span class="emphasis"><em>inline</em></span> and distributed as part of the Spring Framework.
+With this strategy, no constructor at all is being invoked for proxy instances anymore.
+</li><li class="listitem">
+There is managed time zone support across the framework now, e.g. on <code class="literal">LocaleContext</code>.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_general_web_improvements" href="#_general_web_improvements"></a>3.7&nbsp;General Web Improvements</h2></div></div></div>
+
+<p>Deployment to Servlet 2.5 servers remains an option, but Spring Framework 4.0 is now
+focused primarily on Servlet 3.0+ environments. If you are using the
+<a class="link" href="testing.html#spring-mvc-test-framework" title="11.3.6&nbsp;Spring MVC Test Framework">Spring MVC Test Framework</a> you
+will need to ensure that a Servlet 3.0 compatible JAR is in your <span class="emphasis"><em>test classpath</em></span>.</p>
+<p>In addition to the WebSocket support mentioned later, the following general improvements
+have been made to Spring&#8217;s Web modules:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+You can use the <a class="link" href="mvc.html#mvc-ann-restcontroller" title="Creating REST Controllers with the @RestController annotation">new <code class="literal">@RestController</code> annotation</a> with Spring
+MVC applications, removing the need to add <code class="literal">@ResponseBody</code> to each of your
+<code class="literal">@RequestMapping</code> methods.
+</li><li class="listitem">
+The <code class="literal">AsyncRestTemplate</code> class has been added, <a class="link" href="remoting.html#rest-async-resttemplate" title="22.10.3&nbsp;Async RestTemplate">allowing
+non-blocking asynchronous support</a> when developing REST clients.
+</li><li class="listitem">
+Spring now offers <a class="link" href="mvc.html#mvc-timezone" title="17.8.1&nbsp;Obtaining Time Zone Information">comprehensive timezone support</a> when developing
+Spring MVC applications.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_websocket_sockjs_and_stomp_messaging" href="#_websocket_sockjs_and_stomp_messaging"></a>3.8&nbsp;WebSocket, SockJS, and STOMP Messaging</h2></div></div></div>
+
+<p>A new <code class="literal">spring-websocket</code> module provides comprehensive support for WebSocket-based,
+two-way communication between client and server in web applications. It is compatible with
+<a class="ulink" href="http://jcp.org/en/jsr/detail?id=356" target="_top">JSR-356</a>, the Java WebSocket API, and in addition
+provides SockJS-based fallback options (i.e. WebSocket emulation) for use in browsers
+that don&#8217;t yet support the WebSocket protocol (e.g. Internet Explorer &lt; 10).</p>
+<p>A new <code class="literal">spring-messaging</code> module adds support for STOMP as the WebSocket sub-protocol
+to use in applications along with an annotation programming model for routing and
+processing STOMP messages from WebSocket clients. As a result an <code class="literal">@Controller</code>
+can now contain both <code class="literal">@RequestMapping</code> and <code class="literal">@MessageMapping</code> methods for handling
+HTTP requests and messages from WebSocket-connected clients. The new <code class="literal">spring-messaging</code>
+module also contains key abstractions formerly from the
+<a class="ulink" href="http://projects.spring.io/spring-integration/" target="_top">Spring Integration</a> project such as
+<code class="literal">Message</code>, <code class="literal">MessageChannel</code>, <code class="literal">MessageHandler</code>, and others to serve as a foundation
+for messaging-based applications.</p>
+<p>For further details, including a more thorough introduction, see the <a class="xref" href="websocket.html" title="21.&nbsp;WebSocket Support">Chapter&nbsp;21, <i>WebSocket Support</i></a> section.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_testing_improvements" href="#_testing_improvements"></a>3.9&nbsp;Testing Improvements</h2></div></div></div>
+
+<p>In addition to pruning of deprecated code within the <code class="literal">spring-test</code> module, Spring
+Framework 4.0 introduces several new features for use in unit and integration testing.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Almost all annotations in the <code class="literal">spring-test</code> module (e.g., <code class="literal">@ContextConfiguration</code>,
+<code class="literal">@WebAppConfiguration</code>, <code class="literal">@ContextHierarchy</code>, <code class="literal">@ActiveProfiles</code>, etc.) can now be used
+as <a class="link" href="testing.html#integration-testing-annotations-meta" title="Meta-Annotation Support for Testing">meta-annotations</a> to create custom
+<span class="emphasis"><em>composed annotations</em></span> and reduce configuration duplication across a test suite.
+</li><li class="listitem">
+Active bean definition profiles can now be resolved programmatically, simply by
+implementing a custom <a class="link" href="testing.html#testcontext-ctx-management-env-profiles-ActiveProfilesResolver"><code class="literal">ActiveProfilesResolver</code></a>
+and registering it via the <code class="literal">resolver</code> attribute of <code class="literal">@ActiveProfiles</code>.
+</li><li class="listitem">
+A new <code class="literal">SocketUtils</code> class has been introduced in the <code class="literal">spring-core</code> module
+which enables you to scan for free TCP and UDP server ports on localhost. This
+functionality is not specific to testing but can prove very useful when writing
+integration tests that require the use of sockets, for example tests that start
+an in-memory SMTP server, FTP server, Servlet container, etc.
+</li><li class="listitem">
+As of Spring 4.0, the set of mocks in the <code class="literal">org.springframework.mock.web</code> package is
+now based on the Servlet 3.0 API. Furthermore, several of the Servlet API mocks
+(e.g., <code class="literal">MockHttpServletRequest</code>, <code class="literal">MockServletContext</code>, etc.) have been updated with
+minor enhancements and improved configurability.
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-whats-new.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-whats-new.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="new-in-4.1.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;4.&nbsp;New Features and Enhancements in Spring Framework 4.1</td></tr></table></div></body></html>
