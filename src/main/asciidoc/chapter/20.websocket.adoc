@@ -1,5 +1,5 @@
 [[websocket]]
-== WebSocket Support
+== WebSocket 支持
 This part of the reference documentation covers Spring Framework's support for
 WebSocket-style messaging in web applications including use of STOMP as an
 application level WebSocket sub-protocol.
