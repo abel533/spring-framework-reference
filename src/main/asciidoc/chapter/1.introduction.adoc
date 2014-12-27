@@ -5,7 +5,7 @@ Rod Johnson; Juergen Hoeller; Keith Donald; Colin Sampaleanu; Rob Harrop; Thomas
 :javadoc-baseurl: http://docs.spring.io/spring/docs/current/javadoc-api
 
 [[spring-introduction]]
-= Overview of Spring Framework
+= Spring 框架概述
 
 [partintro]
 --
