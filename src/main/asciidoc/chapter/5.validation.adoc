@@ -1,5 +1,5 @@
 [[validation]]
-== Validation, Data Binding, and Type Conversion
+== 数据校验、数据绑定和类型转换
 
 
 
