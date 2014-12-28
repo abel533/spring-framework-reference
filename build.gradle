@@ -1,0 +1,68 @@
+defaultTasks 'docsZip'
+
+buildscript {
+	repositories {
+		maven { url "http://maven.oschina.net/content/groups/public/" }
+	}
+	dependencies {
+		classpath("org.asciidoctor:asciidoctor-gradle-plugin:0.7.0")
+		classpath("io.spring.gradle:docbook-reference-plugin:0.3.0")
+	}
+}
+
+description = "Spring Framework"
+
+apply plugin: "asciidoctor"
+apply plugin: "docbook-reference"
+apply plugin: "groovy"
+
+apply from: "${rootProject.projectDir}/gradle/jdiff.gradle"
+
+asciidoctor {
+	baseDir = project.file('src/asciidoc')
+	backend = 'docbook5'
+	options = [
+		eruby: 'erubis',
+		attributes: [
+			encoding:'utf-8',
+			doctype: 'book',
+			'spring-version' : '4.1.3.RELEASE',
+			revnumber : '4.1.3.RELEASE',
+			docinfo : ""
+		]
+	]
+}
+
+reference {
+	sourceDir = asciidoctor.outputDir
+	pdfFilename = "spring-framework-reference.pdf"
+	epubFilename = "spring-framework-reference.epub"
+	expandPlaceholders = ""
+}
+
+afterEvaluate {
+	tasks.findAll { it.name.startsWith("reference") }.each{ it.dependsOn.add("asciidoctor") }
+}
+
+
+configurations.archives.artifacts.clear()
+
+task docsZip(type: Zip, dependsOn: 'reference') {
+	group = "Distribution"
+	baseName = "spring-framework"
+	classifier = "docs"
+	description = "Builds -${classifier} archive containing api and reference " +
+		"for deployment at http://static.springframework.org/spring-framework/docs."
+
+	from("src/dist") {
+		include "changelog.txt"
+	}
+
+	from (reference) {
+		into "spring-framework-reference"
+	}
+}
+
+artifacts {
+	archives docsZip
+}
