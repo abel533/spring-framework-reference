@@ -26,66 +26,37 @@ The section then concludes with comprehensive coverage of the Spring Framework
 
 
 [[mvc]]
-== Web MVC framework
+== Web MVC 框架
 
 
 
 
 [[mvc-introduction]]
-=== Introduction to Spring Web MVC framework
-The Spring Web model-view-controller (MVC) framework is designed around a
-`DispatcherServlet` that dispatches requests to handlers, with configurable handler
-mappings, view resolution, locale, time zone and theme resolution as well as support for
-uploading files. The default handler is based on the `@Controller` and `@RequestMapping`
-annotations, offering a wide range of flexible handling methods. With the introduction
-of Spring 3.0, the `@Controller` mechanism also allows you to create RESTful Web sites
-and applications, through the `@PathVariable` annotation and other features.
+=== Spring Web MVC 框架介绍
+Spring Web 模型-视图-控制器(MVC) 框架是围绕 `DispatcherServlet`而设计的，其支持可配置的 handler 映射，视图解析，本地化、时区和主题的解析以及文件上传的功能。`DispatcherServlet` 负责将请求分发到不同的 handler。默认的 handler 通过`@Controller` 和 `@RequestMapping`注解，提供多种灵活的处理方法。若加上 `@PathVariable` 注解和其他辅助功能，你也可用使用 `@Controller` 机制来创建 RESTful web 站点和应用程序。
 
 ****
-"Open for extension..."
-A key design principle in Spring Web MVC and in Spring in general is the "__Open for
-extension, closed for modification__" principle.
+"对扩展开放..." 是 Spring Web MVC 的重要设计原则之一，符合 Spring 的本身设计的概念
+"_对扩展开发，对修改关闭_"。
 
-Some methods in the core classes of Spring Web MVC are marked `final`. As a developer
-you cannot override these methods to supply your own behavior. This has not been done
-arbitrarily, but specifically with this principle in mind.
+Spring Web MVC 核心类中部分方法被标记为 `final`,开发者不能通过覆盖这些方法，来提供自定义的行为。其目的是遵循开闭(OCP)原则， 而不是故意刁难开发者。
 
-For an explanation of this principle, refer to __Expert Spring Web MVC and Web Flow__ by
-Seth Ladd and others; specifically see the section "A Look At Design," on page 117 of
-the first edition. Alternatively, see
+在 Seth Ladd 等人所著一书__Expert Spring Web MVC and Web Flow__中，详细解释了这一设计原则，如果你有兴趣深入了解的，可以阅读一下，重点阅读该书第一版 117 页 "A Look At Design" 的章节。或者，你可以看一下这个：
 
 * http://www.objectmentor.com/resources/articles/ocp.pdf[Bob Martin, The Open-Closed
   Principle (PDF)]
 
-You cannot add advice to final methods when you use Spring MVC. For example, you cannot
-add advice to the `AbstractController.setSynchronizeOnSession()` method. Refer to
-<<aop-understanding-aop-proxies>> for more information on AOP proxies and why you cannot
-add advice to final methods.
+Spring MVC 不允许在 final 方法添加 advice。如不能在 `AbstractController.setSynchronizeOnSession()` 方法添加 advice。需要了解 AOP 代理的相关信息与及为什么不能在 final 方法上添加 advice，可以参考
+<<aop-understanding-aop-proxies>>。
 ****
 
-In Spring Web MVC you can use any object as a command or form-backing object; you do not
-need to implement a framework-specific interface or base class. Spring's data binding is
-highly flexible: for example, it treats type mismatches as validation errors that can be
-evaluated by the application, not as system errors. Thus you need not duplicate your
-business objects' properties as simple, untyped strings in your form objects simply to
-handle invalid submissions, or to convert the Strings properly. Instead, it is often
-preferable to bind directly to your business objects.
+使用 Spring Web MVC ，你不需要实现框架指定的任何接口或继承任意基类，就可以使用任意对象作为命令对象(或表单对象)。Spring 的数据绑定相当之灵活，比如，Spring可以将不匹配的类型作为应用可识别的验证错误，而不是系统错误，所以，你不需要去重复定义一套属性一致而类型是原始字符串的业务逻辑对象，去处理错误的提交或对字符串进行类型转换。反过来说就是，spring 允许你直接正确类型的参数绑定到业务逻辑对象。
 
-Spring's view resolution is extremely flexible. A `Controller` is typically responsible
-for preparing a model `Map` with data and selecting a view name but it can also write
-directly to the response stream and complete the request. View name resolution is highly
-configurable through file extension or Accept header content type negotiation, through
-bean names, a properties file, or even a custom `ViewResolver` implementation. The model
-(the M in MVC) is a `Map` interface, which allows for the complete abstraction of the
-view technology. You can integrate directly with template based rendering technologies
-such as JSP, Velocity and Freemarker, or directly generate XML, JSON, Atom, and many
-other types of content. The model `Map` is simply transformed into an appropriate
-format, such as JSP request attributes, a Velocity template model.
-
+Spring 的视图解析也相当之灵活。完成一个请求，`Controller` 通常是负责准备一个数据模型 `Map` 和选择一个指定的视图，当然，也支持直接将数据写到的响应流里。视图名称的解析是高度可配置的，可以通过文件扩展名、accept header 的 Content-Type、bean 的名称、属性文件或自定义的 `ViewResolver` 实现来解析。模型(Model,MVC 中的 'M'),是一个 `Map` 接口，提供对视图数据的完全抽象，可直接与渲染模版集成，如 JSP，Veloctiy，Freemarker;或直接生成原始数据、，或xml、json等其他类型的响应内容。模型 `Map` 接口只是负责将数据转换为合适格式，如 jsp 请求属性，velocity 的 model 等。
 
 
 [[mvc-features]]
-==== Features of Spring Web MVC
+==== Spring Web MVC 的特点
 
 .Spring Web Flow
 ****
