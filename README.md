@@ -20,7 +20,44 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 
 7. **翻译前请看下面的要求**。
 
-##I. 翻译一般要求
+##I. 已分配的章节
+
+- **1.introduction.adoc          - [@lixiuwen](http://git.oschina.net/lixiuwen)**
+- **2.spring-whats-new.adoc      - [@isea533](http://blog.csdn.net/isea533)**
+- **3.beans.adoc                 - [@isea533](http://blog.csdn.net/isea533)**
+- **4.resources.adoc             - [@tianya](tianya@tianya-PC)**
+- **5.validation.adoc            - [@jassen](http://git.oschina.net/thinapple)**
+- **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**
+- **8.aop.adoc                   - [@ym919202](http://git.oschina.net/yemaozistar)**
+- 9.aop-api.adoc               -
+- 10.testing.adoc              -
+- 11.spring-data-tier.adoc     -
+- 12.dao.adoc                  -
+- 13.jdbc.adoc                 -
+- 14.orm.adoc                  -
+- 15.oxm.adoc                  -
+- **16.spring-web.adoc           - [@tianya](tianya@tianya-PC)**
+- 17.view.adoc                 -
+- 18.web-integration.adoc      -
+- 19.portlet.adoc              -
+- **20.websocket.adoc            - [@zipu888](http://git.oschina.net/xiaohaogege)**
+- 21.spring-integration.adoc   -
+- 22.ejb.adoc                  -
+- 23.jms.adoc                  -
+- 24.jmx.adoc                  -
+- 25.cci.adoc                  -
+- 26.mail.adoc                 -
+- 27.scheduling.adoc           -
+- 28.dynamic-language.adoc     -
+- 29.cache.adoc                -
+- 31.classic-spring.adoc       -
+- 32.classic-aop-spring.adoc   -
+- 33.xsd-config.adoc           -
+- 34.extensible-xml.adoc       -
+- 35.spring.tld.adoc           -
+
+
+##II. 翻译一般要求
 
 为了大家在翻译的时候文件格式正确，而且翻译比较一致，需要遵守一定的要求。
 
@@ -68,7 +105,7 @@ asciidoc语法--快速参考：
 
 具体遇到那些词可以在群内讨论。  
 
-##II. 编译本项目   
+##III. 编译本项目   
 
 **目录结构**：
 
