@@ -50,23 +50,49 @@ asciidoc语法--快速参考：
 
 ##II. 编译本项目   
 
-为了便于独立翻译，已经手工将`index.adoc`和`appendix.adoc`进行了拆分。拆分后的内容在`src\main\asciidoc\chapter`目录。
+**目录结构**：
 
-拆分规则：  
+为了便于独立翻译，已经手工将`index.adoc`和`appendix.adoc`进行了拆分。拆分后的内容在`src\asciidoc\chaptor`中。
 
-- 1~29 属于`index.adoc`
-- 30 是`index.adoc`的结尾，也属于`index.adoc`，但是不需要翻译
-- 31~35 是`appendix.adoc`的内容
+原来的`index.adoc`改名为`index.adoc.backup`。现在的`index.adoc`内容如下：  
 
-由于目录结构做了调整，为了不影响现有的翻译内容，拆分的位置没有修改。但是`index.adoc`和`appendix.adoc`所在的目录都已经移动到了`src\asciidoc`中。  
+	include::chapter/1.introduction.adoc[]
+	include::chapter/2.spring-whats-new.adoc[]
+	include::chapter/3.beans.adoc[]
+	include::chapter/4.resources.adoc[]
+	include::chapter/5.validation.adoc[]
+	include::chapter/7.expressions.adoc[]
+	include::chapter/8.aop.adoc[]
+	include::chapter/9.aop-api.adoc[]
+	include::chapter/10.testing.adoc[]
+	include::chapter/11.spring-data-tier.adoc[]
+	include::chapter/12.dao.adoc[]
+	include::chapter/13.jdbc.adoc[]
+	include::chapter/14.orm.adoc[]
+	include::chapter/15.oxm.adoc[]
+	include::chapter/16.spring-web.adoc[]
+	include::chapter/17.view.adoc[]
+	include::chapter/18.web-integration.adoc[]
+	include::chapter/19.portlet.adoc[]
+	include::chapter/20.websocket.adoc[]
+	include::chapter/21.spring-integration.adoc[]
+	include::chapter/22.ejb.adoc[]
+	include::chapter/23.jms.adoc[]
+	include::chapter/24.jmx.adoc[]
+	include::chapter/25.cci.adoc[]
+	include::chapter/26.mail.adoc[]
+	include::chapter/27.scheduling.adoc[]
+	include::chapter/28.dynamic-language.adoc[]
+	include::chapter/29.cache.adoc[]
+	include::chapter/31.classic-spring.adoc[]
+	include::chapter/32.classic-aop-spring.adoc[]
+	include::chapter/33.xsd-config.adoc[]
+	include::chapter/34.extensible-xml.adoc[]
+	include::chapter/35.spring.tld.adoc[]
 
-###等大家都在的时候，我可以移动`chapter`目录到`src\asciidoc`中，将来修改`index.adoc`可以直接引用所有的独立部分。
+**注**：上面内容中中断的序号的文件都是不存在的，不是bug。  
 
 Spring项目使用的**Gradle**,编译文档也需要用到**Gradle**，所以如果你想编译本项目，需要按如下进行操作：  
-
-###0. 目前需要手动合并章节内容  
-
-目前需要手动合并到`index.adoc`和`appendix.adoc`，后续修改目录后可以免去这一步操作。  
 
 ###1. 下载并配置Gradle
 
