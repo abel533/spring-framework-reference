@@ -2,6 +2,7 @@
 target/
 
 # Gradle #
+.gradle
 build/
 
 # IDEA #
