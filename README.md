@@ -22,13 +22,13 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 
 ##I. 已分配的章节
 
-- **1.introduction.adoc          - [@lixiuwen](http://git.oschina.net/lixiuwen)**
-- **2.spring-whats-new.adoc      - [@isea533](http://blog.csdn.net/isea533)**
-- **3.beans.adoc                 - [@isea533](http://blog.csdn.net/isea533)**
-- **4.resources.adoc             - [@tianya](tianya@tianya-PC)**
-- **5.validation.adoc            - [@jassen](http://git.oschina.net/thinapple)**
+- **1.introduction.adoc          - [lixiuwen](http://git.oschina.net/lixiuwen)**
+- **2.spring-whats-new.adoc      - [isea533](http://blog.csdn.net/isea533)**
+- **3.beans.adoc                 - [isea533](http://blog.csdn.net/isea533)**
+- **4.resources.adoc             - [tianya](tianyatianya-PC)**
+- **5.validation.adoc            - [jassen](http://git.oschina.net/thinapple)**
 - **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**
-- **8.aop.adoc                   - [@ym919202](http://git.oschina.net/yemaozistar)**
+- **8.aop.adoc                   - [ym919202](http://git.oschina.net/yemaozistar)**
 - 9.aop-api.adoc               -
 - 10.testing.adoc              -
 - 11.spring-data-tier.adoc     -
@@ -36,11 +36,11 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 13.jdbc.adoc                 -
 - 14.orm.adoc                  -
 - 15.oxm.adoc                  -
-- **16.spring-web.adoc           - [@tianya](tianya@tianya-PC)**
+- **16.spring-web.adoc           - [tianya](tianyatianya-PC)**
 - 17.view.adoc                 -
 - 18.web-integration.adoc      -
 - 19.portlet.adoc              -
-- **20.websocket.adoc            - [@zipu888](http://git.oschina.net/xiaohaogege)**
+- **20.websocket.adoc            - [zipu888](http://git.oschina.net/xiaohaogege)**
 - 21.spring-integration.adoc   -
 - 22.ejb.adoc                  -
 - 23.jms.adoc                  -
@@ -55,7 +55,6 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 33.xsd-config.adoc           -
 - 34.extensible-xml.adoc       -
 - 35.spring.tld.adoc           -
-
 
 ##II. 翻译一般要求
 
