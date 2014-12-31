@@ -34,7 +34,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 11.spring-data-tier.adoc     -
 - 12.dao.adoc                  -
 - 13.jdbc.adoc                 -
-- 14.orm.adoc                  -
+- **14.orm.adoc                  - [waylau](http://git.oschina.net/waylau)**
 - 15.oxm.adoc                  -
 - **16.spring-web.adoc           - [tianya](tianyatianya-PC)**
 - 17.view.adoc                 -
