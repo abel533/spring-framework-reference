@@ -4,6 +4,12 @@
 
 Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文件，该文件在`src/asciidoc/chapter`路径下。  
 
+**其他**
+
+[waylau](https://github.com/waylau)**已经翻译了一部分内容，大家翻译的时候可以去下面的地址参考：
+
+>[https://github.com/waylau/spring-framework-4-reference](https://github.com/waylau/spring-framework-4-reference)
+
 **参与翻译**
 
 1. 首先加QQ群Team翻译小组：111763438  
@@ -12,7 +18,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 
 3. 进入Team后需要先绑定gitosc账号。
 
-4. 可以从上面的章节中选择还没有人翻译的章节（有人翻译的标题都是中文）
+4. 可以从下面的章节中选择还没有人翻译的章节（有人翻译的标题都是中文）
 
 5. 跟群主说明要翻译的章节，确定后可以开始翻译。
 
@@ -20,7 +26,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 
 7. **翻译前请看下面的要求**。
 
-##I. 已分配的章节
+##I. 全部章节(**已分配的章节**)
 
 - **1.introduction.adoc          - [lixiuwen](http://git.oschina.net/lixiuwen)**
 - **2.spring-whats-new.adoc      - [isea533](http://blog.csdn.net/isea533)**
@@ -32,9 +38,9 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 9.aop-api.adoc               -
 - 10.testing.adoc              -
 - 11.spring-data-tier.adoc     -
-- 12.dao.adoc                  -
+- **12.dao.adoc                  - **
 - 13.jdbc.adoc                 -
-- **14.orm.adoc                  - [waylau](http://git.oschina.net/waylau)**
+- **14.orm.adoc                  - [waylau](https://github.com/waylau)**
 - 15.oxm.adoc                  -
 - **16.spring-web.adoc           - [tianya](tianyatianya-PC)**
 - 17.view.adoc                 -
