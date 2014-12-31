@@ -4,12 +4,6 @@
 
 Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文件，该文件在`src/asciidoc/chapter`路径下。  
 
-**其他**
-
-**[waylau](https://github.com/waylau)**已经翻译了一部分内容，大家翻译的时候可以去下面的地址参考：
-
->[https://github.com/waylau/spring-framework-4-reference](https://github.com/waylau/spring-framework-4-reference)
-
 **参与翻译**
 
 1. 首先加QQ群Team翻译小组：111763438  
