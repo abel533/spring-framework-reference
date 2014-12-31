@@ -32,7 +32,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 9.aop-api.adoc               -
 - 10.testing.adoc              -
 - 11.spring-data-tier.adoc     -
-- **12.dao.adoc                  - **
+- **12.dao.adoc                  - 已经分配**
 - 13.jdbc.adoc                 -
 - **14.orm.adoc                  - [waylau](https://github.com/waylau)**
 - 15.oxm.adoc                  -
@@ -47,7 +47,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 24.jmx.adoc                  -
 - 25.cci.adoc                  -
 - 26.mail.adoc                 -
-- 27.scheduling.adoc           -
+- **27.scheduling.adoc           - [qxs](http://git.oschina.net/qxs)**
 - 28.dynamic-language.adoc     -
 - 29.cache.adoc                -
 - 31.classic-spring.adoc       -
