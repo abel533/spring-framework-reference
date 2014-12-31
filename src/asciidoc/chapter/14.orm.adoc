@@ -5,18 +5,9 @@
 
 
 [[orm-introduction]]
-=== Introduction to ORM with Spring
-The Spring Framework supports integration with Hibernate, Java Persistence API (JPA)
-and Java Data Objects (JDO) for resource management, data access object
-(DAO) implementations, and transaction strategies. For example, for Hibernate there is
-first-class support with several convenient IoC features that address many typical
-Hibernate integration issues. You can configure all of the supported features for O/R
-(object relational) mapping tools through Dependency Injection. They can participate in
-Spring's resource and transaction management, and they comply with Spring's generic
-transaction and DAO exception hierarchies. The recommended integration style is to code
-DAOs against plain Hibernate, JPA, and JDO APIs. The older style of using Spring's DAO
-templates is no longer recommended; however, coverage of this style can be found in the
-<<classic-spring-orm>> in the appendices.
+=== 介绍 Spring 中的 ORM 
+Spring Framework 支持集成  Hibernate, Java Persistence API (JPA) 和 Java Data Objects (JDO) 用于资源管理、数据访问对象(DAO)的实现,和事务策略。例如,对于 Hibernate 有一流的支持，使用方便的 IoC 特性,解决许多典型的 Hibernate 集成问题。您可以通过依赖注入配置的所有  O/R (对象关系) 映射工具的特性。他们可以参与 Spring 的资源和事务管理,他们符合 Spring 的通用事务和 DAO 异常层次结构。建议集成风格是在 Hibernate, JPA, 和 JDO APIs 中使用 DAO 。旧的 Spring DAO 模板不再推荐使用;然而,关于风格的论述可以见
+<<classic-spring-orm>> .
 
 Spring adds significant enhancements to the ORM layer of your choice when you create
 data access applications. You can leverage as much of the integration support as you
@@ -1557,7 +1548,3 @@ specify the appropriate dialect.
 
 See the `JpaDialect` javadocs for more details of its operations and how they are used
 within Spring's JPA support.
-
-
-
-
