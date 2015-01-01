@@ -1,68 +1,47 @@
 <html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   <title>4.&nbsp;New Features and Enhancements in Spring Framework 4.1</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-whats-new.html" title="Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x"><link rel="prev" href="new-in-4.0.html" title="3.&nbsp;New Features and Enhancements in Spring Framework 4.0"><link rel="next" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.&nbsp;New Features and Enhancements in Spring Framework 4.1</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="new-in-4.1" href="#new-in-4.1"></a>4.&nbsp;New Features and Enhancements in Spring Framework 4.1</h2></div></div></div>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>4.&nbsp;Spring 4.1&#30340;&#25913;&#36827;&#21644;&#26032;&#21151;&#33021;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-whats-new.html" title="Part&nbsp;II.&nbsp;Spring 4.x&#30340;&#26032;&#21151;&#33021;"><link rel="prev" href="new-in-4.0.html" title="3.&nbsp;Spring 4.0&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;"><link rel="next" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.&nbsp;Spring 4.1&#30340;&#25913;&#36827;&#21644;&#26032;&#21151;&#33021;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;II.&nbsp;Spring 4.x&#30340;&#26032;&#21151;&#33021;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="new-in-4.1" href="#new-in-4.1"></a>4.&nbsp;Spring 4.1&#30340;&#25913;&#36827;&#21644;&#26032;&#21151;&#33021;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_jms_improvements" href="#_jms_improvements"></a>4.1&nbsp;JMS Improvements</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_jms" href="#_jms"></a>4.1&nbsp;JMS&#25913;&#36827;</h2></div></div></div>
 
-<p>Spring 4.1 introduces a much simpler infrastructure <a class="link" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">to register JMS
-listener endpoints</a> by annotating bean methods with
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListener.html" target="_top"><code class="literal">@JmsListener</code></a>.
-The XML namespace has been enhanced to support this new style (<code class="literal">jms:annotation-driven</code>),
-and it is also possible to fully configure the infrastructure using Java config
-(<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/EnableJms.html" target="_top"><code class="literal">@EnableJms</code></a>,
-<code class="literal">JmsListenerContainerFactory</code>). It is also possible to register listener endpoints
-programmatically using
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListenerConfigurer.html" target="_top"><code class="literal">JmsListenerConfigurer</code></a>.</p>
-<p>Spring 4.1 also aligns its JMS support to allow you to benefit from the <code class="literal">spring-messaging</code>
-abstraction introduced in 4.0, that is:</p>
+<p>Spring 4.1&#24341;&#20837;&#20102;&#19968;&#20010;&#26356;&#31616;&#21333;&#30340;&#22522;&#30784;&#26550;&#26500;&#65292;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListener.html" target="_top"><code class="literal">@JmsListener</code></a>&#27880;&#35299;bean&#26041;&#27861;&#26469;<a class="link" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">&#27880;&#20876;JMS&#30417;&#21548;&#31471;&#28857;</a>&#12290;XML&#21629;&#21517;&#31354;&#38388;&#24050;&#32463;&#36890;&#36807;&#22686;&#24378;&#26469;&#25903;&#25345;&#36825;&#31181;&#26032;&#30340;&#26041;&#24335;&#65288;<code class="literal">jms:annotation-driven</code>&#65289;&#65292;&#23427;&#20063;&#21487;&#20197;&#23436;&#20840;&#36890;&#36807;Java&#37197;&#32622;( <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/EnableJms.html" target="_top"><code class="literal">@EnableJms</code></a>,
+<code class="literal">JmsListenerContainerFactory</code>)&#26469;&#37197;&#32622;&#26550;&#26500;&#12290;&#20063;&#21487;&#20197;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListenerConfigurer.html" target="_top"><code class="literal">JmsListenerConfigurer</code></a>&#27880;&#35299;&#26469;&#27880;&#20876;&#30417;&#21548;&#31471;&#28857;&#12290;</p>
+<p>Spring 4.1&#36824;&#35843;&#25972;&#20102;JMS&#30340;&#25903;&#25345;&#65292;&#20351;&#24471;&#20320;&#21487;&#20197;&#20174;<code class="literal">spring-messaging</code>&#22312;Spring4.0&#24341;&#20837;&#30340;&#25277;&#35937;&#33719;&#30410;&#65292;&#21363;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Message listener endpoints can have a more flexible signature and benefit from
-standard messaging annotations such as <code class="literal">@Payload</code>, <code class="literal">@Header</code>, <code class="literal">@Headers</code>, and <code class="literal">@SendTo</code>. It
-is also possible to use a standard <code class="literal">Message</code> in lieu of <code class="literal">javax.jms.Message</code> as method
-argument.
+&#28040;&#24687;&#30417;&#21548;&#31471;&#28857;&#21487;&#20197;&#26377;&#26356;&#20026;&#28789;&#27963;&#30340;&#31614;&#21517;&#65292;&#24182;&#19988;&#21487;&#20197;&#20174;&#26631;&#20934;&#30340;&#28040;&#24687;&#27880;&#35299;&#33719;&#30410;&#65292;&#20363;&#22914;<code class="literal">@Payload</code>&#12289;<code class="literal">@Header</code>&#12289;<code class="literal">@Headers</code>&#21644;<code class="literal">@SendTo</code>&#27880;&#35299;&#12290;&#21478;&#22806;&#65292;&#20063;&#21487;&#20197;&#20351;&#29992;&#19968;&#20010;&#26631;&#20934;&#30340;&#28040;&#24687;&#65292;&#20197;&#20195;&#26367;<code class="literal">javax.jms.Message</code>&#20316;&#20026;&#26041;&#27861;&#21442;&#25968;&#12290;
 </li><li class="listitem">
-A new <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/core/JmsMessageOperations.html" target="_top"><code class="literal">JmsMessageOperations</code></a>
-interface is available and permits <code class="literal">JmsTemplate</code> like operations using the <code class="literal">Message</code>
-abstraction.
+&#19968;&#20010;&#26032;&#30340;&#21487;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/core/JmsMessageOperations.html" target="_top"><code class="literal">JmsMessageOperations</code></a>&#25509;&#21475;&#21644;&#20801;&#35768;&#25805;&#20316;&#20351;&#29992;<code class="literal">Message</code>&#25277;&#35937;&#30340;<code class="literal">JmsTemplate</code>&#12290;
 </li></ul></div>
 
-<p>Finally, Spring 4.1 provides additional miscellaneous improvements:</p>
+<p>&#26368;&#21518;&#65292;Spring 4.1&#25552;&#20379;&#20102;&#20854;&#20182;&#21508;&#31181;&#21508;&#26679;&#30340;&#25913;&#36827;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Synchronous request-reply operations support in <code class="literal">JmsTemplate</code>
+JmsTemplate&#20013;&#30340;&#21516;&#27493;&#35831;&#27714;-&#31572;&#22797;&#25805;&#20316;&#25903;&#25345;
 </li><li class="listitem">
-Listener priority can be specified per <code class="literal">&lt;jms:listener/&gt;</code> element
+&#30417;&#21548;&#22120;&#30340;&#20248;&#20808;&#26435;&#21487;&#20197;&#25351;&#23450;&#27599;&#20010;<code class="literal">&lt;jms:listener/&gt;</code>&#20803;&#32032;
 </li><li class="listitem">
-Recovery options for the message listener container are configurable using a
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/backoff/BackOff.html" target="_top"><code class="literal">BackOff</code></a> implementation
+&#28040;&#24687;&#20390;&#21548;&#22120;&#23481;&#22120;&#24674;&#22797;&#36873;&#39033;&#21487;&#20197;&#36890;&#36807;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/backoff/BackOff.html" target="_top"><code class="literal">BackOff</code></a> &#23454;&#29616;&#36827;&#34892;&#37197;&#32622;
 </li><li class="listitem">
-JMS 2.0 shared consumers are supported
+JMS 2.0&#28040;&#36153;&#32773;&#25903;&#25345;&#20849;&#20139;
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_caching_improvements" href="#_caching_improvements"></a>4.2&nbsp;Caching Improvements</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_caching" href="#_caching"></a>4.2&nbsp;Caching&#65288;&#32531;&#23384;&#65289;&#25913;&#36827;</h2></div></div></div>
 
-<p>Spring 4.1 supports <a class="link" href="cache.html#cache-jsr-107" title="30.4&nbsp;JCache (JSR-107) annotations">JCache (JSR-107) annotations</a> using Spring&#8217;s
-existing cache configuration and infrastructure abstraction; no changes are required
-to use the standard annotations.</p>
-<p>Spring 4.1 also improves its own caching abstraction significantly:</p>
+<p>Spring 4.1 &#25903;&#25345;<a class="link" href="cache.html#cache-jsr-107" title="30.4&nbsp;JCache (JSR-107) annotations">JCache (JSR-107)&#27880;&#35299;</a>&#20351;&#29992;Spring&#30340;&#29616;&#26377;&#32531;&#23384;&#37197;&#32622;&#21644;&#22522;&#30784;&#32467;&#26500;&#30340;&#25277;&#35937;&#65307;&#20351;&#29992;&#26631;&#20934;&#27880;&#35299;&#19981;&#38656;&#35201;&#20219;&#20309;&#26356;&#25913;&#12290;</p>
+<p>Spring 4.1&#20063;&#22823;&#22823;&#25552;&#39640;&#20102;&#33258;&#24049;&#30340;&#32531;&#23384;&#25277;&#35937;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Caches can be resolved at runtime using a
-<a class="link" href="cache.html#cache-annotations-cacheable-cache-resolver" title="Custom cache resolution"><code class="literal">CacheResolver</code></a>. As a result the
-<code class="literal">value</code> argument defining the cache name(s) to use is no longer mandatory.
+&#32531;&#23384;&#21487;&#20197;&#22312;&#36816;&#34892;&#26102;&#20351;&#29992;<a class="link" href="cache.html#cache-annotations-cacheable-cache-resolver" title="Custom cache resolution"><code class="literal">CacheResolver</code></a>&#35299;&#20915;&#12290;&#22240;&#27492;&#20351;&#29992;<code class="literal">value</code>&#21442;&#25968;&#23450;&#20041;&#30340;&#32531;&#23384;&#21517;&#31216;&#19981;&#22312;&#26159;&#24378;&#21046;&#24615;&#30340;&#12290;
 </li><li class="listitem">
-More operation-level customizations: cache resolver, cache manager, key
-generator
+&#26356;&#22810;&#30340;&#25805;&#20316;&#32423;&#33258;&#23450;&#20041;&#39033;&#65306;&#32531;&#23384;&#35299;&#26512;&#22120;&#65292;&#32531;&#23384;&#31649;&#29702;&#22120;&#65292;&#38190;&#20540;&#29983;&#25104;&#22120;
 </li><li class="listitem">
-A new <a class="link" href="cache.html#cache-annotations-config" title="30.3.5&nbsp;@CacheConfig annotation"><code class="literal">@CacheConfig</code> class-level annotation</a> allows
-common settings to be shared at the class level <span class="strong"><strong>without</strong></span> enabling any cache operation.
+&#19968;&#20010;&#26032;&#30340;<a class="link" href="cache.html#cache-annotations-config" title="30.3.5&nbsp;@CacheConfig annotation"><code class="literal">@CacheConfig</code>&#31867;&#32423;&#21035;&#27880;&#35299;</a>&#20801;&#35768;&#22312;&#31867;&#32423;&#21035;&#19978;&#20849;&#20139;&#24120;&#29992;&#37197;&#32622;&#65292;<span class="strong"><strong>&#19981;&#38656;&#35201;</strong></span>&#21551;&#29992;&#20219;&#20309;&#32531;&#23384;&#25805;&#20316;&#12290;
 </li><li class="listitem">
-Better exception handling of cached methods using <code class="literal">CacheErrorHandler</code>
+&#20351;&#29992;<code class="literal">CacheErrorHandler</code>&#26356;&#22909;&#30340;&#22788;&#29702;&#32531;&#23384;&#26041;&#27861;&#30340;&#24322;&#24120;
 </li></ul></div>
 
-<p>Spring 4.1 also has a breaking change in the <code class="literal">CacheInterface</code> as a new <code class="literal">putIfAbsent</code>
-method has been added.</p>
+<p>Spring 4.1&#20026;&#20102;&#22312;<code class="literal">CacheInterface</code>&#28155;&#21152;&#19968;&#20010;&#26032;&#30340;<code class="literal">putIfAbsent</code>&#26041;&#27861;&#20063;&#20570;&#20102;&#37325;&#22823;&#30340;&#26356;&#25913;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_web_improvements" href="#_web_improvements"></a>4.3&nbsp;Web Improvements</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_web" href="#_web"></a>4.3&nbsp;Web&#25913;&#36827;</h2></div></div></div>
 
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 The existing support for resource handling based on the <code class="literal">ResourceHttpRequestHandler</code>
@@ -144,7 +123,7 @@ support (based on Groovy 2.3). See the <code class="literal">GroovyMarkupConfigu
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_websocket_stomp_messaging_improvements" href="#_websocket_stomp_messaging_improvements"></a>4.4&nbsp;WebSocket STOMP Messaging Improvements</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_websocket_stomp" href="#_websocket_stomp"></a>4.4&nbsp;WebSocket STOMP&#28040;&#24687;&#25913;&#36827;</h2></div></div></div>
 
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 SockJS (Java) client-side support. See <code class="literal">SockJsClient</code> and classes in same package.
@@ -173,7 +152,7 @@ session is established. See <a class="ulink" href="https://jira.spring.io/browse
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_testing_improvements_2" href="#_testing_improvements_2"></a>4.5&nbsp;Testing Improvements</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="__5" href="#__5"></a>4.5&nbsp;&#27979;&#35797;&#25913;&#36827;</h2></div></div></div>
 
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <p class="simpara">Groovy scripts can now be used to configure the <code class="literal">ApplicationContext</code> loaded for
@@ -241,4 +220,4 @@ common setup for any 3rd party framework or within a project.
 </li></ul></div>
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-whats-new.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.&nbsp;New Features and Enhancements in Spring Framework 4.0&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;III.&nbsp;Core Technologies</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-whats-new.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.&nbsp;Spring 4.0&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;III.&nbsp;Core Technologies</td></tr></table></div></body></html>

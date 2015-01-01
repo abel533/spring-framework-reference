@@ -1,55 +1,27 @@
 <html><head>
-      <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-   <title>17.&nbsp;Web MVC framework</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="next" href="view.html" title="18.&nbsp;View technologies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.&nbsp;Web MVC framework</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-web.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="view.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="mvc" href="#mvc"></a>17.&nbsp;Web MVC framework</h2></div></div></div>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>17.&nbsp;Web MVC &#26694;&#26550;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="next" href="view.html" title="18.&nbsp;View technologies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.&nbsp;Web MVC &#26694;&#26550;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-web.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="view.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="mvc" href="#mvc"></a>17.&nbsp;Web MVC &#26694;&#26550;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-introduction" href="#mvc-introduction"></a>17.1&nbsp;Introduction to Spring Web MVC framework</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-introduction" href="#mvc-introduction"></a>17.1&nbsp;Spring Web MVC &#26694;&#26550;&#20171;&#32461;</h2></div></div></div>
 
-<p>The Spring Web model-view-controller (MVC) framework is designed around a
-<code class="literal">DispatcherServlet</code> that dispatches requests to handlers, with configurable handler
-mappings, view resolution, locale, time zone and theme resolution as well as support for
-uploading files. The default handler is based on the <code class="literal">@Controller</code> and <code class="literal">@RequestMapping</code>
-annotations, offering a wide range of flexible handling methods. With the introduction
-of Spring 3.0, the <code class="literal">@Controller</code> mechanism also allows you to create RESTful Web sites
-and applications, through the <code class="literal">@PathVariable</code> annotation and other features.</p>
+<p>Spring Web &#27169;&#22411;-&#35270;&#22270;-&#25511;&#21046;&#22120;(MVC) &#26694;&#26550;&#26159;&#22260;&#32469; <code class="literal">DispatcherServlet</code>&#32780;&#35774;&#35745;&#30340;&#65292;&#20854;&#25903;&#25345;&#21487;&#37197;&#32622;&#30340; handler &#26144;&#23556;&#65292;&#35270;&#22270;&#35299;&#26512;&#65292;&#26412;&#22320;&#21270;&#12289;&#26102;&#21306;&#21644;&#20027;&#39064;&#30340;&#35299;&#26512;&#20197;&#21450;&#25991;&#20214;&#19978;&#20256;&#30340;&#21151;&#33021;&#12290;<code class="literal">DispatcherServlet</code> &#36127;&#36131;&#23558;&#35831;&#27714;&#20998;&#21457;&#21040;&#19981;&#21516;&#30340; handler&#12290;&#40664;&#35748;&#30340; handler &#36890;&#36807;<code class="literal">@Controller</code> &#21644; <code class="literal">@RequestMapping</code>&#27880;&#35299;&#65292;&#25552;&#20379;&#22810;&#31181;&#28789;&#27963;&#30340;&#22788;&#29702;&#26041;&#27861;&#12290;&#33509;&#21152;&#19978; <code class="literal">@PathVariable</code> &#27880;&#35299;&#21644;&#20854;&#20182;&#36741;&#21161;&#21151;&#33021;&#65292;&#20320;&#20063;&#21487;&#29992;&#20351;&#29992; <code class="literal">@Controller</code> &#26426;&#21046;&#26469;&#21019;&#24314; RESTful web &#31449;&#28857;&#21644;&#24212;&#29992;&#31243;&#24207;&#12290;</p>
 <div class="sidebar"><div class="titlepage"></div>
-<p>"Open for extension&#8230;"
-A key design principle in Spring Web MVC and in Spring in general is the "<span class="emphasis"><em>Open for
-extension, closed for modification</em></span>" principle.</p>
-<p>Some methods in the core classes of Spring Web MVC are marked <code class="literal">final</code>. As a developer
-you cannot override these methods to supply your own behavior. This has not been done
-arbitrarily, but specifically with this principle in mind.</p>
-<p>For an explanation of this principle, refer to <span class="emphasis"><em>Expert Spring Web MVC and Web Flow</em></span> by
-Seth Ladd and others; specifically see the section "A Look At Design," on page 117 of
-the first edition. Alternatively, see</p>
+<p>"&#23545;&#25193;&#23637;&#24320;&#25918;&#8230;" &#26159; Spring Web MVC &#30340;&#37325;&#35201;&#35774;&#35745;&#21407;&#21017;&#20043;&#19968;&#65292;&#31526;&#21512; Spring &#30340;&#26412;&#36523;&#35774;&#35745;&#30340;&#27010;&#24565;
+"<span class="emphasis"><em>&#23545;&#25193;&#23637;&#24320;&#21457;&#65292;&#23545;&#20462;&#25913;&#20851;&#38381;</em></span>"&#12290;</p>
+<p>Spring Web MVC &#26680;&#24515;&#31867;&#20013;&#37096;&#20998;&#26041;&#27861;&#34987;&#26631;&#35760;&#20026; <code class="literal">final</code>,&#24320;&#21457;&#32773;&#19981;&#33021;&#36890;&#36807;&#35206;&#30422;&#36825;&#20123;&#26041;&#27861;&#65292;&#26469;&#25552;&#20379;&#33258;&#23450;&#20041;&#30340;&#34892;&#20026;&#12290;&#20854;&#30446;&#30340;&#26159;&#36981;&#24490;&#24320;&#38381;(OCP)&#21407;&#21017;&#65292; &#32780;&#19981;&#26159;&#25925;&#24847;&#20993;&#38590;&#24320;&#21457;&#32773;&#12290;</p>
+<p>&#22312; Seth Ladd &#31561;&#20154;&#25152;&#33879;&#19968;&#20070;<span class="emphasis"><em>Expert Spring Web MVC and Web Flow</em></span>&#20013;&#65292;&#35814;&#32454;&#35299;&#37322;&#20102;&#36825;&#19968;&#35774;&#35745;&#21407;&#21017;&#65292;&#22914;&#26524;&#20320;&#26377;&#20852;&#36259;&#28145;&#20837;&#20102;&#35299;&#30340;&#65292;&#21487;&#20197;&#38405;&#35835;&#19968;&#19979;&#65292;&#37325;&#28857;&#38405;&#35835;&#35813;&#20070;&#31532;&#19968;&#29256; 117 &#39029; "A Look At Design" &#30340;&#31456;&#33410;&#12290;&#25110;&#32773;&#65292;&#20320;&#21487;&#20197;&#30475;&#19968;&#19979;&#36825;&#20010;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <a class="ulink" href="http://www.objectmentor.com/resources/articles/ocp.pdf" target="_top">Bob Martin, The Open-Closed
 Principle (PDF)</a>
 </li></ul></div>
 
-<p>You cannot add advice to final methods when you use Spring MVC. For example, you cannot
-add advice to the <code class="literal">AbstractController.setSynchronizeOnSession()</code> method. Refer to
-<a class="xref" href="aop.html#aop-understanding-aop-proxies" title="9.6.1&nbsp;Understanding AOP proxies">Section&nbsp;9.6.1, &#8220;Understanding AOP proxies&#8221;</a> for more information on AOP proxies and why you cannot
-add advice to final methods.</p>
+<p>Spring MVC &#19981;&#20801;&#35768;&#22312; final &#26041;&#27861;&#28155;&#21152; advice&#12290;&#22914;&#19981;&#33021;&#22312; <code class="literal">AbstractController.setSynchronizeOnSession()</code> &#26041;&#27861;&#28155;&#21152; advice&#12290;&#38656;&#35201;&#20102;&#35299; AOP &#20195;&#29702;&#30340;&#30456;&#20851;&#20449;&#24687;&#19982;&#21450;&#20026;&#20160;&#20040;&#19981;&#33021;&#22312; final &#26041;&#27861;&#19978;&#28155;&#21152; advice&#65292;&#21487;&#20197;&#21442;&#32771;
+<a class="xref" href="aop.html#aop-understanding-aop-proxies" title="9.6.1&nbsp;Understanding AOP proxies">Section&nbsp;9.6.1, &#8220;Understanding AOP proxies&#8221;</a>&#12290;</p>
 </div>
 
-<p>In Spring Web MVC you can use any object as a command or form-backing object; you do not
-need to implement a framework-specific interface or base class. Spring&#8217;s data binding is
-highly flexible: for example, it treats type mismatches as validation errors that can be
-evaluated by the application, not as system errors. Thus you need not duplicate your
-business objects' properties as simple, untyped strings in your form objects simply to
-handle invalid submissions, or to convert the Strings properly. Instead, it is often
-preferable to bind directly to your business objects.</p>
-<p>Spring&#8217;s view resolution is extremely flexible. A <code class="literal">Controller</code> is typically responsible
-for preparing a model <code class="literal">Map</code> with data and selecting a view name but it can also write
-directly to the response stream and complete the request. View name resolution is highly
-configurable through file extension or Accept header content type negotiation, through
-bean names, a properties file, or even a custom <code class="literal">ViewResolver</code> implementation. The model
-(the M in MVC) is a <code class="literal">Map</code> interface, which allows for the complete abstraction of the
-view technology. You can integrate directly with template based rendering technologies
-such as JSP, Velocity and Freemarker, or directly generate XML, JSON, Atom, and many
-other types of content. The model <code class="literal">Map</code> is simply transformed into an appropriate
-format, such as JSP request attributes, a Velocity template model.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-features" href="#mvc-features"></a>17.1.1&nbsp;Features of Spring Web MVC</h3></div></div></div>
+<p>&#20351;&#29992; Spring Web MVC &#65292;&#20320;&#19981;&#38656;&#35201;&#23454;&#29616;&#26694;&#26550;&#25351;&#23450;&#30340;&#20219;&#20309;&#25509;&#21475;&#25110;&#32487;&#25215;&#20219;&#24847;&#22522;&#31867;&#65292;&#23601;&#21487;&#20197;&#20351;&#29992;&#20219;&#24847;&#23545;&#35937;&#20316;&#20026;&#21629;&#20196;&#23545;&#35937;(&#25110;&#34920;&#21333;&#23545;&#35937;)&#12290;Spring &#30340;&#25968;&#25454;&#32465;&#23450;&#30456;&#24403;&#20043;&#28789;&#27963;&#65292;&#27604;&#22914;&#65292;Spring&#21487;&#20197;&#23558;&#19981;&#21305;&#37197;&#30340;&#31867;&#22411;&#20316;&#20026;&#24212;&#29992;&#21487;&#35782;&#21035;&#30340;&#39564;&#35777;&#38169;&#35823;&#65292;&#32780;&#19981;&#26159;&#31995;&#32479;&#38169;&#35823;&#65292;&#25152;&#20197;&#65292;&#20320;&#19981;&#38656;&#35201;&#21435;&#37325;&#22797;&#23450;&#20041;&#19968;&#22871;&#23646;&#24615;&#19968;&#33268;&#32780;&#31867;&#22411;&#26159;&#21407;&#22987;&#23383;&#31526;&#20018;&#30340;&#19994;&#21153;&#36923;&#36753;&#23545;&#35937;&#65292;&#21435;&#22788;&#29702;&#38169;&#35823;&#30340;&#25552;&#20132;&#25110;&#23545;&#23383;&#31526;&#20018;&#36827;&#34892;&#31867;&#22411;&#36716;&#25442;&#12290;&#21453;&#36807;&#26469;&#35828;&#23601;&#26159;&#65292;spring &#20801;&#35768;&#20320;&#30452;&#25509;&#27491;&#30830;&#31867;&#22411;&#30340;&#21442;&#25968;&#32465;&#23450;&#21040;&#19994;&#21153;&#36923;&#36753;&#23545;&#35937;&#12290;</p>
+<p>Spring &#30340;&#35270;&#22270;&#35299;&#26512;&#20063;&#30456;&#24403;&#20043;&#28789;&#27963;&#12290;&#23436;&#25104;&#19968;&#20010;&#35831;&#27714;&#65292;<code class="literal">Controller</code> &#36890;&#24120;&#26159;&#36127;&#36131;&#20934;&#22791;&#19968;&#20010;&#25968;&#25454;&#27169;&#22411; <code class="literal">Map</code> &#21644;&#36873;&#25321;&#19968;&#20010;&#25351;&#23450;&#30340;&#35270;&#22270;&#65292;&#24403;&#28982;&#65292;&#20063;&#25903;&#25345;&#30452;&#25509;&#23558;&#25968;&#25454;&#20889;&#21040;&#30340;&#21709;&#24212;&#27969;&#37324;&#12290;&#35270;&#22270;&#21517;&#31216;&#30340;&#35299;&#26512;&#26159;&#39640;&#24230;&#21487;&#37197;&#32622;&#30340;&#65292;&#21487;&#20197;&#36890;&#36807;&#25991;&#20214;&#25193;&#23637;&#21517;&#12289;accept header &#30340; Content-Type&#12289;bean &#30340;&#21517;&#31216;&#12289;&#23646;&#24615;&#25991;&#20214;&#25110;&#33258;&#23450;&#20041;&#30340; <code class="literal">ViewResolver</code> &#23454;&#29616;&#26469;&#35299;&#26512;&#12290;&#27169;&#22411;(Model,MVC &#20013;&#30340; <span class="emphasis"><em>M</em></span>),&#26159;&#19968;&#20010; <code class="literal">Map</code> &#25509;&#21475;&#65292;&#25552;&#20379;&#23545;&#35270;&#22270;&#25968;&#25454;&#30340;&#23436;&#20840;&#25277;&#35937;&#65292;&#21487;&#30452;&#25509;&#19982;&#28210;&#26579;&#27169;&#29256;&#38598;&#25104;&#65292;&#22914; JSP&#65292;Veloctiy&#65292;Freemarker;&#25110;&#30452;&#25509;&#29983;&#25104;&#21407;&#22987;&#25968;&#25454;&#12289;&#65292;&#25110;xml&#12289;json&#31561;&#20854;&#20182;&#31867;&#22411;&#30340;&#21709;&#24212;&#20869;&#23481;&#12290;&#27169;&#22411; <code class="literal">Map</code> &#25509;&#21475;&#21482;&#26159;&#36127;&#36131;&#23558;&#25968;&#25454;&#36716;&#25442;&#20026;&#21512;&#36866;&#26684;&#24335;&#65292;&#22914; jsp &#35831;&#27714;&#23646;&#24615;&#65292;velocity &#30340; model &#31561;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-features" href="#mvc-features"></a>17.1.1&nbsp;Spring Web MVC &#30340;&#29305;&#28857;</h3></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Spring Web Flow</b></p></div></div></div>
 
@@ -149,7 +121,7 @@ has.</p>
 in the following diagram. The pattern-savvy reader will recognize that the
 <code class="literal">DispatcherServlet</code> is an expression of the "Front Controller" design pattern (this is a
 pattern that Spring Web MVC shares with many other leading web frameworks).</p>
-<div class="figure"><a name="d5e14143" href="#d5e14143"></a><p class="title"><b>Figure&nbsp;17.1.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e14140" href="#d5e14140"></a><p class="title"><b>Figure&nbsp;17.1.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/mvc.png" alt="mvc"></div>
 </div></div><br class="figure-break">
 
@@ -202,7 +174,7 @@ scoped. In the Web MVC framework, each <code class="literal">DispatcherServlet</
 <code class="literal">WebApplicationContext</code>, which inherits all the beans already defined in the root
 <code class="literal">WebApplicationContext</code>. These inherited beans can be overridden in the servlet-specific
 scope, and you can define new scope-specific beans local to a given Servlet instance.</p>
-<div class="figure"><a name="d5e14178" href="#d5e14178"></a><p class="title"><b>Figure&nbsp;17.2.&nbsp;Context hierarchy in Spring Web MVC</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e14175" href="#d5e14175"></a><p class="title"><b>Figure&nbsp;17.2.&nbsp;Context hierarchy in Spring Web MVC</b></p><div class="figure-contents">
 
   <div class="mediaobject"><img src="images/mvc-contexts.gif" alt="mvc contexts"></div>
 </div></div><br class="figure-break">
@@ -1318,7 +1290,7 @@ without the need for an <code class="literal">@ModelAttribute</code> method.</p>
 <p>The next step is data binding. The <code class="literal">WebDataBinder</code> class matches request parameter names&#8201;&#8212;&#8201;including query string parameters and form fields&#8201;&#8212;&#8201;to model attribute fields by
 name. Matching fields are populated after type conversion (from String to the target
 field type) has been applied where necessary. Data binding and validation are covered in
-<a class="xref" href="validation.html" title="7.&nbsp;Validation, Data Binding, and Type Conversion">Chapter&nbsp;7, <i>Validation, Data Binding, and Type Conversion</i></a>. Customizing the data binding process for a controller level is covered
+<a class="xref" href="validation.html" title="7.&nbsp;&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;">Chapter&nbsp;7, <i>&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;</i></a>. Customizing the data binding process for a controller level is covered
 in <a class="xref" href="mvc.html#mvc-ann-webdatabinder" title="Customizing WebDataBinder initialization">the section called &#8220;Customizing WebDataBinder initialization&#8221;</a>.</p>
 <p>As a result of data binding there may be errors such as missing required fields or type
 conversion errors. To check for such errors add a <code class="literal">BindingResult</code> argument immediately
@@ -1366,7 +1338,7 @@ annotation:</p>
 
 }</pre>
 
-<p>See <a class="xref" href="validation.html#validation-beanvalidation" title="7.8&nbsp;Spring Validation">Section&nbsp;7.8, &#8220;Spring Validation&#8221;</a> and <a class="xref" href="validation.html" title="7.&nbsp;Validation, Data Binding, and Type Conversion">Chapter&nbsp;7, <i>Validation, Data Binding, and Type Conversion</i></a> for details on how to configure and
+<p>See <a class="xref" href="validation.html#validation-beanvalidation" title="7.8&nbsp;Spring Validation">Section&nbsp;7.8, &#8220;Spring Validation&#8221;</a> and <a class="xref" href="validation.html" title="7.&nbsp;&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;">Chapter&nbsp;7, <i>&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;</i></a> for details on how to configure and
 use validation.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-sessionattrib" href="#mvc-ann-sessionattrib"></a>Using @SessionAttributes to store model attributes in the HTTP session between requests</h4></div></div></div>
