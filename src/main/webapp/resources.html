@@ -2,21 +2,13 @@
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
    <title>6.&nbsp;Resources</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"><link rel="prev" href="beans.html" title="5.&nbsp;The IoC container"><link rel="next" href="validation.html" title="7.&nbsp;&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">6.&nbsp;Resources</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="beans.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;III.&nbsp;Core Technologies</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="validation.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="resources" href="#resources"></a>6.&nbsp;Resources</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-introduction" href="#resources-introduction"></a>6.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-introduction" href="#resources-introduction"></a>6.1&nbsp;&#20171;&#32461;</h2></div></div></div>
 
-<p>Java&#8217;s standard <code class="literal">java.net.URL</code> class and standard handlers for various URL prefixes
-unfortunately are not quite adequate enough for all access to low-level resources. For
-example, there is no standardized <code class="literal">URL</code> implementation that may be used to access a
-resource that needs to be obtained from the classpath, or relative to a
-<code class="literal">ServletContext</code>. While it is possible to register new handlers for specialized <code class="literal">URL</code>
-prefixes (similar to existing handlers for prefixes such as <code class="literal">http:</code>), this is generally
-quite complicated, and the <code class="literal">URL</code> interface still lacks some desirable functionality,
-such as a method to check for the existence of the resource being pointed to.</p>
+<p>&#20165;&#20165;&#20351;&#29992; java &#26631;&#20934; java.net.URL &#21644;&#38024;&#23545;&#19981;&#21516; URL &#21069;&#32512;&#30340;&#26631;&#20934;&#22788;&#29702;&#22120;&#24182;&#19981;&#33021;&#28385;&#36275;&#25105;&#20204;&#23545;&#21508;&#31181;&#24213;&#23618;&#36164;&#28304;&#30340;&#35775;&#38382;&#65292;&#27604;&#22914;&#65306;&#25105;&#20204;&#23601;&#19981;&#33021;&#36890;&#36807; URL &#30340;&#26631;&#20934;&#23454;&#29616;&#26469;&#35775;&#38382;&#30456;&#23545;&#31867;&#36335;&#24452;&#25110;&#32773;&#30456;&#23545; ServletContext &#30340;&#21508;&#31181;&#36164;&#28304;&#12290;&#34429;&#28982;&#25105;&#20204;&#21487;&#20197;&#38024;&#23545;&#29305;&#23450;&#30340; url &#21069;&#32512;&#26469;&#27880;&#20876;&#19968;&#20010;&#26032;&#30340; URLStreamHandler&#65288;&#21644;&#29616;&#26377;&#30340;&#38024;&#23545;&#21508;&#31181;&#29305;&#23450;&#21069;&#32512;&#30340;&#22788;&#29702;&#22120;&#31867;&#20284;&#65292;&#27604;&#22914; http&#65306;&#65289;&#65292;&#28982;&#32780;&#36825;&#24448;&#24448;&#20250;&#26159;&#19968;&#20214;&#27604;&#36739;&#40635;&#28902;&#30340;&#20107;&#24773;(&#35201;&#27714;&#20102;&#35299; url &#30340;&#23454;&#29616;&#26426;&#21046;&#31561;&#65289;&#65292;&#32780;&#19988; url &#25509;&#21475;&#20063;&#32570;&#23569;&#20102;&#37096;&#20998;&#22522;&#26412;&#30340;&#26041;&#27861;&#65292;&#22914;&#26816;&#26597;&#24403;&#21069;&#36164;&#28304;&#26159;&#21542;&#23384;&#22312;&#30340;&#26041;&#27861;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-resource" href="#resources-resource"></a>6.2&nbsp;The Resource interface</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-resource" href="#resources-resource"></a>6.2&nbsp;Resource &#25509;&#21475;</h2></div></div></div>
 
-<p>Spring&#8217;s <code class="literal">Resource</code> interface is meant to be a more capable interface for abstracting
-access to low-level resources.</p>
+<p>&#30456;&#23545;&#26631;&#20934; url &#35775;&#38382;&#26426;&#21046;&#65292;spring &#30340; Resource &#25509;&#21475;&#23545;&#25277;&#35937;&#24213;&#23618;&#36164;&#28304;&#30340;&#35775;&#38382;&#25552;&#20379;&#20102;&#19968;&#22871;&#26356;&#22909;&#30340;&#26426;&#21046;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Resource <span class="hl-keyword">extends</span> InputStreamSource {
 
     <span class="hl-keyword">boolean</span> exists();
@@ -41,188 +33,100 @@ access to low-level resources.</p>
 
 }</pre>
 
-<p>Some of the most important methods from the <code class="literal">Resource</code> interface are:</p>
+<p>Resource &#25509;&#21475;&#37324;&#30340;&#26368;&#37325;&#35201;&#30340;&#20960;&#20010;&#26041;&#27861;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">getInputStream()</code>: locates and opens the resource, returning an <code class="literal">InputStream</code> for
-reading from the resource. It is expected that each invocation returns a fresh
-<code class="literal">InputStream</code>. It is the responsibility of the caller to close the stream.
+<code class="literal">getInputStream()</code>: &#23450;&#20301;&#24182;&#19988;&#25171;&#24320;&#24403;&#21069;&#36164;&#28304;&#65292;&#36820;&#22238;&#24403;&#21069;&#36164;&#28304;&#30340; InputStream&#12290;&#39044;&#35745;&#27599;&#19968;&#27425;&#35843;&#29992;&#37117;&#20250;&#36820;&#22238;&#19968;&#20010;&#26032;&#30340; InputStream&#65292;&#22240;&#27492;&#20851;&#38381;&#24403;&#21069;&#36755;&#20986;&#27969;&#23601;&#25104;&#20026;&#20102;&#35843;&#29992;&#32773;&#30340;&#36131;&#20219;&#12290;
 </li><li class="listitem">
-<code class="literal">exists()</code>: returns a <code class="literal">boolean</code> indicating whether this resource actually exists in
-physical form.
+<code class="literal">exists()</code>: &#36820;&#22238;&#19968;&#20010; boolean&#65292;&#34920;&#31034;&#24403;&#21069;&#36164;&#28304;&#26159;&#21542;&#30495;&#30340;&#23384;&#22312;&#12290;
 </li><li class="listitem">
-<code class="literal">isOpen()</code>: returns a <code class="literal">boolean</code> indicating whether this resource represents a handle
-with an open stream. If <code class="literal">true</code>, the <code class="literal">InputStream</code> cannot be read multiple times, and
-must be read once only and then closed to avoid resource leaks. Will be <code class="literal">false</code> for
-all usual resource implementations, with the exception of <code class="literal">InputStreamResource</code>.
+<code class="literal">isOpen()</code>: &#36820;&#22238;&#19968;&#20010; boolean&#65292;&#34920;&#31034;&#24403;&#21069;&#36164;&#28304;&#26159;&#21542;&#19968;&#20010;&#24050;&#25171;&#24320;&#30340;&#36755;&#20837;&#27969;&#12290;&#22914;&#26524;&#32467;&#26524;&#20026; true&#65292;&#36820;&#22238;&#30340; InputStream &#19981;&#33021;&#22810;&#27425;&#35835;&#21462;&#65292;&#21482;&#33021;&#26159;&#19968;&#27425;&#24615;&#35835;&#21462;&#20043;&#21518;&#65292;&#23601;&#20851;&#38381; InputStream&#65292;&#20197;&#38450;&#27490;&#20869;&#23384;&#27844;&#28431;&#12290;&#38500;&#20102; InputStreamResource&#65292;&#20854;&#20182;&#24120;&#29992; Resource &#23454;&#29616;&#37117;&#20250;&#36820;&#22238; false&#12290;
 </li><li class="listitem">
-<code class="literal">getDescription()</code>: returns a description for this resource, to be used for error
-output when working with the resource. This is often the fully qualified file name or
-the actual URL of the resource.
+<code class="literal">getDescription()</code>: &#36820;&#22238;&#24403;&#21069;&#36164;&#28304;&#30340;&#25551;&#36848;&#65292;&#24403;&#22788;&#29702;&#36164;&#28304;&#20986;&#38169;&#26102;&#65292;&#36164;&#28304;&#30340;&#25551;&#36848;&#20250;&#29992;&#20110;&#38169;&#35823;&#20449;&#24687;&#30340;&#36755;&#20986;&#12290;&#19968;&#33324;&#26469;&#35828;&#65292;&#36164;&#28304;&#30340;&#25551;&#36848;&#26159;&#19968;&#20010;&#23436;&#20840;&#38480;&#23450;&#30340;&#25991;&#20214;&#21517;&#31216;&#65292;&#25110;&#32773;&#26159;&#24403;&#21069;&#36164;&#28304;&#30340;&#30495;&#23454; url&#12290;
 </li></ul></div>
 
-<p>Other methods allow you to obtain an actual <code class="literal">URL</code> or <code class="literal">File</code> object representing the
-resource (if the underlying implementation is compatible, and supports that
-functionality).</p>
-<p>The <code class="literal">Resource</code> abstraction is used extensively in Spring itself, as an argument type in
-many method signatures when a resource is needed. Other methods in some Spring APIs
-(such as the constructors to various <code class="literal">ApplicationContext</code> implementations), take a
-<code class="literal">String</code> which in unadorned or simple form is used to create a <code class="literal">Resource</code> appropriate to
-that context implementation, or via special prefixes on the <code class="literal">String</code> path, allow the
-caller to specify that a specific <code class="literal">Resource</code> implementation must be created and used.</p>
-<p>While the <code class="literal">Resource</code> interface is used a lot with Spring and by Spring, it&#8217;s actually
-very useful to use as a general utility class by itself in your own code, for access to
-resources, even when your code doesn&#8217;t know or care about any other parts of Spring.
-While this couples your code to Spring, it really only couples it to this small set of
-utility classes, which are serving as a more capable replacement for <code class="literal">URL</code>, and can be
-considered equivalent to any other library you would use for this purpose.</p>
-<p>It is important to note that the <code class="literal">Resource</code> abstraction does not replace functionality:
-it wraps it where possible. For example, a <code class="literal">UrlResource</code> wraps a URL, and uses the
-wrapped <code class="literal">URL</code> to do its work.</p>
+<p>Resource &#25509;&#21475;&#37324;&#30340;&#20854;&#20182;&#26041;&#27861;&#21487;&#20197;&#35753;&#20320;&#33719;&#24471;&#20195;&#34920;&#24403;&#21069;&#36164;&#28304;&#30340; URL &#25110; File &#23545;&#35937;&#65288;&#21069;&#25552;&#26159;&#24213;&#23618;&#23454;&#29616;&#21487;&#20860;&#23481;&#30340;&#65292;&#20063;&#25903;&#25345;&#35813;&#21151;&#33021;&#65289;&#12290;</p>
+<p>&#22312; spring &#37324;&#65292;Resource &#25277;&#35937;&#26377;&#30528;&#30456;&#24403;&#24191;&#27867;&#30340;&#20351;&#29992;&#65292;&#27604;&#22914;&#65292;&#24403;&#38656;&#35201;&#19968;&#20010;&#36164;&#28304;&#26102;&#65292;Resource &#21487;&#20197;&#20316;&#20026;&#26041;&#27861;&#31614;&#21517;&#37324;&#30340;&#19968;&#20010;&#21442;&#25968;&#31867;&#22411;&#12290;&#22312; spring api &#20013;&#65292;&#26377;&#20123;&#26041;&#27861;&#65288;&#22914;&#21508;&#31181; ApplicationContext &#23454;&#29616;&#30340;&#26500;&#36896;&#20989;&#25968;&#65289;&#20250;&#30452;&#25509;&#37319;&#29992;&#26222;&#36890;&#26684;&#24335;&#30340;String &#36335;&#24452;&#26469;&#21019;&#24314;&#21512;&#36866;&#30340; Resource&#65292;&#35843;&#29992;&#32773;&#20063;&#21487;&#20197;&#36890;&#36807;&#22312;&#36335;&#24452;&#37324;&#24102;&#19978;&#25351;&#23450;&#30340;&#21069;&#32512;&#26469;&#21019;&#24314;&#29305;&#23450; Resource &#23454;&#29616;&#12290;</p>
+<p>Resource &#25509;&#21475;&#65288;&#23454;&#29616;&#65289;&#19981;&#20165;&#21487;&#20197;&#34987; spring &#22823;&#37327;&#30340;&#24212;&#29992;&#65292;&#20854;&#20063;&#38750;&#24120;&#36866;&#21512;&#20316;&#20026;&#20320;&#32534;&#31243;&#20013;&#35775;&#38382;&#36164;&#28304;&#30340;&#36741;&#21161;&#24037;&#20855;&#31867;&#12290;&#24403;&#20320;&#20165;&#38656;&#35201;&#20351;&#29992;&#21040; Resource &#25509;&#21475;&#23454;&#29616;&#26102;&#65292;&#21487;&#20197;&#30452;&#25509;&#24573;&#30053; spring &#30340;&#20854;&#20313;&#37096;&#20998;&#12290;&#21333;&#29420;&#20351;&#29992; Rsourece &#23454;&#29616;&#65292;&#20250;&#36896;&#25104;&#20195;&#30721;&#19982; spring &#30340;&#37096;&#20998;&#32806;&#21512;&#65292;&#21487;&#20063;&#20165;&#32806;&#21512;&#20102;&#20854;&#20013;&#19968;&#23567;&#37096;&#20998;&#36741;&#21161;&#31867;&#65292;&#32780;&#19988;&#20320;&#21487;&#20197;&#23558; Reource &#23454;&#29616;&#20316;&#20026; URL &#30340;&#19968;&#31181;&#35775;&#38382;&#24213;&#23618;&#26356;&#20026;&#26377;&#25928;&#30340;&#26367;&#20195;&#65292;&#19982;&#20320;&#24341;&#20837;&#20854;&#20182;&#24211;&#26469;&#36798;&#21040;&#36825;&#31181;&#30446;&#30340;&#26159;&#19968;&#26679;&#30340;&#12290;</p>
+<p>&#38656;&#35201;&#27880;&#24847;&#30340;&#26159; Resource &#23454;&#29616;&#24182;&#27809;&#26377;&#21435;&#37325;&#26032;&#21457;&#26126;&#36718;&#23376;&#65292;&#32780;&#26159;&#23613;&#21487;&#33021;&#22320;&#37319;&#29992;&#23553;&#35013;&#12290;&#20030;&#20010;&#20363;&#23376;&#65292;UrlResource &#37324;&#23601;&#23553;&#35013;&#20102;&#19968;&#20010; URL &#23545;&#35937;&#65292;&#22312;&#20854;&#20869;&#30340;&#36923;&#36753;&#23601;&#26159;&#36890;&#36807;&#23553;&#35013;&#30340; URL &#23545;&#35937;&#26469;&#23436;&#25104;&#30340;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-implementations" href="#resources-implementations"></a>6.3&nbsp;Built-in Resource implementations</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-implementations" href="#resources-implementations"></a>6.3&nbsp;&#20869;&#32622;&#30340; Resource &#23454;&#29616;</h2></div></div></div>
 
-<p>There are a number of <code class="literal">Resource</code> implementations that come supplied straight out of the
-box in Spring:</p>
+<p>spring &#30452;&#25509;&#25552;&#20379;&#20102;&#22810;&#31181;&#24320;&#31665;&#21363;&#29992;&#30340; Resource &#23454;&#29616;&#12290;</p>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-urlresource" href="#resources-implementations-urlresource"></a>6.3.1&nbsp;UrlResource</h3></div></div></div>
 
-<p>The <code class="literal">UrlResource</code> wraps a <code class="literal">java.net.URL</code>, and may be used to access any object that is
-normally accessible via a URL, such as files, an HTTP target, an FTP target, etc. All
-URLs have a standardized <code class="literal">String</code> representation, such that appropriate standardized
-prefixes are used to indicate one URL type from another. This includes <code class="literal">file:</code> for
-accessing filesystem paths, <code class="literal">http:</code> for accessing resources via the HTTP protocol,
-<code class="literal">ftp:</code> for accessing resources via FTP, etc.</p>
-<p>A <code class="literal">UrlResource</code> is created by Java code explicitly using the <code class="literal">UrlResource</code> constructor,
-but will often be created implicitly when you call an API method which takes a <code class="literal">String</code>
-argument which is meant to represent a path. For the latter case, a JavaBeans
-<code class="literal">PropertyEditor</code> will ultimately decide which type of <code class="literal">Resource</code> to create. If the path
-string contains a few well-known (to it, that is) prefixes such as <code class="literal">classpath:</code>, it will
-create an appropriate specialized <code class="literal">Resource</code> for that prefix. However, if it doesn&#8217;t
-recognize the prefix, it will assume the this is just a standard URL string, and will
-create a <code class="literal">UrlResource</code>.</p>
+<p>UrlResource &#23553;&#35013;&#20102;&#19968;&#20010; java.net.URL &#23545;&#35937;&#65292;&#29992;&#26469;&#35775;&#38382; URL &#21487;&#20197;&#27491;&#24120;&#35775;&#38382;&#30340;&#20219;&#24847;&#23545;&#35937;&#65292;&#27604;&#22914;&#25991;&#20214;&#12289;an HTTP target, an FTP target, &#31561;&#31561;&#12290;&#25152;&#26377;&#30340; URL &#37117;&#21487;&#20197;&#29992;&#19968;&#20010;&#26631;&#20934;&#21270;&#30340;&#23383;&#31526;&#20018;&#26469;&#34920;&#31034;&#12290;&#22914;&#36890;&#36807;&#27491;&#30830;&#30340;&#26631;&#20934;&#21270;&#21069;&#32512;&#65292;&#21487;&#20197;&#29992;&#26469;&#34920;&#31034;&#24403;&#21069; URL &#30340;&#31867;&#22411;&#65292;&#24403;&#20013;&#23601;&#21253;&#25324;&#29992;&#20110;&#35775;&#38382;&#25991;&#20214;&#31995;&#32479;&#36335;&#24452;&#30340; file:,&#36890;&#36807; http &#21327;&#35758;&#35775;&#38382;&#36164;&#28304;&#30340; http:,&#36890;&#36807; ftp &#21327;&#35758;&#35775;&#38382;&#36164;&#28304;&#30340; ftp:&#65292;&#36824;&#26377;&#24456;&#22810;&#8230;&#8230;</p>
+<p>&#21487;&#20197;&#26174;&#24335;&#21270;&#22320;&#20351;&#29992; UrlResource &#26500;&#36896;&#20989;&#25968;&#26469;&#21019;&#24314;&#19968;&#20010; UrlResource&#65292;&#19981;&#36807;&#36890;&#24120;&#25105;&#20204;&#21487;&#20197;&#22312;&#35843;&#29992;&#19968;&#20010; api &#26041;&#27861;&#26159;&#65292;&#20351;&#29992;&#19968;&#20010;&#20195;&#34920;&#36335;&#24452;&#30340; String &#21442;&#25968;&#26469;&#38544;&#24335;&#21019;&#24314;&#19968;&#20010; UrlResource&#12290;&#23545;&#20110;&#21518;&#19968;&#31181;&#24773;&#20917;&#65292;&#20250;&#30001;&#19968;&#20010; javabean PropertyEditor &#26469;&#20915;&#23450;&#21019;&#24314;&#21738;&#19968;&#31181; Resource&#12290;&#22914;&#26524;&#36335;&#24452;&#37324;&#21253;&#21547;&#26576;&#19968;&#20010;&#36890;&#29992;&#30340;&#21069;&#32512;&#65288;&#22914; classpath:),PropertyEditor &#20250;&#26681;&#25454;&#36825;&#20010;&#36890;&#29992;&#30340;&#21069;&#32512;&#26469;&#21019;&#24314;&#24688;&#24403;&#30340; Resource&#65307;&#21453;&#20043;&#65292;&#22914;&#26524; PropertyEditor &#26080;&#27861;&#35782;&#21035;&#36825;&#20010;&#21069;&#32512;&#65292;&#20250;&#25226;&#36825;&#20010;&#36335;&#24452;&#20316;&#20026;&#19968;&#20010;&#26631;&#20934;&#30340; URL &#26469;&#21019;&#24314;&#19968;&#20010; UrlResource&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-classpathresource" href="#resources-implementations-classpathresource"></a>6.3.2&nbsp;ClassPathResource</h3></div></div></div>
 
-<p>This class represents a resource which should be obtained from the classpath. This uses
-either the thread context class loader, a given class loader, or a given class for
-loading resources.</p>
-<p>This <code class="literal">Resource</code> implementation supports resolution as <code class="literal">java.io.File</code> if the class path
-resource resides in the file system, but not for classpath resources which reside in a
-jar and have not been expanded (by the servlet engine, or whatever the environment is)
-to the filesystem. To address this the various <code class="literal">Resource</code> implementations always support
-resolution as a <code class="literal">java.net.URL</code>.</p>
-<p>A <code class="literal">ClassPathResource</code> is created by Java code explicitly using the <code class="literal">ClassPathResource</code>
-constructor, but will often be created implicitly when you call an API method which
-takes a <code class="literal">String</code> argument which is meant to represent a path. For the latter case, a
-JavaBeans <code class="literal">PropertyEditor</code> will recognize the special prefix <code class="literal">classpath:</code> on the string
-path, and create a <code class="literal">ClassPathResource</code> in that case.</p>
+<p>&#21487;&#20197;&#20351;&#29992; ClassPathResource &#26469;&#33719;&#21462;&#31867;&#36335;&#24452;&#19978;&#30340;&#36164;&#28304;&#12290;ClassPathResource &#21487;&#20197;&#20351;&#29992;&#32447;&#31243;&#19978;&#19979;&#25991;&#30340;&#21152;&#36733;&#22120;&#12289;&#35843;&#29992;&#32773;&#25552;&#20379;&#30340;&#21152;&#36733;&#22120;&#25110;&#25351;&#23450;&#30340;&#31867;&#20013;&#30340;&#20219;&#24847;&#19968;&#20010;&#26469;&#21152;&#36733;&#36164;&#28304;&#12290;</p>
+<p>ClassPathResource &#21487;&#20197;&#20174;&#31867;&#36335;&#24452;&#19978;&#21152;&#36733;&#36164;&#28304;&#65292;&#20854;&#21487;&#20197;&#20351;&#29992;&#32447;&#31243;&#19978;&#19979;&#25991;&#21152;&#36733;&#22120;&#12289;&#25351;&#23450;&#21152;&#36733;&#22120;&#25110;&#25351;&#23450;&#30340; class &#31867;&#22411;&#20013;&#30340;&#20219;&#24847;&#19968;&#20010;&#26469;&#21152;&#36733;&#36164;&#28304;&#12290;</p>
+<p>&#24403;&#31867;&#36335;&#24452;&#19978;&#36164;&#28304;&#23384;&#20110;&#25991;&#20214;&#31995;&#32479;&#20013;&#65292;ClassPathResource &#25903;&#25345;&#20197; java.io.File &#30340;&#24418;&#24335;&#35775;&#38382;&#65292;&#21487;&#24403;&#31867;&#36335;&#24452;&#19978;&#30340;&#36164;&#28304;&#23384;&#20110;&#23578;&#26410;&#35299;&#21387;(&#27809;&#26377; &#34987;Servlet &#24341;&#25806;&#25110;&#20854;&#20182;&#21487;&#35299;&#21387;&#30340;&#29615;&#22659;&#35299;&#21387;&#65289;&#30340; jar &#21253;&#20013;&#65292;ClassPathResource &#23601;&#19981;&#20877;&#25903;&#25345;&#20197; java.io.File &#30340;&#24418;&#24335;&#35775;&#38382;&#12290;&#37492;&#20110;&#19978;&#38754;&#25152;&#35828;&#36825;&#20010;&#38382;&#39064;&#65292;spring &#20013;&#21508;&#24335; Resource &#23454;&#29616;&#37117;&#25903;&#25345;&#20197; jave.net.URL &#30340;&#24418;&#24335;&#35775;&#38382;&#12290;</p>
+<p>&#21487;&#20197;&#26174;&#24335;&#20351;&#29992; ClassPathResource &#26500;&#36896;&#20989;&#25968;&#26469;&#21019;&#24314;&#19968;&#20010; ClassPathResource &#65292;&#19981;&#36807;&#36890;&#24120;&#25105;&#20204;&#21487;&#20197;&#22312;&#35843;&#29992;&#19968;&#20010; api &#26041;&#27861;&#26102;&#65292;&#20351;&#29992;&#19968;&#20010;&#20195;&#34920;&#36335;&#24452;&#30340; String &#21442;&#25968;&#26469;&#38544;&#24335;&#21019;&#24314;&#19968;&#20010; ClassPathResource&#12290;&#23545;&#20110;&#21518;&#19968;&#31181;&#24773;&#20917;&#65292;&#20250;&#30001;&#19968;&#20010; javabean PropertyEditor &#26469;&#35782;&#21035;&#36335;&#24452;&#20013; classpath: &#21069;&#32512;&#65292;&#20174;&#32780;&#21019;&#24314;&#19968;&#20010; ClassPathResource&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-filesystemresource" href="#resources-implementations-filesystemresource"></a>6.3.3&nbsp;FileSystemResource</h3></div></div></div>
 
-<p>This is a <code class="literal">Resource</code> implementation for <code class="literal">java.io.File</code> handles. It obviously supports
-resolution as a <code class="literal">File</code>, and as a <code class="literal">URL</code>.</p>
+<p>&#36825;&#26159;&#38024;&#23545; java.io.File &#25552;&#20379;&#30340; Resource &#23454;&#29616;&#12290;&#26174;&#28982;&#65292;&#25105;&#20204;&#21487;&#20197;&#20351;&#29992; FileSystemResource &#30340; getFile() &#20989;&#25968;&#33719;&#21462; File &#23545;&#35937;&#65292;&#20351;&#29992; getURL() &#33719;&#21462; URL &#23545;&#35937;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-servletcontextresource" href="#resources-implementations-servletcontextresource"></a>6.3.4&nbsp;ServletContextResource</h3></div></div></div>
 
-<p>This is a <code class="literal">Resource</code> implementation for <code class="literal">ServletContext</code> resources, interpreting
-relative paths within the relevant web application&#8217;s root directory.</p>
-<p>This always supports stream access and URL access, but only allows <code class="literal">java.io.File</code> access
-when the web application archive is expanded and the resource is physically on the
-filesystem. Whether or not it&#8217;s expanded and on the filesystem like this, or accessed
-directly from the JAR or somewhere else like a DB (it&#8217;s conceivable) is actually
-dependent on the Servlet container.</p>
+<p>&#36825;&#26159;&#20026;&#20102;&#33719;&#21462; web &#26681;&#36335;&#24452;&#30340; ServletContext &#36164;&#28304;&#32780;&#25552;&#20379;&#30340; Resource &#23454;&#29616;&#12290;</p>
+<p>ServletContextResource &#23436;&#20840;&#25903;&#25345;&#20197;&#27969;&#21644; URL &#30340;&#26041;&#24335;&#35775;&#38382;&#65292;&#21487;&#21482;&#26377;&#24403; web &#39033;&#30446;&#26159;&#24050;&#35299;&#21387;&#30340;(&#19981;&#26159;&#20197; war &#31561;&#21387;&#32553;&#21253;&#24418;&#24335;&#23384;&#22312;)&#19988;&#35813; ServletContext &#36164;&#28304;&#23384;&#20110;&#25991;&#20214;&#31995;&#32479;&#37324;&#65292;ServletContextResource &#25165;&#25903;&#25345;&#20197; java.io.File &#30340;&#26041;&#24335;&#35775;&#38382;&#12290;&#33267;&#20110;&#35828;&#21040;&#65292;&#25105;&#20204;&#30340; web &#39033;&#30446;&#26159;&#21542;&#24050;&#35299;&#21387;&#21644;&#30456;&#20851;&#30340; ServletContext &#36164;&#28304;&#26159;&#21542;&#20250;&#23384;&#20110;&#25991;&#20214;&#31995;&#32479;&#37324;&#65292;&#36825;&#20010;&#21462;&#20915;&#20110;&#25105;&#20204;&#25152;&#20351;&#29992;&#30340; Servlet &#23481;&#22120;&#12290;&#33509; Servlet &#23481;&#22120;&#27809;&#26377;&#35299;&#21387; web &#39033;&#30446;&#65292;&#25105;&#20204;&#21487;&#20197;&#30452;&#25509;&#20197; JAR &#30340;&#24418;&#24335;&#30340;&#35775;&#38382;&#65292;&#25110;&#32773;&#20854;&#20182;&#21487;&#20197;&#24819;&#21040;&#30340;&#26041;&#24335;&#65288;&#22914;&#35775;&#38382;&#25968;&#25454;&#24211;&#65289;&#31561;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-inputstreamresource" href="#resources-implementations-inputstreamresource"></a>6.3.5&nbsp;InputStreamResource</h3></div></div></div>
 
-<p>A <code class="literal">Resource</code> implementation for a given <code class="literal">InputStream</code>. This should only be used if no
-specific <code class="literal">Resource</code> implementation is applicable. In particular, prefer
-<code class="literal">ByteArrayResource</code> or any of the file-based <code class="literal">Resource</code> implementations where possible.</p>
-<p>In contrast to other <code class="literal">Resource</code> implementations, this is a descriptor for an <span class="emphasis"><em>already</em></span>
-opened resource - therefore returning <code class="literal">true</code> from <code class="literal">isOpen()</code>. Do not use it if you need
-to keep the resource descriptor somewhere, or if you need to read a stream multiple
-times.</p>
+<p>&#36825;&#26159;&#38024;&#23545; InputStream &#25552;&#20379;&#30340; Resource &#23454;&#29616;&#12290;&#24314;&#35758;&#65292;&#22312;&#30830;&#23454;&#27809;&#26377;&#25214;&#21040;&#20854;&#20182;&#21512;&#36866;&#30340; Resource &#23454;&#29616;&#26102;&#65292;&#25165;&#20351;&#29992; InputSteamResource&#12290;&#22914;&#26524;&#21487;&#20197;&#65292;&#23613;&#37327;&#36873;&#25321; ByteArrayResource &#25110;&#20854;&#20182;&#22522;&#20110;&#25991;&#20214;&#30340; Resource &#23454;&#29616;&#26469;&#20195;&#26367;&#12290;</p>
+<p>&#19982;&#20854;&#20182; Resource &#23454;&#29616;&#24050;&#27604;&#36739;&#65292;InputStreamRsource &#20498;&#20687;&#19968;&#20010;&#24050;&#25171;&#24320;&#36164;&#28304;&#30340;&#25551;&#36848;&#31526;,&#22240;&#27492;&#65292;&#35843;&#29992; isOpen() &#26041;&#27861;&#20250;&#36820;&#22238; true&#12290;&#38500;&#20102;&#22312;&#38656;&#35201;&#33719;&#21462;&#36164;&#28304;&#30340;&#25551;&#36848;&#31526;&#25110;&#38656;&#35201;&#20174;&#36755;&#20837;&#27969;&#22810;&#27425;&#35835;&#21462;&#26102;&#65292;&#37117;&#19981;&#35201;&#20351;&#29992; InputStreamResource &#26469;&#35835;&#21462;&#36164;&#28304;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-implementations-bytearrayresource" href="#resources-implementations-bytearrayresource"></a>6.3.6&nbsp;ByteArrayResource</h3></div></div></div>
 
-<p>This is a <code class="literal">Resource</code> implementation for a given byte array. It creates a
-<code class="literal">ByteArrayInputStream</code> for the given byte array.</p>
-<p>It&#8217;s useful for loading content from any given byte array, without having to resort to a
-single-use <code class="literal">InputStreamResource</code>.</p>
+<p>&#36825;&#26159;&#38024;&#23545;&#23383;&#33410;&#25968;&#32452;&#25552;&#20379;&#30340; Resource &#23454;&#29616;&#12290;&#21487;&#20197;&#36890;&#36807;&#19968;&#20010;&#23383;&#33410;&#25968;&#32452;&#26469;&#21019;&#24314; ByteArrayResource&#12290;</p>
+<p>&#24403;&#38656;&#35201;&#20174;&#23383;&#33410;&#25968;&#32452;&#21152;&#36733;&#20869;&#23481;&#26102;&#65292;ByteArrayResource &#26159;&#19968;&#20010;&#19981;&#38169;&#30340;&#36873;&#25321;&#65292;&#20351;&#29992; ByteArrayResource &#21487;&#20197;&#19981;&#29992;&#27714;&#21161;&#20110; InputStreamResource&#12290;</p>
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-resourceloader" href="#resources-resourceloader"></a>6.4&nbsp;The ResourceLoader</h2></div></div></div>
 
-<p>The <code class="literal">ResourceLoader</code> interface is meant to be implemented by objects that can return
-(i.e. load) <code class="literal">Resource</code> instances.</p>
+<p>ResourceLoader &#25509;&#21475;&#26159;&#29992;&#26469;&#21152;&#36733; Resource &#23545;&#35937;&#30340;&#65292;&#25442;&#21477;&#35805;&#35828;&#65292;&#23601;&#26159;&#24403;&#19968;&#20010;&#23545;&#35937;&#38656;&#35201;&#33719;&#21462; Resource &#23454;&#20363;&#26102;&#65292;&#21487;&#20197;&#36873;&#25321;&#23454;&#29616; ResourceLoader &#25509;&#21475;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> ResourceLoader {
 
     Resource getResource(String location);
 
 }</pre>
 
-<p>All application contexts implement the <code class="literal">ResourceLoader</code> interface, and therefore all
-application contexts may be used to obtain <code class="literal">Resource</code> instances.</p>
-<p>When you call <code class="literal">getResource()</code> on a specific application context, and the location path
-specified doesn&#8217;t have a specific prefix, you will get back a <code class="literal">Resource</code> type that is
-appropriate to that particular application context. For example, assume the following
-snippet of code was executed against a <code class="literal">ClassPathXmlApplicationContext</code> instance:</p>
+<p>spring &#37324;&#25152;&#26377;&#30340;&#24212;&#29992;&#19978;&#19979;&#25991;&#37117;&#26159;&#23454;&#29616;&#20102; ResourceLoader &#25509;&#21475;&#65292;&#22240;&#27492;&#65292;&#25152;&#26377;&#24212;&#29992;&#19978;&#19979;&#25991;&#37117;&#21487;&#20197;&#36890;&#36807; getResource() &#26041;&#27861;&#33719;&#21462; Resource &#23454;&#20363;&#12290;</p>
+<p>&#24403;&#20320;&#22312;&#25351;&#23450;&#24212;&#29992;&#19978;&#19979;&#25991;&#35843;&#29992; getResource() &#26041;&#27861;&#26102;&#65292;&#32780;&#25351;&#23450;&#30340;&#20301;&#32622;&#36335;&#24452;&#21448;&#27809;&#26377;&#21253;&#21547;&#29305;&#23450;&#30340;&#21069;&#32512;&#65292;spring &#20250;&#26681;&#25454;&#24403;&#21069;&#24212;&#29992;&#19978;&#19979;&#25991;&#26469;&#20915;&#23450;&#36820;&#22238;&#21738;&#19968;&#31181;&#31867;&#22411; Resource&#12290;&#20030;&#20010;&#20363;&#23376;&#65292;&#20551;&#35774;&#19979;&#38754;&#30340;&#20195;&#30721;&#29255;&#27573;&#26159;&#36890;&#36807; ClassPathXmlApplicationContext &#23454;&#20363;&#26469;&#35843;&#29992;&#30340;&#65292;</p>
 <pre class="programlisting">Resource template = ctx.getResource(<span class="hl-string">"some/resource/path/myTemplate.txt"</span>);</pre>
 
-<p>What would be returned would be a <code class="literal">ClassPathResource</code>; if the same method was executed
-against a <code class="literal">FileSystemXmlApplicationContext</code> instance, you&#8217;d get back a
-<code class="literal">FileSystemResource</code>. For a <code class="literal">WebApplicationContext</code>, you&#8217;d get back a
-<code class="literal">ServletContextResource</code>, and so on.</p>
-<p>As such, you can load resources in a fashion appropriate to the particular application
-context.</p>
-<p>On the other hand, you may also force <code class="literal">ClassPathResource</code> to be used, regardless of the
-application context type, by specifying the special <code class="literal">classpath:</code> prefix:</p>
+<p>&#37027; spring &#20250;&#36820;&#22238;&#19968;&#20010; ClassPathResource &#23545;&#35937;&#65307;&#31867;&#20284;&#30340;&#65292;&#22914;&#26524;&#26159;&#36890;&#36807;&#23454;&#20363; FileSystemXmlApplicationContext &#23454;&#20363;&#35843;&#29992;&#30340;&#65292;&#36820;&#22238;&#30340;&#26159;&#19968;&#20010; FileSystemResource &#23545;&#35937;&#65307;&#22914;&#26524;&#26159;&#36890;&#36807; WebApplicationContext &#23454;&#20363;&#30340;&#65292;&#36820;&#22238;&#30340;&#26159;&#19968;&#20010; ServletContextResource &#23545;&#35937;&#8230;&#8230;
+&#22914;&#19978;&#25152;&#35828;&#65292;&#20320;&#23601;&#21487;&#20197;&#22312;&#25351;&#23450;&#30340;&#24212;&#29992;&#19978;&#19979;&#20013;&#20351;&#29992; Resource &#23454;&#20363;&#26469;&#21152;&#36733;&#24403;&#21069;&#24212;&#29992;&#19978;&#19979;&#25991;&#30340;&#36164;&#28304;&#12290;</p>
+<p>&#36824;&#26377;&#21478;&#22806;&#19968;&#31181;&#22330;&#26223;&#37324;&#65292;&#22914;&#22312;&#20854;&#20182;&#24212;&#29992;&#19978;&#19979;&#25991;&#37324;&#65292;&#20320;&#21487;&#33021;&#20250;&#24378;&#21046;&#38656;&#35201;&#33719;&#21462;&#19968;&#20010; ClassPathResource &#23545;&#35937;&#65292;&#36825;&#20010;&#26102;&#20505;&#65292;&#20320;&#21487;&#20197;&#36890;&#36807;&#21152;&#19978;&#25351;&#23450;&#30340;&#21069;&#32512;&#26469;&#23454;&#29616;&#36825;&#19968;&#38656;&#27714;&#65292;&#22914;&#65306;</p>
 <pre class="programlisting">Resource template = ctx.getResource(<span class="hl-string">"classpath:some/resource/path/myTemplate.txt"</span>);</pre>
 
-<p>Similarly, one can force a <code class="literal">UrlResource</code> to be used by specifying any of the standard
-<code class="literal">java.net.URL</code> prefixes:</p>
+<p>&#31867;&#20284;&#30340;&#65292;&#20320;&#21487;&#20197;&#36890;&#36807;&#20854;&#20182;&#20219;&#24847;&#30340; url &#21069;&#32512;&#26469;&#24378;&#21046;&#33719;&#21462; UrlResource &#23545;&#35937;&#65306;</p>
 <pre class="programlisting">Resource template = ctx.getResource(<span class="hl-string">"file:///some/resource/path/myTemplate.txt"</span>);</pre>
 
 <pre class="programlisting">Resource template = ctx.getResource(<span class="hl-string">"http://myhost.com/resource/path/myTemplate.txt"</span>);</pre>
 
-<p>The following table summarizes the strategy for converting <code class="literal">String</code>s to <code class="literal">Resource</code>s:</p>
+<p>&#19979;&#38754;&#65292;&#32473;&#20986;&#19968;&#20010;&#34920;&#26684;&#26469;&#24635;&#32467;&#19968;&#19979; spring &#26681;&#25454;&#21508;&#31181;&#20301;&#32622;&#36335;&#24452;&#21152;&#36733;&#36164;&#28304;&#30340;&#31574;&#30053;&#65306;</p>
 <div class="table"><a name="resources-resource-strings" href="#resources-resource-strings"></a><p class="title"><b>Table&nbsp;6.1.&nbsp;Resource strings</b></p><div class="table-contents">
 
-  <table summary="Resource strings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Prefix</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Example</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>classpath:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">classpath:com/myapp/config.xml</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Loaded from the classpath.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>file:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">file:///data/config.xml</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Loaded as a <code class="literal">URL</code>, from the filesystem. <a href="#ftn.d5e4827" class="footnote" name="d5e4827"><sup class="footnote">[1]</sup></a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>http:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">http://myserver/logo.png</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Loaded as a <code class="literal">URL</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>(none)</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">/data/config.xml</code></p></td><td style="" align="left" valign="top"><p>Depends on the underlying <code class="literal">ApplicationContext</code>.</p></td></tr></tbody><tbody class="footnotes"><tr><td colspan="3"><div id="ftn.d5e4827" class="footnote"><p><a href="#d5e4827" class="simpara"><sup class="simpara">[1] </sup></a>But see also
-  <a class="xref" href="resources.html#resources-filesystemresource-caveats" title="6.7.3&nbsp;FileSystemResource caveats">Section&nbsp;6.7.3, &#8220;FileSystemResource caveats&#8221;</a>.</p></div></td></tr></tbody></table>
+  <table summary="Resource strings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&#21069;&#32512;</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&#26679;&#20363;</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">&#35828;&#26126;</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>classpath:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">classpath:com/myapp/config.xml</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#20174;&#31867;&#36335;&#24452;&#21152;&#36733;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>file:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">file:///data/config.xml</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#20854;&#20316;&#20026; URL &#23545;&#35937;&#65292;&#20174;&#25991;&#20214;&#31995;&#32479;&#21152;&#36733; <a href="#ftn.d5e4735" class="footnote" name="d5e4735"><sup class="footnote">[1]</sup></a>.]</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>http:</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">http://myserver/logo.png</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#20854;&#20316;&#20026; URL &#23545;&#35937; &#21152;&#36733;</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>(none)</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">/data/config.xml</code></p></td><td style="" align="left" valign="top"><p>&#21462;&#20915;&#20110;&#24213;&#23618;&#30340; ApplicationContext</p></td></tr></tbody><tbody class="footnotes"><tr><td colspan="3"><div id="ftn.d5e4735" class="footnote"><p><a href="#d5e4735" class="simpara"><sup class="simpara">[1] </sup></a>&#21478;&#35831;&#21442;&#38405;:specialcharacters,macros[<a class="xref" href="resources.html#resources-filesystemresource-caveats" title="6.7.3&nbsp;FileSystemResource caveats">Section&nbsp;6.7.3, &#8220;FileSystemResource caveats&#8221;</a></p></div></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-resourceloaderaware" href="#resources-resourceloaderaware"></a>6.5&nbsp;The ResourceLoaderAware interface</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-resourceloaderaware" href="#resources-resourceloaderaware"></a>6.5&nbsp;ResourceLoaderAware &#25509;&#21475;</h2></div></div></div>
 
-<p>The <code class="literal">ResourceLoaderAware</code> interface is a special marker interface, identifying objects
-that expect to be provided with a <code class="literal">ResourceLoader</code> reference.</p>
+<p>ResourceLoaderAware &#26159;&#19968;&#20010;&#29305;&#27530;&#30340;&#26631;&#35760;&#25509;&#21475;&#65292;&#29992;&#26469;&#26631;&#35760;&#25552;&#20379; ResourceLoader &#24341;&#29992;&#30340;&#23545;&#35937;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> ResourceLoaderAware {
 
     <span class="hl-keyword">void</span> setResourceLoader(ResourceLoader resourceLoader);
 }</pre>
 
-<p>When a class implements <code class="literal">ResourceLoaderAware</code> and is deployed into an application
-context (as a Spring-managed bean), it is recognized as <code class="literal">ResourceLoaderAware</code> by the
-application context. The application context will then invoke the
-<code class="literal">setResourceLoader(ResourceLoader)</code>, supplying itself as the argument (remember, all
-application contexts in Spring implement the <code class="literal">ResourceLoader</code> interface).</p>
-<p>Of course, since an <code class="literal">ApplicationContext</code> is a <code class="literal">ResourceLoader</code>, the bean could also
-implement the <code class="literal">ApplicationContextAware</code> interface and use the supplied application
-context directly to load resources, but in general, it&#8217;s better to use the specialized
-<code class="literal">ResourceLoader</code> interface if that&#8217;s all that&#8217;s needed. The code would just be coupled
-to the resource loading interface, which can be considered a utility interface, and not
-the whole Spring <code class="literal">ApplicationContext</code> interface.</p>
-<p>As of Spring 2.5, you can rely upon autowiring of the <code class="literal">ResourceLoader</code> as an alternative
-to implementing the <code class="literal">ResourceLoaderAware</code> interface. The "traditional" <code class="literal">constructor</code> and
-<code class="literal">byType</code> autowiring modes (as described in <a class="xref" href="beans.html#beans-factory-autowire" title="5.4.5&nbsp;Autowiring collaborators">Section&nbsp;5.4.5, &#8220;Autowiring collaborators&#8221;</a>) are now capable
-of providing a dependency of type <code class="literal">ResourceLoader</code> for either a constructor argument or
-setter method parameter respectively. For more flexibility (including the ability to
-autowire fields and multiple parameter methods), consider using the new annotation-based
-autowiring features. In that case, the <code class="literal">ResourceLoader</code> will be autowired into a field,
-constructor argument, or method parameter that is expecting the <code class="literal">ResourceLoader</code> type as
-long as the field, constructor, or method in question carries the <code class="literal">@Autowired</code>
-annotation. For more information, see <a class="xref" href="beans.html#beans-autowired-annotation" title="5.9.2&nbsp;@Autowired">Section&nbsp;5.9.2, &#8220;@Autowired&#8221;</a>.</p>
+<p>&#24403;&#23558;&#19968;&#20010; ResourceLoaderAware &#25509;&#21475;&#30340;&#23454;&#29616;&#31867;&#37096;&#32626;&#21040;&#24212;&#29992;&#19978;&#19979;&#25991;&#26102;(&#27492;&#31867;&#20250;&#20316;&#20026;&#19968;&#20010; spring &#31649;&#29702;&#30340; bean&#65289;, &#24212;&#29992;&#19978;&#19979;&#25991;&#35782;&#21035;&#20986;&#27492;&#20026;&#19968;&#20010; ResourceLoaderAware &#23545;&#35937;&#65292;&#24182;&#23558;&#33258;&#36523;&#20316;&#20026;&#19968;&#20010;&#21442;&#25968;&#26469;&#35843;&#29992; setResourceLoader() &#20989;&#25968;&#65292;&#22914;&#27492;&#65292;&#35813;&#23454;&#29616;&#31867;&#20415;&#21487;&#20351;&#29992; ResourceLoader &#33719;&#21462; Resource &#23454;&#20363;&#26469;&#21152;&#36733;&#20320;&#25152;&#38656;&#35201;&#30340;&#36164;&#28304;&#12290;&#65288;&#38468;&#65306;&#20026;&#20160;&#20040;&#23558;&#24212;&#29992;&#19978;&#19979;&#25991;&#20316;&#20026;&#19968;&#20010;&#21442;&#25968;&#26469;&#35843;&#29992; setResourceLoader() &#20989;&#25968;&#21602;&#65311;&#19981;&#35201;&#24536;&#20102;&#65292;&#22312;&#21069;&#25991;&#26377;&#35848;&#36807;&#65292;spring &#30340;&#25152;&#26377;&#19978;&#19979;&#25991;&#37117;&#23454;&#29616;&#20102; ResourceLoader &#25509;&#21475;&#65289;&#12290;</p>
+<p>&#24403;&#28982;&#20102;&#65292;&#19968;&#20010; bean &#33509;&#24819;&#21152;&#36733;&#25351;&#23450;&#36335;&#24452;&#19979;&#30340;&#36164;&#28304;&#65292;&#38500;&#20102;&#21018;&#25165;&#25552;&#21040;&#30340;&#23454;&#29616; ResourcesLoaderAware &#25509;&#21475;&#20043;&#22806;&#65288;&#23558; ApplicationContext &#20316;&#20026;&#19968;&#20010; ResourceLoader &#23545;&#35937;&#27880;&#20837;&#65289;&#65292;bean &#20063;&#21487;&#20197;&#23454;&#29616; ApplicationContextAware &#25509;&#21475;&#65292;&#36825;&#26679;&#21487;&#20197;&#30452;&#25509;&#20351;&#29992;&#24212;&#29992;&#19978;&#19979;&#25991;&#26469;&#21152;&#36733;&#36164;&#28304;&#12290;&#20294;&#24635;&#30340;&#26469;&#35828;&#65292;&#22312;&#38656;&#27714;&#28385;&#36275;&#37117;&#28385;&#36275;&#30340;&#24773;&#20917;&#19979;&#65292;&#26368;&#22909;&#26159;&#20351;&#29992;&#30340;&#19987;&#29992; ResourceLoader &#25509;&#21475;&#65292;&#22240;&#20026;&#36825;&#26679;&#20195;&#30721;&#21482;&#20250;&#19982;&#25509;&#21475;&#32806;&#21512;&#65292;&#32780;&#19981;&#20250;&#19982;&#25972;&#20010; spring ApplicationContext &#32806;&#21512;&#12290;&#19982; ResourceLoader &#25509;&#21475;&#32806;&#21512;&#65292;&#25243;&#24320; spring &#26469;&#30475;&#65292;&#23601;&#26159;&#25552;&#20379;&#20102;&#19968;&#20010;&#21152;&#36733;&#36164;&#28304;&#30340;&#24037;&#20855;&#31867;&#25509;&#21475;&#12290;</p>
+<p>&#20174; spring 2.5 &#24320;&#22987;&#65292;&#38500;&#20102;&#23454;&#29616; ResourceLoaderAware &#25509;&#21475;&#65292;&#20063;&#21487;&#37319;&#21462;&#21478;&#22806;&#19968;&#31181;&#26367;&#20195;&#26041;&#26696;&#8212;&#8212;&#20381;&#36182;&#20110; ResourceLoader &#30340;&#33258;&#21160;&#35013;&#37197;&#12290;"&#20256;&#32479;"&#30340; constructor &#21644; bytype &#33258;&#21160;&#35013;&#37197;&#27169;&#24335;&#37117;&#25903;&#25345; ResourceLoader &#30340;&#35013;&#37197;&#65288;&#21487;&#21442;&#38405; <a class="xref" href="beans.html#beans-factory-autowire" title="5.4.5&nbsp;Autowiring collaborators">Section&nbsp;5.4.5, &#8220;Autowiring collaborators&#8221;</a> &#65289;&#8212;&#8212;&#21069;&#32773;&#20197;&#26500;&#36896;&#21442;&#25968;&#30340;&#24418;&#24335;&#35013;&#37197;&#65292;&#21518;&#32773;&#20197; setter &#26041;&#27861;&#20013;&#21442;&#25968;&#35013;&#37197;&#12290;&#33509;&#20026;&#20102;&#33719;&#24471;&#26356;&#22823;&#30340;&#28789;&#27963;&#24615;(&#21253;&#25324;&#23646;&#24615;&#27880;&#20837;&#30340;&#33021;&#21147;&#21644;&#22810;&#21442;&#26041;&#27861;)&#65292;&#21487;&#20197;&#32771;&#34385;&#20351;&#29992;&#22522;&#20110;&#27880;&#35299;&#30340;&#26032;&#27880;&#20837;&#26041;&#24335;&#12290;&#20351;&#29992;&#27880;&#35299; @Autowiring &#26631;&#35760; ResourceLoader &#21464;&#37327;&#65292;&#20415;&#21487;&#23558;&#20854;&#27880;&#20837;&#21040;&#25104;&#21592;&#23646;&#24615;&#12289;&#26500;&#36896;&#21442;&#25968;&#25110;&#26041;&#27861;&#21442;&#25968;&#20013;( @autowiring &#35814;&#32454;&#30340;&#20351;&#29992;&#26041;&#27861;&#21487;&#21442;&#32771;<a class="xref" href="beans.html#beans-autowired-annotation" title="5.9.2&nbsp;@Autowired">Section&nbsp;5.9.2, &#8220;@Autowired&#8221;</a>.)&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-as-dependencies" href="#resources-as-dependencies"></a>6.6&nbsp;Resources as dependencies</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-as-dependencies" href="#resources-as-dependencies"></a>6.6&nbsp;&#36164;&#28304;&#20381;&#36182;</h2></div></div></div>
 
 <p>If the bean itself is going to determine and supply the resource path through some sort
 of dynamic process, it probably makes sense for the bean to use the <code class="literal">ResourceLoader</code>
@@ -251,47 +155,28 @@ used. The following two examples show how to force a <code class="literal">Class
 <pre class="programlisting"><span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"template"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"file:///some/resource/path/myTemplate.txt"</span><span class="hl-tag">/&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-app-ctx" href="#resources-app-ctx"></a>6.7&nbsp;Application contexts and Resource paths</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="resources-app-ctx" href="#resources-app-ctx"></a>6.7&nbsp;&#24212;&#29992;&#19978;&#19979;&#25991;&#21644;&#36164;&#28304;&#36335;&#24452;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-app-ctx-construction" href="#resources-app-ctx-construction"></a>6.7.1&nbsp;Constructing application contexts</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-app-ctx-construction" href="#resources-app-ctx-construction"></a>6.7.1&nbsp;&#26500;&#36896;&#24212;&#29992;&#19978;&#19979;&#25991;</h3></div></div></div>
 
-<p>An application context constructor (for a specific application context type) generally
-takes a string or array of strings as the location path(s) of the resource(s) such as
-XML files that make up the definition of the context.</p>
-<p>When such a location path doesn&#8217;t have a prefix, the specific <code class="literal">Resource</code> type built from
-that path and used to load the bean definitions, depends on and is appropriate to the
-specific application context. For example, if you create a
-<code class="literal">ClassPathXmlApplicationContext</code> as follows:</p>
+<p>&#24212;&#29992;&#19978;&#19979;&#25991;(&#26576;&#19968;&#29305;&#23450;&#30340;&#19978;&#19979;&#25991;)&#30340;&#26500;&#36896;&#22120;&#36890;&#24120;&#21487;&#20197;&#20351;&#29992;&#23383;&#31526;&#20018;&#25110;&#23383;&#31526;&#20018;&#25968;&#32452;&#25152;&#25351;&#20195;&#30340;(&#22810;&#20010;)&#36164;&#28304;(&#22914; xml &#25991;&#20214;)&#26469;&#26500;&#36896;&#24403;&#21069;&#19978;&#19979;&#25991;&#12290;</p>
+<p>&#24403;&#25351;&#23450;&#30340;&#20301;&#32622;&#36335;&#24452;&#27809;&#26377;&#24102;&#21069;&#32512;&#26102;&#65292;&#37027;&#20174;&#25351;&#23450;&#20301;&#32622;&#36335;&#24452;&#21019;&#24314;&#30340; Resource &#31867;&#22411;(&#29992;&#20110;&#21518;&#32493;&#21152;&#36733; bean &#23450;&#20041;),&#21462;&#20915;&#20110;&#25152;&#20351;&#29992;&#24212;&#29992;&#19978;&#19979;&#25991;&#12290;&#20030;&#20010;&#21015;&#23376;&#65292;&#22914;&#19979;&#25152;&#21019;&#24314;&#30340; ClassPathXmlApplicationContext &#65306;</p>
 <pre class="programlisting">ApplicationContext ctx = <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-string">"conf/appContext.xml"</span>);</pre>
 
-<p>The bean definitions will be loaded from the classpath, as a <code class="literal">ClassPathResource</code> will be
-used. But if you create a <code class="literal">FileSystemXmlApplicationContext</code> as follows:</p>
+<p>&#20250;&#20174;&#31867;&#36335;&#24452;&#21152;&#36733; bean &#30340;&#23450;&#20041;&#65292;&#22240;&#20026;&#25152;&#21019;&#24314;&#30340; Resource &#23454;&#20363;&#26159; ClassPathResource.&#20294;&#25152;&#21019;&#24314;&#30340;&#26159; FileSystemXmlApplicationContext &#26102;&#65292;</p>
 <pre class="programlisting">ApplicationContext ctx =
     <span class="hl-keyword">new</span> FileSystemXmlApplicationContext(<span class="hl-string">"conf/appContext.xml"</span>);</pre>
 
-<p>The bean definition will be loaded from a filesystem location, in this case relative to
-the current working directory.</p>
-<p>Note that the use of the special classpath prefix or a standard URL prefix on the
-location path will override the default type of <code class="literal">Resource</code> created to load the
-definition. So this <code class="literal">FileSystemXmlApplicationContext</code>&#8230;</p>
+<p>&#21017;&#20250;&#20174;&#25991;&#20214;&#31995;&#32479;&#21152;&#36733; bean &#30340;&#23450;&#20041;&#65292;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#36164;&#28304;&#36335;&#24452;&#26159;&#30456;&#23545;&#24037;&#20316;&#30446;&#24405;&#32780;&#35328;&#30340;&#12290;</p>
+<p>&#27880;&#24847;&#65306;&#33509;&#20301;&#32622;&#36335;&#24452;&#24102;&#26377; classpath &#21069;&#32512;&#25110; URL &#21069;&#32512;&#65292;&#20250;&#35206;&#30422;&#40664;&#35748;&#21019;&#24314;&#30340;&#29992;&#20110;&#21152;&#36733; bean &#23450;&#20041;&#30340; Resource &#31867;&#22411;&#65292;&#27604;&#22914;&#36825;&#31181;&#24773;&#20917;&#19979; FileSystemXmlApplicationContext</p>
 <pre class="programlisting">ApplicationContext ctx =
     <span class="hl-keyword">new</span> FileSystemXmlApplicationContext(<span class="hl-string">"classpath:conf/appContext.xml"</span>);</pre>
 
-<div class="orderedlist"><ol class="orderedlist" type="i"><li class="listitem">
-will actually load its bean definitions from the classpath. However, it is still a
-<code class="literal">FileSystemXmlApplicationContext</code>. If it is subsequently used as a <code class="literal">ResourceLoader</code>, any
-unprefixed paths will still be treated as filesystem paths.
-</li></ol></div>
+<p>&#65292;&#23454;&#38469;&#26159;&#20174;&#31867;&#36335;&#24452;&#19979;&#21152;&#36733;&#20102; bean &#30340;&#23450;&#20041;&#12290;&#21487;&#26159;&#65292;&#36825;&#20010;&#19978;&#19979;&#25991;&#20173;&#28982;&#26159; FileSystemXmlApplicationContext&#65292;&#32780;&#19981;&#26159; ClassPathXmlApplicationContext&#65292;&#22312;&#21518;&#32493;&#20316;&#20026; ResourceLoader &#26469;&#20351;&#29992;&#26102;&#65292;&#19981;&#24102;&#21069;&#32512;&#30340;&#36335;&#24452;&#20173;&#28982;&#20250;&#20174;&#25991;&#20214;&#31995;&#32479;&#20013;&#21152;&#36733;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-app-ctx-classpathxml" href="#resources-app-ctx-classpathxml"></a>&#26500;&#36896; ClassPathXmlApplicationContext &#23454;&#20363; - &#24555;&#25463;&#26041;&#24335;</h4></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-app-ctx-classpathxml" href="#resources-app-ctx-classpathxml"></a>Constructing ClassPathXmlApplicationContext instances - shortcuts</h4></div></div></div>
-
-<p>The <code class="literal">ClassPathXmlApplicationContext</code> exposes a number of constructors to enable
-convenient instantiation. The basic idea is that one supplies merely a string array
-containing just the filenames of the XML files themselves (without the leading path
-information), and one <span class="emphasis"><em>also</em></span> supplies a <code class="literal">Class</code>; the <code class="literal">ClassPathXmlApplicationContext</code>
-will derive the path information from the supplied class.</p>
-<p>An example will hopefully make this clear. Consider a directory layout that looks like
-this:</p>
+<p>ClassPathXmlApplicationContext &#25552;&#20379;&#20102;&#22810;&#20010;&#26500;&#36896;&#20989;&#25968;&#65292;&#20197;&#21033;&#20110;&#24555;&#25463;&#22320;&#21019;&#24314; ClassPathXmlApplicationContext &#30340;&#23454;&#20363;&#12290;&#26368;&#22909;&#33707;&#19981;&#36807;&#20351;&#29992;&#21482;&#21253;&#21547;&#22810;&#20010; xml &#25991;&#20214;&#21517;&#65288;&#19981;&#24102;&#36335;&#24452;&#20449;&#24687;&#65289;&#30340;&#23383;&#31526;&#20018;&#25968;&#32452;&#21644;&#19968;&#20010; Class &#21442;&#25968;&#30340;&#26500;&#36896;&#22120;&#65292;&#25152;&#30465;&#30053;&#36335;&#24452;&#20449;&#24687; ClassPathXmlApplicationContext &#20250;&#20174; Class &#21442;&#25968; &#33719;&#21462;&#65306;</p>
+<p>&#19979;&#38754;&#30340;&#36825;&#20010;&#20363;&#23376;&#65292;&#21487;&#20197;&#35753;&#20320;&#23545;&#20010;&#26500;&#36896;&#22120;&#26377;&#27604;&#36739;&#28165;&#26224;&#30340;&#35748;&#35782;&#12290;&#35797;&#24819;&#19968;&#20010;&#22914;&#19979;&#31867;&#20284;&#30340;&#30446;&#24405;&#32467;&#26500;&#65306;</p>
 
 <pre class="literallayout">com/
   foo/
@@ -299,34 +184,21 @@ this:</p>
 	daos.xml
     MessengerService.class</pre>
 
-<p>A <code class="literal">ClassPathXmlApplicationContext</code> instance composed of the beans defined in the
-<code class="literal">'services.xml'</code> and <code class="literal">'daos.xml'</code> could be instantiated like so&#8230;</p>
+<p>&#30001; <span class="emphasis"><em>services.xml</em></span> &#21644; <span class="emphasis"><em>daos.xml</em></span> &#20013; bean &#25152;&#32452;&#25104;&#30340; ClassPathXmlApplicationContext&#65292;&#21487;&#20197;&#36825;&#26679;&#26469;&#21021;&#22987;&#21270;&#65306;</p>
 <pre class="programlisting">ApplicationContext ctx = <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(
     <span class="hl-keyword">new</span> String[] {<span class="hl-string">"services.xml"</span>, <span class="hl-string">"daos.xml"</span>}, MessengerService.<span class="hl-keyword">class</span>);</pre>
 
-<p>Please do consult the <code class="literal">ClassPathXmlApplicationContext</code> javadocs for details
-on the various constructors.</p>
+<p>&#27442;&#35201;&#30693;&#36947; ClassPathXmlApplicationContext &#26356;&#22810;&#19981;&#21516;&#31867;&#22411;&#30340;&#26500;&#36896;&#22120;&#65292;&#35831;&#26597;&#38405; Javadocs &#25991;&#26723;&#12290;</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-app-ctx-wildcards-in-resource-paths" href="#resources-app-ctx-wildcards-in-resource-paths"></a>6.7.2&nbsp;Wildcards in application context constructor resource paths</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-app-ctx-wildcards-in-resource-paths" href="#resources-app-ctx-wildcards-in-resource-paths"></a>6.7.2&nbsp;&#20351;&#29992;&#36890;&#37197;&#31526;&#26500;&#36896;&#24212;&#29992;&#19978;&#19979;&#25991;</h3></div></div></div>
 
-<p>The resource paths in application context constructor values may be a simple path (as
-shown above) which has a one-to-one mapping to a target Resource, or alternately may
-contain the special "classpath*:" prefix and/or internal Ant-style regular expressions
-(matched using Spring&#8217;s <code class="literal">PathMatcher</code> utility). Both of the latter are effectively
-wildcards</p>
-<p>One use for this mechanism is when doing component-style application assembly. All
-components can <span class="emphasis"><em>publish</em></span> context definition fragments to a well-known location path, and
-when the final application context is created using the same path prefixed via
-<code class="literal">classpath*:</code>, all component fragments will be picked up automatically.</p>
-<p>Note that this wildcarding is specific to use of resource paths in application context
-constructors (or when using the <code class="literal">PathMatcher</code> utility class hierarchy directly), and is
-resolved at construction time. It has nothing to do with the <code class="literal">Resource</code> type itself.
-It&#8217;s not possible to use the <code class="literal">classpath*:</code> prefix to construct an actual <code class="literal">Resource</code>, as
-a resource points to just one resource at a time.</p>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-app-ctx-ant-patterns-in-paths" href="#resources-app-ctx-ant-patterns-in-paths"></a>Ant-style Patterns</h4></div></div></div>
+<p>&#20174;&#21069;&#25991;&#21487;&#30693;&#65292;&#24212;&#29992;&#19978;&#19979;&#25991;&#26500;&#36896;&#22120;&#30340;&#20013;&#30340;&#36164;&#28304;&#36335;&#24452;&#21487;&#20197;&#26159;&#21333;&#19968;&#30340;&#36335;&#24452;&#65288;&#21363;&#19968;&#23545;&#19968;&#22320;&#26144;&#23556;&#21040;&#30446;&#26631;&#36164;&#28304;&#65289;&#65307;&#21478;&#22806;&#36164;&#28304;&#36335;&#24452;&#20063;&#21487;&#20197;&#20351;&#29992;&#39640;&#25928;&#30340;&#36890;&#37197;&#31526;&#8212;&#8212;&#21487;&#21253;&#21547; classpath*&#65306; &#29305;&#27530;&#21069;&#32512; &#25110; ant &#39118;&#26684;&#30340;&#27491;&#21017;&#34920;&#36798;&#24335;&#65288;&#20351;&#29992; spring &#30340; PathMatcher &#26469;&#21305;&#37197;&#65289;&#12290;</p>
+<p>&#36890;&#37197;&#31526;&#26426;&#21046;&#30340;&#20854;&#20013;&#19968;&#31181;&#24212;&#29992;&#21487;&#20197;&#29992;&#26469;&#32452;&#35013;&#32452;&#20214;&#24335;&#30340;&#24212;&#29992;&#31243;&#24207;&#12290;&#24212;&#29992;&#31243;&#24207;&#37324;&#25152;&#26377;&#32452;&#20214;&#37117;&#21487;&#20197;&#22312;&#19968;&#20010;&#20849;&#30693;&#30340;&#20301;&#32622;&#36335;&#24452;&#21457;&#24067;&#33258;&#23450;&#20041;&#30340;&#19978;&#19979;&#25991;&#29255;&#27573;&#65292;&#21017;&#24403;&#26368;&#32456;&#24212;&#29992;&#19978;&#19979;&#25991;&#21487;&#20351;&#29992; classpath*: &#22312;&#21516;&#19968;&#36335;&#24452;&#21069;&#32512;(&#21069;&#38754;&#30340;&#20849;&#30693;&#36335;&#24452;&#65289;&#19979;&#21019;&#24314;&#65292;&#36825;&#26102;&#25152;&#26377;&#32452;&#20214;&#19978;&#19979;&#25991;&#30340;&#29255;&#27573;&#37117;&#20250;&#34987;&#33258;&#21160;&#32452;&#35013;&#12290;</p>
+<p>&#35880;&#35760;&#65292;&#36335;&#24452;&#20013;&#30340;&#36890;&#37197;&#31526;&#29305;&#23450;&#29992;&#20110;&#24212;&#29992;&#19978;&#19979;&#25991;&#30340;&#26500;&#36896;&#22120;&#65292;&#21482;&#20250;&#22312;&#24212;&#29992;&#26500;&#36896;&#26102;&#26377;&#25928;&#65292;&#19982;&#20854; Resource &#33258;&#36523;&#31867;&#22411;&#27809;&#26377;&#20219;&#20309;&#20851;&#31995;&#12290;&#19981;&#21487;&#20197;&#20351;&#29992; classpth*&#65306;&#26469;&#26500;&#36896;&#20219;&#19968;&#30495;&#23454;&#30340; Resource&#65292;&#22240;&#20026;&#19968;&#20010;&#36164;&#28304;&#28857;&#19968;&#27425;&#21482;&#21487;&#20197;&#25351;&#21521;&#19968;&#20010;&#36164;&#28304;&#12290;&#65288;&#22914;&#26524;&#30452;&#25509;&#20351;&#29992; PathMatcher &#30340;&#24037;&#20855;&#31867;&#65292;&#20063;&#21487;&#20197;&#22312;&#36335;&#24452;&#20013;&#20351;&#29992;&#36890;&#37197;&#31526;&#65289;</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-app-ctx-ant-patterns-in-paths" href="#resources-app-ctx-ant-patterns-in-paths"></a>Ant &#39118;&#26684;&#27169;&#24335;</h4></div></div></div>
 
-<p>When the path location contains an Ant-style pattern, for example:</p>
+<p>&#20197;&#19979;&#26159;&#19968;&#20123;&#20351;&#29992;&#20102; Ant &#39118;&#26684;&#30340;&#20301;&#32622;&#36335;&#24452;&#65306;</p>
 
 <pre class="literallayout">/WEB-INF/*-context.xml
   com/mycompany/**/applicationContext.xml
@@ -334,14 +206,7 @@ a resource points to just one resource at a time.</p>
   classpath:com/mycompany/**/applicationContext.xml</pre>
 
 <div class="orderedlist"><ol class="orderedlist" type="i"><li class="listitem">
-the resolver follows a more complex but defined procedure to try to resolve the
-wildcard. It produces a Resource for the path up to the last non-wildcard segment and
-obtains a URL from it. If this URL is not a "jar:" URL or container-specific variant
-(e.g. " <code class="literal">zip:</code>" in WebLogic, " <code class="literal">wsjar</code>" in WebSphere, etc.), then a <code class="literal">java.io.File</code> is
-obtained from it and used to resolve the wildcard by traversing the filesystem. In the
-case of a jar URL, the resolver either gets a <code class="literal">java.net.JarURLConnection</code> from it or
-manually parses the jar URL and then traverses the contents of the jar file to resolve
-the wildcards.
+&#24403;&#20301;&#32622;&#36335;&#24452;&#20351;&#29992;&#20102; ant &#39118;&#26684;&#65292;&#35299;&#37322;&#22120;&#20250;&#36981;&#24490;&#19968;&#22871;&#36127;&#36131;&#19988;&#39044;&#23450;&#20041;&#30340;&#36923;&#36753;&#26469;&#35299;&#37322;&#36825;&#20123;&#20301;&#32622;&#36335;&#24452;&#12290;&#35299;&#37322;&#22120;&#20250;&#20808;&#20174;&#20301;&#32622;&#36335;&#24452;&#37324;&#33719;&#21462;&#26368;&#38752;&#21069;&#30340;&#19981;&#24102;&#36890;&#37197;&#31526;&#30340;&#36335;&#24452;&#29255;&#27573;&#65292;&#20351;&#29992;&#36825;&#20010;&#36335;&#24452;&#29255;&#27573;&#26469;&#21019;&#24314;&#19968;&#20010; Resource &#65292;&#24182;&#20174; Resource &#37324;&#33719;&#21462;&#20854; URL&#65292;&#33509;&#25152;&#33719;&#21462;&#21040; URL &#21069;&#32512;&#24182;&#19981;&#26159; "jar:",&#25110;&#20854;&#20182;&#29305;&#27530;&#23481;&#22120;&#20135;&#29983;&#30340;&#29305;&#27530;&#21069;&#32512;&#65288;&#22914; WebLogic &#30340; zip:,WebSphere wsjar),&#21017;&#20174; Resource &#37324;&#33719;&#21462; java.io.File &#23545;&#35937;&#65292;&#24182;&#36890;&#36807;&#20854;&#36941;&#21382;&#25991;&#20214;&#31995;&#32479;&#12290;&#36827;&#32780;&#35299;&#20915;&#20301;&#32622;&#36335;&#24452;&#37324;&#36890;&#37197;&#31526;;&#33509;&#33719;&#21462;&#30340;&#26159; "jar:"&#30340; URL &#65292;&#35299;&#26512;&#22120;&#20250;&#20174;&#20854;&#33719;&#21462;&#19968;&#20010; java.net.JarURLConnection &#25110;&#25163;&#21160;&#35299;&#26512;&#27492; URL&#65292;&#24182;&#36941;&#21382; jar &#25991;&#20214;&#30340;&#20869;&#23481;&#36827;&#32780;&#36827;&#32780;&#35299;&#20915;&#20301;&#32622;&#36335;&#24452;&#30340;&#36890;&#37197;&#31526;&#12290;
 </li></ol></div>
 
 <div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="resources-app-ctx-portability" href="#resources-app-ctx-portability"></a>Implications on portability</h5></div></div></div>
@@ -365,60 +230,31 @@ resolution of resources coming from jars be thoroughly tested in your specific
 environment before you rely on it.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-classpath-wildcards" href="#resources-classpath-wildcards"></a>The Classpath*: portability classpath*: prefix</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-classpath-wildcards" href="#resources-classpath-wildcards"></a>classpath*: &#30340;&#21487;&#31227;&#26893;&#24615;</h4></div></div></div>
 
-<p>When constructing an XML-based application context, a location string may use the
-special <code class="literal">classpath*:</code> prefix:</p>
+<p>&#24403;&#26500;&#36896;&#22522;&#20110; xml &#25991;&#20214;&#30340;&#24212;&#29992;&#19978;&#19979;&#25991;&#26102;&#65292;&#20301;&#32622;&#36335;&#24452;&#21487;&#20197;&#20351;&#29992; classpath*&#65306;&#21069;&#32512;&#65306;</p>
 <pre class="programlisting">ApplicationContext ctx =
     <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-string">"classpath*:conf/appContext.xml"</span>);</pre>
 
-<p>This special prefix specifies that all classpath resources that match the given name
-must be obtained (internally, this essentially happens via a
-<code class="literal">ClassLoader.getResources(...)</code> call), and then merged to form the final application
-context definition.</p>
+<p>classpath*&#65306;&#34920;&#31034;&#31867;&#36335;&#24452;&#19979;&#25152;&#26377;&#21305;&#37197;&#25351;&#23450;&#25991;&#20214;&#21517;&#31216;&#30340;&#36164;&#28304;&#37117;&#20250;&#34987;&#33719;&#21462;(&#26412;&#36136;&#19978;&#23601;&#26159;&#35843;&#29992;&#20102; ClassLoader.getResources(&#8230;) &#26041;&#27861;&#65289;&#65292;&#25509;&#30528;&#23558;&#33719;&#21462;&#21040;&#30340;&#36164;&#28304;&#32452;&#35013;&#25104;&#26368;&#32456;&#30340;&#24212;&#29992;&#19978;&#19979;&#25991;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>The wildcard classpath relies on the <code class="literal">getResources()</code> method of the underlying
-classloader. As most application servers nowadays supply their own classloader
-implementation, the behavior might differ especially when dealing with jar files. A
-simple test to check if <code class="literal">classpath*</code> works is to use the classloader to load a file from
-within a jar on the classpath:
-<code class="literal">getClass().getClassLoader().getResources("&lt;someFileInsideTheJar&gt;")</code>. Try this test with
-files that have the same name but are placed inside two different locations. In case an
-inappropriate result is returned, check the application server documentation for
-settings that might affect the classloader behavior.</p>
+<p>&#36890;&#37197;&#31526;&#36335;&#24452;&#20381;&#36182;&#20102;&#24213;&#23618; classloader &#30340; getResource &#26041;&#27861;&#12290;&#21487;&#26159;&#29616;&#22312;&#22823;&#22810;&#25968;&#24212;&#29992;&#26381;&#21153;&#22120;&#25552;&#20379;&#20102;&#33258;&#36523;&#30340; classloader &#23454;&#29616;&#65292;&#20854;&#22788;&#29702; jar &#25991;&#20214;&#30340;&#24418;&#24335;&#21487;&#33021;&#21508;&#26377;&#19981;&#21516;&#12290;&#35201;&#22312;&#25351;&#23450;&#26381;&#21153;&#22120;&#27979;&#35797; classpath*: &#26159;&#21542;&#26377;&#25928;&#65292;&#31616;&#21333;&#28857;&#21487;&#20197;&#20351;&#29992; getClass().getClassLoader().getResources("&lt;someFileInsideTheJar&gt;") &#21435;&#21152;&#36733;&#31867;&#36335;&#24452; jar&#21253;&#37324;&#30340;&#19968;&#20010;&#25991;&#20214;&#12290;&#23581;&#35797;&#22312;&#20004;&#20010;&#19981;&#21516;&#30340;&#36335;&#24452;&#21152;&#36733;&#21517;&#31216;&#30456;&#21516;&#30340;&#25991;&#20214;&#65292;&#22914;&#26524;&#36820;&#22238;&#30340;&#32467;&#26524;&#19981;&#19968;&#33268;&#65292;&#23601;&#38656;&#35201;&#26597;&#30475;&#19968;&#19979;&#27492;&#26381;&#21153;&#22120;&#20013;&#19982; classloader &#34892;&#20026;&#35774;&#32622;&#30456;&#20851;&#30340;&#25991;&#26723;&#12290;</p>
 </td></tr></table></div>
 
-<p>The " <code class="literal">classpath*:</code>" prefix can also be combined with a <code class="literal">PathMatcher</code> pattern in the
-rest of the location path, for example " <code class="literal">classpath*:META-INF/*-beans.xml</code>". In this
-case, the resolution strategy is fairly simple: a ClassLoader.getResources() call is
-used on the last non-wildcard path segment to get all the matching resources in the
-class loader hierarchy, and then off each resource the same PathMatcher resolution
-strategy described above is used for the wildcard subpath.</p>
+<p>&#22312;&#20301;&#32622;&#36335;&#24452;&#30340;&#20854;&#20313;&#37096;&#20998;&#65292;classpath*: &#21069;&#32512;&#21487;&#20197;&#19982; PathMatcher &#32467;&#21512;&#20351;&#29992;&#65292;&#22914;&#65306;" classpath*:META-INF/*-beans.xml"&#12290;&#36825;&#31181;&#24773;&#20917;&#30340;&#35299;&#26512;&#31574;&#30053;&#38750;&#24120;&#31616;&#21333;&#65306;&#21462;&#20301;&#32622;&#36335;&#24452;&#26368;&#38752;&#21069;&#30340;&#26080;&#36890;&#37197;&#31526;&#29255;&#27573;&#65292;&#35843;&#29992; ClassLoader.getResources() &#33719;&#21462;&#25152;&#26377;&#21305;&#37197;&#30340;&#31867;&#23618;&#27425;&#21152;&#36733;&#22120;&#21487;&#21152;&#36733;&#30340;&#30340;&#36164;&#28304;&#65292;&#38543;&#21518;&#23558; PathMacher &#30340;&#31574;&#30053;&#24212;&#29992;&#20110;&#27599;&#19968;&#20010;&#33719;&#24471;&#36164;&#28304;&#65288;&#36215;&#36807;&#28388;&#20316;&#29992;&#65289;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-wildcards-in-path-other-stuff" href="#resources-wildcards-in-path-other-stuff"></a>Other notes relating to wildcards</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="resources-wildcards-in-path-other-stuff" href="#resources-wildcards-in-path-other-stuff"></a>&#36890;&#37197;&#31526;&#30340;&#34917;&#20805;&#35828;&#26126;</h4></div></div></div>
 
-<p>Please note that " <code class="literal">classpath*:</code>" when combined with Ant-style patterns will only work
-reliably with at least one root directory before the pattern starts, unless the actual
-target files reside in the file system. This means that a pattern like "
-<code class="literal">classpath*:*.xml</code>" will not retrieve files from the root of jar files but rather only
-from the root of expanded directories. This originates from a limitation in the JDK&#8217;s
-<code class="literal">ClassLoader.getResources()</code> method which only returns file system locations for a
-passed-in empty string (indicating potential roots to search).</p>
-<p>Ant-style patterns with " <code class="literal">classpath:</code>" resources are not guaranteed to find matching
-resources if the root package to search is available in multiple class path locations.
-This is because a resource such as</p>
-
-<pre class="literallayout">com/mycompany/package1/service-context.xml</pre>
-
-<p>may be in only one location, but when a path such as</p>
+<p>&#38500;&#38750;&#25152;&#26377;&#30446;&#26631;&#36164;&#28304;&#37117;&#23384;&#22312;&#25991;&#20214;&#31995;&#32479;&#65292;&#21542;&#21017;classpath*&#65306;&#21644; ant &#39118;&#26684;&#27169;&#24335;&#30340;&#32467;&#21512;&#20351;&#29992;&#65292;&#37117;&#21482;&#33021;&#22312;&#33267;&#23569;&#26377;&#19968;&#20010;&#30830;&#23450;&#26681;&#21253;&#36335;&#24452;&#24773;&#20917;&#19979;&#65292;&#25165;&#33021;&#36798;&#21040;&#26399;&#26395;&#30340;&#25928;&#26524;&#12290;&#25442;&#21477;&#35805;&#35828;&#65292;&#23601;&#26159;&#20687; classpath*:*.xml &#36825;&#26679;&#30340; pattern &#19981;&#33021;&#20174;&#26681;&#30446;&#24405;&#30340; jar &#25991;&#20214;&#20013;&#33719;&#21462;&#36164;&#28304;&#65292;&#21482;&#33021;&#20174;&#26681;&#30446;&#24405;&#30340;&#25193;&#23637;&#30446;&#24405;&#33719;&#21462;&#36164;&#28304;&#12290;&#27492;&#38382;&#39064;&#30340;&#36896;&#25104;&#28304;&#20110; jdk ClassLoader.getResources() &#26041;&#27861;&#30340;&#23616;&#38480;&#24615;&#8212;&#8212;&#24403;&#21521; ClassLoader.getResources() &#20256;&#20837;&#31354;&#20018;&#26102;(&#34920;&#31034;&#25628;&#32034;&#28508;&#22312;&#30340;&#26681;&#30446;&#24405;)&#65292;&#21482;&#33021;&#33719;&#21462;&#30340;&#25991;&#20214;&#31995;&#32479;&#30340;&#25991;&#20214;&#20301;&#32622;&#36335;&#24452;&#65292;&#21363;&#33719;&#21462;&#19981;&#20102; jar &#20013;&#25991;&#20214;&#30340;&#20301;&#32622;&#36335;&#24452;&#12290;</p>
+<p>&#22914;&#26524;&#22312;&#22810;&#20010;&#31867;&#36335;&#24452;&#19978;&#23384;&#22312;&#25152;&#25628;&#32034;&#30340;&#26681;&#21253;&#65292;&#37027;&#20351;&#29992; classpath: &#21644; ant &#39118;&#26684;&#27169;&#24335;&#19968;&#36215;&#25351;&#23450;&#30340;&#36164;&#28304;&#19981;&#20445;&#35777;&#25214;&#21040;&#21305;&#37197;&#30340;&#36164;&#28304;&#12290;&#22240;&#20026;&#20351;&#29992;&#22914;&#19979;&#30340; pattern</p>
 
 <pre class="literallayout">classpath:com/mycompany/**/service-context.xml</pre>
 
-<p>is used to try to resolve it, the resolver will work off the (first) URL returned by
-<code class="literal">getResource("com/mycompany")</code>;. If this base package node exists in multiple
-classloader locations, the actual end resource may not be underneath. Therefore,
-preferably, use " <code class="literal">classpath*:</code>" with the same Ant-style pattern in such a case, which
-will search all class path locations that contain the root package.</p>
+<p>&#21435;&#25628;&#32034;&#21482;&#22312;&#26576;&#19968;&#20010;&#36335;&#24452;&#23384;&#22312;&#30340;&#25351;&#23450;&#36164;&#28304;</p>
+
+<pre class="literallayout">com/mycompany/package1/service-context.xml</pre>
+
+<p>&#26102;,&#35299;&#26512;&#22120;&#21482;&#20250;&#23545; getResource("com/mycompany") &#36820;&#22238;&#30340;(&#31532;&#19968;&#20010;) URL &#36827;&#34892;&#36941;&#21382;&#21644;&#35299;&#37322;&#65292;&#21017;&#24403;&#22312;&#22810;&#20010;&#31867;&#36335;&#24452;&#23384;&#22312;&#22522;&#30784;&#21253;&#33410;&#28857; "com/mycompany" &#26102;(&#22914;&#22312;&#22810;&#20010; jar &#23384;&#22312;&#36825;&#20010;&#22522;&#30784;&#33410;&#28857;),&#35299;&#26512;&#22120;&#23601;&#19981;&#19968;&#23450;&#20250;&#25214;&#21040;&#25351;&#23450;&#36164;&#28304;&#12290;&#22240;&#27492;&#65292;&#36825;&#31181;&#24773;&#20917;&#19979;&#24314;&#35758;&#32467;&#21512;&#20351;&#29992; classpath*: &#21644; ant &#39118;&#26684;&#27169;&#24335;&#65292;classpath*&#65306;&#20250;&#35753;&#35299;&#26512;&#22120;&#21435;&#25628;&#32034;&#25152;&#26377;&#21253;&#21547;&#22522;&#30784;&#21253;&#33410;&#28857;&#30340;&#31867;&#36335;&#24452;&#12290;</p>
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="resources-filesystemresource-caveats" href="#resources-filesystemresource-caveats"></a>6.7.3&nbsp;FileSystemResource caveats</h3></div></div></div>
