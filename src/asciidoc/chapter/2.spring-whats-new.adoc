@@ -1,19 +1,14 @@
 [[spring-whats-new]]
-= Spring 4.x 的新功能
+= Spring 4.x的新功能
 
 
 
 
 [[new-in-4.0]]
-== Spring 4.0 增强和新特性
-Spring框架第一个版本发布于2004年，自发布以来已历经三个主要版本更新:
-Spring 2.0提供了XML命名空间和AspectJ支持；
-Spring 2.5增加了注释驱动（annotation-driven）的配置支持；
-Spring 3.0增加了对Java 5+版本的支持和@Configuration模型。
+== Spring 4.0增强和新功能
+Spring框架第一个版本发布于2004年，自发布以来已历经三个主要版本更新:Spring 2.0提供了XML命名空间和AspectJ支持；Spring 2.5增加了注释驱动（annotation-driven）的配置支持；Spring 3.0增加了对Java 5+版本的支持和@Configuration模型。
 
-今天发布的Spring 4.0.0则首次增加对Java 8的支持。
-你仍然可以使用老版本的Java，但是最低版本的要求已经提高到Java SE 6。
-我们也借主要版本更新的机会删除了许多过时的类和方法。
+今天发布的Spring 4.0.0则首次增加对Java 8的支持。你仍然可以使用老版本的Java，但是最低版本的要求已经提高到Java SE 6。我们也借主要版本更新的机会删除了许多过时的类和方法。
 
 你可以在 https://github.com/spring-projects/spring-framework/wiki[Spring Wiki文档] 上查看 https://github.com/spring-projects/spring-framework/wiki/Migrating-from-earlier-versions-of-the-spring-framework[升级Spring 4.0迁移指南]。
 
@@ -22,10 +17,7 @@ Spring 3.0增加了对Java 5+版本的支持和@Configuration模型。
 
 
 === 改进的入门体验
-新的 https://spring.io[spring.io] 网站提供了一整个系列的
-https://spring.io/guides["入门指南"] 帮助你学习Spring。
-你可以本文档的 <<overview-getting-started-with-spring,Spring 入门概述>> 一节阅读更多的入门指南。
-新网站还提供了Spring之下其他额外项目的一个全面的概述。
+新的 https://spring.io[spring.io] 网站提供了一整个系列的https://spring.io/guides["入门指南"] 帮助你学习Spring。你可以本文档的 <<overview-getting-started-with-spring,Spring 入门概述>> 一节阅读更多的入门指南。新网站还提供了Spring之下其他额外项目的一个全面的概述。
 
 如果你是一个Maven用户，你可以会对 <<overview-maven-bom,BOM>> 这个有用的POM文件感兴趣，
 这个文件已经与每个Spring的发布版发布。
@@ -34,27 +26,18 @@ https://spring.io/guides["入门指南"] 帮助你学习Spring。
 
 
 === 移除过时的包和方法
-所有过时的包和许多过时的类和方法已经从Spring4中移除。
-如果你从之前的发布版升级Spring，你需要保证已经修复了所有使用过时的API方法。
+所有过时的包和许多过时的类和方法已经从Spring4中移除。如果你从之前的发布版升级Spring，你需要保证已经修复了所有使用过时的API方法。
 
 查看完整的变化：
 http://docs.spring.io/spring-framework/docs/3.2.4.RELEASE_to_4.0.0.RELEASE/[API差异报告]。
 
 
-请注意，所有可选的第三方依赖都已经升级到了2010/2011的最低版本
-(例如Spring4通常只支持2010年的最新或者现在的最新发布版本):
-尤其是 Hibernate 3.6+, EhCache 2.1+, Quartz 1.8+, Groovy 1.8+, Joda-Time 2.0+。
-但是有一个例外，Spring4依赖最近的Hibernate Validator 4.3+,
-现在对Jackson的支持集中在2.0+版本 (Spring3.2支持的Jackson 1.8/1.9，现在已经过时）。
+请注意，所有可选的第三方依赖都已经升级到了2010/2011的最低版本(例如Spring4通常只支持2010年的最新或者现在的最新发布版本):尤其是 Hibernate 3.6+、EhCache 2.1+、Quartz 1.8+、Groovy 1.8+、Joda-Time 2.0+。但是有一个例外，Spring4依赖最近的Hibernate Validator 4.3+，现在对Jackson的支持集中在2.0+版本 (Spring3.2支持的Jackson 1.8/1.9，现在已经过时）。
 
 
 
 === Java 8 (以及6和7)
-Spring4支持Java8的一些特性。你可以在Spring的回调接口中使用
-__lambda 表达式__ 和 __方法引用__。
-支持`java.time` (http://jcp.org/en/jsr/detail?id=310[JSR-310])的值类型
-和一些改进过的注解，例如`@Repeatable`。
-你还可以使用Java8的参数名称发现机制（基于`-parameters`编译器标志）。
+Spring4支持Java8的一些特性。你可以在Spring的回调接口中使用 __lambda 表达式__ 和 __方法引用__。支持`java.time` (http://jcp.org/en/jsr/detail?id=310[JSR-310])的值类型和一些改进过的注解，例如`@Repeatable`。你还可以使用Java8的参数名称发现机制（基于`-parameters`编译器标志）。
 
 Spring仍然兼容老版本的Java和JDK：Java SE 6（具体来说，支持JDK6 update 18）以上版本，我们建议新的基于Spring4的项目使用Java7或Java8。
 
@@ -62,20 +45,15 @@ Spring仍然兼容老版本的Java和JDK：Java SE 6（具体来说，支持JDK6
 
 
 
-=== Java EE 6 和 7
-Java EE 6 或以上版本是Spring4的底线,与JPA2.0和Servlet3.0规范有着特殊的意义。
-为了保持与Google App Engine和旧的应用程序服务器兼容,Spring4可以部署在Servlet2.5运行环境。
-但是我们强烈的建议您在Spring测试和模拟测试的开发环境中使用Servlet3.0+。
+=== Java EE 6和7
+Java EE 6 或以上版本是Spring4的底线,与JPA2.0和Servlet3.0规范有着特殊的意义。为了保持与Google App Engine和旧的应用程序服务器兼容,Spring4可以部署在Servlet2.5运行环境。但是我们强烈的建议您在Spring测试和模拟测试的开发环境中使用Servlet3.0+。
 
 [NOTE]
 ====
 如果你是WebSphere 7的用户，一定要安装JPA2.0功能包。在WebLogic 10.3.4或更高版本，安装附带的JPA2.0补丁。这样就可以将这两种服务器变成Spring4兼容的部署环境。
 ====
 
-从长远的观点来看，Spring4.0现在支持Java EE 7级别的适用性规范：
-尤其是JMS 2.0, JTA 1.2, JPA 2.1, Bean Validation 1.1 和JSR-236并发工具类。
-像往常一样，支持的重点是独立的使用这些规范。例如在Tomcat或者独立环境中。
-但是，当把Spring应用部署到Java EE 7服务器时它同样适用。
+从长远的观点来看，Spring4.0现在支持Java EE 7级别的适用性规范：尤其是JMS 2.0, JTA 1.2, JPA 2.1, Bean Validation 1.1 和JSR-236并发工具类。像往常一样，支持的重点是独立的使用这些规范。例如在Tomcat或者独立环境中。但是，当把Spring应用部署到Java EE 7服务器时它同样适用。
 
 注意，Hibernate 4.3是JPA 2.1的提供者，因此它只支持Spring4。同样适用用于作为Bean Validation 1.1提供者的Hibernate Validator 5.0。这两个都不支持Spring3.2。
 
@@ -152,63 +130,36 @@ Spring4.0支持使用Groovy DSL来进行外部的bean定义配置。这在概念
 
 
 === 测试改进
-In addition to pruning of deprecated code within the `spring-test` module, Spring
-Framework 4.0 introduces several new features for use in unit and integration testing.
+除了精简`spring-test`模块中过时的代码外，Spring4还引入了几个用于单元测试和集成测试的新功能。
 
-* Almost all annotations in the `spring-test` module (e.g., `@ContextConfiguration`,
-  `@WebAppConfiguration`, `@ContextHierarchy`, `@ActiveProfiles`, etc.) can now be used
-  as <<integration-testing-annotations-meta,meta-annotations>> to create custom
-  _composed annotations_ and reduce configuration duplication across a test suite.
-* Active bean definition profiles can now be resolved programmatically, simply by
-  implementing a custom <<testcontext-ctx-management-env-profiles-ActiveProfilesResolver,`ActiveProfilesResolver`>>
-  and registering it via the `resolver` attribute of `@ActiveProfiles`.
-* A new `SocketUtils` class has been introduced in the `spring-core` module
-  which enables you to scan for free TCP and UDP server ports on localhost. This
-  functionality is not specific to testing but can prove very useful when writing
-  integration tests that require the use of sockets, for example tests that start
-  an in-memory SMTP server, FTP server, Servlet container, etc.
-* As of Spring 4.0, the set of mocks in the `org.springframework.mock.web` package is
-  now based on the Servlet 3.0 API. Furthermore, several of the Servlet API mocks
-  (e.g., `MockHttpServletRequest`, `MockServletContext`, etc.) have been updated with
-  minor enhancements and improved configurability.
+* 几乎`spring-test`模块中所有的注解（例如：`@ContextConfiguration`、`@WebAppConfiguration`、`@ContextHierarchy`、`@ActiveProfiles`等等)现在可以用作<<integration-testing-annotations-meta,元注解>>来创建自定义的_composed annotations_并且可以减少测试套件的配置。
+* 现在可以以编程方式解决Bean定义配置文件的激活。只需要实现一个自定义的<<testcontext-ctx-management-env-profiles-ActiveProfilesResolver,`ActiveProfilesResolver`>>，并且通过`@ActiveProfiles`的`resolver`属性注册。
+* 新的`SocketUtils`类被引入到了`spring-core`模块。这个类可以使你能够扫描本地主机的空闲的TCP和UDP服务端口。这个功能不是专门用在测试的，但是可以证明在你使用Socket写集成测试的时候非常有用。例如测试内存中启动的SMTP服务器，FTP服务器，Servlet容器等。
+* 从Spring 4.0开始,`org.springframework.mock.web`包中的一套mock是基于Servlet 3.0 API。此外，一些Servlet API mocks（例如：`MockHttpServletRequest`、`MockServletContext`等等）已经有一些小的改进更新，提高了可配置性。
 
 
 
 
 [[new-in-4.1]]
-== New Features and Enhancements in Spring Framework 4.1
+== Spring 4.1的改进和新功能
 
-=== JMS Improvements
-Spring 4.1 introduces a much simpler infrastructure <<jms-annotated,to register JMS
-listener endpoints>> by annotating bean methods with
-{javadoc-baseurl}/org/springframework/jms/annotation/JmsListener.html[`@JmsListener`].
-The XML namespace has been enhanced to support this new style (`jms:annotation-driven`),
-and it is also possible to fully configure the infrastructure using Java config
-({javadoc-baseurl}/org/springframework/jms/annotation/EnableJms.html[`@EnableJms`],
-`JmsListenerContainerFactory`). It is also possible to register listener endpoints
-programmatically using
-{javadoc-baseurl}/org/springframework/jms/annotation/JmsListenerConfigurer.html[`JmsListenerConfigurer`].
+=== JMS改进
+Spring 4.1引入了一个更简单的基础架构，使用{javadoc-baseurl}/org/springframework/jms/annotation/JmsListener.html[`@JmsListener`]注解bean方法来<<jms-annotated,注册JMS监听端点>>。XML命名空间已经通过增强来支持这种新的方式（`jms:annotation-driven`），它也可以完全通过Java配置({javadoc-baseurl}/org/springframework/jms/annotation/EnableJms.html[`@EnableJms`],
+`JmsListenerContainerFactory`)来配置架构。也可以使用{javadoc-baseurl}/org/springframework/jms/annotation/JmsListenerConfigurer.html[`JmsListenerConfigurer`]注解来注册监听端点。
 
-Spring 4.1 also aligns its JMS support to allow you to benefit from the `spring-messaging`
-abstraction introduced in 4.0, that is:
+Spring 4.1还调整了JMS的支持，使得你可以从`spring-messaging`在Spring4.0引入的抽象获益，即：
 
-* Message listener endpoints can have a more flexible signature and benefit from
-  standard messaging annotations such as `@Payload`, `@Header`, `@Headers`, and `@SendTo`. It
-  is also possible to use a standard `Message` in lieu of `javax.jms.Message` as method
-  argument.
-* A new {javadoc-baseurl}/org/springframework/jms/core/JmsMessageOperations.html[`JmsMessageOperations`]
-  interface is available and permits `JmsTemplate` like operations using the `Message`
-  abstraction.
+* 消息监听端点可以有更为灵活的签名，并且可以从标准的消息注解获益，例如`@Payload`、`@Header`、`@Headers`和`@SendTo`注解。另外，也可以使用一个标准的消息，以代替`javax.jms.Message`作为方法参数。
+* 一个新的可用{javadoc-baseurl}/org/springframework/jms/core/JmsMessageOperations.html[`JmsMessageOperations`]接口和允许操作使用`Message`抽象的`JmsTemplate`。
 
-Finally, Spring 4.1 provides additional miscellaneous improvements:
+最后，Spring 4.1提供了其他各种各样的改进：
 
-* Synchronous request-reply operations support in `JmsTemplate`
-* Listener priority can be specified per `<jms:listener/>` element
-* Recovery options for the message listener container are configurable using a
-  {javadoc-baseurl}/org/springframework/util/backoff/BackOff.html[`BackOff`] implementation
-* JMS 2.0 shared consumers are supported
+* JmsTemplate中的同步请求-答复操作支持
+* 监听器的优先权可以指定每个`<jms:listener/>`元素
+* 消息侦听器容器恢复选项可以通过使用{javadoc-baseurl}/org/springframework/util/backoff/BackOff.html[`BackOff`] 实现进行配置
+* JMS 2.0消费者支持共享
 
-=== Caching Improvements
+=== Caching（缓存）改进
 
 Spring 4.1 supports <<cache-jsr-107,JCache (JSR-107) annotations>> using Spring's
 existing cache configuration and infrastructure abstraction; no changes are required
