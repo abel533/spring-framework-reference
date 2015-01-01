@@ -46,7 +46,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 23.jms.adoc                  -
 - 24.jmx.adoc                  -
 - 25.cci.adoc                  -
-- 26.mail.adoc                 -
+- **26.mail.adoc                 - 抢小孩糖吃**
 - **27.scheduling.adoc           - [qxs](http://git.oschina.net/qxs)**
 - 28.dynamic-language.adoc     -
 - 29.cache.adoc                -
