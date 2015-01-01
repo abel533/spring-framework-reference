@@ -17,9 +17,9 @@ Spring框架第一个版本发布于2004年，自发布以来已历经三个主�
 
 
 === 改进的入门体验
-新的 https://spring.io[spring.io] 网站提供了一整个系列的https://spring.io/guides["入门指南"] 帮助你学习Spring。你可以本文档的 <<overview-getting-started-with-spring,Spring 入门概述>> 一节阅读更多的入门指南。新网站还提供了Spring之下其他额外项目的一个全面的概述。
+新的 https://spring.io[spring.io] 网站提供了一整个系列的 https://spring.io/guides["入门指南"] 帮助你学习Spring。你可以本文档的 <<overview-getting-started-with-spring,Spring 入门概述>> 一节阅读更多的入门指南。新网站还提供了Spring之下其他额外项目的一个全面的概述。
 
-如果你是一个Maven用户，你可以会对 <<overview-maven-bom,BOM>> 这个有用的POM文件感兴趣，
+如果你是一个Maven用户，你可能会对 <<overview-maven-bom,BOM>> 这个有用的POM文件感兴趣，
 这个文件已经与每个Spring的发布版发布。
 
 
@@ -32,7 +32,7 @@ Spring框架第一个版本发布于2004年，自发布以来已历经三个主�
 http://docs.spring.io/spring-framework/docs/3.2.4.RELEASE_to_4.0.0.RELEASE/[API差异报告]。
 
 
-请注意，所有可选的第三方依赖都已经升级到了2010/2011的最低版本(例如Spring4通常只支持2010年的最新或者现在的最新发布版本):尤其是 Hibernate 3.6+、EhCache 2.1+、Quartz 1.8+、Groovy 1.8+、Joda-Time 2.0+。但是有一个例外，Spring4依赖最近的Hibernate Validator 4.3+，现在对Jackson的支持集中在2.0+版本 (Spring3.2支持的Jackson 1.8/1.9，现在已经过时）。
+请注意，所有可选的第三方依赖都已经升级到了最低2010/2011(例如Spring4通常只支持2010年的最新或者现在的最新发布版本):尤其是 Hibernate 3.6+、EhCache 2.1+、Quartz 1.8+、Groovy 1.8+、Joda-Time 2.0+。但是有一个例外，Spring4依赖最近的Hibernate Validator 4.3+，现在对Jackson的支持集中在2.0+版本 (Spring3.2支持的Jackson 1.8/1.9，现在已经过时）。
 
 
 
@@ -144,42 +144,35 @@ Spring4.0支持使用Groovy DSL来进行外部的bean定义配置。这在概念
 == Spring 4.1的改进和新功能
 
 === JMS改进
-Spring 4.1引入了一个更简单的基础架构，使用{javadoc-baseurl}/org/springframework/jms/annotation/JmsListener.html[`@JmsListener`]注解bean方法来<<jms-annotated,注册JMS监听端点>>。XML命名空间已经通过增强来支持这种新的方式（`jms:annotation-driven`），它也可以完全通过Java配置({javadoc-baseurl}/org/springframework/jms/annotation/EnableJms.html[`@EnableJms`],
-`JmsListenerContainerFactory`)来配置架构。也可以使用{javadoc-baseurl}/org/springframework/jms/annotation/JmsListenerConfigurer.html[`JmsListenerConfigurer`]注解来注册监听端点。
+Spring 4.1引入了一个更简单的基础架构，使用 {javadoc-baseurl}/org/springframework/jms/annotation/JmsListener.html[`@JmsListener`]注解bean方法来<<jms-annotated,注册JMS监听端点>>。XML命名空间已经通过增强来支持这种新的方式（`jms:annotation-driven`），它也可以完全通过Java配置( {javadoc-baseurl}/org/springframework/jms/annotation/EnableJms.html[`@EnableJms`],
+`JmsListenerContainerFactory`)来配置架构。也可以使用 {javadoc-baseurl}/org/springframework/jms/annotation/JmsListenerConfigurer.html[`JmsListenerConfigurer`]注解来注册监听端点。
 
 Spring 4.1还调整了JMS的支持，使得你可以从`spring-messaging`在Spring4.0引入的抽象获益，即：
 
 * 消息监听端点可以有更为灵活的签名，并且可以从标准的消息注解获益，例如`@Payload`、`@Header`、`@Headers`和`@SendTo`注解。另外，也可以使用一个标准的消息，以代替`javax.jms.Message`作为方法参数。
-* 一个新的可用{javadoc-baseurl}/org/springframework/jms/core/JmsMessageOperations.html[`JmsMessageOperations`]接口和允许操作使用`Message`抽象的`JmsTemplate`。
+* 一个新的可用 {javadoc-baseurl}/org/springframework/jms/core/JmsMessageOperations.html[`JmsMessageOperations`]接口和允许操作使用`Message`抽象的`JmsTemplate`。
 
 最后，Spring 4.1提供了其他各种各样的改进：
 
 * JmsTemplate中的同步请求-答复操作支持
 * 监听器的优先权可以指定每个`<jms:listener/>`元素
-* 消息侦听器容器恢复选项可以通过使用{javadoc-baseurl}/org/springframework/util/backoff/BackOff.html[`BackOff`] 实现进行配置
+* 消息侦听器容器恢复选项可以通过使用 {javadoc-baseurl}/org/springframework/util/backoff/BackOff.html[`BackOff`] 实现进行配置
 * JMS 2.0消费者支持共享
 
 === Caching（缓存）改进
 
-Spring 4.1 supports <<cache-jsr-107,JCache (JSR-107) annotations>> using Spring's
-existing cache configuration and infrastructure abstraction; no changes are required
-to use the standard annotations.
+Spring 4.1 支持<<cache-jsr-107,JCache (JSR-107)注解>>使用Spring的现有缓存配置和基础结构的抽象；使用标准注解不需要任何更改。
 
-Spring 4.1 also improves its own caching abstraction significantly:
+Spring 4.1也大大提高了自己的缓存抽象：
 
-* Caches can be resolved at runtime using a
-  <<cache-annotations-cacheable-cache-resolver,`CacheResolver`>>. As a result the
-  `value` argument defining the cache name(s) to use is no longer mandatory.
-* More operation-level customizations: cache resolver, cache manager, key
-  generator
-* A new <<cache-annotations-config,`@CacheConfig` class-level annotation>> allows
-  common settings to be shared at the class level **without** enabling any cache operation.
-* Better exception handling of cached methods using `CacheErrorHandler`
+* 缓存可以在运行时使用<<cache-annotations-cacheable-cache-resolver,`CacheResolver`>>解决。因此使用`value`参数定义的缓存名称不在是强制性的。
+* 更多的操作级自定义项：缓存解析器，缓存管理器，键值生成器
+* 一个新的<<cache-annotations-config,`@CacheConfig`类级别注解>>允许在类级别上共享常用配置，**不需要**启用任何缓存操作。
+* 使用`CacheErrorHandler`更好的处理缓存方法的异常
 
-Spring 4.1 also has a breaking change in the `CacheInterface` as a new `putIfAbsent`
-method has been added.
+Spring 4.1为了在`CacheInterface`添加一个新的`putIfAbsent`方法也做了重大的更改。
 
-=== Web Improvements
+=== Web改进
 
 * The existing support for resource handling based on the `ResourceHttpRequestHandler`
   has been expanded with new abstractions `ResourceResolver`, `ResourceTransformer`,
@@ -236,7 +229,7 @@ method has been added.
   support (based on Groovy 2.3). See the `GroovyMarkupConfigurer` and respecitve
   `ViewResolver` and `View' implementations.
 
-=== WebSocket STOMP Messaging Improvements
+=== WebSocket STOMP消息改进
 
 * SockJS (Java) client-side support. See `SockJsClient` and classes in same package.
 * New application context events `SessionSubscribeEvent` and `SessionUnubscribeEvent` published
@@ -254,7 +247,7 @@ method has been added.
 * STOMP/WebSocket connections that have not activity 60 seconds after the WebSocket
   session is established. See https://jira.spring.io/browse/SPR-11884[SPR-11884].
 
-=== Testing Improvements
+=== 测试改进
 
 * Groovy scripts can now be used to configure the `ApplicationContext` loaded for
   integration tests in the TestContext framework.
