@@ -8,7 +8,7 @@
 == Spring 4.0增强和新功能
 Spring框架第一个版本发布于2004年，自发布以来已历经三个主要版本更新:Spring 2.0提供了XML命名空间和AspectJ支持；Spring 2.5增加了注释驱动（annotation-driven）的配置支持；Spring 3.0增加了对Java 5+版本的支持和@Configuration模型。
 
-今天发布的Spring 4.0.0则首次增加对Java 8的支持。你仍然可以使用老版本的Java，但是最低版本的要求已经提高到Java SE 6。我们也借主要版本更新的机会删除了许多过时的类和方法。
+Spring 4.0是最新的主要版本，并且首次完全支持Java 8的特性。你仍然可以使用老版本的Java，但是最低版本的要求已经提高到Java SE 6。我们也借主要版本更新的机会删除了许多过时的类和方法。
 
 你可以在 https://github.com/spring-projects/spring-framework/wiki[Spring Wiki文档] 上查看 https://github.com/spring-projects/spring-framework/wiki/Migrating-from-earlier-versions-of-the-spring-framework[升级Spring 4.0迁移指南]。
 
@@ -141,7 +141,7 @@ Spring4.0支持使用Groovy DSL来进行外部的bean定义配置。这在概念
 
 
 [[new-in-4.1]]
-== Spring 4.1的改进和新功能
+== Spring 4.1增强和新功能
 
 === JMS改进
 Spring 4.1引入了一个更简单的基础架构，使用 {javadoc-baseurl}/org/springframework/jms/annotation/JmsListener.html[`@JmsListener`]注解bean方法来<<jms-annotated,注册JMS监听端点>>。XML命名空间已经通过增强来支持这种新的方式（`jms:annotation-driven`），它也可以完全通过Java配置( {javadoc-baseurl}/org/springframework/jms/annotation/EnableJms.html[`@EnableJms`],
