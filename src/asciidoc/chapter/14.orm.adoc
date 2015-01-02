@@ -1,5 +1,5 @@
 [[orm]]
-== Object Relational Mapping (ORM) Data Access
+== 对象关系映射(ORM)数据访问
 
 
 
@@ -29,65 +29,27 @@ Data with JPA] 提供了一个很好的介绍.
 
 
 [[orm-general]]
-=== General ORM integration considerations
-This section highlights considerations that apply to all ORM technologies. The
-<<orm-hibernate>> section provides more details and also show these features and
-configurations in a concrete context.
+=== 常见的 ORM 集成方面的注意事项
+本节强调的 注意事项应用与所有的 ORM 技术。 
+<<orm-hibernate>> 这节提供了更多细节，同时展示了这些特性和具体上下文的配置。
 
-The major goal of Spring's ORM integration is clear application layering, with any data
-access and transaction technology, and for loose coupling of application objects. No
-more business service dependencies on the data access or transaction strategy, no more
-hard-coded resource lookups, no more hard-to-replace singletons, no more custom service
-registries. One simple and consistent approach to wiring up application objects, keeping
-them as reusable and free from container dependencies as possible. All the individual
-data access features are usable on their own but integrate nicely with Spring's
-application context concept, providing XML-based configuration and cross-referencing of
-plain JavaBean instances that need not be Spring-aware. In a typical Spring application,
-many important objects are JavaBeans: data access templates, data access objects,
-transaction managers, business services that use the data access objects and transaction
-managers, web view resolvers, web controllers that use the business services,and so on.
+Spring 的 ORM 集成的主要目标是明确的应用程序分层,包括在任何数据访问、事务技术和松耦合的应用程序对象。没有更多的业务服务依赖于数据访问或事务策略,不再资源查找硬编码,不再强制替换单例,没有更多的自定义服务注册。一个简单的和一致的方法来连接应用程序对象,让他们尽可能的对容器依赖是可以重用并且是自由。所有个人数据访问特性可用的,但可以与Spring 应用程序上下文的概念集成,提供基于 xml 的配置和交叉引用的普通 JavaBean 实例而不需要 Spring-aware（Spring 的意识）。在一个典型的 Spring 应用程序中,许多重要的对象是 JavaBean:数据访问模板,数据访问对象,事务管理器,使用数据访问对象和事务管理器的业务服务, web 视图解析器,使用业务服务的 web 控制器,等等。
 
 
 
 [[orm-resource-mngmnt]]
-==== Resource and transaction management
-Typical business applications are cluttered with repetitive resource management code.
-Many projects try to invent their own solutions, sometimes sacrificing proper handling
-of failures for programming convenience. Spring advocates simple solutions for proper
-resource handling, namely IoC through templating in the case of JDBC and applying AOP
-interceptors for the ORM technologies.
+==== 资源和事务管理
+典型的商业应用是用重复的资源管理代码杂乱的堆积起来的。很多项目试图创造自己的解决方案，有时为了编程方便来牺牲故障的处理。Spring 提倡简单的处理适当资源的方案，即在JDBC的案例 IoC 通过模板和在 ORM 技术应用 AOP 拦截器。
 
-The infrastructure provides proper resource handling and appropriate conversion of
-specific API exceptions to an unchecked infrastructure exception hierarchy. Spring
-introduces a DAO exception hierarchy, applicable to any data access strategy. For direct
-JDBC, the `JdbcTemplate` class mentioned in a previous section provides connection
-handling and proper conversion of `SQLException` to the `DataAccessException` hierarchy,
-including translation of database-specific SQL error codes to meaningful exception
-classes. For ORM technologies, see the next section for how to get the same exception
-translation benefits.
+基础设施提供适当的资源处理，并且能将特定的 API 异常适当的转换为一个未检查的基础的异常层次结构。Spring  引入了 DAO 异常层次结构，适用于任何的数据访问策略。对于直接的 JDBC，在前一节提到的`JdbcTemplate`类提供了连接处理和将 `SQLException` 适当的转换为`DataAccessException` 层次结构，其中包括将 具体数据库 SQL 错误代码转为有意义的异常类。对于 ORM 技术，见下一节，如何得到相同异常转换的好处。
 
-When it comes to transaction management, the `JdbcTemplate` class hooks in to the Spring
-transaction support and supports both JTA and JDBC transactions, through respective
-Spring transaction managers. For the supported ORM technologies Spring offers Hibernate,
-JPA and JDO support through the Hibernate, JPA, and JDO transaction managers as well as
-JTA support. For details on transaction support, see the <<transaction>> chapter.
+当涉及到事务管理，`JdbcTemplate`类与 Spring 的事务支持挂钩，并且通过各自的 Spring 事务管理器支持 JTA 和 JDBC 事务。为支持 ORM 技术 Spring 提供了通过与 JTA 支持类似的 Hibernate，JPA，和 JDO 事务管理器来实现对 Hibernate，JPA 和 JDO 支持。更多事务的支持，详细信息，参 <<transaction>> chapter.
 
 
 
 [[orm-exception-translation]]
-==== Exception translation
-When you use Hibernate, JPA, or JDO in a DAO, you must decide how to handle the
-persistence technology's native exception classes. The DAO throws a subclass of a
-`HibernateException`, `PersistenceException` or `JDOException` depending on the
-technology. These exceptions are all run-time exceptions and do not have to be declared
-or caught. You may also have to deal with `IllegalArgumentException` and
-`IllegalStateException`. This means that callers can only treat exceptions as generally
-fatal, unless they want to depend on the persistence technology's own exception
-structure. Catching specific causes such as an optimistic locking failure is not
-possible without tying the caller to the implementation strategy. This trade off might
-be acceptable to applications that are strongly ORM-based and/or do not need any special
-exception treatment. However, Spring enables exception translation to be applied
-transparently through the `@Repository` annotation:
+==== 异常转化
+当你在 DAO 中使用 Hibernate、JPA 或 JDO 时,你必须决定如何处理持久化技术的原生异常类。运用不同的技术，DAO 会抛出`HibernateException`、`PersistenceException`或`JDOException` 的子类。这些异常都是运行时的异常,不需要声明或捕获。你可能必须处理`IllegalArgumentException` 和`IllegalStateException`。这意味着调用者只能将异常处理成为一个通常为致命的问题,除非他们想要依赖于持久化技术自身的异常结构。捕捉乐观锁定失败等具体原因是不可能的除非把调用者与实现策略相联系。取消这交换是可接受的对于应用程序是基于 ORM 和/或 不需要任何特殊的异常处理。然而,Spring 通过 `@Repository` 注解 来使异常透明的转化:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -113,16 +75,9 @@ transparently through the `@Repository` annotation:
 	</beans>
 ----
 
-The postprocessor automatically looks for all exception translators (implementations of
-the `PersistenceExceptionTranslator` interface) and advises all beans marked with the
-`@Repository` annotation so that the discovered translators can intercept and apply the
-appropriate translation on the thrown exceptions.
+postprocessor 会自动寻找所有异常转换器( 实现 `PersistenceExceptionTranslator` 接口),建议所有 bean 标有`@Repository`注解,以便发现的转换器可以在抛出异常时拦截和应用适当的转换。
 
-In summary: you can implement DAOs based on the plain persistence technology's API and
-annotations, while still benefiting from Spring-managed transactions, dependency
-injection, and transparent exception conversion (if desired) to Spring's custom
-exception hierarchies.
-
+总之:您可以实现 DAO  基于纯持久化技术的API和注解,同时仍然受益于Spring 管理事务,依赖注入、和透明将异常转换(如果需要)为 Spring 的自定义的异常层次结构。
 
 
 
