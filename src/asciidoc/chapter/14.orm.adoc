@@ -83,31 +83,22 @@ postprocessor 会自动寻找所有异常转换器( 实现 `PersistenceException
 
 [[orm-hibernate]]
 === Hibernate
-We will start with a coverage of http://www.hibernate.org/[Hibernate 3] in a Spring
-environment, using it to demonstrate the approach that Spring takes towards integrating
-O/R mappers. This section will cover many issues in detail and show different variations
-of DAO implementations and transaction demarcation. Most of these patterns can be
-directly translated to all other supported ORM tools. The following sections in this
-chapter will then cover the other ORM technologies, showing briefer examples there.
+现在要开始谈下 Spring 环境中的  http://www.hibernate.org/[Hibernate 3] 用它来展示 Spring 对集成 O/R 映射的方法。本节将详细讨论许多问题,并显示不同的 DAO 实现和事务界定。大多数这些模式可以直接从所有其他支持 ORM 的工具中转换。以下部分在本章将覆盖其他的 ORM 技术,并显示简短的例子。
+
 
 [NOTE]
 ====
-As of Spring 4.0, Spring requires Hibernate 3.6 or later.
+对于Spring 4.0, Spring 需要 Hibernate 3.6 或者更高版本
 ====
 
 
 
 [[orm-session-factory-setup]]
-==== SessionFactory setup in a Spring container
+==== 在 Spring 容器中设置 SessionFactory
 
-To avoid tying application objects to hard-coded resource lookups, you can define
-resources such as a JDBC `DataSource` or a Hibernate `SessionFactory` as beans in the
-Spring container. Application objects that need to access resources receive references
-to such predefined instances through bean references, as illustrated in the DAO
-definition in the next section.
+为了避免应用程序对象与硬编码的资源查找想绑定，您可以定义资源如 JDBC `DataSource` 或者 Hibernate `SessionFactory` 为 Spring 容器的 bean。应用对象需要通过对 bean 的引用来访问资源接受引用，就如在下一节中说明的 DAO 的定义。
 
-The following excerpt from an XML application context definition shows how to set up a
-JDBC `DataSource` and a Hibernate `SessionFactory` on top of it:
+以下摘录自 XML 应用程序上下文定义，展示了如何设置 JDBC `DataSource` 或者 Hibernate `SessionFactory` :
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -138,9 +129,7 @@ JDBC `DataSource` and a Hibernate `SessionFactory` on top of it:
 	</beans>
 ----
 
-Switching from a local Jakarta Commons DBCP `BasicDataSource` to a JNDI-located
-`DataSource` (usually managed by an application server) is just a matter of
-configuration:
+从 Jakarta Commons DBCP `BasicDataSource` 转为 JNDI-located `DataSource`, 主要的配置为：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -150,18 +139,13 @@ configuration:
 	</beans>
 ----
 
-You can also access a JNDI-located `SessionFactory`, using Spring's
-`JndiObjectFactoryBean` / `<jee:jndi-lookup>` to retrieve and expose it. However, that
-is typically not common outside of an EJB context.
+您还可以访问 JNDI-located `SessionFactory`,使用 Spring 的`JndiObjectFactoryBean`/`<jee:jndi-lookup>` 来检索和暴露他。然而,通常在 EJB 环境外不常用。
 
 
 
 [[orm-hibernate-straight]]
-==== Implementing DAOs based on plain Hibernate 3 API
-Hibernate 3 has a feature called contextual sessions, wherein Hibernate itself manages
-one current `Session` per transaction. This is roughly equivalent to Spring's
-synchronization of one Hibernate `Session` per transaction. A corresponding DAO
-implementation resembles the following example, based on the plain Hibernate API:
+==== 基于平常的 Hibernate 3 API 来实现 DAO
+Hibernate 3 有一个特性称为上下文会话,Hibernate 本身在每个事务管理一个当前 `Session` 。这是大致相当于 Spring 的 每个事务一个当前 Hibernate `Session`的同步。相应的 DAO 实现像下面的例子,基于普通Hibernate API
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -183,17 +167,9 @@ implementation resembles the following example, based on the plain Hibernate API
 	}
 ----
 
-This style is similar to that of the Hibernate reference documentation and examples,
-except for holding the `SessionFactory` in an instance variable. We strongly recommend
-such an instance-based setup over the old-school `static` `HibernateUtil` class from
-Hibernate's CaveatEmptor sample application. (In general, do not keep any resources in
-`static` variables unless __absolutely__ necessary.)
+这种风格类似于 Hibernate 参考文档和例子,除了在一个实例变量中保存 `SessionFactory`。我们强烈建议基于实例的设置,替换老派的Hibernate 的 CaveatEmptor 示例应用程序中的`static` `HibernateUtil`类。(一般来说,不保留任何资源`static`变量,除非绝对必要)
 
-The above DAO follows the dependency injection pattern: it fits nicely into a Spring IoC
-container, just as it would if coded against Spring's `HibernateTemplate`. Of course,
-such a DAO can also be set up in plain Java (for example, in unit tests). Simply
-instantiate it and call `setSessionFactory(..)` with the desired factory reference. As a
-Spring bean definition, the DAO would resemble the following:
+上面的 DAO 是依赖注入模式:这正好符合 Spring IoC 容器,就像对Spring 的 `HibernateTemplate` 编码。当然,这种 DAO 也可以在普通的 Java 设置(例如,在单元测试)。简单的实例化,并用所需的工厂引用调用`setSessionFactory(..)`。Spring bean 定义 DAO 就像下面一样:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -207,51 +183,29 @@ Spring bean definition, the DAO would resemble the following:
 	</beans>
 ----
 
-The main advantage of this DAO style is that it depends on Hibernate API only; no import
-of any Spring class is required. This is of course appealing from a non-invasiveness
-perspective, and will no doubt feel more natural to Hibernate developers.
+DAO 风格的主要优点是，它只依赖于 Hibernate API ，而没有引进任何Spring 必需的类。从非侵入性的视角看这当然是有吸引力的，对Hibernate 开发者来说无疑会感觉更自然。
 
-However, the DAO throws plain `HibernateException` (which is unchecked, so does not have
-to be declared or caught), which means that callers can only treat exceptions as
-generally fatal - unless they want to depend on Hibernate's own exception hierarchy.
-Catching specific causes such as an optimistic locking failure is not possible without
-tying the caller to the implementation strategy. This trade off might be acceptable to
-applications that are strongly Hibernate-based and/or do not need any special exception
-treatment.
+然而，DAO 将平常的 `HibernateException`（这是未检查的，所以不需要声明或者捕获），这意味着调用者当异常为一个普通的致命问题——除非他们想要依赖于 Hibernate 自身的异常结构。捕捉乐观锁定失败等具体原因是不可能除非把调用者与实现策略相联系。取消这交换是可接受的对于应用程序是基于 Hibernate 和/或 不需要任何特殊的异常处理。
 
-Fortunately, Spring's `LocalSessionFactoryBean` supports Hibernate's
-`SessionFactory.getCurrentSession()` method for any Spring transaction strategy,
-returning the current Spring-managed transactional `Session` even with
-`HibernateTransactionManager`. Of course, the standard behavior of that method remains
-the return of the current `Session` associated with the ongoing JTA transaction, if any.
-This behavior applies regardless of whether you are using Spring's
-`JtaTransactionManager`, EJB container managed transactions (CMTs), or JTA.
+幸运的是,Spring 的 `LocalSessionFactoryBean` 支持 Hibernate `SessionFactory.getCurrentSession()`方法用于任何 Spring 事务策略,返回当前 Spring 管理的事务 `Session`即使是`HibernateTransactionManager.`。当然,这种方法的标准行为返回仍然是当前`Session`与持续的JTA事务有关。这种行为适用于不管您使用是Spring 的 `JtaTransactionManager`,EJB容器管理的事务(CMT),或 JTA。
 
-In summary: you can implement DAOs based on the plain Hibernate 3 API, while still being
-able to participate in Spring-managed transactions.
+总之:你可以基于平常的 Hibernate 3 API 来实现 DAO,同时仍然能够参与 Spring 管理事务。
 
 
 
 [[orm-hibernate-tx-declarative]]
-==== Declarative transaction demarcation
-We recommend that you use Spring's declarative transaction support, which enables you to
-replace explicit transaction demarcation API calls in your Java code with an AOP
-transaction interceptor. This transaction interceptor can be configured in a Spring
-container using either Java annotations or XML.This declarative transaction capability
-allows you to keep business services free of repetitive transaction demarcation code and
-to focus on adding business logic, which is the real value of your application.
+==== 声明式事务划分
+建议你使用 Spring 声明式事务的支持,这使您能够代替显式事务划分 API调用 AOP 事务拦截器中的 Java 代码。这个事务拦截器可以配置 Spring容器通过使用 Java 注释或 XML。这个声明式事务能力允许您保持业务服务中的重复性事务划分代码码更自由，并且让你只关注添加业务逻辑,而这是您的应用程序的真正价值。
 
 [NOTE]
 ====
-Prior to continuing, you are __strongly__ encouraged to read <<transaction-declarative>>
-if you have not done so.
+在继续之前，强烈建议你读<<transaction-declarative>>
+如果你还没有这样做
 ====
 
-Furthermore, transaction semantics like propagation behavior and isolation level can be
-changed in a configuration file and do not affect the business service implementations.
+此外，事务语义比如传播行为和隔离水平可以在配置文件的改变，不影响业务服务的实现。
 
-The following example shows how you can configure an AOP transaction interceptor, using
-XML, for a simple service class:
+下面的示例说明如何使用 XML 配置 AOP 事务拦截器，一个简单的服务类：
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -297,7 +251,7 @@ XML, for a simple service class:
 	</beans>
 ----
 
-This is the service class that is advised:
+下面是要处理的服务类
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -320,10 +274,7 @@ This is the service class that is advised:
 	}
 ----
 
-We also show an attribute-support based configuration, in the following example. You
-annotate the service layer with @Transactional annotations and instruct the Spring
-container to find these annotations and provide transactional semantics for these
-annotated methods.
+我们还展示了一个基于配置属性的支持，在下面的例子中。你通过 `@Transactional`注释的服务层,并引导 Spring 容器找到这些注释，这些注释的方法提供事务性语义。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -350,10 +301,7 @@ annotated methods.
 	}
 ----
 
-As you can see from the following configuration example, the configuration is much
-simplified, compared to the XML example above, while still providing the same
-functionality driven by the annotations in the service layer code. All you need to
-provide is the TransactionManager implementation and a "<tx:annotation-driven/>" entry.
+正如你可以看到下面的配置实例，配置更加简化，与上述 XML 实例，同时还提供了在服务层的代码注释驱动相同的功能。所有您需要提供的是TransactionManager 的实现和"<tx:annotation-driven/>" 实体
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -390,15 +338,8 @@ provide is the TransactionManager implementation and a "<tx:annotation-driven/>"
 
 
 [[orm-hibernate-tx-programmatic]]
-==== Programmatic transaction demarcation
-You can demarcate transactions in a higher level of the application, on top of such
-lower-level data access services spanning any number of operations. Nor do restrictions
-exist on the implementation of the surrounding business service; it just needs a Spring
-`PlatformTransactionManager`. Again, the latter can come from anywhere, but preferably
-as a bean reference through a `setTransactionManager(..)` method, just as the
-`productDAO` should be set by a `setProductDao(..)` method. The following snippets show
-a transaction manager and a business service definition in a Spring application context,
-and an example for a business method implementation:
+==== 编程式事务划分
+可以在高级的应用中划分事务，在这样的底层数据访问服务生成任意数量的操作。限制也不存在于周边业务服务的实现;它只需要一个 Spring `PlatformTransactionManager`。再次,后者可以来自任何地方,但最好是通过 `setTransactionManager(..)`方法来对 bean 引用,正如由`setProductDao(..)`方法来设置 `productDAO`。下面的代码片段显示了在Spring 应用程序上下文中定义一个事务管理器和业务服务,以及一个业务方法实现:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -444,36 +385,15 @@ and an example for a business method implementation:
 	}
 ----
 
-Spring's `TransactionInterceptor` allows any checked application exception to be thrown
-with the callback code, while `TransactionTemplate` is restricted to unchecked
-exceptions within the callback. `TransactionTemplate` triggers a rollback in case of an
-unchecked application exception, or if the transaction is marked rollback-only by the
-application (via `TransactionStatus`). `TransactionInterceptor` behaves the same way by
-default but allows configurable rollback policies per method.
+Spring `TransactionInterceptor` 允许任何检查的应用异常可以跟着回调代码抛出，而 `TransactionTemplate`是限制于未检查的回调的异常。当遇到一个未检查的应用异常或者是事务被应用（通过`TransactionStatus`）标记为 rollback-only（只回滚） ,`TransactionTemplate`触发回滚事务。默认时 `TransactionInterceptor`表现是一样的，但是允许在每个方法中配置回滚策略。
 
 
 
 [[orm-hibernate-tx-strategies]]
-==== Transaction management strategies
-Both `TransactionTemplate` and `TransactionInterceptor` delegate the actual transaction
-handling to a `PlatformTransactionManager` instance, which can be a
-`HibernateTransactionManager` (for a single Hibernate `SessionFactory`, using a
-`ThreadLocal` `Session` under the hood) or a `JtaTransactionManager` (delegating to the
-JTA subsystem of the container) for Hibernate applications. You can even use a custom
-`PlatformTransactionManager` implementation. Switching from native Hibernate transaction
-management to JTA, such as when facing distributed transaction requirements for certain
-deployments of your application, is just a matter of configuration. Simply replace
-the Hibernate transaction manager with Spring's JTA transaction implementation. Both
-transaction demarcation and data access code will work without changes, because they
-just use the generic transaction management APIs.
+==== 事务管理策略
+`TransactionTemplate` 和 `TransactionInterceptor`代表了对 `PlatformTransactionManager` 实例的实际事务处理，在 Hibernate 的应用中它们可以是一个 `HibernateTransactionManager`（一个Hibernate 的 `SessionFactory`，在引擎下使用的是`ThreadLocal` `Session`）或 `JtaTransactionManager`（委派到容器的 JTA 子系统）。你甚至可以使用一个自定义的`PlatformTransactionManager` 实现。从原生 Hibernate 事务管理 转到 JTA，如你的某些应用程序部署具有分布式事务处理的要求，那么这仅仅是一个配置的问题，只要将 Hibernate 事务管理简单的替换为 Spring 的 JTA 即可。两个的事务划分和数据访问代码的不用改变，因为他们只是使用了通用的事务管理 API。
 
-For distributed transactions across multiple Hibernate session factories, simply combine
-`JtaTransactionManager` as a transaction strategy with multiple
-`LocalSessionFactoryBean` definitions. Each DAO then gets one specific `SessionFactory`
-reference passed into its corresponding bean property. If all underlying JDBC data
-sources are transactional container ones, a business service can demarcate transactions
-across any number of DAOs and any number of session factories without special regard, as
-long as it is using `JtaTransactionManager` as the strategy.
+对于分布式事务跨多个 Hibernate 会话工厂，只要简单地把`JtaTransactionManager` 与具有多个定义的`LocalSessionFactoryBean`组合成为一个事务策略。每个 DAO 得到一个特定的`SessionFactory`的引用传递到其相应的 bean 属性。如果所有底层的 JDBC 数据源的事务容器，业务服务可以划分事务到任意数量的DAO 和任何数量的会话工厂，而这无需没有特殊的处理，只要是使用`JtaTransactionManager`策略。
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -547,77 +467,27 @@ long as it is using `JtaTransactionManager` as the strategy.
 	</beans>
 ----
 
-Both `HibernateTransactionManager` and `JtaTransactionManager` allow for proper
-JVM-level cache handling with Hibernate, without container-specific transaction manager
-lookup or a JCA connector (if you are not using EJB to initiate transactions).
+`HibernateTransactionManager` 和 `JtaTransactionManager`允许适当的 JVM 级别的 Hibernate 缓存处理,而不需要容器特定的事务管理查找或 JCA 连接器(如果你不使用 EJB 启动事务)。
 
-`HibernateTransactionManager` can export the Hibernate JDBC `Connection` to plain JDBC
-access code, for a specific `DataSource`. This capability allows for high-level
-transaction demarcation with mixed Hibernate and JDBC data access completely without
-JTA, if you are accessing only one database. `HibernateTransactionManager` automatically
-exposes the Hibernate transaction as a JDBC transaction if you have set up the passed-in
-`SessionFactory` with a `DataSource` through the `dataSource` property of the
-`LocalSessionFactoryBean` class. Alternatively, you can specify explicitly the
-`DataSource` for which the transactions are supposed to be exposed through the
-`dataSource` property of the `HibernateTransactionManager` class.
+`HibernateTransactionManager`可以为一个特定的`DataSource`导出 Hibernate JDBC `Connection`到普通 JDBC 访问代码。此功能允许高级的混合 Hibernate 和 JDBC 数据访问的完全没有 JTA 的事务划分,如果你只访问一个数据库。如果你有设置通过 `LocalSessionFactoryBean`类的`dataSource`属性传入`SessionFactory`的`DataSource`，`HibernateTransactionManager`自动暴露 Hibernate 事务作为一个 JDBC 事务。或者,您可以明确指定`DataSource`中哪些事务是需要支持通过 HibernateTransactionManager 类的`dataSource`属性暴露的。
 
 
 
 [[orm-hibernate-resources]]
-==== Comparing container-managed and locally defined resources
-You can switch between a container-managed JNDI `SessionFactory` and a locally defined
-one, without having to change a single line of application code. Whether to keep
-resource definitions in the container or locally within the application is mainly a
-matter of the transaction strategy that you use. Compared to a Spring-defined local
-`SessionFactory`, a manually registered JNDI `SessionFactory` does not provide any
-benefits. Deploying a `SessionFactory` through Hibernate's JCA connector provides the
-added value of participating in the Java EE server's management infrastructure, but does
-not add actual value beyond that.
+==== 比较容器管理和本地定义的资源
+你可以在一个容器管理的 JNDI `SessionFactory`和本地定义的互相切换,而无需更改应用程序的代码。是否保持资源定义在容器或本地应用程序中，主要取决于使用的事务策略。对比 Spring 定义的本地的`SessionFactory`,手动注册 JNDI `SessionFactory`没有任何好处。部署一个通过 Hibernate JCA 连接器的`SessionFactory`来提供 Java EE 服务器的管理基础设施的附加值,但在这之前不增加任何实际的值。
 
-Spring's transaction support is not bound to a container. Configured with any strategy
-other than JTA, transaction support also works in a stand-alone or test environment.
-Especially in the typical case of single-database transactions, Spring's single-resource
-local transaction support is a lightweight and powerful alternative to JTA. When you use
-local EJB stateless session beans to drive transactions, you depend both on an EJB
-container and JTA, even if you access only a single database, and only use stateless
-session beans to provide declarative transactions through container-managed
-transactions. Also, direct use of JTA programmatically requires a Java EE environment as
-well. JTA does not involve only container dependencies in terms of JTA itself and of
-JNDI `DataSource` instances. For non-Spring, JTA-driven Hibernate transactions, you have
-to use the Hibernate JCA connector, or extra Hibernate transaction code with the
-`TransactionManagerLookup` configured for proper JVM-level caching.
+Spring 的事务支持不是绑定到一个容器中。在配置除了 JTA 以外的任何策略后，事务支持同样也能在一个独立的或测试的环境中工作。特别是在单独的数据库事务的典型应用中。Spring 是一个轻量级的单资源本地事务支持和强大的 JTA 的替代品。当你使用本地 EJB 无状态会话 bean 来驱动事务,你都必须要依赖 EJB 容器和 JTA,即使你只访问一个数据库,并且只使用无状态会话 bean 通过容器管理的事务来提供声明式事务。另外,直接使用 JTA 编程需要一个 Java EE 环境。JTA 并不只涉及容器依赖性的JTA 本身和 JNDI `DataSource` 实例。对于 非 Spring,JTA 驱动的 Hibernate 事务交易,您必须使用 Hibernate JCA 连接器,或额外的Hibernate 事务代码`TransactionManagerLookup`为适当的 JVM 级别配置缓存。
 
-Spring-driven transactions can work as well with a locally defined Hibernate
-`SessionFactory` as they do with a local JDBC `DataSource` if they are accessing a
-single database. Thus you only have to use Spring's JTA transaction strategy when you
-have distributed transaction requirements. A JCA connector requires container-specific
-deployment steps, and obviously JCA support in the first place. This configuration
-requires more work than deploying a simple web application with local resource
-definitions and Spring-driven transactions. Also, you often need the Enterprise Edition
-of your container if you are using, for example, WebLogic Express, which does not
-provide JCA. A Spring application with local resources and transactions spanning one
-single database works in any Java EE web container (without JTA, JCA, or EJB) such as
-Tomcat, Resin, or even plain Jetty. Additionally, you can easily reuse such a middle
-tier in desktop applications or test suites.
+Spring 驱动事务可以与本地定义的 Hibernate `SessionFactory`和本地的JDBC `DataSource`很好的工作，如果他们访问一个数据库。因此你只需要使用 Spring 的 JTA 事务策略，在当你有分布式事务的需求的时候。JCA 连接器需要特定容器部署步骤,显然首先需要的是 JCA 的支持。这个配置比部署一个简单的 使用本地资源定义和 Spring 驱动事务 web 应用程序需要更多的工作。同样,你经常需要你的容器是使用的是企业版,例如,WebLogic Express, 并且是不提供 JCA。Spring 的应用程序具有本地资源和事务跨越数据库的能力，可以在任何 Java EE web容器(没有 JTA、JCA 或 EJB )如Tomcat、Resin、甚至普通的 Jetty 中工作。此外,您可以很容易地重用这样的一个中间层在桌面应用程序或测试套件中。
 
-All things considered, if you do not use EJBs, stick with local `SessionFactory` setup
-and Spring's `HibernateTransactionManager` or `JtaTransactionManager`. You get all of
-the benefits, including proper transactional JVM-level caching and distributed
-transactions, without the inconvenience of container deployment. JNDI registration of a
-Hibernate `SessionFactory` through the JCA connector only adds value when used in
-conjunction with EJBs.
+从全面考虑,如果你不使用 EJB,请坚持使用本地 `SessionFactory`设置和 Spring 的`HibernateTransactionManager`或`JtaTransactionManager`。你得到所有的好处,包括适当的事务 JVM 级别缓存和分布式事务,没有容器部署的不便。JNDI 通过 JCA 连接器注册 Hibernate `SessionFactory`,在与 EJB 一起使用时只是增加了值。
 
 
 
 [[orm-hibernate-invalid-jdbc-access-error]]
-==== Spurious application server warnings with Hibernate
-In some JTA environments with very strict `XADataSource` implementations -- currently
-only some WebLogic Server and WebSphere versions -- when Hibernate is configured without
-regard to the JTA `PlatformTransactionManager` object for that environment, it is
-possible for spurious warning or exceptions to show up in the application server log.
-These warnings or exceptions indicate that the connection being accessed is no longer
-valid, or JDBC access is no longer valid, possibly because the transaction is no longer
-active. As an example, here is an actual exception from WebLogic:
+==== 在 Hibernate 中的虚假应用服务器告警
+在一些 JTA 的非常严格的 `XADataSource`实现的环境中 — 目前只在一些  WebLogic Server 和 WebSphere 版本中 — 当 Hibernate 配置时没有留意环境中的 JTA 的 `PlatformTransactionManager`对象，这可能会导致 虚假告警或者异常显示在应用服务器的日志中。这些告警或者异常显示连接访问不再有效,或 JDBC 访问不再有效,这可能是因为事务已经不再活动了。举个例子,这是一个真实的 WebLogic 异常:
 
 [literal]
 [subs="verbatim,quotes"]
@@ -626,54 +496,27 @@ java.sql.SQLException: The transaction is no longer active - status: 'Committed'
 further JDBC access is allowed within this transaction.
 ----
 
-You resolve this warning by simply making Hibernate aware of the JTA
-`PlatformTransactionManager` instance, to which it will synchronize (along with Spring).
-You have two options for doing this:
+要解决此警告，只需要使 Hibernate 知道 JTA `PlatformTransactionManager`实例，它将同步（连同 Spring）。实现这个有两个选项：
 
-* If in your application context you are already directly obtaining the JTA
-  `PlatformTransactionManager` object (presumably from JNDI through
-  `JndiObjectFactoryBean` or `<jee:jndi-lookup>`) and feeding it, for example, to
-  Spring's `JtaTransactionManager`, then the easiest way is to specify a reference to
-  the bean defining this JTA `PlatformTransactionManager` instance as the value of the
-  `jtaTransactionManager` property for `LocalSessionFactoryBean.` Spring then makes the
-  object available to Hibernate.
-* More likely you do not already have the JTA `PlatformTransactionManager` instance,
-  because Spring's `JtaTransactionManager` can find it itself. Thus you need to
-  configure Hibernate to look up JTA `PlatformTransactionManager` directly. You do this
-  by configuring an application server- specific `TransactionManagerLookup` class in the
-  Hibernate configuration, as described in the Hibernate manual.
+* 如果在你的应用程序上下文中你已经直接获取 JTA `PlatformTransactionManager`对象（大概是从 JNDI 通过`JndiObjectFactoryBean` 或 `<jee:jndi-lookup>`）将它提供给，例如，Spring 的 `JtaTransactionManager`，那么最简单的方法是通过引用定义了这个 JTA `PlatformTransactionManager`实例的 bean给`LocalSessionFactoryBean`指定一个`jtaTransactionManager`的属性值。那么 Spring 就会使对象在 Hibernate 中可用
+* 你很有可能没有 JTA `PlatformTransactionManager`实例，因为Spring 的 `JtaTransactionManager` 本身可以找到它。因此，你需要配置 Hibernate 直接查找 JTA `PlatformTransactionManager`。你可以在 Hibernate 配置中通过配置应用程序服务器特定的`ransactionManagerLookup`类实现这个，正如 Hibernate 手册所描述的那样
 
-The remainder of this section describes the sequence of events that occur with and
-without Hibernate's awareness of the JTA `PlatformTransactionManager`.
+本节的其余部分描述了事件发生的顺序和 Hibernate 对 JTA `PlatformTransactionManager`的认知。
 
-When Hibernate is not configured with any awareness of the JTA
-`PlatformTransactionManager`, the following events occur when a JTA transaction commits:
+当 Hibernate 没有配置任何 JTA `PlatformTransactionManager` 的认知时,当一个 JTA 事务提交时以下事件发生:
 
-* The JTA transaction commits.
-* Spring's `JtaTransactionManager` is synchronized to the JTA transaction, so it is
-  called back through an __afterCompletion__ callback by the JTA transaction manager.
-* Among other activities, this synchronization can trigger a callback by Spring to
-  Hibernate, through Hibernate's `afterTransactionCompletion` callback (used to clear
-  the Hibernate cache), followed by an explicit `close()` call on the Hibernate Session,
-  which causes Hibernate to attempt to `close()` the JDBC Connection.
-* In some environments, this `Connection.close()` call then triggers the warning or
-  error, as the application server no longer considers the `Connection` usable at all,
-  because the transaction has already been committed.
+* JTA 事务提交。
+* Spring 的 `JtaTransactionManager`与 JTA 事务同步时，通过 JTA 事务管理执行一个 afterCompletion 的回调。
+* 在其他活动中，从 Spring 到 Hibernate 的同步可以触发回调，通过Hibernate 的 `afterTransactionCompletion`回调（用于清除 Hibernate 缓存），随后的是一个显式 close() 调用在 Hibernate Session,,导致 Hibernate 试图  close() JDBC 连接。
+* 在某些环境中,这个 `Connection.close()`调用然后触发警告或错误,因为应用程序服务器不再认为`Connection`是可用的,因为事务已经提交了。
 
-When Hibernate is configured with awareness of the JTA `PlatformTransactionManager`, the
-following events occur when a JTA transaction commits:
+当Hibernate 配置了 JTA `PlatformTransactionManager`的认知,当一个JTA事务提交，以下事件发生：
 
-* the JTA transaction is ready to commit.
-* Spring's `JtaTransactionManager` is synchronized to the JTA transaction, so the
-  transaction is called back through a __beforeCompletion__ callback by the JTA
-  transaction manager.
-* Spring is aware that Hibernate itself is synchronized to the JTA transaction, and
-  behaves differently than in the previous scenario. Assuming the Hibernate `Session`
-  needs to be closed at all, Spring will close it now.
-* The JTA transaction commits.
-* Hibernate is synchronized to the JTA transaction, so the transaction is called back
-  through an __afterCompletion__ callback by the JTA transaction manager, and can
-  properly clear its cache.
+* JTA 事务准备提交。
+* Spring 的 `JtaTransactionManager` 跟 JTA 事务是同步的,所以通过 JTA 事务管理器的 `beforeCompletion`回调来执行事务的回调。
+* Spring 感知到 Hibernate 本身与 JTA 事务是同步的,并且行为不同于在前面的场景。假设需要 Hibernate `Session`关闭, 那么 Spring将会关闭它。
+* JTA 事务提交
+* Hibernate 与 JTA 事务是同步的,所以通过 JTA 事务管理器的 `beforeCompletion`回调来执行事务的回调，并能正确清楚其缓存。
 
 
 
