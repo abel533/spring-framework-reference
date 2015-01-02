@@ -1,0 +1,374 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>27.&nbsp;Email</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="cci.html" title="26.&nbsp;JCA CCI"><link rel="next" href="scheduling.html" title="28.&nbsp;Task Execution and Scheduling"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">27.&nbsp;Email</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="cci.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="scheduling.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="mail" href="#mail"></a>27.&nbsp;Email</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mail-introduction" href="#mail-introduction"></a>27.1&nbsp;Introduction</h2></div></div></div>
+
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Library dependencies</b></p></div></div></div>
+
+<p>The following additional jars to be on the classpath of your application in order to be
+able to use the Spring Framework&#8217;s email library.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <a class="ulink" href="https://java.net/projects/javamail/pages/Home" target="_top">JavaMail</a> <code class="literal">mail.jar</code> library
+</li><li class="listitem">
+The <a class="ulink" href="http://www.oracle.com/technetwork/java/jaf11-139815.html" target="_top">JAF</a>
+<code class="literal">activation.jar</code> library
+</li></ul></div>
+
+<p>All of these libraries are freely available on the web.</p>
+</div>
+
+<p>The Spring Framework provides a helpful utility library for sending email that shields
+the user from the specifics of the underlying mailing system and is responsible for low
+level resource handling on behalf of the client.</p>
+<p>The <code class="literal">org.springframework.mail</code> package is the root level package for the Spring
+Framework&#8217;s email support. The central interface for sending emails is the <code class="literal">MailSender</code>
+interface; a simple value object encapsulating the properties of a simple mail such as
+<span class="emphasis"><em>from</em></span> and <span class="emphasis"><em>to</em></span> (plus many others) is the <code class="literal">SimpleMailMessage</code> class. This package
+also contains a hierarchy of checked exceptions which provide a higher level of
+abstraction over the lower level mail system exceptions with the root exception being
+<code class="literal">MailException</code>. Please refer to the javadocs for more information on the rich mail
+exception hierarchy.</p>
+<p>The <code class="literal">org.springframework.mail.javamail.JavaMailSender</code> interface adds specialized
+<span class="emphasis"><em>JavaMail</em></span> features such as MIME message support to the <code class="literal">MailSender</code> interface (from
+which it inherits). <code class="literal">JavaMailSender</code> also provides a callback interface for preparation
+of JavaMail MIME messages, called
+<code class="literal">org.springframework.mail.javamail.MimeMessagePreparator</code></p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mail-usage" href="#mail-usage"></a>27.2&nbsp;Usage</h2></div></div></div>
+
+<p>Let&#8217;s assume there is a business interface called <code class="literal">OrderManager</code>:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> OrderManager {
+
+    <span class="hl-keyword">void</span> placeOrder(Order order);
+
+}</pre>
+
+<p>Let us also assume that there is a requirement stating that an email message with an
+order number needs to be generated and sent to a customer placing the relevant order.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mail-usage-simple" href="#mail-usage-simple"></a>27.2.1&nbsp;Basic MailSender and SimpleMailMessage usage</h3></div></div></div>
+
+<pre class="programlisting"><span class="hl-keyword">import</span> org.springframework.mail.MailException;
+<span class="hl-keyword">import</span> org.springframework.mail.MailSender;
+<span class="hl-keyword">import</span> org.springframework.mail.SimpleMailMessage;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleOrderManager <span class="hl-keyword">implements</span> OrderManager {
+
+    <span class="hl-keyword">private</span> MailSender mailSender;
+    <span class="hl-keyword">private</span> SimpleMailMessage templateMessage;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setMailSender(MailSender mailSender) {
+        <span class="hl-keyword">this</span>.mailSender = mailSender;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setTemplateMessage(SimpleMailMessage templateMessage) {
+        <span class="hl-keyword">this</span>.templateMessage = templateMessage;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> placeOrder(Order order) {
+
+        <span class="hl-comment">// Do the business calculations...</span>
+
+        <span class="hl-comment">// Call the collaborators to persist the order...</span>
+
+        <span class="hl-comment">// Create a thread safe "copy" of the template message and customize it</span>
+        SimpleMailMessage msg = <span class="hl-keyword">new</span> SimpleMailMessage(<span class="hl-keyword">this</span>.templateMessage);
+        msg.setTo(order.getCustomer().getEmailAddress());
+        msg.setText(
+            <span class="hl-string">"Dear "</span> + order.getCustomer().getFirstName()
+                + order.getCustomer().getLastName()
+                + <span class="hl-string">", thank you for placing order. Your order number is "</span>
+                + order.getOrderNumber());
+        <span class="hl-keyword">try</span>{
+            <span class="hl-keyword">this</span>.mailSender.send(msg);
+        }
+        <span class="hl-keyword">catch</span> (MailException ex) {
+            <span class="hl-comment">// simply log it and go on...</span>
+            System.err.println(ex.getMessage());
+        }
+    }
+
+}</pre>
+
+<p>Find below the bean definitions for the above code:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"mailSender"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.mail.javamail.JavaMailSenderImpl"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"host"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"mail.mycompany.com"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-comment">&lt;!-- this is a template message that we can pre-load with default state --&gt;</span>
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"templateMessage"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.mail.SimpleMailMessage"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"from"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"customerservice@mycompany.com"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"subject"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"Your order"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"orderManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.mycompany.businessapp.support.SimpleOrderManager"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mailSender"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"mailSender"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"templateMessage"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"templateMessage"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mail-usage-mime" href="#mail-usage-mime"></a>27.2.2&nbsp;Using the JavaMailSender and the MimeMessagePreparator</h3></div></div></div>
+
+<p>Here is another implementation of <code class="literal">OrderManager</code> using the <code class="literal">MimeMessagePreparator</code>
+callback interface. Please note in this case that the <code class="literal">mailSender</code> property is of type
+<code class="literal">JavaMailSender</code> so that we are able to use the JavaMail <code class="literal">MimeMessage</code> class:</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> javax.mail.Message;
+<span class="hl-keyword">import</span> javax.mail.MessagingException;
+<span class="hl-keyword">import</span> javax.mail.internet.InternetAddress;
+<span class="hl-keyword">import</span> javax.mail.internet.MimeMessage;
+
+<span class="hl-keyword">import</span> javax.mail.internet.MimeMessage;
+<span class="hl-keyword">import</span> org.springframework.mail.MailException;
+<span class="hl-keyword">import</span> org.springframework.mail.javamail.JavaMailSender;
+<span class="hl-keyword">import</span> org.springframework.mail.javamail.MimeMessagePreparator;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleOrderManager <span class="hl-keyword">implements</span> OrderManager {
+
+    <span class="hl-keyword">private</span> JavaMailSender mailSender;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setMailSender(JavaMailSender mailSender) {
+        <span class="hl-keyword">this</span>.mailSender = mailSender;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> placeOrder(<span class="hl-keyword">final</span> Order order) {
+
+        <span class="hl-comment">// Do the business calculations...</span>
+
+        <span class="hl-comment">// Call the collaborators to persist the order...</span>
+
+        MimeMessagePreparator preparator = <span class="hl-keyword">new</span> MimeMessagePreparator() {
+
+            <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> prepare(MimeMessage mimeMessage) <span class="hl-keyword">throws</span> Exception {
+
+                mimeMessage.setRecipient(Message.RecipientType.TO,
+                        <span class="hl-keyword">new</span> InternetAddress(order.getCustomer().getEmailAddress()));
+                mimeMessage.setFrom(<span class="hl-keyword">new</span> InternetAddress(<span class="hl-string">"mail@mycompany.com"</span>));
+                mimeMessage.setText(
+                        <span class="hl-string">"Dear "</span> + order.getCustomer().getFirstName() + <span class="hl-string">" "</span>
+                            + order.getCustomer().getLastName()
+                            + <span class="hl-string">", thank you for placing order. Your order number is "</span>
+                            + order.getOrderNumber());
+            }
+        };
+
+        <span class="hl-keyword">try</span> {
+            <span class="hl-keyword">this</span>.mailSender.send(preparator);
+        }
+        <span class="hl-keyword">catch</span> (MailException ex) {
+            <span class="hl-comment">// simply log it and go on...</span>
+            System.err.println(ex.getMessage());
+        }
+    }
+
+}</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The mail code is a crosscutting concern and could well be a candidate for refactoring
+into a <a class="link" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">custom Spring AOP aspect</a>, which then could be executed at appropriate
+joinpoints on the <code class="literal">OrderManager</code> target.</p>
+</td></tr></table></div>
+
+<p>The Spring Framework&#8217;s mail support ships with the standard JavaMail implementation.
+Please refer to the relevant javadocs for more information.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mail-javamail-mime" href="#mail-javamail-mime"></a>27.3&nbsp;Using the JavaMail MimeMessageHelper</h2></div></div></div>
+
+<p>A class that comes in pretty handy when dealing with JavaMail messages is the
+<code class="literal">org.springframework.mail.javamail.MimeMessageHelper</code> class, which shields you from
+having to use the verbose JavaMail API. Using the <code class="literal">MimeMessageHelper</code> it is pretty easy
+to create a <code class="literal">MimeMessage</code>:</p>
+<pre class="programlisting"><span class="hl-comment">// of course you would use DI in any real-world cases</span>
+JavaMailSenderImpl sender = <span class="hl-keyword">new</span> JavaMailSenderImpl();
+sender.setHost(<span class="hl-string">"mail.host.com"</span>);
+
+MimeMessage message = sender.createMimeMessage();
+MimeMessageHelper helper = <span class="hl-keyword">new</span> MimeMessageHelper(message);
+helper.setTo(<span class="hl-string">"test@host.com"</span>);
+helper.setText(<span class="hl-string">"Thank you for ordering!"</span>);
+
+sender.send(message);</pre>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mail-javamail-mime-attachments" href="#mail-javamail-mime-attachments"></a>27.3.1&nbsp;Sending attachments and inline resources</h3></div></div></div>
+
+<p>Multipart email messages allow for both attachments and inline resources. Examples of
+inline resources would be images or a stylesheet you want to use in your message, but
+that you don&#8217;t want displayed as an attachment.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mail-javamail-mime-attachments-attachment" href="#mail-javamail-mime-attachments-attachment"></a>Attachments</h4></div></div></div>
+
+<p>The following example shows you how to use the <code class="literal">MimeMessageHelper</code> to send an email
+along with a single JPEG image attachment.</p>
+<pre class="programlisting">JavaMailSenderImpl sender = <span class="hl-keyword">new</span> JavaMailSenderImpl();
+sender.setHost(<span class="hl-string">"mail.host.com"</span>);
+
+MimeMessage message = sender.createMimeMessage();
+
+<span class="hl-comment">// use the true flag to indicate you need a multipart message</span>
+MimeMessageHelper helper = <span class="hl-keyword">new</span> MimeMessageHelper(message, true);
+helper.setTo(<span class="hl-string">"test@host.com"</span>);
+
+helper.setText(<span class="hl-string">"Check out this image!"</span>);
+
+<span class="hl-comment">// let's attach the infamous windows Sample file (this time copied to c:/)</span>
+FileSystemResource file = <span class="hl-keyword">new</span> FileSystemResource(<span class="hl-keyword">new</span> File(<span class="hl-string">"c:/Sample.jpg"</span>));
+helper.addAttachment(<span class="hl-string">"CoolImage.jpg"</span>, file);
+
+sender.send(message);</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mail-javamail-mime-attachments-inline" href="#mail-javamail-mime-attachments-inline"></a>Inline resources</h4></div></div></div>
+
+<p>The following example shows you how to use the <code class="literal">MimeMessageHelper</code> to send an email
+along with an inline image.</p>
+<pre class="programlisting">JavaMailSenderImpl sender = <span class="hl-keyword">new</span> JavaMailSenderImpl();
+sender.setHost(<span class="hl-string">"mail.host.com"</span>);
+
+MimeMessage message = sender.createMimeMessage();
+
+<span class="hl-comment">// use the true flag to indicate you need a multipart message</span>
+MimeMessageHelper helper = <span class="hl-keyword">new</span> MimeMessageHelper(message, true);
+helper.setTo(<span class="hl-string">"test@host.com"</span>);
+
+<span class="hl-comment">// use the true flag to indicate the text included is HTML</span>
+helper.setText(<span class="hl-string">"&lt;html&gt;&lt;body&gt;&lt;img src=</span><span class="emphasis"><em>'cid:identifier1234</em></span><span class="hl-string">'&gt;&lt;/body&gt;&lt;/html&gt;", true);
+</span>
+<span class="hl-comment">// let's include the infamous windows Sample file (this time copied to c:/)</span>
+FileSystemResource res = <span class="hl-keyword">new</span> FileSystemResource(<span class="hl-keyword">new</span> File(<span class="hl-string">"c:/Sample.jpg"</span>));
+helper.addInline(<span class="hl-string">"identifier1234"</span>, res);
+
+sender.send(message);</pre>
+
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="images/warning.png"></td><th align="left">Warning</th></tr><tr><td align="left" valign="top">
+<p>Inline resources are added to the mime message using the specified <code class="literal">Content-ID</code> (
+<code class="literal">identifier1234</code> in the above example). The order in which you are adding the text and
+the resource are <span class="emphasis"><em>very</em></span> important. Be sure to <span class="emphasis"><em>first add the text</em></span> and after that
+the resources. If you are doing it the other way around, it won&#8217;t work!</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mail-templates" href="#mail-templates"></a>27.3.2&nbsp;Creating email content using a templating library</h3></div></div></div>
+
+<p>The code in the previous examples explicitly created the content of the email message,
+using methods calls such as <code class="literal">message.setText(..)</code>. This is fine for simple cases, and it
+is okay in the context of the aforementioned examples, where the intent was to show you
+the very basics of the API.</p>
+<p>In your typical enterprise application though, you are not going to create the content
+of your emails using the above approach for a number of reasons.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Creating HTML-based email content in Java code is tedious and error prone
+</li><li class="listitem">
+There is no clear separation between display logic and business logic
+</li><li class="listitem">
+Changing the display structure of the email content requires writing Java code,
+recompiling, redeploying&#8230;
+</li></ul></div>
+
+<p>Typically the approach taken to address these issues is to use a template library such
+as FreeMarker or Velocity to define the display structure of email content. This leaves
+your code tasked only with creating the data that is to be rendered in the email
+template and sending the email. It is definitely a best practice for when the content of
+your emails becomes even moderately complex, and with the Spring Framework&#8217;s support
+classes for FreeMarker and Velocity becomes quite easy to do. Find below an example of
+using the Velocity template library to create email content.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mail-templates-example" href="#mail-templates-example"></a>A Velocity-based example</h4></div></div></div>
+
+<p>To use <a class="ulink" href="http://velocity.apache.org" target="_top">Velocity</a> to create your email template(s), you will
+need to have the Velocity libraries available on your classpath. You will also need to
+create one or more Velocity templates for the email content that your application needs.
+Find below the Velocity template that this example will be using. As you can see it is
+HTML-based, and since it is plain text it can be created using your favorite HTML or
+text editor.</p>
+<pre class="programlisting"># in the com/foo/package
+<span class="hl-tag">&lt;html&gt;</span>
+    <span class="hl-tag">&lt;body&gt;</span>
+        <span class="hl-tag">&lt;h3&gt;</span>Hi ${user.userName}, welcome to the Chipping Sodbury On-the-Hill message boards!<span class="hl-tag">&lt;/h3&gt;</span>
+
+        <span class="hl-tag">&lt;div&gt;</span>
+            Your email address is <span class="hl-tag">&lt;a</span> <span class="hl-attribute">href</span>=<span class="hl-value">"mailto:${user.emailAddress}"</span><span class="hl-tag">&gt;</span>${user.emailAddress}<span class="hl-tag">&lt;/a&gt;</span>.
+        <span class="hl-tag">&lt;/div&gt;</span>
+    <span class="hl-tag">&lt;/body&gt;</span>
+<span class="hl-tag">&lt;/html&gt;</span></pre>
+
+<p>Find below some simple code and Spring XML configuration that makes use of the above
+Velocity template to create email content and send email(s).</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
+
+<span class="hl-keyword">import</span> org.apache.velocity.app.VelocityEngine;
+<span class="hl-keyword">import</span> org.springframework.mail.javamail.JavaMailSender;
+<span class="hl-keyword">import</span> org.springframework.mail.javamail.MimeMessageHelper;
+<span class="hl-keyword">import</span> org.springframework.mail.javamail.MimeMessagePreparator;
+<span class="hl-keyword">import</span> org.springframework.ui.velocity.VelocityEngineUtils;
+
+<span class="hl-keyword">import</span> javax.mail.internet.MimeMessage;
+<span class="hl-keyword">import</span> java.util.HashMap;
+<span class="hl-keyword">import</span> java.util.Map;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleRegistrationService <span class="hl-keyword">implements</span> RegistrationService {
+
+    <span class="hl-keyword">private</span> JavaMailSender mailSender;
+    <span class="hl-keyword">private</span> VelocityEngine velocityEngine;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setMailSender(JavaMailSender mailSender) {
+        <span class="hl-keyword">this</span>.mailSender = mailSender;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setVelocityEngine(VelocityEngine velocityEngine) {
+        <span class="hl-keyword">this</span>.velocityEngine = velocityEngine;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> register(User user) {
+
+        <span class="hl-comment">// Do the registration logic...</span>
+
+        sendConfirmationEmail(user);
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">void</span> sendConfirmationEmail(<span class="hl-keyword">final</span> User user) {
+        MimeMessagePreparator preparator = <span class="hl-keyword">new</span> MimeMessagePreparator() {
+            <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> prepare(MimeMessage mimeMessage) <span class="hl-keyword">throws</span> Exception {
+                MimeMessageHelper message = <span class="hl-keyword">new</span> MimeMessageHelper(mimeMessage);
+                message.setTo(user.getEmailAddress());
+                message.setFrom(<span class="hl-string">"webmaster@csonth.gov.uk"</span>); <span class="hl-comment">// could be parameterized...</span>
+                Map model = <span class="hl-keyword">new</span> HashMap();
+                model.put(<span class="hl-string">"user"</span>, user);
+                String text = VelocityEngineUtils.mergeTemplateIntoString(
+                        velocityEngine, <span class="hl-string">"com/dns/registration-confirmation.vm"</span>, model);
+                message.setText(text, true);
+            }
+        };
+        <span class="hl-keyword">this</span>.mailSender.send(preparator);
+    }
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"mailSender"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.mail.javamail.JavaMailSenderImpl"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"host"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"mail.csonth.gov.uk"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"registrationService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.SimpleRegistrationService"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mailSender"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"mailSender"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"velocityEngine"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"velocityEngine"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"velocityEngine"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.ui.velocity.VelocityEngineFactoryBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"velocityProperties"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>
+                resource.loader=class
+                class.resource.loader.class=org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader
+            <span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="cci.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="scheduling.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">26.&nbsp;JCA CCI&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;28.&nbsp;Task Execution and Scheduling</td></tr></table></div></body></html>

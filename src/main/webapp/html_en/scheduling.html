@@ -1,0 +1,666 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>28.&nbsp;Task Execution and Scheduling</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="mail.html" title="27.&nbsp;Email"><link rel="next" href="dynamic-language.html" title="29.&nbsp;Dynamic language support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.&nbsp;Task Execution and Scheduling</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mail.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="dynamic-language.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="scheduling" href="#scheduling"></a>28.&nbsp;Task Execution and Scheduling</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-introduction" href="#scheduling-introduction"></a>28.1&nbsp;Introduction</h2></div></div></div>
+
+<p>The Spring Framework provides abstractions for asynchronous execution and scheduling of
+tasks with the <code class="literal">TaskExecutor</code> and <code class="literal">TaskScheduler</code> interfaces, respectively. Spring also
+features implementations of those interfaces that support thread pools or delegation to
+CommonJ within an application server environment. Ultimately the use of these
+implementations behind the common interfaces abstracts away the differences between Java
+SE 5, Java SE 6 and Java EE environments.</p>
+<p>Spring also features integration classes for supporting scheduling with the <code class="literal">Timer</code>,
+part of the JDK since 1.3, and the Quartz Scheduler ( <a class="ulink" href="http://quartz-scheduler.org" target="_top">http://quartz-scheduler.org</a>).
+Both of those schedulers are set up using a <code class="literal">FactoryBean</code> with optional references to
+<code class="literal">Timer</code> or <code class="literal">Trigger</code> instances, respectively. Furthermore, a convenience class for both
+the Quartz Scheduler and the <code class="literal">Timer</code> is available that allows you to invoke a method of
+an existing target object (analogous to the normal <code class="literal">MethodInvokingFactoryBean</code>
+operation).</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-task-executor" href="#scheduling-task-executor"></a>28.2&nbsp;The Spring TaskExecutor abstraction</h2></div></div></div>
+
+<p>Spring 2.0 introduces a new abstraction for dealing with executors. Executors are the
+Java 5 name for the concept of thread pools. The "executor" naming is due to the fact
+that there is no guarantee that the underlying implementation is actually a pool; an
+executor may be single-threaded or even synchronous. Spring&#8217;s abstraction hides
+implementation details between Java SE 1.4, Java SE 5 and Java EE environments.</p>
+<p>Spring&#8217;s <code class="literal">TaskExecutor</code> interface is identical to the <code class="literal">java.util.concurrent.Executor</code>
+interface. In fact, its primary reason for existence was to abstract away the need for
+Java 5 when using thread pools. The interface has a single method <code class="literal">execute(Runnable
+task)</code> that accepts a task for execution based on the semantics and configuration of the
+thread pool.</p>
+<p>The <code class="literal">TaskExecutor</code> was originally created to give other Spring components an abstraction
+for thread pooling where needed. Components such as the <code class="literal">ApplicationEventMulticaster</code>,
+JMS&#8217;s <code class="literal">AbstractMessageListenerContainer</code>, and Quartz integration all use the
+<code class="literal">TaskExecutor</code> abstraction to pool threads. However, if your beans need thread pooling
+behavior, it is possible to use this abstraction for your own needs.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-executor-types" href="#scheduling-task-executor-types"></a>28.2.1&nbsp;TaskExecutor types</h3></div></div></div>
+
+<p>There are a number of pre-built implementations of <code class="literal">TaskExecutor</code> included with the
+Spring distribution. In all likelihood, you shouldn&#8217;t ever need to implement your own.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<code class="literal">SimpleAsyncTaskExecutor</code>
+This implementation does not reuse any threads, rather it starts up a new thread
+for each invocation. However, it does support a concurrency limit which will block
+any invocations that are over the limit until a slot has been freed up. If you
+re looking for true pooling, keep scrolling further down the page.
+</li><li class="listitem">
+<code class="literal">SyncTaskExecutor</code>
+This implementation doesn&#8217;t execute invocations asynchronously. Instead, each
+invocation takes place in the calling thread. It is primarily used in situations
+where multi-threading isn&#8217;t necessary such as simple test cases.
+</li><li class="listitem">
+<code class="literal">ConcurrentTaskExecutor</code>
+This implementation is an adapter for a <code class="literal">java.util.concurrent.Executor</code> object.
+There is an alternative, <code class="literal">ThreadPoolTaskExecutor, that exposes the `Executor</code>
+configuration parameters as bean properties. It is rare to need to use the
+<code class="literal">ConcurrentTaskExecutor</code> but if the <a class="link" href=""><code class="literal">ThreadPoolTaskExecutor</code></a>
+isn&#8217;t flexible enough for your needs, the <code class="literal">ConcurrentTaskExecutor</code> is an alternative.
+</li><li class="listitem">
+<code class="literal">SimpleThreadPoolTaskExecutor</code>
+This implementation is actually a subclass of Quartz&#8217;s <code class="literal">SimpleThreadPool</code> which
+listens to Spring&#8217;s lifecycle callbacks. This is typically used when you have a
+thread pool that may need to be shared by both Quartz and non-Quartz components.
+</li><li class="listitem">
+<code class="literal">ThreadPoolTaskExecutor</code>
+This implementation is the most commonly used one. It exposes bean properties for
+configuring a java.util.concurrent.ThreadPoolExecutor` and wraps it in a <code class="literal">TaskExecutor</code>.
+If you need to adapt to a different kind of <code class="literal">java.util.concurrent.Executor</code>, it is
+recommended that you use a <a class="link" href=""><code class="literal">ConcurrentTaskExecutor</code></a> instead.
+</li><li class="listitem">
+<p class="simpara"><code class="literal">WorkManagerTaskExecutor</code></p>
+<div class="sidebar"><div class="titlepage"></div>
+<p>CommonJ is a set of specifications jointly developed between BEA and IBM. These
+specifications are not Java EE standards, but are standard across BEA&#8217;s and IBM&#8217;s
+Application Server implementations.</p>
+</div>
+
+<p class="simpara">This implementation uses the CommonJ WorkManager as its backing implementation and is
+the central convenience class for setting up a CommonJ WorkManager reference in a Spring
+context. Similar to the <a class="link" href=""><code class="literal">SimpleThreadPoolTaskExecutor</code></a>,
+this class implements the WorkManager interface and therefore can be used directly as a
+WorkManager as well.</p>
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-executor-usage" href="#scheduling-task-executor-usage"></a>28.2.2&nbsp;Using a TaskExecutor</h3></div></div></div>
+
+<p>Spring&#8217;s <code class="literal">TaskExecutor</code> implementations are used as simple JavaBeans. In the example
+below, we define a bean that uses the <code class="literal">ThreadPoolTaskExecutor</code> to asynchronously print
+out a set of messages.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> org.springframework.core.task.TaskExecutor;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TaskExecutorExample {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">class</span> MessagePrinterTask <span class="hl-keyword">implements</span> Runnable {
+
+        <span class="hl-keyword">private</span> String message;
+
+        <span class="hl-keyword">public</span> MessagePrinterTask(String message) {
+            <span class="hl-keyword">this</span>.message = message;
+        }
+
+        <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> run() {
+            System.out.println(message);
+        }
+
+    }
+
+    <span class="hl-keyword">private</span> TaskExecutor taskExecutor;
+
+    <span class="hl-keyword">public</span> TaskExecutorExample(TaskExecutor taskExecutor) {
+        <span class="hl-keyword">this</span>.taskExecutor = taskExecutor;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> printMessages() {
+        <span class="hl-keyword">for</span>(<span class="hl-keyword">int</span> i = <span class="hl-number">0</span>; i &lt; <span class="hl-number">25</span>; i++) {
+            taskExecutor.execute(<span class="hl-keyword">new</span> MessagePrinterTask(<span class="hl-string">"Message"</span> + i));
+        }
+    }
+
+}</pre>
+
+<p>As you can see, rather than retrieving a thread from the pool and executing yourself,
+you add your <code class="literal">Runnable</code> to the queue and the <code class="literal">TaskExecutor</code> uses its internal rules to
+decide when the task gets executed.</p>
+<p>To configure the rules that the <code class="literal">TaskExecutor</code> will use, simple bean properties have
+been exposed.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"taskExecutor"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"corePoolSize"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"5"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"maxPoolSize"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"10"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"queueCapacity"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"25"</span><span class="hl-tag"> /&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"taskExecutorExample"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"TaskExecutorExample"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"taskExecutor"</span><span class="hl-tag"> /&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-task-scheduler" href="#scheduling-task-scheduler"></a>28.3&nbsp;The Spring TaskScheduler abstraction</h2></div></div></div>
+
+<p>In addition to the <code class="literal">TaskExecutor</code> abstraction, Spring 3.0 introduces a <code class="literal">TaskScheduler</code>
+with a variety of methods for scheduling tasks to run at some point in the future.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> TaskScheduler {
+
+    ScheduledFuture schedule(Runnable task, Trigger trigger);
+
+    ScheduledFuture schedule(Runnable task, Date startTime);
+
+    ScheduledFuture scheduleAtFixedRate(Runnable task, Date startTime, <span class="hl-keyword">long</span> period);
+
+    ScheduledFuture scheduleAtFixedRate(Runnable task, <span class="hl-keyword">long</span> period);
+
+    ScheduledFuture scheduleWithFixedDelay(Runnable task, Date startTime, <span class="hl-keyword">long</span> delay);
+
+    ScheduledFuture scheduleWithFixedDelay(Runnable task, <span class="hl-keyword">long</span> delay);
+
+}</pre>
+
+<p>The simplest method is the one named <span class="emphasis"><em>schedule</em></span> that takes a <code class="literal">Runnable</code> and <code class="literal">Date</code> only.
+That will cause the task to run once after the specified time. All of the other methods
+are capable of scheduling tasks to run repeatedly. The fixed-rate and fixed-delay
+methods are for simple, periodic execution, but the method that accepts a Trigger is
+much more flexible.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-trigger-interface" href="#scheduling-trigger-interface"></a>28.3.1&nbsp;the Trigger interface</h3></div></div></div>
+
+<p>The <code class="literal">Trigger</code> interface is essentially inspired by JSR-236, which, as of Spring 3.0, has
+not yet been officially implemented. The basic idea of the <code class="literal">Trigger</code> is that execution
+times may be determined based on past execution outcomes or even arbitrary conditions.
+If these determinations do take into account the outcome of the preceding execution,
+that information is available within a <code class="literal">TriggerContext</code>. The <code class="literal">Trigger</code> interface itself
+is quite simple:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Trigger {
+
+    Date nextExecutionTime(TriggerContext triggerContext);
+
+}</pre>
+
+<p>As you can see, the <code class="literal">TriggerContext</code> is the most important part. It encapsulates all of
+the relevant data, and is open for extension in the future if necessary. The
+<code class="literal">TriggerContext</code> is an interface (a <code class="literal">SimpleTriggerContext</code> implementation is used by
+default). Here you can see what methods are available for <code class="literal">Trigger</code> implementations.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> TriggerContext {
+
+    Date lastScheduledExecutionTime();
+
+    Date lastActualExecutionTime();
+
+    Date lastCompletionTime();
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-trigger-implementations" href="#scheduling-trigger-implementations"></a>28.3.2&nbsp;Trigger implementations</h3></div></div></div>
+
+<p>Spring provides two implementations of the <code class="literal">Trigger</code> interface. The most interesting one
+is the <code class="literal">CronTrigger</code>. It enables the scheduling of tasks based on cron expressions. For
+example the following task is being scheduled to run 15 minutes past each hour but only
+during the 9-to-5 "business hours" on weekdays.</p>
+<pre class="programlisting">scheduler.schedule(task, <span class="hl-keyword">new</span> CronTrigger(<span class="hl-string">"* 15 9-17 * * MON-FRI"</span>));</pre>
+
+<p>The other out-of-the-box implementation is a <code class="literal">PeriodicTrigger</code> that accepts a fixed
+period, an optional initial delay value, and a boolean to indicate whether the period
+should be interpreted as a fixed-rate or a fixed-delay. Since the <code class="literal">TaskScheduler</code>
+interface already defines methods for scheduling tasks at a fixed-rate or with a
+fixed-delay, those methods should be used directly whenever possible. The value of the
+<code class="literal">PeriodicTrigger</code> implementation is that it can be used within components that rely on
+the <code class="literal">Trigger</code> abstraction. For example, it may be convenient to allow periodic triggers,
+cron-based triggers, and even custom trigger implementations to be used interchangeably.
+Such a component could take advantage of dependency injection so that such <code class="literal">Triggers</code>
+could be configured externally.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-scheduler-implementations" href="#scheduling-task-scheduler-implementations"></a>28.3.3&nbsp;TaskScheduler implementations</h3></div></div></div>
+
+<p>As with Spring&#8217;s <code class="literal">TaskExecutor</code> abstraction, the primary benefit of the <code class="literal">TaskScheduler</code>
+is that code relying on scheduling behavior need not be coupled to a particular
+scheduler implementation. The flexibility this provides is particularly relevant when
+running within Application Server environments where threads should not be created
+directly by the application itself. For such cases, Spring provides a
+<code class="literal">TimerManagerTaskScheduler</code> that delegates to a CommonJ TimerManager instance, typically
+configured with a JNDI-lookup.</p>
+<p>A simpler alternative, the <code class="literal">ThreadPoolTaskScheduler</code>, can be used whenever external
+thread management is not a requirement. Internally, it delegates to a
+<code class="literal">ScheduledExecutorService</code> instance. <code class="literal">ThreadPoolTaskScheduler</code> actually implements
+Spring&#8217;s <code class="literal">TaskExecutor</code> interface as well, so that a single instance can be used for
+asynchronous execution <span class="emphasis"><em>as soon as possible</em></span> as well as scheduled, and potentially
+recurring, executions.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-annotation-support" href="#scheduling-annotation-support"></a>28.4&nbsp;Annotation Support for Scheduling and Asynchronous Execution</h2></div></div></div>
+
+<p>Spring provides annotation support for both task scheduling and asynchronous method
+execution.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-enable-annotation-support" href="#scheduling-enable-annotation-support"></a>28.4.1&nbsp;Enable scheduling annotations</h3></div></div></div>
+
+<p>To enable support for <code class="literal">@Scheduled</code> and <code class="literal">@Async</code> annotations add <code class="literal">@EnableScheduling</code> and
+<code class="literal">@EnableAsync</code> to one of your <code class="literal">@Configuration</code> classes:</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
+<em><span class="hl-annotation" style="color: gray">@EnableAsync</span></em>
+<em><span class="hl-annotation" style="color: gray">@EnableScheduling</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AppConfig {
+}</pre>
+
+<p>You are free to pick and choose the relevant annotations for your application. For
+example, if you only need support for <code class="literal">@Scheduled</code>, simply omit <code class="literal">@EnableAsync</code>. For more
+fine-grained control you can additionally implement the <code class="literal">SchedulingConfigurer</code> and/or
+<code class="literal">AsyncConfigurer</code> interfaces. See the javadocs for full details.</p>
+<p>If you prefer XML configuration use the <code class="literal">&lt;task:annotation-driven&gt;</code> element.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:annotation-driven</span> <span class="hl-attribute">executor</span>=<span class="hl-value">"myExecutor"</span> <span class="hl-attribute">scheduler</span>=<span class="hl-value">"myScheduler"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;task:executor</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myExecutor"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"5"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;task:scheduler</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myScheduler"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"10"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Notice with the above XML that an executor reference is provided for handling those
+tasks that correspond to methods with the <code class="literal">@Async</code> annotation, and the scheduler
+reference is provided for managing those methods annotated with <code class="literal">@Scheduled</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-annotation-support-scheduled" href="#scheduling-annotation-support-scheduled"></a>28.4.2&nbsp;The @Scheduled Annotation</h3></div></div></div>
+
+<p>The @Scheduled annotation can be added to a method along with trigger metadata. For
+example, the following method would be invoked every 5 seconds with a fixed delay,
+meaning that the period will be measured from the completion time of each preceding
+invocation.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Scheduled(fixedDelay=5000)</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() {
+    <span class="hl-comment">// something that should execute periodically</span>
+}</pre>
+
+<p>If a fixed rate execution is desired, simply change the property name specified within
+the annotation. The following would be executed every 5 seconds measured between the
+successive start times of each invocation.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Scheduled(fixedRate=5000)</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() {
+    <span class="hl-comment">// something that should execute periodically</span>
+}</pre>
+
+<p>For fixed-delay and fixed-rate tasks, an initial delay may be specified indicating the
+number of milliseconds to wait before the first execution of the method.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Scheduled(initialDelay=1000, fixedRate=5000)</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() {
+    <span class="hl-comment">// something that should execute periodically</span>
+}</pre>
+
+<p>If simple periodic scheduling is not expressive enough, then a cron expression may be
+provided. For example, the following will only execute on weekdays.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Scheduled(cron="*/5 * * * * MON-FRI")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() {
+    <span class="hl-comment">// something that should execute on weekdays only</span>
+}</pre>
+
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>You can additionally use the <code class="literal">zone</code> attribute to specify the time zone in which the cron
+expression will be resolved.</p>
+</td></tr></table></div>
+
+<p>Notice that the methods to be scheduled must have void returns and must not expect any
+arguments. If the method needs to interact with other objects from the Application
+Context, then those would typically have been provided through dependency injection.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Make sure that you are not initializing multiple instances of the same @Scheduled
+annotation class at runtime, unless you do want to schedule callbacks to each such
+instance. Related to this, make sure that you do not use @Configurable on bean classes
+which are annotated with @Scheduled and registered as regular Spring beans with the
+container: You would get double initialization otherwise, once through the container and
+once through the @Configurable aspect, with the consequence of each @Scheduled method
+being invoked twice.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-annotation-support-async" href="#scheduling-annotation-support-async"></a>28.4.3&nbsp;The @Async Annotation</h3></div></div></div>
+
+<p>The <code class="literal">@Async</code> annotation can be provided on a method so that invocation of that method
+will occur asynchronously. In other words, the caller will return immediately upon
+invocation and the actual execution of the method will occur in a task that has been
+submitted to a Spring <code class="literal">TaskExecutor</code>. In the simplest case, the annotation may be
+applied to a <code class="literal">void</code>-returning method.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Async</span></em>
+<span class="hl-keyword">void</span> doSomething() {
+    <span class="hl-comment">// this will be executed asynchronously</span>
+}</pre>
+
+<p>Unlike the methods annotated with the <code class="literal">@Scheduled</code> annotation, these methods can expect
+arguments, because they will be invoked in the "normal" way by callers at runtime rather
+than from a scheduled task being managed by the container. For example, the following is
+a legitimate application of the <code class="literal">@Async</code> annotation.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Async</span></em>
+<span class="hl-keyword">void</span> doSomething(String s) {
+    <span class="hl-comment">// this will be executed asynchronously</span>
+}</pre>
+
+<p>Even methods that return a value can be invoked asynchronously. However, such methods
+are required to have a <code class="literal">Future</code> typed return value. This still provides the benefit of
+asynchronous execution so that the caller can perform other tasks prior to calling
+<code class="literal">get()</code> on that Future.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Async</span></em>
+Future&lt;String&gt; returnSomething(<span class="hl-keyword">int</span> i) {
+    <span class="hl-comment">// this will be executed asynchronously</span>
+}</pre>
+
+<p><code class="literal">@Async</code> can not be used in conjunction with lifecycle callbacks such as
+<code class="literal">@PostConstruct</code>. To asynchronously initialize Spring beans you currently have to use a
+separate initializing Spring bean that invokes the <code class="literal">@Async</code> annotated method on the
+target then.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SampleBeanImpl <span class="hl-keyword">implements</span> SampleBean {
+
+    <em><span class="hl-annotation" style="color: gray">@Async</span></em>
+    <span class="hl-keyword">void</span> doSomething() {
+        <span class="hl-comment">// ...</span>
+    }
+
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SampleBeanInititalizer {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">final</span> SampleBean bean;
+
+    <span class="hl-keyword">public</span> SampleBeanInitializer(SampleBean bean) {
+        <span class="hl-keyword">this</span>.bean = bean;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@PostConstruct</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> initialize() {
+        bean.doSomething();
+    }
+
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-annotation-support-qualification" href="#scheduling-annotation-support-qualification"></a>28.4.4&nbsp;Executor qualification with @Async</h3></div></div></div>
+
+<p>By default when specifying <code class="literal">@Async</code> on a method, the executor that will be used is the
+one supplied to the <span class="emphasis"><em>annotation-driven</em></span> element as described above. However, the <code class="literal">value</code>
+attribute of the <code class="literal">@Async</code> annotation can be used when needing to indicate that an
+executor other than the default should be used when executing a given method.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Async("otherExecutor")</span></em>
+<span class="hl-keyword">void</span> doSomething(String s) {
+    <span class="hl-comment">// this will be executed asynchronously by "otherExecutor"</span>
+}</pre>
+
+<p>In this case, "otherExecutor" may be the name of any <code class="literal">Executor</code> bean in the Spring
+container, or may be the name of a <span class="emphasis"><em>qualifier</em></span> associated with any <code class="literal">Executor</code>, e.g. as
+specified with the <code class="literal">&lt;qualifier&gt;</code> element or Spring&#8217;s <code class="literal">@Qualifier</code> annotation.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-annotation-support-exception" href="#scheduling-annotation-support-exception"></a>28.4.5&nbsp;Exception management with @Async</h3></div></div></div>
+
+<p>When an <code class="literal">@Async</code> method has a <code class="literal">Future</code> typed return value, it is easy to manage
+an exception that was thrown during the method execution as this exception will
+be thrown when calling <code class="literal">get</code> on the <code class="literal">Future</code> result. With a void return type
+however, the exception is uncaught and cannot be transmitted. For those cases, an
+<code class="literal">AsyncUncaughtExceptionHandler</code> can be provided to handle such exceptions.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> MyAsyncUncaughtExceptionHandler <span class="hl-keyword">implements</span> AsyncUncaughtExceptionHandler {
+
+    <em><span class="hl-annotation" style="color: gray">@Override</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> handleUncaughtException(Throwable ex, Method method, Object... params) {
+        <span class="hl-comment">// handle exception</span>
+    }
+}</pre>
+
+<p>By default, the exception is simply logged. A custom <code class="literal">AsyncUncaughtExceptionHandler</code> can
+be defined <span class="emphasis"><em>via</em></span> <code class="literal">AsyncConfigurer</code> or the <code class="literal">task:annotation-driven</code> XML element.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-task-namespace" href="#scheduling-task-namespace"></a>28.5&nbsp;The Task Namespace</h2></div></div></div>
+
+<p>Beginning with Spring 3.0, there is an XML namespace for configuring <code class="literal">TaskExecutor</code> and
+<code class="literal">TaskScheduler</code> instances. It also provides a convenient way to configure tasks to be
+scheduled with a trigger.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-namespace-scheduler" href="#scheduling-task-namespace-scheduler"></a>28.5.1&nbsp;The <span class="emphasis"><em>scheduler</em></span> element</h3></div></div></div>
+
+<p>The following element will create a <code class="literal">ThreadPoolTaskScheduler</code> instance with the
+specified thread pool size.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:scheduler</span> <span class="hl-attribute">id</span>=<span class="hl-value">"scheduler"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"10"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>The value provided for the <span class="emphasis"><em>id</em></span> attribute will be used as the prefix for thread names
+within the pool. The <span class="emphasis"><em>scheduler</em></span> element is relatively straightforward. If you do not
+provide a <span class="emphasis"><em>pool-size</em></span> attribute, the default thread pool will only have a single thread.
+There are no other configuration options for the scheduler.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-namespace-executor" href="#scheduling-task-namespace-executor"></a>28.5.2&nbsp;The <span class="emphasis"><em>executor</em></span> element</h3></div></div></div>
+
+<p>The following will create a <code class="literal">ThreadPoolTaskExecutor</code> instance:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:executor</span> <span class="hl-attribute">id</span>=<span class="hl-value">"executor"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"10"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>As with the scheduler above, the value provided for the <span class="emphasis"><em>id</em></span> attribute will be used as
+the prefix for thread names within the pool. As far as the pool size is concerned, the
+<span class="emphasis"><em>executor</em></span> element supports more configuration options than the <span class="emphasis"><em>scheduler</em></span> element. For
+one thing, the thread pool for a <code class="literal">ThreadPoolTaskExecutor</code> is itself more configurable.
+Rather than just a single size, an executor&#8217;s thread pool may have different values for
+the <span class="emphasis"><em>core</em></span> and the <span class="emphasis"><em>max</em></span> size. If a single value is provided then the executor will
+have a fixed-size thread pool (the core and max sizes are the same). However, the
+<span class="emphasis"><em>executor</em></span> element&#8217;s <span class="emphasis"><em>pool-size</em></span> attribute also accepts a range in the form of "min-max".</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:executor</span>
+        <span class="hl-attribute">id</span>=<span class="hl-value">"executorWithPoolSizeRange"</span>
+        <span class="hl-attribute">pool-size</span>=<span class="hl-value">"5-25"</span>
+        <span class="hl-attribute">queue-capacity</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>As you can see from that configuration, a <span class="emphasis"><em>queue-capacity</em></span> value has also been provided.
+The configuration of the thread pool should also be considered in light of the
+executor&#8217;s queue capacity. For the full description of the relationship between pool
+size and queue capacity, consult the documentation for
+<a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/java/util/concurrent/ThreadPoolExecutor.html" target="_top">ThreadPoolExecutor</a>.
+The main idea is that when a task is submitted, the executor will first try to use a
+free thread if the number of active threads is currently less than the core size. If the
+core size has been reached, then the task will be added to the queue as long as its
+capacity has not yet been reached. Only then, if the queue&#8217;s capacity <span class="emphasis"><em>has</em></span> been
+reached, will the executor create a new thread beyond the core size. If the max size has
+also been reached, then the executor will reject the task.</p>
+<p>By default, the queue is <span class="emphasis"><em>unbounded</em></span>, but this is rarely the desired configuration,
+because it can lead to <code class="literal">OutOfMemoryErrors</code> if enough tasks are added to that queue while
+all pool threads are busy. Furthermore, if the queue is unbounded, then the max size has
+no effect at all. Since the executor will always try the queue before creating a new
+thread beyond the core size, a queue must have a finite capacity for the thread pool to
+grow beyond the core size (this is why a <span class="emphasis"><em>fixed size</em></span> pool is the only sensible case
+when using an unbounded queue).</p>
+<p>In a moment, we will review the effects of the keep-alive setting which adds yet another
+factor to consider when providing a pool size configuration. First, let&#8217;s consider the
+case, as mentioned above, when a task is rejected. By default, when a task is rejected,
+a thread pool executor will throw a <code class="literal">TaskRejectedException</code>. However, the rejection
+policy is actually configurable. The exception is thrown when using the default
+rejection policy which is the <code class="literal">AbortPolicy</code> implementation. For applications where some
+tasks can be skipped under heavy load, either the <code class="literal">DiscardPolicy</code> or
+<code class="literal">DiscardOldestPolicy</code> may be configured instead. Another option that works well for
+applications that need to throttle the submitted tasks under heavy load is the
+<code class="literal">CallerRunsPolicy</code>. Instead of throwing an exception or discarding tasks, that policy
+will simply force the thread that is calling the submit method to run the task itself.
+The idea is that such a caller will be busy while running that task and not able to
+submit other tasks immediately. Therefore it provides a simple way to throttle the
+incoming load while maintaining the limits of the thread pool and queue. Typically this
+allows the executor to "catch up" on the tasks it is handling and thereby frees up some
+capacity on the queue, in the pool, or both. Any of these options can be chosen from an
+enumeration of values available for the <span class="emphasis"><em>rejection-policy</em></span> attribute on the <span class="emphasis"><em>executor</em></span>
+element.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:executor</span>
+        <span class="hl-attribute">id</span>=<span class="hl-value">"executorWithCallerRunsPolicy"</span>
+        <span class="hl-attribute">pool-size</span>=<span class="hl-value">"5-25"</span>
+        <span class="hl-attribute">queue-capacity</span>=<span class="hl-value">"100"</span>
+        <span class="hl-attribute">rejection-policy</span>=<span class="hl-value">"CALLER_RUNS"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Finally, the <code class="literal">keep-alive</code> setting determines the time limit (in seconds) for which threads
+may remain idle before being terminated. If there are more than the core number of threads
+currently in the pool, after waiting this amount of time without processing a task, excess
+threads will get terminated. A time value of zero will cause excess threads to terminate
+immediately after executing a task without remaining follow-up work in the task queue.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:executor</span>
+        <span class="hl-attribute">id</span>=<span class="hl-value">"executorWithKeepAlive"</span>
+        <span class="hl-attribute">pool-size</span>=<span class="hl-value">"5-25"</span>
+        <span class="hl-attribute">keep-alive</span>=<span class="hl-value">"120"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-task-namespace-scheduled-tasks" href="#scheduling-task-namespace-scheduled-tasks"></a>28.5.3&nbsp;The <span class="emphasis"><em>scheduled-tasks</em></span> element</h3></div></div></div>
+
+<p>The most powerful feature of Spring&#8217;s task namespace is the support for configuring
+tasks to be scheduled within a Spring Application Context. This follows an approach
+similar to other "method-invokers" in Spring, such as that provided by the JMS namespace
+for configuring Message-driven POJOs. Basically a "ref" attribute can point to any
+Spring-managed object, and the "method" attribute provides the name of a method to be
+invoked on that object. Here is a simple example.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:scheduled-tasks</span> <span class="hl-attribute">scheduler</span>=<span class="hl-value">"myScheduler"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;task:scheduled</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"beanA"</span> <span class="hl-attribute">method</span>=<span class="hl-value">"methodA"</span> <span class="hl-attribute">fixed-delay</span>=<span class="hl-value">"5000"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/task:scheduled-tasks&gt;</span>
+
+<span class="hl-tag">&lt;task:scheduler</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myScheduler"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"10"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>As you can see, the scheduler is referenced by the outer element, and each individual
+task includes the configuration of its trigger metadata. In the preceding example, that
+metadata defines a periodic trigger with a fixed delay indicating the number of
+milliseconds to wait after each task execution has completed. Another option is
+<span class="emphasis"><em>fixed-rate</em></span>, indicating how often the method should be executed regardless of how long
+any previous execution takes. Additionally, for both fixed-delay and fixed-rate tasks an
+<span class="emphasis"><em>initial-delay</em></span> parameter may be specified indicating the number of milliseconds to wait
+before the first execution of the method. For more control, a "cron" attribute may be
+provided instead. Here is an example demonstrating these other options.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;task:scheduled-tasks</span> <span class="hl-attribute">scheduler</span>=<span class="hl-value">"myScheduler"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;task:scheduled</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"beanA"</span> <span class="hl-attribute">method</span>=<span class="hl-value">"methodA"</span> <span class="hl-attribute">fixed-delay</span>=<span class="hl-value">"5000"</span> <span class="hl-attribute">initial-delay</span>=<span class="hl-value">"1000"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;task:scheduled</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"beanB"</span> <span class="hl-attribute">method</span>=<span class="hl-value">"methodB"</span> <span class="hl-attribute">fixed-rate</span>=<span class="hl-value">"5000"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;task:scheduled</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"beanC"</span> <span class="hl-attribute">method</span>=<span class="hl-value">"methodC"</span> <span class="hl-attribute">cron</span>=<span class="hl-value">"*/5 * * * * MON-FRI"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/task:scheduled-tasks&gt;</span>
+
+<span class="hl-tag">&lt;task:scheduler</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myScheduler"</span> <span class="hl-attribute">pool-size</span>=<span class="hl-value">"10"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="scheduling-quartz" href="#scheduling-quartz"></a>28.6&nbsp;Using the Quartz Scheduler</h2></div></div></div>
+
+<p>Quartz uses <code class="literal">Trigger</code>, <code class="literal">Job</code> and <code class="literal">JobDetail</code> objects to realize scheduling of all kinds
+of jobs. For the basic concepts behind Quartz, have a look at
+<a class="ulink" href="http://quartz-scheduler.org" target="_top">http://quartz-scheduler.org</a>. For convenience purposes, Spring offers a couple of
+classes that simplify the usage of Quartz within Spring-based applications.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-quartz-jobdetail" href="#scheduling-quartz-jobdetail"></a>28.6.1&nbsp;Using the JobDetailFactoryBean</h3></div></div></div>
+
+<p>Quartz <code class="literal">JobDetail</code> objects contain all information needed to run a job. Spring provides a
+<code class="literal">JobDetailFactoryBean</code> which provides bean-style properties for XML configuration purposes.
+Let&#8217;s have a look at an example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"exampleJob"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.JobDetailFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"jobClass"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"example.ExampleJob"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"jobDataAsMap"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"timeout"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"5"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The job detail configuration has all information it needs to run the job (<code class="literal">ExampleJob</code>).
+The timeout is specified in the job data map. The job data map is available through the
+<code class="literal">JobExecutionContext</code> (passed to you at execution time), but the <code class="literal">JobDetail</code> also gets
+its properties from the job data mapped to properties of the job instance. So in this
+case, if the <code class="literal">ExampleJob</code> contains a bean property named <code class="literal">timeout</code>, the <code class="literal">JobDetail</code>
+will have it applied automatically:</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> example;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ExampleJob <span class="hl-keyword">extends</span> QuartzJobBean {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> timeout;
+
+    <strong class="hl-tag" style="color: blue">/**
+     * Setter called after the ExampleJob is instantiated
+     * with the value from the JobDetailFactoryBean (5)
+     */</strong>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setTimeout(<span class="hl-keyword">int</span> timeout) {
+        <span class="hl-keyword">this</span>.timeout = timeout;
+    }
+
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> executeInternal(JobExecutionContext ctx) <span class="hl-keyword">throws</span> JobExecutionException {
+        <span class="hl-comment">// do the actual work</span>
+    }
+
+}</pre>
+
+<p>All additional properties from the job data map are of course available to you as well.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Using the <code class="literal">name</code> and <code class="literal">group</code> properties, you can modify the name and the group
+of the job, respectively. By default, the name of the job matches the bean name
+of the <code class="literal">JobDetailFactoryBean</code> (in the example above, this is <code class="literal">exampleJob</code>).</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-quartz-method-invoking-job" href="#scheduling-quartz-method-invoking-job"></a>28.6.2&nbsp;Using the MethodInvokingJobDetailFactoryBean</h3></div></div></div>
+
+<p>Often you just need to invoke a method on a specific object. Using the
+<code class="literal">MethodInvokingJobDetailFactoryBean</code> you can do exactly this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jobDetail"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetObject"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"exampleBusinessObject"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetMethod"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"doIt"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The above example will result in the <code class="literal">doIt</code> method being called on the
+<code class="literal">exampleBusinessObject</code> method (see below):</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ExampleBusinessObject {
+
+    <span class="hl-comment">// properties and collaborators</span>
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doIt() {
+        <span class="hl-comment">// do the actual work</span>
+    }
+}</pre>
+
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exampleBusinessObject"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"examples.ExampleBusinessObject"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Using the <code class="literal">MethodInvokingJobDetailFactoryBean</code>, you don&#8217;t need to create one-line jobs
+that just invoke a method, and you only need to create the actual business object and
+wire up the detail object.</p>
+<p>By default, Quartz Jobs are stateless, resulting in the possibility of jobs interfering
+with each other. If you specify two triggers for the same <code class="literal">JobDetail</code>, it might be
+possible that before the first job has finished, the second one will start. If
+<code class="literal">JobDetail</code> classes implement the <code class="literal">Stateful</code> interface, this won&#8217;t happen. The second
+job will not start before the first one has finished. To make jobs resulting from the
+<code class="literal">MethodInvokingJobDetailFactoryBean</code> non-concurrent, set the <code class="literal">concurrent</code> flag to
+<code class="literal">false</code>.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jobDetail"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetObject"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"exampleBusinessObject"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetMethod"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"doIt"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"concurrent"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"false"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>By default, jobs will run in a concurrent fashion.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="scheduling-quartz-cron" href="#scheduling-quartz-cron"></a>28.6.3&nbsp;Wiring up jobs using triggers and the SchedulerFactoryBean</h3></div></div></div>
+
+<p>We&#8217;ve created job details and jobs. We&#8217;ve also reviewed the convenience bean that allows
+you to invoke a method on a specific object. Of course, we still need to schedule the
+jobs themselves. This is done using triggers and a <code class="literal">SchedulerFactoryBean</code>. Several
+triggers are available within Quartz and Spring offers two Quartz <code class="literal">FactoryBean</code>
+implementations with convenient defaults: <code class="literal">CronTriggerFactoryBean</code> and
+<code class="literal">SimpleTriggerFactoryBean</code>.</p>
+<p>Triggers need to be scheduled. Spring offers a <code class="literal">SchedulerFactoryBean</code> that exposes
+triggers to be set as properties. <code class="literal">SchedulerFactoryBean</code> schedules the actual jobs with
+those triggers.</p>
+<p>Find below a couple of examples:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"simpleTrigger"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.SimpleTriggerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-comment">&lt;!-- see the example of method invoking job above --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"jobDetail"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"jobDetail"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-comment">&lt;!-- 10 seconds --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"startDelay"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"10000"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-comment">&lt;!-- repeat every 50 seconds --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"repeatInterval"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"50000"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"cronTrigger"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.CronTriggerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"jobDetail"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"exampleJob"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-comment">&lt;!-- run every morning at 6 AM --&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"cronExpression"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"0 0 6 * * ?"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Now we&#8217;ve set up two triggers, one running every 50 seconds with a starting delay of 10
+seconds and one every morning at 6 AM. To finalize everything, we need to set up the
+<code class="literal">SchedulerFactoryBean</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.scheduling.quartz.SchedulerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"triggers"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;ref</span> <span class="hl-attribute">bean</span>=<span class="hl-value">"cronTrigger"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;ref</span> <span class="hl-attribute">bean</span>=<span class="hl-value">"simpleTrigger"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>More properties are available for the <code class="literal">SchedulerFactoryBean</code> for you to set, such as the
+calendars used by the job details, properties to customize Quartz with, etc. Have a look
+at the
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/scheduling/quartz/SchedulerFactoryBean.html" target="_top"><code class="literal">SchedulerFactoryBean</code>
+javadocs</a> for more information.</p>
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mail.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="dynamic-language.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.&nbsp;Email&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;29.&nbsp;Dynamic language support</td></tr></table></div></body></html>
