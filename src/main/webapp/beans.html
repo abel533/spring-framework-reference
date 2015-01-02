@@ -1,107 +1,53 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>5.&nbsp;The IoC container</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"><link rel="prev" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"><link rel="next" href="resources.html" title="6.&nbsp;Resources"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.&nbsp;The IoC container</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-core.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;III.&nbsp;Core Technologies</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="resources.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="beans" href="#beans"></a>5.&nbsp;The IoC container</h2></div></div></div>
+   <title>5.&nbsp;IoC &#23481;&#22120;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-core.html" title="Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;"><link rel="prev" href="spring-core.html" title="Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;"><link rel="next" href="resources.html" title="6.&nbsp;Resources"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">5.&nbsp;IoC &#23481;&#22120;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-core.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="resources.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="beans" href="#beans"></a>5.&nbsp;IoC &#23481;&#22120;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="beans-introduction" href="#beans-introduction"></a>5.1&nbsp;Introduction to the Spring IoC container and beans</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="beans-introduction" href="#beans-introduction"></a>5.1&nbsp;Spring IoC&#23481;&#22120;&#21644;Bean&#27010;&#36848;</h2></div></div></div>
 
-<p>This chapter covers the Spring Framework implementation of the Inversion of Control
-(IoC) <a href="#ftn.d5e958" class="footnote" name="d5e958"><sup class="footnote">[1]</sup></a> principle. IoC
-is also known as <span class="emphasis"><em>dependency injection</em></span> (DI). It is a process whereby objects define
-their dependencies, that is, the other objects they work with, only through constructor
-arguments, arguments to a factory method, or properties that are set on the object
-instance after it is constructed or returned from a factory method. The container then
-<span class="emphasis"><em>injects</em></span> those dependencies when it creates the bean. This process is fundamentally
+<p>&#26412;&#31456;&#20171;&#32461;&#20102;Spring&#26694;&#26550;&#23454;&#29616;&#25511;&#21046;&#21453;&#36716;&#65288;IoC&#65289; <a href="#ftn.d5e958" class="footnote" name="d5e958"><sup class="footnote">[1]</sup></a> &#30340;&#21407;&#29702;&#12290;IoC&#20063;&#34987;&#31216;&#20316; <span class="emphasis"><em>&#20381;&#36182;&#27880;&#20837;</em></span> (DI)&#12290;&#23427;&#26159;&#19968;&#20010;&#22788;&#29702;&#23545;&#35937;&#20381;&#36182;&#39033;&#30340;&#36807;&#31243;&#65292;&#20063;&#23601;&#26159;&#35828;&#65292;&#21644;&#20182;&#20204;&#19968;&#36215;&#24037;&#20316;&#30340;&#20854;&#20182;&#30340;&#23545;&#35937;&#65292;&#21482;&#26377;&#36890;&#36807;&#26500;&#36896;&#21442;&#25968;&#12289;&#24037;&#21378;&#26041;&#27861;&#21442;&#25968;&#25110;&#32773;&#65288;&#23646;&#24615;&#27880;&#20837;&#65289;&#36890;&#36807;&#26500;&#36896;&#21442;&#25968;&#23454;&#20363;&#21270;&#25110;&#36890;&#36807;&#24037;&#21378;&#26041;&#27861;&#36820;&#22238;&#23545;&#35937;&#21518;&#20877;&#35774;&#32622;&#23646;&#24615;&#12290;&#24403;&#21019;&#24314;bean&#21518;&#65292;IoC&#23481;&#22120;&#20877;&#23558;&#36825;&#20123;&#20381;&#36182;&#39033;&#27880;&#20837;&#36827;&#21435;&#12290;&#36825;&#20010;&#36807;&#31243;&#22522;&#26412;&#19978;&#26159;&#21453;&#36716;&#30340;&#65292;&#22240;&#27492;&#24471;&#21517; <span class="emphasis"><em>&#25511;&#21046;&#21453;&#36716;</em></span> &#65288;IoC&#65289;&#65292;
+This process is fundamentally
 the inverse, hence the name <span class="emphasis"><em>Inversion of Control</em></span> (IoC), of the bean itself
 controlling the instantiation or location of its dependencies by using direct
 construction of classes, or a mechanism such as the <span class="emphasis"><em>Service Locator</em></span> pattern.</p>
-<p>The <code class="literal">org.springframework.beans</code> and <code class="literal">org.springframework.context</code> packages are the basis
-for Spring Framework&#8217;s IoC container. The
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_top"><code class="literal">BeanFactory</code></a>
-interface provides an advanced configuration mechanism capable of managing any type of
-object.
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html" target="_top"><code class="literal">ApplicationContext</code></a>
-is a sub-interface of <code class="literal">BeanFactory</code>. It adds easier integration with Spring&#8217;s AOP
-features; message resource handling (for use in internationalization), event
-publication; and application-layer specific contexts such as the <code class="literal">WebApplicationContext</code>
-for use in web applications.</p>
-<p>In short, the <code class="literal">BeanFactory</code> provides the configuration framework and basic
-functionality, and the <code class="literal">ApplicationContext</code> adds more enterprise-specific functionality.
-The <code class="literal">ApplicationContext</code> is a complete superset of the <code class="literal">BeanFactory</code>, and is used
-exclusively in this chapter in descriptions of Spring&#8217;s IoC container. For more
-information on using the <code class="literal">BeanFactory</code> instead of the <code class="literal">ApplicationContext,</code> refer to
-<a class="xref" href="beans.html#beans-beanfactory" title="5.16&nbsp;The BeanFactory">Section&nbsp;5.16, &#8220;The BeanFactory&#8221;</a>.</p>
-<p>In Spring, the objects that form the backbone of your application and that are managed
-by the Spring IoC <span class="emphasis"><em>container</em></span> are called <span class="emphasis"><em>beans</em></span>. A bean is an object that is
-instantiated, assembled, and otherwise managed by a Spring IoC container. Otherwise, a
-bean is simply one of many objects in your application. Beans, and the <span class="emphasis"><em>dependencies</em></span>
-among them, are reflected in the <span class="emphasis"><em>configuration metadata</em></span> used by a container.</p>
+<p><code class="literal">org.springframework.beans</code>&#21644;<code class="literal">org.springframework.context</code>&#21253;&#26159;Spring&#26694;&#26550;IoC&#23481;&#22120;&#30340;&#22522;&#30784;&#12290;
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_top"><code class="literal">BeanFactory</code></a>&#25509;&#21475;&#25552;&#20379;&#20102;&#19968;&#20010;&#20808;&#36827;&#30340;&#37197;&#32622;&#26426;&#21046;&#33021;&#22815;&#31649;&#29702;&#20219;&#20309;&#31867;&#22411;&#30340;&#23545;&#35937;&#12290;
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html" target="_top"><code class="literal">ApplicationContext</code>(&#24212;&#29992;&#19978;&#19979;&#25991;)</a> &#26159;<code class="literal">BeanFactory</code>&#30340;&#19968;&#20010;&#23376;&#25509;&#21475;&#12290;&#23427;&#22686;&#21152;&#20102;&#26356;&#26041;&#20415;&#30340;&#38598;&#25104;Spring&#30340;AOP&#21151;&#33021;&#12289;&#28040;&#24687;&#36164;&#28304;&#22788;&#29702;&#65288;&#20351;&#29992;&#22269;&#38469;&#21270;&#65289;&#12289;&#20107;&#20214;&#21457;&#24067;&#21644;&#29305;&#23450;&#30340;&#24212;&#29992;&#23618;&#65292;&#22914;&#22312;web&#24212;&#29992;&#23618;&#20013;&#20351;&#29992;&#30340;<code class="literal">WebApplicationContext</code>&#12290;</p>
+<p>&#24635;&#20043;&#65292;<code class="literal">BeanFactory</code>&#25552;&#20379;&#20102;&#37197;&#32622;&#26694;&#26550;&#21644;&#22522;&#26412;&#21151;&#33021;&#65292;<code class="literal">ApplicationContext</code>&#21017;&#28155;&#21152;&#20102;&#26356;&#22810;&#30340;&#20225;&#19994;&#29305;&#23450;&#30340;&#21151;&#33021;&#12290;<code class="literal">ApplicationContext</code>&#26159;<code class="literal">BeanFactory</code>&#30340;&#19968;&#20010;&#23436;&#25972;&#30340;&#36229;&#38598;&#65292;&#24182;&#19988;&#22312;&#26412;&#31456;&#19987;&#38376;&#29992;&#20110;&#25351;&#20195;Spring&#23481;&#22120;&#12290;&#20851;&#20110;&#26356;&#22810;&#20351;&#29992;<code class="literal">BeanFactory</code>&#26367;&#20195;<code class="literal">ApplicationContext</code>&#30340;&#20449;&#24687;&#65292;&#21442;&#32771;<a class="xref" href="beans.html#beans-beanfactory" title="5.16&nbsp;The BeanFactory">Section&nbsp;5.16, &#8220;The BeanFactory&#8221;</a>&#12290;</p>
+<p>&#22312;Spring&#20013;&#65292;&#34987;Spring IoC <span class="emphasis"><em>&#23481;&#22120;</em></span> &#31649;&#29702;&#30340;&#36825;&#20123;&#26469;&#33258;&#20110;&#24212;&#29992;&#20027;&#24178;&#30340;&#36825;&#20123;&#23545;&#35937;&#31216;&#20316; <span class="emphasis"><em>beans</em></span> &#12290;bean&#26159;&#19968;&#20010;&#30001;Spring IoC&#23481;&#22120;&#36827;&#34892;&#23454;&#20363;&#21270;&#12289;&#35013;&#37197;&#21644;&#31649;&#29702;&#30340;&#23545;&#35937;&#12290;&#27492;&#22806;&#65292;bean&#21482;&#26159;&#20320;&#24212;&#29992;&#20013;&#35768;&#22810;&#23545;&#35937;&#20013;&#30340;&#19968;&#20010;&#12290;Beans&#20197;&#21450;&#20182;&#20204;&#20043;&#38388;&#30340; <span class="emphasis"><em>&#20381;&#36182;&#20851;&#31995;</em></span> &#26159;&#36890;&#36807;&#23481;&#22120;&#20351;&#29992; <span class="emphasis"><em>&#37197;&#32622;&#20803;&#25968;&#25454;</em></span> &#21453;&#24212;&#20986;&#26469;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="beans-basics" href="#beans-basics"></a>5.2&nbsp;Container overview</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="beans-basics" href="#beans-basics"></a>5.2&nbsp;&#23481;&#22120;&#27010;&#36848;</h2></div></div></div>
 
-<p>The interface <code class="literal">org.springframework.context.ApplicationContext</code> represents the Spring IoC
-container and is responsible for instantiating, configuring, and assembling the
-aforementioned beans. The container gets its instructions on what objects to
-instantiate, configure, and assemble by reading configuration metadata. The
-configuration metadata is represented in XML, Java annotations, or Java code. It allows
-you to express the objects that compose your application and the rich interdependencies
-between such objects.</p>
-<p>Several implementations of the <code class="literal">ApplicationContext</code> interface are supplied
-out-of-the-box with Spring. In standalone applications it is common to create an
-instance of
+<p><code class="literal">org.springframework.context.ApplicationContext</code>&#25509;&#21475;&#20195;&#34920;&#20102;Spring
+IoC&#23481;&#22120;&#65292;&#24182;&#19988;&#36127;&#36131;&#19978;&#38754;&#25552;&#21040;&#30340;Beans&#30340;&#23454;&#20363;&#21270;&#12289;&#37197;&#32622;&#21644;&#35013;&#37197;&#12290;&#23481;&#22120;&#36890;&#36807;&#35835;&#21462;&#37197;&#32622;&#20803;&#25968;&#25454;&#33719;&#21462;&#23545;&#35937;&#22914;&#20309;&#23454;&#20363;&#21270;&#12289;&#37197;&#32622;&#21644;&#35013;&#37197;&#30340;&#25351;&#31034;&#12290;&#37197;&#32622;&#20803;&#25968;&#25454;&#21487;&#20197;&#29992;XML&#12289;Java&#27880;&#35299;&#25110;Java&#20195;&#30721;&#26469;&#25551;&#36848;&#12290;&#23427;&#20801;&#35768;&#20320;&#34920;&#31034;&#32452;&#25104;&#20320;&#24212;&#29992;&#30340;&#23545;&#35937;&#65292;&#20197;&#21450;&#23545;&#35937;&#38388;&#20016;&#23500;&#30340;&#20381;&#36182;&#20851;&#31995;&#12290;</p>
+<p>Spring&#25552;&#20379;&#20102;&#20960;&#20010;&#24320;&#31665;&#21363;&#29992;&#30340;<code class="literal">ApplicationContext</code>&#25509;&#21475;&#30340;&#23454;&#29616;&#12290;&#22312;&#29420;&#31435;&#30340;&#24212;&#29992;&#31243;&#24207;&#20013;&#65292;&#36890;&#24120;&#21019;&#24314;
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/ClassPathXmlApplicationContext.html" target="_top"><code class="literal">ClassPathXmlApplicationContext</code></a>
-or <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/FileSystemXmlApplicationContext.html" target="_top"><code class="literal">FileSystemXmlApplicationContext</code></a>.
- While XML has been the traditional format for defining configuration metadata you can
-instruct the container to use Java annotations or code as the metadata format by
-providing a small amount of XML configuration to declaratively enable support for these
-additional metadata formats.</p>
-<p>In most application scenarios, explicit user code is not required to instantiate one or
-more instances of a Spring IoC container. For example, in a web application scenario, a
-simple eight (or so) lines of boilerplate web descriptor XML in the <code class="literal">web.xml</code> file
-of the application will typically suffice (see <a class="xref" href="beans.html#context-create" title="5.15.4&nbsp;Convenient ApplicationContext instantiation for web applications">Section&nbsp;5.15.4, &#8220;Convenient ApplicationContext instantiation for web applications&#8221;</a>). If you are using the
-<a class="ulink" href="https://spring.io/tools/sts" target="_top">Spring Tool Suite</a> Eclipse-powered development
-environment this boilerplate configuration can be easily created with few mouse clicks or
-keystrokes.</p>
-<p>The following diagram is a high-level view of how Spring works. Your application classes
-are combined with configuration metadata so that after the <code class="literal">ApplicationContext</code> is
-created and initialized, you have a fully configured and executable system or
-application.</p>
-<div class="figure"><a name="d5e1003" href="#d5e1003"></a><p class="title"><b>Figure&nbsp;5.1.&nbsp;The Spring IoC container</b></p><div class="figure-contents">
+&#25110;
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/FileSystemXmlApplicationContexthttp://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/support/FileSystemXmlApplicationContext.html" target="_top"><code class="literal">FileSystemXmlApplicationContext</code></a>&#30340;&#23454;&#20363;&#12290;
+&#34429;&#28982;XML&#26159;&#23450;&#20041;&#37197;&#32622;&#20803;&#25968;&#25454;&#30340;&#20256;&#32479;&#26684;&#24335;&#65292;&#20294;&#26159;&#20320;&#21487;&#20197;&#25351;&#31034;&#23481;&#22120;&#20351;&#29992;Java&#27880;&#35299;&#25110;&#32773;&#20195;&#30721;&#20316;&#20026;&#20803;&#25968;&#25454;&#26684;&#24335;&#65292;&#20320;&#38656;&#35201;&#36890;&#36807;&#25552;&#20379;&#23569;&#37327;XML&#37197;&#32622;&#22768;&#26126;&#25903;&#25345;&#36825;&#20123;&#39069;&#22806;&#30340;&#20803;&#25968;&#25454;&#26684;&#24335;&#12290;</p>
+<p>&#22312;&#22823;&#22810;&#25968;&#30340;&#24212;&#29992;&#22330;&#26223;&#65292;&#19981;&#38656;&#35201;&#26174;&#24335;&#30340;&#20195;&#30721;&#26469;&#23454;&#20363;&#21270;&#19968;&#20010;&#25110;&#22810;&#20010;Spring IoC&#23481;&#22120;&#12290;&#20363;&#23376;&#65292;&#22312;wei&#24212;&#29992;&#20013;&#65292;&#22312;&#24212;&#29992;&#30340;<code class="literal">web.xml</code>&#25991;&#20214;&#20013;&#65292;&#31616;&#21333;&#30340;8&#34892;&#26679;&#26495;&#24335;&#30340;xml&#37197;&#32622;&#25991;&#20214;&#23601;&#36275;&#22815;&#20102;&#12290;&#22914;&#26524;&#20320;&#20351;&#29992; <a class="ulink" href="https://spring.io/tools/sts" target="_top">Spring Tool Suite</a> &#30340;Eclipse&#24320;&#21457;&#29615;&#22659;&#65292;&#20320;&#21482;&#38656;&#35201;&#28857;&#20960;&#19979;&#40736;&#26631;&#25110;&#32773;&#38190;&#30424;&#23601;&#21487;&#20197;&#36731;&#26494;&#30340;&#21019;&#24314;&#36825;&#20010;&#37197;&#32622;&#12290;</p>
+<p>&#19979;&#38754;&#30340;&#22270;&#34920;&#26159;&#19968;&#20010;Spring&#24037;&#20316;&#30340;&#39640;&#32423;&#21035;&#35270;&#22270;&#12290;&#20320;&#30340;&#24212;&#29992;&#31243;&#24207;&#31867;&#37117;&#36890;&#36807;&#37197;&#32622;&#20803;&#25968;&#25454;&#36827;&#34892;&#20851;&#32852;&#65292;&#25152;&#20197;&#22312;<code class="literal">ApplicationContext</code>&#21019;&#24314;&#21644;&#21021;&#22987;&#21270;&#21518;&#65292;&#20320;&#23601;&#26377;&#20102;&#19968;&#20010;&#23436;&#20840;&#37197;&#32622;&#21644;&#21487;&#25191;&#34892;&#30340;&#31995;&#32479;&#25110;&#24212;&#29992;&#31243;&#24207;&#12290;</p>
+<div class="figure"><a name="d5e1002" href="#d5e1002"></a><p class="title"><b>Figure&nbsp;5.1.&nbsp;Spring IoC&#23481;&#22120;</b></p><div class="figure-contents">
 
   <div class="mediaobject"><img src="images/container-magic.png" alt="container magic"></div>
 </div></div><br class="figure-break">
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-metadata" href="#beans-factory-metadata"></a>5.2.1&nbsp;Configuration metadata</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-metadata" href="#beans-factory-metadata"></a>5.2.1&nbsp;&#37197;&#32622;&#20803;&#25968;&#25454;</h3></div></div></div>
 
-<p>As the preceding diagram shows, the Spring IoC container consumes a form of
-<span class="emphasis"><em>configuration metadata</em></span>; this configuration metadata represents how you as an
-application developer tell the Spring container to instantiate, configure, and assemble
-the objects in your application.</p>
-<p>Configuration metadata is traditionally supplied in a simple and intuitive XML format,
-which is what most of this chapter uses to convey key concepts and features of the
-Spring IoC container.</p>
+<p>&#22914;&#19978;&#22270;&#25152;&#31034;&#65292;Spring IoC&#23481;&#22120;&#20351;&#29992;&#20102;&#19968;&#31181; <span class="emphasis"><em>&#37197;&#32622;&#20803;&#25968;&#25454;</em></span> &#30340;&#24418;&#24335;&#65292;&#36825;&#20123;&#37197;&#32622;&#20803;&#25968;&#25454;&#20195;&#34920;&#20102;&#20320;&#20316;&#20026;&#19968;&#20010;&#24212;&#29992;&#24320;&#21457;&#32773;&#21578;&#35785;Spring&#23481;&#22120;&#22914;&#20309;&#21435;&#23454;&#20363;&#21270;&#12289;&#37197;&#32622;&#21644;&#35013;&#22791;&#20320;&#24212;&#29992;&#20013;&#30340;&#23545;&#35937;&#12290;</p>
+<p>&#37197;&#32622;&#20803;&#25968;&#25454;&#36890;&#24120;&#20351;&#29992;&#19968;&#20010;&#31616;&#21333;&#21644;&#30452;&#35266;&#30340;XML&#26684;&#24335;&#65292;&#26412;&#31456;&#22823;&#37096;&#20998;&#37117;&#20351;&#29992;&#36825;&#31181;&#26684;&#24335;&#26469;&#34920;&#36798;Spring IoC&#23481;&#22120;&#27010;&#24565;&#21644;&#29305;&#24615;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>XML-based metadata is <span class="emphasis"><em>not</em></span> the only allowed form of configuration metadata. The
-Spring IoC container itself is <span class="emphasis"><em>totally</em></span> decoupled from the format in which this
-configuration metadata is actually written. These days many developers choose
-<a class="link" href="beans.html#beans-java" title="5.12&nbsp;Java-based container configuration">Java-based configuration</a> for their Spring applications.</p>
+<p>&#22522;&#20110;XML&#37197;&#32622;&#30340;&#20803;&#25968;&#25454; <span class="emphasis"><em>&#19981;&#26159;</em></span> &#21807;&#19968;&#20801;&#35768;&#29992;&#26469;&#37197;&#32622;&#20803;&#25968;&#25454;&#30340;&#19968;&#31181;&#24418;&#24335;&#12290;Spring IoC&#23481;&#22120;&#26412;&#36523;&#26159; <span class="emphasis"><em>&#23436;&#20840;</em></span> &#21644;&#20803;&#25968;&#25454;&#37197;&#32622;&#20070;&#20889;&#30340;&#24418;&#24335;&#35299;&#32806;&#30340;&#12290;&#36825;&#20123;&#22825;&#65292;&#35768;&#22810;&#24320;&#21457;&#32773;&#22312;&#20182;&#20204;&#30340;Spring&#24212;&#29992;&#20013;&#36873;&#25321;&#20351;&#29992;<a class="link" href="beans.html#beans-java" title="5.12&nbsp;Java-based container configuration">&#22522;&#20110;Java&#30340;&#37197;&#32622;</a>&#30340;&#20803;&#25968;&#25454;&#24418;&#24335;&#12290;</p>
 </td></tr></table></div>
 
-<p>For information about using other forms of metadata with the Spring container, see:</p>
+<p>&#26356;&#22810;&#26377;&#20851;&#22312;Spring&#23481;&#22120;&#20013;&#20351;&#29992;&#20854;&#20182;&#24418;&#24335;&#30340;&#20803;&#25968;&#25454;&#30340;&#20869;&#23481;&#65292;&#35831;&#26597;&#38405;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="link" href="beans.html#beans-annotation-config" title="5.9&nbsp;Annotation-based container configuration">Annotation-based configuration</a>: Spring 2.5 introduced
-support for annotation-based configuration metadata.
+<a class="link" href="beans.html#beans-annotation-config" title="5.9&nbsp;Annotation-based container configuration">&#22522;&#20110;&#27880;&#35299;&#30340;&#37197;&#32622;</a>: Spring 2.5&#24341;&#20837;&#22522;&#20110;&#27880;&#35299;&#30340;&#37197;&#32622;&#20803;&#25968;&#25454;&#12290;
 </li><li class="listitem">
-<a class="link" href="beans.html#beans-java" title="5.12&nbsp;Java-based container configuration">Java-based configuration</a>: Starting with Spring 3.0, many features
-provided by the Spring JavaConfig project became part of the core Spring Framework.
-Thus you can define beans external to your application classes by using Java rather
-than XML files. To use these new features, see the <code class="literal">@Configuration</code>, <code class="literal">@Bean</code>, <code class="literal">@Import</code>
-and <code class="literal">@DependsOn</code> annotations.
+<a class="link" href="beans.html#beans-java" title="5.12&nbsp;Java-based container configuration">&#22522;&#20110;Java&#30340;&#37197;&#32622;</a>: &#20174;Spring 3.0&#24320;&#22987;&#65292;&#30001;Spring
+JavaConfig&#25552;&#20379;&#30340;&#35768;&#22810;&#21151;&#33021;&#24050;&#32463;&#25104;&#20026;Spring&#26694;&#26550;&#30340;&#19968;&#37096;&#20998;&#12290;&#22240;&#27492;&#65292;&#20320;&#21487;&#20197;&#36890;&#36807;Java&#32780;&#19981;&#26159;XML&#25991;&#20214;&#26469;&#23450;&#20041;&#22806;&#37096;&#24212;&#29992;&#31243;&#24207;&#30340;bean&#31867;&#12290;&#20351;&#29992;&#36825;&#20123;&#26032;&#30340;&#21151;&#33021;&#65292;&#35831;&#30475;<code class="literal">@Configuration</code>&#12289;<code class="literal">@Bean</code>&#12289;<code class="literal">@Import</code>&#21644;<code class="literal">@DependsOn</code> &#27880;&#35299;&#12290;
 </li></ul></div>
 
-<p>Spring configuration consists of at least one and typically more than one bean
-definition that the container must manage. XML-based configuration metadata shows these
-beans configured as <code class="literal">&lt;bean/&gt;</code> elements inside a top-level <code class="literal">&lt;beans/&gt;</code> element. Java
-configuration typically uses <code class="literal">@Bean</code> annotated methods within a <code class="literal">@Configuration</code> class.</p>
+<p>Spring&#37197;&#32622;&#21253;&#25324;&#33267;&#23569;&#19968;&#20010;&#19988;&#36890;&#24120;&#22810;&#20010;&#30001;&#23481;&#22120;&#31649;&#29702;&#30340;bean&#23450;&#20041;&#12290;&#22312;&#22522;&#20110;XML&#37197;&#32622;&#30340;&#20803;&#25968;&#25454;&#20013;&#65292;&#36825;&#20123;beans&#37197;&#32622;&#25104;&#19968;&#20010;<code class="literal">&lt;bean/&gt;</code>&#20803;&#32032;&#65292;&#36825;&#20123;<code class="literal">&lt;bean/&gt;</code>&#20803;&#32032;&#23450;&#20041;&#22312;&#39030;&#32423;&#20803;&#32032;<code class="literal">&lt;beans/&gt;</code>&#30340;&#37324;&#38754;&#12290;&#22312;Java&#37197;&#32622;&#20013;&#36890;&#24120;&#22312;&#19968;&#20010;<code class="literal">@Configuration</code>&#27880;&#35299;&#30340;&#31867;&#20013;&#65292;&#22312;&#26041;&#27861;&#19978;&#20351;&#29992;<code class="literal">@Bean</code>&#27880;&#35299;&#12290;</p>
 <p>These bean definitions correspond to the actual objects that make up your application.
 Typically you define service layer objects, data access objects (DAOs), presentation
 objects such as Struts <code class="literal">Action</code> instances, infrastructure objects such as Hibernate
@@ -6023,4 +5969,4 @@ team blog entry</a>.</p>
 </div>
 </div>
 <div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.d5e958" class="footnote"><p><a href="#d5e958" class="simpara"><sup class="simpara">[1] </sup></a>See <a class="xref" href="overview.html#background-ioc" title="Background">Background</a> </p></div><div id="ftn.d5e1782" class="footnote"><p><a href="#d5e1782" class="simpara"><sup class="simpara">[2] </sup></a>See
-<a class="xref" href="beans.html#beans-factory-collaborators" title="5.4.1&nbsp;Dependency injection">Section&nbsp;5.4.1, &#8220;Dependency injection&#8221;</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-core.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-core.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="resources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;III.&nbsp;Core Technologies&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;6.&nbsp;Resources</td></tr></table></div></body></html>
+<a class="xref" href="beans.html#beans-factory-collaborators" title="5.4.1&nbsp;Dependency injection">Section&nbsp;5.4.1, &#8220;Dependency injection&#8221;</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-core.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-core.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="resources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;6.&nbsp;Resources</td></tr></table></div></body></html>
