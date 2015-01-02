@@ -25,21 +25,21 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **1.introduction.adoc          - [lixiuwen](http://git.oschina.net/lixiuwen)**
 - **2.spring-whats-new.adoc      - [isea533](http://blog.csdn.net/isea533)**
 - **3.beans.adoc                 - [isea533](http://blog.csdn.net/isea533)**
-- **3.1.beans.adoc               - [isea533](http://blog.csdn.net/isea533)**
-- **3.2.beans.adoc               - [isea533](http://blog.csdn.net/isea533)**
-- 3.3.beans.adoc               -
-- 3.4.beans.adoc               -
-- 3.5.beans.adoc               -
-- 3.6.beans.adoc               -
-- 3.7.beans.adoc               -
-- 3.8.beans.adoc               -
-- 3.9.beans.adoc               -
-- 3.10.beans.adoc              -
-- 3.11.beans.adoc              -
-- 3.12.beans.adoc              -
-- 3.13.beans.adoc              -
-- 3.14.beans.adoc              -
-- 3.15.beans.adoc              -
+- **3.1.beans.adoc(5.1. Introduction&5.2. Container overview) - [isea533](http://blog.csdn.net/isea533)**
+- **3.2.beans.adoc(5.3. Bean overview) - [isea533](http://blog.csdn.net/isea533)**
+- 3.3.beans.adoc(5.4. Dependencies) -
+- 3.4.beans.adoc(5.5. Bean scopes) -
+- 3.5.beans.adoc(5.6. Customizing the nature of a bean) -
+- 3.6.beans.adoc(5.7. Bean definition inheritance) -
+- 3.7.beans.adoc(5.8. Container Extension Points) -
+- 3.8.beans.adoc(5.9. Annotation-based container configuration) -
+- 3.9.beans.adoc(5.10. Classpath scanning and managed components) -
+- 3.10.beans.adoc(5.11. Using JSR 330 Standard Annotations) -
+- 3.11.beans.adoc(5.12. Java-based container configuration) -
+- 3.12.beans.adoc(5.13. Environment abstraction) -
+- 3.13.beans.adoc(5.14. Registering a LoadTimeWeaver) -
+- 3.14.beans.adoc(5.15. Additional Capabilities of the ApplicationContext) -
+- 3.15.beans.adoc(5.16. The BeanFactory)              -
 - **4.resources.adoc             - [tianya](tianyatianya-PC)**
 - **5.validation.adoc            - [jassen](http://git.oschina.net/thinapple)**
 - **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**
