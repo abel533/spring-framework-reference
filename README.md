@@ -1,5 +1,11 @@
 #Spring框架参考文档 翻译
 
+**文档地址**
+
+中文文档:[http://spring.oschina.mopaas.com/](http://spring.oschina.mopaas.com/)  
+
+英文文档:[http://spring.oschina.mopaas.com/html_en/](http://spring.oschina.mopaas.com/html_en/)
+
 **基本说明**
 
 Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文件，该文件在`src/asciidoc/chapter`路径下。  
@@ -45,7 +51,15 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**
 - **8.aop.adoc                   - [ym919202](http://git.oschina.net/yemaozistar)**
 - 9.aop-api.adoc               -
-- 10.testing.adoc              -
+- 10.testing.adoc(11. Introduction) -
+- 10.1.testing.adoc(11.3. Integration Testing) -
+- 10.2.testing.adoc(11.3.3. JDBC Testing Support) -
+- 10.3.testing.adoc(11.3.4. Annotations) -
+- 10.4.testing.adoc(11.3.5. Spring TestContext Framework) -
+- 10.4.1.testing.adoc(11.3.5.3. Context management) -
+- 10.4.2.testing.adoc(11.3.5.4. DI) -
+- 10.5.testing.adoc(11.3.6. Spring MVC Test Framework) -
+- 10.6.testing.adoc(11.3.7. PetClinic Example) -
 - 11.spring-data-tier.adoc     -
 - **12.dao.adoc                  - 已经分配**
 - 13.jdbc.adoc                 -
@@ -84,6 +98,10 @@ Spring文件使用的adoc语法，和markdow比较接近。
 asciidoc语法--快速参考：
 
 > [http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/](http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/)  
+
+asciidoc中文文档：
+
+>[http://houqp.github.io/wbwa/wbwa.html](http://houqp.github.io/wbwa/wbwa.html)
 
 建议大家一定看看，否则翻译后的文档会出现一些格式错误。  
 

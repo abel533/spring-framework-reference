@@ -1,0 +1,1327 @@
+[[testcontext-ctx-management]]
+===== Context management
+
+Each `TestContext` provides context management and caching support for the test instance
+it is responsible for. Test instances do not automatically receive access to the
+configured `ApplicationContext`. However, if a test class implements the
+`ApplicationContextAware` interface, a reference to the `ApplicationContext` is supplied
+to the test instance. Note that `AbstractJUnit4SpringContextTests` and
+`AbstractTestNGSpringContextTests` implement `ApplicationContextAware` and therefore
+provide access to the `ApplicationContext` automatically.
+
+.@Autowired ApplicationContext
+[TIP]
+====
+As an alternative to implementing the `ApplicationContextAware` interface, you can
+inject the application context for your test class through the `@Autowired` annotation
+on either a field or setter method. For example:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration
+	public class MyTest {
+
+		**@Autowired**
+		private ApplicationContext applicationContext;
+
+		// class body...
+	}
+----
+
+Similarly, if your test is configured to load a `WebApplicationContext`, you can inject
+the web application context into your test as follows:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	**@WebAppConfiguration**
+	@ContextConfiguration
+	public class MyWebAppTest {
+		**@Autowired**
+		private WebApplicationContext wac;
+
+		// class body...
+	}
+----
+
+Dependency injection via `@Autowired` is provided by the
+`DependencyInjectionTestExecutionListener` which is configured by default (see
+<<testcontext-fixture-di>>).
+====
+
+Test classes that use the TestContext framework do not need to extend any particular
+class or implement a specific interface to configure their application context. Instead,
+configuration is achieved simply by declaring the `@ContextConfiguration` annotation at
+the class level. If your test class does not explicitly declare application context
+resource `locations` or annotated `classes`, the configured `ContextLoader` determines
+how to load a context from a default location or default configuration classes. In
+addition to context resource `locations` and annotated `classes`, an application context
+can also be configured via application context `initializers`.
+
+The following sections explain how to configure an `ApplicationContext` via XML
+configuration files, annotated classes (typically `@Configuration` classes), or context
+initializers using Spring's `@ContextConfiguration` annotation. Alternatively, you can
+implement and configure your own custom `SmartContextLoader` for advanced use cases.
+
+[[testcontext-ctx-management-xml]]
+====== Context configuration with XML resources
+
+To load an `ApplicationContext` for your tests using XML configuration files, annotate
+your test class with `@ContextConfiguration` and configure the `locations` attribute with
+an array that contains the resource locations of XML configuration metadata. A plain or
+relative path -- for example `"context.xml"` -- will be treated as a classpath resource
+that is relative to the package in which the test class is defined. A path starting with
+a slash is treated as an absolute classpath location, for example
+`"/org/example/config.xml"`. A path which represents a resource URL (i.e., a path
+prefixed with `classpath:`, `file:`, `http:`, etc.) will be used __as is__.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from "/app-config.xml" and
+	// "/test-config.xml" in the root of the classpath
+	**@ContextConfiguration(locations={"/app-config.xml", "/test-config.xml"})**
+	public class MyTest {
+		// class body...
+	}
+----
+
+`@ContextConfiguration` supports an alias for the `locations` attribute through the
+standard Java `value` attribute. Thus, if you do not need to declare additional
+attributes in `@ContextConfiguration`, you can omit the declaration of the `locations`
+attribute name and declare the resource locations by using the shorthand format
+demonstrated in the following example.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	**@ContextConfiguration({"/app-config.xml", "/test-config.xml"})**
+	public class MyTest {
+		// class body...
+	}
+----
+
+If you omit both the `locations` and `value` attributes from the `@ContextConfiguration`
+annotation, the TestContext framework will attempt to detect a default XML resource
+location. Specifically, `GenericXmlContextLoader` and `GenericXmlWebContextLoader` detect
+a default location based on the name of the test class. If your class is named
+`com.example.MyTest`, `GenericXmlContextLoader` loads your application context from
+`"classpath:com/example/MyTest-context.xml"`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.example;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from
+	// "classpath:com/example/MyTest-context.xml"
+	**@ContextConfiguration**
+	public class MyTest {
+		// class body...
+	}
+----
+
+[[testcontext-ctx-management-groovy]]
+====== Context configuration with Groovy scripts
+
+To load an `ApplicationContext` for your tests using Groovy scripts that utilize the
+<<groovy-bean-definition-dsl,Groovy Bean Definition DSL>>, annotate your test class with
+`@ContextConfiguration` and configure the `locations` or `value` attribute with an array
+that contains the resource locations of Groovy scripts. Resource lookup semantics for
+Groovy scripts are the same as those described for <<testcontext-ctx-management-xml,XML
+configuration files>>.
+
+
+.Enabling Groovy script support
+[TIP]
+====
+Support for using Groovy scripts to load an `ApplicationContext` in the Spring
+TestContext Framework is enabled automatically if Groovy is on the classpath.
+====
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from "/AppConfig.groovy" and
+	// "/TestConfig.groovy" in the root of the classpath
+	**@ContextConfiguration({"/AppConfig.groovy", "/TestConfig.Groovy"})**
+	public class MyTest {
+		// class body...
+	}
+----
+
+If you omit both the `locations` and `value` attributes from the `@ContextConfiguration`
+annotation, the TestContext framework will attempt to detect a default Groovy script.
+Specifically, `GenericGroovyXmlContextLoader` and `GenericGroovyXmlWebContextLoader`
+detect a default location based on the name of the test class. If your class is named
+`com.example.MyTest`, the Groovy context loader will load your application context from
+`"classpath:com/example/MyTestContext.groovy"`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.example;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from
+	// "classpath:com/example/MyTestContext.groovy"
+	**@ContextConfiguration**
+	public class MyTest {
+		// class body...
+	}
+----
+
+.Declaring XML config and Groovy scripts simultaneously
+[TIP]
+====
+Both XML configuration files and Groovy scripts can be declared simultaneously via the
+`locations` or `value` attribute of `@ContextConfiguration`. If the path to a configured
+resource location ends with `.xml` it will be loaded using an `XmlBeanDefinitionReader`;
+otherwise it will be loaded using a `GroovyBeanDefinitionReader`.
+
+The following listing demonstrates how to combine both in an integration test.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from
+	// "/app-config.xml" and "/TestConfig.groovy"
+	@ContextConfiguration({ "/app-config.xml", "/TestConfig.groovy" })
+	public class MyTest {
+		// class body...
+	}
+----
+====
+
+[[testcontext-ctx-management-javaconfig]]
+====== Context configuration with annotated classes
+
+To load an `ApplicationContext` for your tests using __annotated classes__ (see
+<<beans-java>>), annotate your test class with `@ContextConfiguration` and configure the
+`classes` attribute with an array that contains references to annotated classes.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from AppConfig and TestConfig
+	**@ContextConfiguration(classes = {AppConfig.class, TestConfig.class})**
+	public class MyTest {
+		// class body...
+	}
+----
+
+.Annotated Classes
+[TIP]
+====
+The term __annotated class__ can refer to any of the following.
+
+* A class annotated with `@Configuration`
+* A component (i.e., a class annotated with `@Component`, `@Service`, `@Repository`, etc.)
+* A JSR-330 compliant class that is annotated with `javax.inject` annotations
+* Any other class that contains `@Bean`-methods
+
+Consult the javadocs of `@Configuration` and `@Bean` for further information regarding
+the configuration and semantics of __annotated classes__, paying special attention to
+the discussion of __`@Bean` Lite Mode__.
+====
+
+If you omit the `classes` attribute from the `@ContextConfiguration` annotation, the
+TestContext framework will attempt to detect the presence of default configuration
+classes. Specifically, `AnnotationConfigContextLoader` and
+`AnnotationConfigWebContextLoader` will detect all static inner classes of the test class
+that meet the requirements for configuration class implementations as specified in the
+`@Configuration` javadocs. In the following example, the `OrderServiceTest` class
+declares a static inner configuration class named `Config` that will be automatically
+used to load the `ApplicationContext` for the test class. Note that the name of the
+configuration class is arbitrary. In addition, a test class can contain more than one
+static inner configuration class if desired.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from the
+	// static inner Config class
+	**@ContextConfiguration**
+	public class OrderServiceTest {
+
+		@Configuration
+		static class Config {
+
+			// this bean will be injected into the OrderServiceTest class
+			@Bean
+			public OrderService orderService() {
+				OrderService orderService = new OrderServiceImpl();
+				// set properties, etc.
+				return orderService;
+			}
+		}
+
+		@Autowired
+		private OrderService orderService;
+
+		@Test
+		public void testOrderService() {
+			// test the orderService
+		}
+
+	}
+----
+
+[[testcontext-ctx-management-mixed-config]]
+====== Mixing XML, Groovy scripts, and annotated classes
+
+It may sometimes be desirable to mix XML configuration files, Groovy scripts, and
+annotated classes (i.e., typically `@Configuration` classes) to configure an
+`ApplicationContext` for your tests. For example, if you use XML configuration in
+production, you may decide that you want to use `@Configuration` classes to configure
+specific Spring-managed components for your tests, or vice versa.
+
+Furthermore, some third-party frameworks (like Spring Boot) provide first-class support
+for loading an `ApplicationContext` from different types of resources simultaneously
+(e.g., XML configuration files, Groovy scripts, and `@Configuration` classes). The Spring
+Framework historically has not supported this for standard deployments. Consequently,
+most of the `SmartContextLoader` implementations that the Spring Framework delivers in
+the `spring-test` module support only one resource type per test context; however, this
+does not mean that you cannot use both. One exception to the general rule is that the
+`GenericGroovyXmlContextLoader` and `GenericGroovyXmlWebContextLoader` support both XML
+configuration files and Groovy scripts simultaneously. Furthermore, third-party
+frameworks may choose to support the declaration of both `locations` and `classes` via
+`@ContextConfiguration`, and with the standard testing support in the TestContext
+framework, you have the following options.
+
+If you want to use resource locations (e.g., XML or Groovy) __and__ `@Configuration`
+classes to configure your tests, you will have to pick one as the __entry point__, and
+that one will have to include or import the other. For example, in XML or Groovy scripts
+you can include `@Configuration` classes via component scanning or define them as normal
+Spring beans; whereas, in a `@Configuration` class you can use `@ImportResource` to
+import XML configuration files. Note that this behavior is semantically equivalent to how
+you configure your application in production: in production configuration you will define
+either a set of XML or Groovy resource locations or a set of `@Configuration` classes
+that your production `ApplicationContext` will be loaded from, but you still have the
+freedom to include or import the other type of configuration.
+
+[[testcontext-ctx-management-initializers]]
+====== Context configuration with context initializers
+To configure an `ApplicationContext` for your tests using context initializers, annotate
+your test class with `@ContextConfiguration` and configure the `initializers` attribute
+with an array that contains references to classes that implement
+`ApplicationContextInitializer`. The declared context initializers will then be used to
+initialize the `ConfigurableApplicationContext` that is loaded for your tests. Note that
+the concrete `ConfigurableApplicationContext` type supported by each declared
+initializer must be compatible with the type of `ApplicationContext` created by the
+`SmartContextLoader` in use (i.e., typically a `GenericApplicationContext`).
+Furthermore, the order in which the initializers are invoked depends on whether they
+implement Spring's `Ordered` interface, are annotated with Spring's `@Order` or the
+standard `@Priority` annotation.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from TestConfig
+	// and initialized by TestAppCtxInitializer
+	**@ContextConfiguration(
+		classes = TestConfig.class,
+		initializers = TestAppCtxInitializer.class)**
+	public class MyTest {
+		// class body...
+	}
+----
+
+It is also possible to omit the declaration of XML configuration files or annotated
+classes in `@ContextConfiguration` entirely and instead declare only
+`ApplicationContextInitializer` classes which are then responsible for registering beans
+in the context -- for example, by programmatically loading bean definitions from XML
+files or configuration classes.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be initialized by EntireAppInitializer
+	// which presumably registers beans in the context
+	**@ContextConfiguration(initializers = EntireAppInitializer.class)**
+	public class MyTest {
+		// class body...
+	}
+----
+
+[[testcontext-ctx-management-inheritance]]
+====== Context configuration inheritance
+`@ContextConfiguration` supports boolean `inheritLocations` and `inheritInitializers`
+attributes that denote whether resource locations or annotated classes and context
+initializers declared by superclasses should be __inherited__. The default value for
+both flags is `true`. This means that a test class inherits the resource locations or
+annotated classes as well as the context initializers declared by any superclasses.
+Specifically, the resource locations or annotated classes for a test class are appended
+to the list of resource locations or annotated classes declared by superclasses.
+Similarly, the initializers for a given test class will be added to the set of
+initializers defined by test superclasses. Thus, subclasses have the option
+of __extending__ the resource locations, annotated classes, or context initializers.
+
+If `@ContextConfiguration`'s `inheritLocations` or `inheritInitializers` attribute is
+set to `false`, the resource locations or annotated classes and the context
+initializers, respectively, for the test class __shadow__ and effectively replace the
+configuration defined by superclasses.
+
+In the following example that uses XML resource locations, the `ApplicationContext` for
+`ExtendedTest` will be loaded from __"base-config.xml"__ __and__
+__"extended-config.xml"__, in that order. Beans defined in __"extended-config.xml"__ may
+therefore __override__ (i.e., replace) those defined in __"base-config.xml"__.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from "/base-config.xml"
+	// in the root of the classpath
+	**@ContextConfiguration("/base-config.xml")**
+	public class BaseTest {
+		// class body...
+	}
+
+	// ApplicationContext will be loaded from "/base-config.xml" and
+	// "/extended-config.xml" in the root of the classpath
+	**@ContextConfiguration("/extended-config.xml")**
+	public class ExtendedTest extends BaseTest {
+		// class body...
+	}
+----
+
+Similarly, in the following example that uses annotated classes, the
+`ApplicationContext` for `ExtendedTest` will be loaded from the `BaseConfig` __and__
+`ExtendedConfig` classes, in that order. Beans defined in `ExtendedConfig` may therefore
+override (i.e., replace) those defined in `BaseConfig`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from BaseConfig
+	**@ContextConfiguration(classes = BaseConfig.class)**
+	public class BaseTest {
+		// class body...
+	}
+
+	// ApplicationContext will be loaded from BaseConfig and ExtendedConfig
+	**@ContextConfiguration(classes = ExtendedConfig.class)**
+	public class ExtendedTest extends BaseTest {
+		// class body...
+	}
+----
+
+In the following example that uses context initializers, the `ApplicationContext` for
+`ExtendedTest` will be initialized using `BaseInitializer` __and__
+`ExtendedInitializer`. Note, however, that the order in which the initializers are
+invoked depends on whether they implement Spring's `Ordered` interface, are annotated
+with Spring's `@Order` or the standard `@Priority` annotation.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be initialized by BaseInitializer
+	**@ContextConfiguration(initializers = BaseInitializer.class)**
+	public class BaseTest {
+		// class body...
+	}
+
+	// ApplicationContext will be initialized by BaseInitializer
+	// and ExtendedInitializer
+	**@ContextConfiguration(initializers = ExtendedInitializer.class)**
+	public class ExtendedTest extends BaseTest {
+		// class body...
+	}
+----
+
+[[testcontext-ctx-management-env-profiles]]
+====== Context configuration with environment profiles
+Spring 3.1 introduced first-class support in the framework for the notion of
+environments and profiles (a.k.a., __bean definition profiles__), and integration tests
+can be configured to activate particular bean definition profiles for various testing
+scenarios. This is achieved by annotating a test class with the `@ActiveProfiles`
+annotation and supplying a list of profiles that should be activated when loading the
+`ApplicationContext` for the test.
+
+[NOTE]
+====
+`@ActiveProfiles` may be used with any implementation of the new `SmartContextLoader`
+SPI, but `@ActiveProfiles` is not supported with implementations of the older
+`ContextLoader` SPI.
+====
+
+Let's take a look at some examples with XML configuration and `@Configuration` classes.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<!-- app-config.xml -->
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+		xmlns:jee="http://www.springframework.org/schema/jee"
+		xsi:schemaLocation="...">
+
+		<bean id="transferService"
+				class="com.bank.service.internal.DefaultTransferService">
+			<constructor-arg ref="accountRepository"/>
+			<constructor-arg ref="feePolicy"/>
+		</bean>
+
+		<bean id="accountRepository"
+				class="com.bank.repository.internal.JdbcAccountRepository">
+			<constructor-arg ref="dataSource"/>
+		</bean>
+
+		<bean id="feePolicy"
+			class="com.bank.service.internal.ZeroFeePolicy"/>
+
+		<beans profile="dev">
+			<jdbc:embedded-database id="dataSource">
+				<jdbc:script
+					location="classpath:com/bank/config/sql/schema.sql"/>
+				<jdbc:script
+					location="classpath:com/bank/config/sql/test-data.sql"/>
+			</jdbc:embedded-database>
+		</beans>
+
+		<beans profile="production">
+			<jee:jndi-lookup id="dataSource" jndi-name="java:comp/env/jdbc/datasource"/>
+		</beans>
+
+		<beans profile="default">
+			<jdbc:embedded-database id="dataSource">
+				<jdbc:script
+					location="classpath:com/bank/config/sql/schema.sql"/>
+			</jdbc:embedded-database>
+		</beans>
+
+	</beans>
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	// ApplicationContext will be loaded from "classpath:/app-config.xml"
+	@ContextConfiguration("/app-config.xml")
+	@ActiveProfiles("dev")
+	public class TransferServiceTest {
+
+		@Autowired
+		private TransferService transferService;
+
+		@Test
+		public void testTransferService() {
+			// test the transferService
+		}
+	}
+----
+
+When `TransferServiceTest` is run, its `ApplicationContext` will be loaded from the
+`app-config.xml` configuration file in the root of the classpath. If you inspect
+`app-config.xml` you'll notice that the `accountRepository` bean has a dependency on a
+`dataSource` bean; however, `dataSource` is not defined as a top-level bean. Instead,
+`dataSource` is defined three times: in the __production__ profile, the
+__dev__ profile, and the __default__ profile.
+
+By annotating `TransferServiceTest` with `@ActiveProfiles("dev")` we instruct the Spring
+TestContext Framework to load the `ApplicationContext` with the active profiles set to
+`{"dev"}`. As a result, an embedded database will be created and populated with test data,
+and the `accountRepository` bean will be wired with a reference to the development
+`DataSource`. And that's likely what we want in an integration test.
+
+It is sometimes useful to assign beans to a `default` profile. Beans within the default profile
+are only included when no other profile is specifically activated. This can be used to define
+_fallback_ beans to be used in the application's default state. For example, you may
+explicitly provide a data source for `dev` and `production` profiles, but define an in-memory
+data source as a default when neither of these is active.
+
+The following code listings demonstrate how to implement the same configuration and
+integration test but using `@Configuration` classes instead of XML.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Configuration
+	@Profile("dev")
+	public class StandaloneDataConfig {
+
+		@Bean
+		public DataSource dataSource() {
+			return new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.HSQL)
+				.addScript("classpath:com/bank/config/sql/schema.sql")
+				.addScript("classpath:com/bank/config/sql/test-data.sql")
+				.build();
+		}
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Configuration
+	@Profile("production")
+	public class JndiDataConfig {
+
+		@Bean
+		public DataSource dataSource() throws Exception {
+			Context ctx = new InitialContext();
+			return (DataSource) ctx.lookup("java:comp/env/jdbc/datasource");
+		}
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Configuration
+	@Profile("default")
+	public class DefaultDataConfig {
+
+		@Bean
+		public DataSource dataSource() {
+			return new EmbeddedDatabaseBuilder()
+				.setType(EmbeddedDatabaseType.HSQL)
+				.addScript("classpath:com/bank/config/sql/schema.sql")
+				.build();
+		}
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Configuration
+	public class TransferServiceConfig {
+
+		@Autowired DataSource dataSource;
+
+		@Bean
+		public TransferService transferService() {
+			return new DefaultTransferService(accountRepository(), feePolicy());
+		}
+
+		@Bean
+		public AccountRepository accountRepository() {
+			return new JdbcAccountRepository(dataSource);
+		}
+
+		@Bean
+		public FeePolicy feePolicy() {
+			return new ZeroFeePolicy();
+		}
+
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration(classes = {
+			TransferServiceConfig.class,
+			StandaloneDataConfig.class,
+			JndiDataConfig.class,
+			DefaultDataConfig.class})
+	@ActiveProfiles("dev")
+	public class TransferServiceTest {
+
+		@Autowired
+		private TransferService transferService;
+
+		@Test
+		public void testTransferService() {
+			// test the transferService
+		}
+	}
+----
+
+In this variation, we have split the XML configuration into four independent
+`@Configuration` classes:
+
+* `TransferServiceConfig`: acquires a `dataSource` via dependency injection using
+  `@Autowired`
+* `StandaloneDataConfig`: defines a `dataSource` for an embedded database suitable for
+  developer tests
+* `JndiDataConfig`: defines a `dataSource` that is retrieved from JNDI in a production
+  environment
+* `DefaultDataConfig`: defines a `dataSource` for a default embedded database in case
+  no profile is active
+
+As with the XML-based configuration example, we still annotate `TransferServiceTest`
+with `@ActiveProfiles("dev")`, but this time we specify all four configuration classes
+via the `@ContextConfiguration` annotation. The body of the test class itself remains
+completely unchanged.
+
+It is often the case that a single set of profiles is used across multiple test classes
+within a given project. Thus, to avoid duplicate declarations of the `@ActiveProfiles`
+annotation it is possible to declare `@ActiveProfiles` once on a base class, and
+subclasses will automatically inherit the `@ActiveProfiles` configuration from the base
+class. In the following example, the declaration of `@ActiveProfiles` (as well as other
+annotations) has been moved to an abstract superclass, `AbstractIntegrationTest`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration(classes = {
+			TransferServiceConfig.class,
+			StandaloneDataConfig.class,
+			JndiDataConfig.class,
+			DefaultDataConfig.class})
+	@ActiveProfiles("dev")
+	public abstract class AbstractIntegrationTest {
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	// "dev" profile inherited from superclass
+	public class TransferServiceTest extends AbstractIntegrationTest {
+
+		@Autowired
+		private TransferService transferService;
+
+		@Test
+		public void testTransferService() {
+			// test the transferService
+		}
+	}
+----
+
+`@ActiveProfiles` also supports an `inheritProfiles` attribute that can be used to
+disable the inheritance of active profiles.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	// "dev" profile overridden with "production"
+	@ActiveProfiles(profiles = "production", inheritProfiles = false)
+	public class ProductionTransferServiceTest extends AbstractIntegrationTest {
+		// test body
+	}
+----
+
+[[testcontext-ctx-management-env-profiles-ActiveProfilesResolver]]
+Furthermore, it is sometimes necessary to resolve active profiles for tests
+__programmatically__ instead of declaratively -- for example, based on:
+
+* the current operating system
+* whether tests are being executed on a continuous integration build server
+* the presence of certain environment variables
+* the presence of custom class-level annotations
+* etc.
+
+To resolve active bean definition profiles programmatically, simply implement a custom
+`ActiveProfilesResolver` and register it via the `resolver` attribute of
+`@ActiveProfiles`. The following example demonstrates how to implement and register a
+custom `OperatingSystemActiveProfilesResolver`. For further information, refer to the
+corresponding javadocs.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service;
+
+	// "dev" profile overridden programmatically via a custom resolver
+	@ActiveProfiles(
+		resolver = OperatingSystemActiveProfilesResolver.class,
+		inheritProfiles = false)
+	public class TransferServiceTest extends AbstractIntegrationTest {
+		// test body
+	}
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	package com.bank.service.test;
+
+	public class OperatingSystemActiveProfilesResolver implements ActiveProfilesResolver {
+
+		@Override
+		String[] resolve(Class<?> testClass) {
+			String profile = ...;
+			// determine the value of profile based on the operating system
+			return new String[] {profile};
+		}
+	}
+----
+
+[[testcontext-ctx-management-property-sources]]
+====== Context configuration with test property sources
+
+Spring 3.1 introduced first-class support in the framework for the notion of an
+environment with a hierarchy of _property sources_, and since Spring 4.1 integration
+tests can be configured with test-specific property sources. In contrast to the
+`@PropertySource` annotation used on `@Configuration` classes, the `@TestPropertySource`
+annotation can be declared on a test class to declare resource locations for test
+properties files or _inlined_ properties. These test property sources will be added to
+the `Environment`'s set of `PropertySources` for the `ApplicationContext` loaded for the
+annotated integration test.
+
+[NOTE]
+====
+`@TestPropertySource` may be used with any implementation of the `SmartContextLoader`
+SPI, but `@TestPropertySource` is not supported with implementations of the older
+`ContextLoader` SPI.
+
+Implementations of `SmartContextLoader` gain access to merged test property source values
+via the `getPropertySourceLocations()` and `getPropertySourceProperties()` methods in
+`MergedContextConfiguration`.
+====
+
+*Declaring test property sources*
+
+Test properties files can be configured via the `locations` or `value` attribute of
+`@TestPropertySource` as shown in the following example.
+
+Both traditional and XML-based properties file formats are supported -- for example,
+`"classpath:/com/example/test.properties"` or `"file:///path/to/file.xml"`.
+
+Each path will be interpreted as a Spring `Resource`. A plain path -- for example,
+`"test.properties"` -- will be treated as a classpath resource that is _relative_ to the
+package in which the test class is defined. A path starting with a slash will be treated
+as an _absolute_ classpath resource, for example: `"/org/example/test.xml"`. A path which
+references a URL (e.g., a path prefixed with `classpath:`, `file:`, `http:`, etc.) will
+be loaded using the specified resource protocol. Resource location wildcards (e.g.
+`**/*.properties`) are not permitted: each location must evaluate to exactly one
+`.properties` or `.xml` resource.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	@TestPropertySource("/test.properties")
+	public class MyIntegrationTests {
+		// class body...
+	}
+----
+
+_Inlined_ properties in the form of key-value pairs can be configured via the
+`properties` attribute of `@TestPropertySource` as shown in the following example. All
+key-value pairs will be added to the enclosing `Environment` as a single test
+`PropertySource` with the highest precedence.
+
+The supported syntax for key-value pairs is the same as the syntax defined for entries in
+a Java properties file:
+
+* `"key=value"`
+* `"key:value"`
+* `"key value"`
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	@TestPropertySource(properties = {"timezone = GMT", "port: 4242"})
+	public class MyIntegrationTests {
+		// class body...
+	}
+----
+
+*Default properties file detection*
+
+If `@TestPropertySource` is declared as an empty annotation (i.e., without explicit
+values for the `locations` or `properties` attributes), an attempt will be made to detect
+a _default_ properties file relative to the class that declared the annotation. For
+example, if the annotated test class is `com.example.MyTest`, the corresponding default
+properties file is `"classpath:com/example/MyTest.properties"`. If the default cannot be
+detected, an `IllegalStateException` will be thrown.
+
+*Precedence*
+
+Test property sources have higher precedence than those loaded from the operating
+system's environment or Java system properties as well as property sources added by the
+application declaratively via `@PropertySource` or programmatically. Thus, test property
+sources can be used to selectively override properties defined in system and application
+property sources. Furthermore, inlined properties have higher precedence than properties
+loaded from resource locations.
+
+In the following example, the `timezone` and `port` properties as well as any properties
+defined in `"/test.properties"` will override any properties of the same name that are
+defined in system and application property sources. Furthermore, if the
+`"/test.properties"` file defines entries for the `timezone` and `port` properties those
+will be overridden by the _inlined_ properties declared via the `properties` attribute.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	@TestPropertySource(
+		locations = "/test.properties",
+		properties = {"timezone = GMT", "port: 4242"}
+	)
+	public class MyIntegrationTests {
+		// class body...
+	}
+----
+
+*Inheriting and overriding test property sources*
+
+`@TestPropertySource` supports boolean `inheritLocations` and `inheritProperties`
+attributes that denote whether resource locations for properties files and inlined
+properties declared by superclasses should be __inherited__. The default value for both
+flags is `true`. This means that a test class inherits the locations and inlined
+properties declared by any superclasses. Specifically, the locations and inlined
+properties for a test class are appended to the locations and inlined properties declared
+by superclasses. Thus, subclasses have the option of __extending__ the locations and
+inlined properties. Note that properties that appear later will __shadow__ (i.e..,
+override) properties of the same name that appear earlier. In addition, the
+aforementioned precedence rules apply for inherited test property sources as well.
+
+If `@TestPropertySource`'s `inheritLocations` or `inheritProperties` attribute is set to
+`false`, the locations or inlined properties, respectively, for the test class __shadow__
+and effectively replace the configuration defined by superclasses.
+
+In the following example, the `ApplicationContext` for `BaseTest` will be loaded using
+only the `"base.properties"` file as a test property source. In contrast, the
+`ApplicationContext` for `ExtendedTest` will be loaded using the `"base.properties"`
+**and** `"extended.properties"` files as test property source locations.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@TestPropertySource("base.properties")
+	@ContextConfiguration
+	public class BaseTest {
+		// ...
+	}
+
+	@TestPropertySource("extended.properties")
+	@ContextConfiguration
+	public class ExtendedTest extends BaseTest {
+		// ...
+	}
+----
+
+In the following example, the `ApplicationContext` for `BaseTest` will be loaded using only
+the _inlined_ `key1` property. In contrast, the `ApplicationContext` for `ExtendedTest` will be
+loaded using the _inlined_ `key1` and `key2` properties.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@TestPropertySource(properties = "key1 = value1")
+	@ContextConfiguration
+	public class BaseTest {
+		// ...
+	}
+
+	@TestPropertySource(properties = "key2 = value2")
+	@ContextConfiguration
+	public class ExtendedTest extends BaseTest {
+		// ...
+	}
+----
+
+[[testcontext-ctx-management-web]]
+====== Loading a WebApplicationContext
+Spring 3.2 introduced support for loading a `WebApplicationContext` in integration
+tests. To instruct the TestContext framework to load a `WebApplicationContext` instead
+of a standard `ApplicationContext`, simply annotate the respective test class with
+`@WebAppConfiguration`.
+
+The presence of `@WebAppConfiguration` on your test class instructs the TestContext
+framework (TCF) that a `WebApplicationContext` (WAC) should be loaded for your
+integration tests. In the background the TCF makes sure that a `MockServletContext` is
+created and supplied to your test's WAC. By default the base resource path for your
+`MockServletContext` will be set to __"src/main/webapp"__. This is interpreted as a path
+relative to the root of your JVM (i.e., normally the path to your project). If you're
+familiar with the directory structure of a web application in a Maven project, you'll
+know that __"src/main/webapp"__ is the default location for the root of your WAR. If you
+need to override this default, simply provide an alternate path to the
+`@WebAppConfiguration` annotation (e.g., `@WebAppConfiguration("src/test/webapp")`). If
+you wish to reference a base resource path from the classpath instead of the file
+system, just use Spring's __classpath:__ prefix.
+
+Please note that Spring's testing support for `WebApplicationContexts` is on par with
+its support for standard `ApplicationContexts`. When testing with a
+`WebApplicationContext` you are free to declare either XML configuration files or
+`@Configuration` classes via `@ContextConfiguration`. You are of course also free to use
+any other test annotations such as `@TestExecutionListeners`,
+`@TransactionConfiguration`, `@ActiveProfiles`, etc.
+
+The following examples demonstrate some of the various configuration options for loading
+a `WebApplicationContext`.
+
+.Conventions
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+
+	// defaults to "file:src/main/webapp"
+	@WebAppConfiguration
+
+	// detects "WacTests-context.xml" in same package
+	// or static nested @Configuration class
+	@ContextConfiguration
+
+	public class WacTests {
+		//...
+	}
+----
+
+The above example demonstrates the TestContext framework's support for __convention over
+configuration__. If you annotate a test class with `@WebAppConfiguration` without
+specifying a resource base path, the resource path will effectively default
+to __"file:src/main/webapp"__. Similarly, if you declare `@ContextConfiguration` without
+specifying resource `locations`, annotated `classes`, or context `initializers`, Spring
+will attempt to detect the presence of your configuration using conventions
+(i.e., __"WacTests-context.xml"__ in the same package as the `WacTests` class or static
+nested `@Configuration` classes).
+
+.Default resource semantics
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+
+	// file system resource
+	@WebAppConfiguration("webapp")
+
+	// classpath resource
+	@ContextConfiguration("/spring/test-servlet-config.xml")
+
+	public class WacTests {
+		//...
+	}
+----
+
+This example demonstrates how to explicitly declare a resource base path with
+`@WebAppConfiguration` and an XML resource location with `@ContextConfiguration`. The
+important thing to note here is the different semantics for paths with these two
+annotations. By default, `@WebAppConfiguration` resource paths are file system based;
+whereas, `@ContextConfiguration` resource locations are classpath based.
+
+.Explicit resource semantics
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+
+	// classpath resource
+	@WebAppConfiguration("classpath:test-web-resources")
+
+	// file system resource
+	@ContextConfiguration("file:src/main/webapp/WEB-INF/servlet-config.xml")
+
+	public class WacTests {
+		//...
+	}
+----
+
+In this third example, we see that we can override the default resource semantics for
+both annotations by specifying a Spring resource prefix. Contrast the comments in this
+example with the previous example.
+
+.[[testcontext-ctx-management-web-mocks]]Working with Web Mocks
+--
+To provide comprehensive web testing support, Spring 3.2 introduced a
+`ServletTestExecutionListener` that is enabled by default. When testing against a
+`WebApplicationContext` this <<testcontext-key-abstractions,TestExecutionListener>> sets
+up default thread-local state via Spring Web's `RequestContextHolder` before each test
+method and creates a `MockHttpServletRequest`, `MockHttpServletResponse`, and
+`ServletWebRequest` based on the base resource path configured via
+`@WebAppConfiguration`. `ServletTestExecutionListener` also ensures that the
+`MockHttpServletResponse` and `ServletWebRequest` can be injected into the test
+instance, and once the test is complete it cleans up thread-local state.
+
+Once you have a `WebApplicationContext` loaded for your test you might find that you
+need to interact with the web mocks -- for example, to set up your test fixture or to
+perform assertions after invoking your web component. The following example demonstrates
+which mocks can be autowired into your test instance. Note that the
+`WebApplicationContext` and `MockServletContext` are both cached across the test suite;
+whereas, the other mocks are managed per test method by the
+`ServletTestExecutionListener`.
+
+.Injecting mocks
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@WebAppConfiguration
+	@ContextConfiguration
+	public class WacTests {
+
+		@Autowired
+		WebApplicationContext wac; // cached
+
+		@Autowired
+		MockServletContext servletContext; // cached
+
+		@Autowired
+		MockHttpSession session;
+
+		@Autowired
+		MockHttpServletRequest request;
+
+		@Autowired
+		MockHttpServletResponse response;
+
+		@Autowired
+		ServletWebRequest webRequest;
+
+		//...
+	}
+----
+--
+
+[[testcontext-ctx-management-caching]]
+====== Context caching
+
+Once the TestContext framework loads an `ApplicationContext` (or `WebApplicationContext`)
+for a test, that context will be cached and reused for __all__ subsequent tests that
+declare the same unique context configuration within the same test suite. To understand
+how caching works, it is important to understand what is meant by __unique__ and __test
+suite__.
+
+An `ApplicationContext` can be __uniquely__ identified by the combination of
+configuration parameters that are used to load it. Consequently, the unique combination
+of configuration parameters are used to generate a __key__ under which the context is
+cached. The TestContext framework uses the following configuration parameters to build
+the context cache key:
+
+* `locations` __(from @ContextConfiguration)__
+* `classes` __(from @ContextConfiguration)__
+* `contextInitializerClasses` __(from @ContextConfiguration)__
+* `contextLoader` __(from @ContextConfiguration)__
+* `parent` __(from @ContextHierarchy)__
+* `activeProfiles` __(from @ActiveProfiles)__
+* `propertySourceLocations` __(from @TestPropertySource)__
+* `propertySourceProperties` __(from @TestPropertySource)__
+* `resourceBasePath` __(from @WebAppConfiguration)__
+
+For example, if `TestClassA` specifies `{"app-config.xml", "test-config.xml"}` for the
+`locations` (or `value`) attribute of `@ContextConfiguration`, the TestContext framework
+will load the corresponding `ApplicationContext` and store it in a `static` context cache
+under a key that is based solely on those locations. So if `TestClassB` also defines
+`{"app-config.xml", "test-config.xml"}` for its locations (either explicitly or
+implicitly through inheritance) but does not define `@WebAppConfiguration`, a different
+`ContextLoader`, different active profiles, different context initializers, different
+test property sources, or a different parent context, then the same `ApplicationContext`
+will be shared by both test classes. This means that the setup cost for loading an
+application context is incurred only once (per test suite), and subsequent test execution
+is much faster.
+
+.Test suites and forked processes
+[NOTE]
+====
+The Spring TestContext framework stores application contexts in a __static__ cache. This
+means that the context is literally stored in a `static` variable. In other words, if
+tests execute in separate processes the static cache will be cleared between each test
+execution, and this will effectively disable the caching mechanism.
+
+To benefit from the caching mechanism, all tests must run within the same process or
+test suite. This can be achieved by executing all tests as a group within an IDE.
+Similarly, when executing tests with a build framework such as Ant, Maven, or Gradle it
+is important to make sure that the build framework does not __fork__ between tests. For
+example, if the
+http://maven.apache.org/plugins/maven-surefire-plugin/test-mojo.html#forkMode[forkMode]
+for the Maven Surefire plug-in is set to `always` or `pertest`, the TestContext
+framework will not be able to cache application contexts between test classes and the
+build process will run significantly slower as a result.
+====
+
+Since having a large number of application contexts loaded within a given test suite can
+cause the suite to take an unnecessarily long time to execute, it is often beneficial to
+know exactly how many contexts have been loaded and cached. To view the statistics for
+the underlying context cache, simply set the log level for the
+`org.springframework.test.context.cache` logging category to `DEBUG`.
+
+In the unlikely case that a test corrupts the application context and requires reloading
+-- for example, by modifying a bean definition or the state of an application object --
+you can annotate your test class or test method with `@DirtiesContext` (see the
+discussion of `@DirtiesContext` in <<integration-testing-annotations-spring>>). This
+instructs Spring to remove the context from the cache and rebuild the application
+context before executing the next test. Note that support for the `@DirtiesContext`
+annotation is provided by the `DirtiesContextTestExecutionListener` which is enabled by
+default.
+
+
+[[testcontext-ctx-management-ctx-hierarchies]]
+====== Context hierarchies
+
+When writing integration tests that rely on a loaded Spring `ApplicationContext`, it is
+often sufficient to test against a single context; however, there are times when it is
+beneficial or even necessary to test against a hierarchy of ++ApplicationContext++s. For
+example, if you are developing a Spring MVC web application you will typically have a
+root `WebApplicationContext` loaded via Spring's `ContextLoaderListener` and a child
+`WebApplicationContext` loaded via Spring's `DispatcherServlet`. This results in a
+parent-child context hierarchy where shared components and infrastructure configuration
+are declared in the root context and consumed in the child context by web-specific
+components. Another use case can be found in Spring Batch applications where you often
+have a parent context that provides configuration for shared batch infrastructure and a
+child context for the configuration of a specific batch job.
+
+As of Spring Framework 3.2.2, it is possible to write integration tests that use context
+hierarchies by declaring context configuration via the `@ContextHierarchy` annotation,
+either on an individual test class or within a test class hierarchy. If a context
+hierarchy is declared on multiple classes within a test class hierarchy it is also
+possible to merge or override the context configuration for a specific, named level in
+the context hierarchy. When merging configuration for a given level in the hierarchy the
+configuration resource type (i.e., XML configuration files or annotated classes) must be
+consistent; otherwise, it is perfectly acceptable to have different levels in a context
+hierarchy configured using different resource types.
+
+The following JUnit-based examples demonstrate common configuration scenarios for
+integration tests that require the use of context hierarchies.
+
+.Single test class with context hierarchy
+--
+`ControllerIntegrationTests` represents a typical integration testing scenario for a
+Spring MVC web application by declaring a context hierarchy consisting of two levels,
+one for the __root__ WebApplicationContext (loaded using the `TestAppConfig`
+`@Configuration` class) and one for the __dispatcher servlet__ `WebApplicationContext`
+(loaded using the `WebConfig` `@Configuration` class). The `WebApplicationContext` that
+is __autowired__ into the test instance is the one for the child context (i.e., the
+lowest context in the hierarchy).
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@WebAppConfiguration
+	@ContextHierarchy({
+		@ContextConfiguration(classes = TestAppConfig.class),
+		@ContextConfiguration(classes = WebConfig.class)
+	})
+	public class ControllerIntegrationTests {
+
+		@Autowired
+		private WebApplicationContext wac;
+
+		// ...
+	}
+----
+
+--
+
+
+.Class hierarchy with implicit parent context
+--
+The following test classes define a context hierarchy within a test class hierarchy.
+`AbstractWebTests` declares the configuration for a root `WebApplicationContext` in a
+Spring-powered web application. Note, however, that `AbstractWebTests` does not declare
+`@ContextHierarchy`; consequently, subclasses of `AbstractWebTests` can optionally
+participate in a context hierarchy or simply follow the standard semantics for
+`@ContextConfiguration`. `SoapWebServiceTests` and `RestWebServiceTests` both extend
+`AbstractWebTests` and define a context hierarchy via `@ContextHierarchy`. The result is
+that three application contexts will be loaded (one for each declaration of
+`@ContextConfiguration`), and the application context loaded based on the configuration
+in `AbstractWebTests` will be set as the parent context for each of the contexts loaded
+for the concrete subclasses.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@WebAppConfiguration
+	@ContextConfiguration("file:src/main/webapp/WEB-INF/applicationContext.xml")
+	public abstract class AbstractWebTests {}
+
+	@ContextHierarchy(@ContextConfiguration("/spring/soap-ws-config.xml")
+	public class SoapWebServiceTests extends AbstractWebTests {}
+
+	@ContextHierarchy(@ContextConfiguration("/spring/rest-ws-config.xml")
+	public class RestWebServiceTests extends AbstractWebTests {}
+----
+--
+
+
+.Class hierarchy with merged context hierarchy configuration
+--
+The following classes demonstrate the use of __named__ hierarchy levels in order to
+__merge__ the configuration for specific levels in a context hierarchy. `BaseTests`
+defines two levels in the hierarchy, `parent` and `child`. `ExtendedTests` extends
+`BaseTests` and instructs the Spring TestContext Framework to merge the context
+configuration for the `child` hierarchy level, simply by ensuring that the names
+declared via `ContextConfiguration`'s `name` attribute are both `"child"`. The result is
+that three application contexts will be loaded: one for `"/app-config.xml"`, one for
+`"/user-config.xml"`, and one for `{"/user-config.xml", "/order-config.xml"}`. As with
+the previous example, the application context loaded from `"/app-config.xml"` will be
+set as the parent context for the contexts loaded from `"/user-config.xml"` and
+`{"/user-config.xml", "/order-config.xml"}`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextHierarchy({
+		@ContextConfiguration(name = "parent", locations = "/app-config.xml"),
+		@ContextConfiguration(name = "child", locations = "/user-config.xml")
+	})
+	public class BaseTests {}
+
+	@ContextHierarchy(
+		@ContextConfiguration(name = "child", locations = "/order-config.xml")
+	)
+	public class ExtendedTests extends BaseTests {}
+----
+--
+
+.Class hierarchy with overridden context hierarchy configuration
+--
+In contrast to the previous example, this example demonstrates how to __override__ the
+configuration for a given named level in a context hierarchy by setting
+++ContextConfiguration++'s `inheritLocations` flag to `false`. Consequently, the
+application context for `ExtendedTests` will be loaded only from
+`"/test-user-config.xml"` and will have its parent set to the context loaded from
+`"/app-config.xml"`.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextHierarchy({
+		@ContextConfiguration(name = "parent", locations = "/app-config.xml"),
+		@ContextConfiguration(name = "child", locations = "/user-config.xml")
+	})
+	public class BaseTests {}
+
+	@ContextHierarchy(
+		@ContextConfiguration(
+			name = "child",
+			locations = "/test-user-config.xml",
+			inheritLocations = false
+	))
+	public class ExtendedTests extends BaseTests {}
+----
+
+.Dirtying a context within a context hierarchy
+[NOTE]
+====
+If `@DirtiesContext` is used in a test whose context is configured as part of a context
+hierarchy, the `hierarchyMode` flag can be used to control how the context cache is
+cleared. For further details consult the discussion of `@DirtiesContext` in
+<<integration-testing-annotations-spring,Spring Testing Annotations>> and the
+`@DirtiesContext` javadocs.
+====
+--
+
+
+
+
