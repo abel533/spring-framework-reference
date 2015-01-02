@@ -1,29 +1,14 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>Part&nbsp;III.&nbsp;Core Technologies</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="index.html" title="Spring Framework Reference Documentation"><link rel="prev" href="new-in-4.1.html" title="4.&nbsp;Spring 4.1&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;"><link rel="next" href="beans.html" title="5.&nbsp;The IoC container"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Part&nbsp;III.&nbsp;Core Technologies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="new-in-4.1.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="beans.html">Next</a></td></tr></table><hr></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="spring-core" href="#spring-core"></a>Part&nbsp;III.&nbsp;Core Technologies</h1></div></div></div>
+   <title>Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="index.html" title="Spring Framework Reference Documentation"><link rel="prev" href="new-in-4.1.html" title="4.&nbsp;Spring 4.1&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;"><link rel="next" href="beans.html" title="5.&nbsp;IoC &#23481;&#22120;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="new-in-4.1.html">Prev</a>&nbsp;</td><th width="60%" align="center">&nbsp;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="beans.html">Next</a></td></tr></table><hr></div><div class="part"><div class="titlepage"><div><div><h1 class="title"><a name="spring-core" href="#spring-core"></a>Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;</h1></div></div></div>
 
 <div class="partintro"><div></div>
-<p>This part of the reference documentation covers all of those technologies that are
-absolutely integral to the Spring Framework.</p>
-<p>Foremost amongst these is the Spring Framework&#8217;s Inversion of Control (IoC) container. A
-thorough treatment of the Spring Framework&#8217;s IoC container is closely followed by
-comprehensive coverage of Spring&#8217;s Aspect-Oriented Programming (AOP) technologies. The
-Spring Framework has its own AOP framework, which is conceptually easy to understand,
-and which successfully addresses the 80% sweet spot of AOP requirements in Java
-enterprise programming.</p>
-<p>Coverage of Spring&#8217;s integration with AspectJ (currently the richest - in terms of
-features - and certainly most mature AOP implementation in the Java enterprise space) is
-also provided.</p>
-<p>Finally, the adoption of the test-driven-development (TDD) approach to software
-development is certainly advocated by the Spring team, and so coverage of Spring&#8217;s
-support for integration testing is covered (alongside best practices for unit testing).
-The Spring team has found that the correct use of IoC certainly does make both unit and
-integration testing easier (in that the presence of setter methods and appropriate
-constructors on classes makes them easier to wire together in a test without having to
-set up service locator registries and suchlike)&#8230; the chapter dedicated solely to
-testing will hopefully convince you of this as well.</p>
+<p>&#21442;&#32771;&#25991;&#26723;&#36825;&#19968;&#37096;&#20998;&#28085;&#30422;&#30340;&#25152;&#26377;&#25216;&#26415;&#32477;&#23545;&#37117;&#26159;Spring&#26694;&#26550;&#19981;&#21487;&#25110;&#32570;&#30340;&#32452;&#25104;&#37096;&#20998;&#12290;</p>
+<p>&#20854;&#20013;&#26368;&#20027;&#35201;&#30340;&#23601;&#26159;Spring&#26694;&#26550;&#30340;&#25511;&#21046;&#21453;&#36716;&#65288;IoC&#65289;&#23481;&#22120;&#12290;&#32039;&#38543;&#20854;&#21518;&#30340;&#26159;&#20840;&#38754;&#28085;&#30422;&#30340;Spring&#38754;&#21521;&#20999;&#38754;&#32534;&#31243;&#65288;AOP&#65289;&#25216;&#26415;&#12290;Spring&#26377;&#33258;&#24049;&#30340;AOP&#26694;&#26550;&#12290;&#36825;&#20010;AOP&#26694;&#26550;&#26131;&#20110;&#29702;&#35299;&#65292;&#24182;&#19988;&#25104;&#21151;&#30340;&#35299;&#20915;&#20102;Java&#20225;&#19994;&#32534;&#31243;&#20013;80%&#30340;AOP&#38656;&#27714;&#12290;</p>
+<p>&#36824;&#25552;&#20379;&#20102;&#20351;&#29992;AspectJ&#65288;&#30446;&#21069;&#26368;&#20840;&#38754;&#26368;&#25104;&#29087;&#30340;&#30340;&#20225;&#19994;&#32423;AOP&#26694;&#26550;&#65289;&#19982;Spring&#38598;&#25104;&#30340;&#20869;&#23481;&#12290;</p>
+<p>&#26368;&#21518;&#65292;Spring&#22242;&#38431;&#25552;&#20513;&#36890;&#36807;&#27979;&#35797;&#39537;&#21160;&#65288;TDD&#65289;&#24320;&#21457;&#36719;&#20214;&#65292;&#25152;&#20197;&#36825;&#37324;&#20063;&#28085;&#30422;&#20102;Spring&#38598;&#25104;&#27979;&#35797;&#30340;&#20869;&#23481;&#65288;&#22312;&#21333;&#20803;&#27979;&#35797;&#26368;&#20339;&#23454;&#36341;&#30340;&#26049;&#36793;&#65289;&#12290;Spring&#22242;&#38431;&#21457;&#29616;&#27491;&#30830;&#30340;&#20351;&#29992;Ioc&#21487;&#20197;&#20351;&#21333;&#20803;&#27979;&#35797;&#21644;&#38598;&#25104;&#27979;&#35797;&#26356;&#23481;&#26131;&#65288;&#22914;&#31867;&#20013;&#23384;&#22312;&#30340;setter&#26041;&#27861;&#21644;&#36866;&#24403;&#30340;&#30340;&#26500;&#36896;&#26041;&#27861;&#21487;&#20197;&#22312;&#27979;&#35797;&#20013;&#20351;&#24471;&#23427;&#20204;&#26356;&#23481;&#26131;&#22312;&#19968;&#36215;&#65292;&#32780;&#19981;&#38656;&#35201;&#23545;&#26381;&#21153;&#23450;&#20301;&#22120;&#36827;&#34892;&#27880;&#20876;&#65289;&#8230;,&#19987;&#38376;&#33268;&#21147;&#20110;&#27979;&#35797;&#30340;&#36825;&#19968;&#31456;&#26377;&#24076;&#26395;&#35828;&#26381;&#20320;&#35748;&#21516;&#36825;&#19968;&#28857;&#12290;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="xref" href="beans.html" title="5.&nbsp;The IoC container">Chapter&nbsp;5, <i>The IoC container</i></a>
+<a class="xref" href="beans.html" title="5.&nbsp;IoC &#23481;&#22120;">Chapter&nbsp;5, <i>IoC &#23481;&#22120;</i></a>
 </li><li class="listitem">
 <a class="xref" href="resources.html" title="6.&nbsp;Resources">Chapter&nbsp;6, <i>Resources</i></a>
 </li><li class="listitem">
@@ -46,4 +31,4 @@ testing will hopefully convince you of this as well.</p>
 
 
 
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-in-4.1.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="beans.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.&nbsp;Spring 4.1&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;5.&nbsp;The IoC container</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-in-4.1.html">Prev</a>&nbsp;</td><td width="20%" align="center">&nbsp;</td><td width="40%" align="right">&nbsp;<a accesskey="n" href="beans.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">4.&nbsp;Spring 4.1&#22686;&#24378;&#21644;&#26032;&#21151;&#33021;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;5.&nbsp;IoC &#23481;&#22120;</td></tr></table></div></body></html>
