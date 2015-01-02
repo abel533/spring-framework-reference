@@ -144,13 +144,9 @@ to use, for example, the transaction abstraction with JDBC or Hibernate.
 [[mvc-servlet]]
 === The DispatcherServlet
 
-Spring's web MVC framework is, like many other web MVC frameworks, request-driven,
-designed around a central Servlet that dispatches requests to controllers and offers
-other functionality that facilitates the development of web applications. Spring's
-`DispatcherServlet` however, does more than just that. It is completely integrated with
-the Spring IoC container and as such allows you to use every other feature that Spring
-has.
+像其他 web MVC 框架一样， Spring web MVC 框架也是基于请求驱动，围绕一个核心 Servlet 转发请求到对应的 Controller 而设计的，提供对web 程序开发的基础的支持。然而 Spring 的 `DispatcherServlet` 并不仅仅拥有这些，因为 Spring MVC 框架集成了 Spring IOC 容器，因此，Spring MVC  可以使用 Spring 提供的其他功能。            
 
+如图，展示了 Spring web MVC `DispatcherServlet` 处理请求的流程。
 The request processing workflow of the Spring Web MVC `DispatcherServlet` is illustrated
 in the following diagram. The pattern-savvy reader will recognize that the
 `DispatcherServlet` is an expression of the "Front Controller" design pattern (this is a
@@ -158,13 +154,9 @@ pattern that Spring Web MVC shares with many other leading web frameworks).
 
 image::images/mvc.png[width=400]
 
-The request processing workflow in Spring Web MVC (high level)
+Spring Web MVC 请求的处理的宏观图
 
-The `DispatcherServlet` is an actual `Servlet` (it inherits from the `HttpServlet` base
-class), and as such is declared in the `web.xml` of your web application. You need to
-map requests that you want the `DispatcherServlet` to handle, by using a URL mapping in
-the same `web.xml` file. This is standard Java EE Servlet configuration; the following
-example shows such a `DispatcherServlet` declaration and mapping:
+`DispatcherServlet` 继承了 `HttpServlet` ，是一个真实的 Servlet，因此可以在 `web.xml` 文件声明。另外你需要使用 url 匹配元件指定 `DispatcherServlet` 处理的请求。如下例子，使用了标准 java EE Servlet 配置，配置了一个 `DispatcherServlet`的声明和匹配 url 元件: 
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -184,10 +176,7 @@ example shows such a `DispatcherServlet` declaration and mapping:
 	</web-app>
 ----
 
-In the preceding example, all requests starting with `/example` will be handled by the
-`DispatcherServlet` instance named `example`. In a Servlet 3.0+ environment, you also
-have the option of configuring the Servlet container programmatically. Below is the code
-based equivalent of the above `web.xml` example:
+在刚才配置的例子中，所有以 `/example` 开始的请求都会被名为 `example` 的 `DispatcherServlet` 所处理。在 Servlet 3.0+ 环境，也可以以编程方式配置上述 `DispatcherServlet`。如下代码与上述 `web.xml` 配置例子等效:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -204,16 +193,12 @@ based equivalent of the above `web.xml` example:
 	}
 ----
 
-`WebApplicationInitializer` is an interface provided by Spring MVC that ensures your
-code-based configuration is detected and automatically used to initialize any Servlet 3
-container. An abstract base class implementation of this interace named
-`AbstractDispatcherServletInitializer` makes it even easier to register the
-`DispatcherServlet` by simply specifying its servlet mapping.
-See <<mvc-container-config,Code-based Servlet container initialization>> for more details.
+Spring MVC 提供的 `WebApplicationInitializer` 接口，可以确保检测到基于代码的配置和用来自动初始化基于 Servlet 3 的容器。它有一个抽象的实现类 `AbstractDispatcherServletInitializer`,简化了`DispatcherServlet` 的注册，只需指定 servlet mapping 就可以了，详情请参考  <<mvc-container-config,Code-based Servlet container initialization>>。
 
-The above is only the first step in setting up Spring Web MVC. You now need to configure
-the various beans used by the Spring Web MVC framework (over and above the
-`DispatcherServlet` itself).
+上述的操作仅仅是开启了 Spring Web MVC 之旅的第一步，现在你需要配置 Spring Web MVC 所使用到的各种 bean(这这不在本节讨论范围)。
+
+如 <<context-introduction>> 所描述那样，在Spring里可以获取到 `ApplicationContext` 实例。在 web MVC 框架，每一个 `DispatcherServlet` 都拥有自己的 `WebApplicationContext`，这个 
+`WebApplicationContext`，这个 `WebApplicationContext` 继承了根 `WebApplicationContext` 定义的所有 bean.
 
 As detailed in <<context-introduction>>, `ApplicationContext` instances in Spring can be
 scoped. In the Web MVC framework, each `DispatcherServlet` has its own
@@ -221,15 +206,14 @@ scoped. In the Web MVC framework, each `DispatcherServlet` has its own
 `WebApplicationContext`. These inherited beans can be overridden in the servlet-specific
 scope, and you can define new scope-specific beans local to a given Servlet instance.
 
-.Context hierarchy in Spring Web MVC
+. Spring Web MVC 上下文的层次结构
 image::images/mvc-contexts.gif[width=400]
 
-Upon initialization of a `DispatcherServlet`, Spring MVC looks for a file named
-__[servlet-name]-servlet.xml__ in the `WEB-INF` directory of your web application and
-creates the beans defined there, overriding the definitions of any beans defined with
-the same name in the global scope.
 
-Consider the following `DispatcherServlet` Servlet configuration (in the `web.xml` file):
+`DispatcherServlet` 在初始化时，Spring MVC 会查找 web 应用 `WEB_INF` 目录下的__[servlet-name]-servlet.xml__ 并创建在此文件定义的 bean,若在全局范围里有一个名称相同的 bean，全局范围的 bean 会被覆盖掉。
+
+
+假设`DispatcherServlet` Servlet 的配置如下(在 web.xml 配置)：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -247,13 +231,7 @@ Consider the following `DispatcherServlet` Servlet configuration (in the `web.xm
 	</web-app>
 ----
 
-With the above Servlet configuration in place, you will need to have a file called
-`/WEB-INF/golfing-servlet.xml` in your application; this file will contain all of your
-Spring Web MVC-specific components (beans). You can change the exact location of this
-configuration file through a Servlet initialization parameter (see below for details).
-
-It is also possible to have just one root context for single DispatcherServlet scenarios
-by setting an empty contextConfigLocation servlet init parameter, as shown below:
+上述配置，要求在应用程序在 `WEB-INF` 目录下有一个 `golfing-servlet.xml` 的文件，在这个文件里，会包含 Spring MVC 的所有组件(beans)。你可以通过定义 servlet 初始化参数来改变__[servlet-name]-servlet.xml__ 文件的路径，如下：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -283,59 +261,39 @@ by setting an empty contextConfigLocation servlet init parameter, as shown below
 ----
 
 
-The `WebApplicationContext` is an extension of the plain `ApplicationContext` that has
-some extra features necessary for web applications. It differs from a normal
-`ApplicationContext` in that it is capable of resolving themes (see
-<<mvc-themeresolver>>), and that it knows which Servlet it is associated with (by having
-a link to the `ServletContext`). The `WebApplicationContext` is bound in the
-`ServletContext`, and by using static methods on the `RequestContextUtils` class you can
-always look up the `WebApplicationContext` if you need access to it.
-
+`WebApplicationContext` 扩展了 `ApplicationContext`，额外提供了 web 程序所需要的功能。与传统 `ApplicationContext` 不同的是，`WebApplicationContext` 支持主题解析(查看 <<mvc-themeresolver>>)，并且知道其所关联的的 Servlet(通过一个指向 `ServletContext` 的引用)。`WebApplicationContext` 绑定在 `ServletContext` 里，在需要访问的时候，可以使用 `RequestContextUtils` 提供的静态方法获取 `WebApplicationContext`。
 
 
 [[mvc-servlet-special-bean-types]]
-==== Special Bean Types In the WebApplicationContext
+==== WebApplicationContext 的专用 bean
 
-The Spring `DispatcherServlet` uses special beans to process requests and render the
-appropriate views. These beans are part of Spring MVC. You can choose which special
-beans to use by simply configuring one or more of them in the `WebApplicationContext`.
-However, you don't need to do that initially since Spring MVC maintains a list of
-default beans to use if you don't configure any. More on that in the next section. First
-see the table below listing the special bean types the `DispatcherServlet` relies on.
+`DispatcherServlet`  使用了其专用的 bean 来处理请求和渲染视图。这些 bean 是 Spring 的组成部分之一，你可以选择在 `WebApplicationContext` 配置所使用一个或多个专用的bean。当然，比并不需要一开始就去配置这些专用的 bean，因为在你不配置这些 bean时，Spring 会维护一系列默认的 bean。首先我们看一下  `DispatcherServlet` 依赖了哪些专用的 bean，后续再作详解。
 
 [[mvc-webappctx-special-beans-tbl]]
-.Special bean types in the WebApplicationContext
+.WebApplicationContext 专用 bean 列表
 |===
-| Bean type| Explanation
+| Bean 类型| 解释
 
 | <<mvc-handlermapping,HandlerMapping>>
-| Maps incoming requests to handlers and a list of pre- and post-processors (handler
-  interceptors) based on some criteria the details of which vary by `HandlerMapping`
-  implementation. The most popular implementation supports annotated controllers but
-  other implementations exists as well.
+| 将传入的请求映射到处理器，与一系列基于各种条件的 pre- 和 post- 处理器，这些处理器根据 `HandlerMapping` 实现的不同而会有所差异。最会欢迎的 `HandlerMapping` 实现提供注解控制器，但其他实现也仍然是存在的。
 
 | HandlerAdapter
-| Helps the `DispatcherServlet` to invoke a handler mapped to a request regardless of
-  the handler is actually invoked. For example, invoking an annotated controller
-  requires resolving various annotations. Thus the main purpose of a `HandlerAdapter` is
-  to shield the `DispatcherServlet` from such details.
+| 帮助 `DispatcherServlet` 去调用请求所映射的 handler，不管hadler 最终是否会被调用，这个处理过程都会存在的。比如，调用注解控制器前需要解析各种 annotations。因此，`HandlerAdapter` 的主要目的就是从 `DispatcherServlet` 中屏蔽这些处理细节。
 
 | <<mvc-exceptionhandlers,HandlerExceptionResolver>>
-| Maps exceptions to views also allowing for more complex exception handling code.
+| 将异常映射到指定视图，也支持自定义更加复杂的异常处理流程
 
 | <<mvc-viewresolver,ViewResolver>>
-| Resolves logical String-based view names to actual `View` types.
+| 将合理的视图名称解释为真实的视图类型
 
 | <<mvc-localeresolver,LocaleResolver>> & <<mvc-timezone,LocaleContextResolver>>
-| Resolves the locale a client is using and possibly their time zone, in order to be able
-  to offer internationalized views
+| 解释客户端所在地区和其时区(本地化)，以便提供国际化的视图
 
 | <<mvc-themeresolver,ThemeResolver>>
-| Resolves themes your web application can use, for example, to offer personalized layouts
+| 解释 web 程序可用的主题，比如，提供个性化的布局
 
 | <<mvc-multipart,MultipartResolver>>
-| Parses multi-part requests for example to support processing file uploads from HTML
-  forms.
+| 解释 multi-part 请求，比如，在 html form 里支持文件上传
 
 | <<mvc-flash-attributes,FlashMapManager>>
 | Stores and retrieves the "input" and the "output" `FlashMap` that can be used to pass
@@ -345,22 +303,14 @@ see the table below listing the special bean types the `DispatcherServlet` relie
 
 
 [[mvc-servlet-config]]
-==== Default DispatcherServlet Configuration
-As mentioned in the previous section for each special bean the `DispatcherServlet`
-maintains a list of implementations to use by default. This information is kept in the
-file `DispatcherServlet.properties` in the package `org.springframework.web.servlet`.
+==== 默认的 DispatcherServlet 配置
+如上一节所说，每一个 `DispatcherServlet` 都维持了一系列默认的实现。这些默认实现的信息保存在 `org.springframework.web.servlet` 包里的 `DispatcherServlet.properties` 文件。
 
-All special beans have some reasonable defaults of their own. Sooner or later though
-you'll need to customize one or more of the properties these beans provide. For example
-it's quite common to configure an `InternalResourceViewResolver` settings its `prefix`
-property to the parent location of view files.
+尽管所有专用的 bean 都有其合理的默认值。迟早你也需要根据实际去自定义这些 bean 的中一个或多个属性值。例如一种很常见的自定义应用，配置一个 `InternalResourceViewResolver`，其 `prefix` 为视图文件的父文件夹。
 
-Regardless of the details, the important concept to understand here is that once
-you	configure a special bean such as an `InternalResourceViewResolver` in your
-`WebApplicationContext`, you effectively override the list of default implementations
-that would have been used otherwise for that special bean type. For example if you
-configure an `InternalResourceViewResolver`, the default list of `ViewResolver`
-implementations is ignored.
+不管这些默认细节如何实现，在这里都需要清楚一个概念——一旦在 `WebApplicationContext` 配置自己专用的 bean，就有效覆盖了原有一系列默认的实现，至少也会作为这个专用 bean 的一个实例。比如，配置了 `InternalResourceViewResolver`，默认的一系列 `ViewResolver` 实现都会被覆盖。
+
+在 <<mvc-config>> 章节，你可以知道 Spring MVC 的其他配置选项，包括 MVC java 配置和 MVC XML 的命名空间。不管你选择如何去配置应用，这一节解释的理念基本都可以帮到你。
 
 In <<mvc-config>> you'll learn about other options for configuring Spring MVC including
 MVC Java config and the MVC XML namespace both of which provide a simple starting point
@@ -371,63 +321,40 @@ should be of help to you.
 
 
 [[mvc-servlet-sequence]]
-==== DispatcherServlet Processing Sequence
-After you set up a `DispatcherServlet`, and a request comes in for that specific
-`DispatcherServlet`, the `DispatcherServlet` starts processing the request as follows:
+==== DispatcherServlet 处理顺序
+在你建立一个 `DispatcherServlet` 之后，并处理一个传进来的请求时，`DispatcherServlet` 会按照以下顺序年来处理这个请求： 
 
-* The `WebApplicationContext` is searched for and bound in the request as an attribute
-  that the controller and other elements in the process can use. It is bound by default
-  under the key `DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE`.
-* The locale resolver is bound to the request to enable elements in the process to
-  resolve the locale to use when processing the request (rendering the view, preparing
-  data, and so on). If you do not need locale resolving, you do not need it.
-* The theme resolver is bound to the request to let elements such as views determine
-  which theme to use. If you do not use themes, you can ignore it.
-* If you specify a multipart file resolver, the request is inspected for multiparts; if
-  multiparts are found, the request is wrapped in a `MultipartHttpServletRequest` for
-  further processing by other elements in the process. See <<mvc-multipart>> for further
-  information about multipart handling.
-* An appropriate handler is searched for. If a handler is found, the execution chain
-  associated with the handler (preprocessors, postprocessors, and controllers) is
-  executed in order to prepare a model or rendering.
-* If a model is returned, the view is rendered. If no model is returned, (may be due to
-  a preprocessor or postprocessor intercepting the request, perhaps for security
-  reasons), no view is rendered, because the request could already have been fulfilled.
+* 寻找 `WebApplicationContext`，并将 `WebApplicationContext`作为一个属性绑定到请求里，以便控制器或其他原件在后续中使用。默认会以 `DispatcherServlet.WEB_APPLICATION_CONTEXT_ATTRIBUTE` 键绑定到请求里。
 
-Handler exception resolvers that are declared in the `WebApplicationContext` pick up
-exceptions that are thrown during processing of the request. Using these exception
-resolvers allows you to define custom behaviors to address exceptions.
+* 将本地化解析器绑定到请求里，以便在处理这个请求时，原件可以解析到客户端的地区（为了渲染视图，准备日期等）。如果你不需要本地化解析器，可以忽略这个步骤。
 
-The Spring `DispatcherServlet` also supports the return of the
-__last-modification-date__, as specified by the Servlet API. The process of determining
-the last modification date for a specific request is straightforward: the
-`DispatcherServlet` looks up an appropriate handler mapping and tests whether the
-handler that is found implements the __LastModified__ interface. If so, the value of the
-`long getLastModified(request)` method of the `LastModified` interface is returned to
-the client.
+* 将主题解析其绑定到请求里，让原件（如视图）决定去使用哪一种主题。如果你不需要使用主题，可以忽略这个步骤。
 
-You can customize individual `DispatcherServlet` instances by adding Servlet
-initialization parameters ( `init-param` elements) to the Servlet declaration in the
-`web.xml` file. See the following table for the list of supported parameters.
+* 如果你指定一个 multipart file 解析器，会检查这个请求包含 multiparts 请求。当发现了 multiparts，这个请求会被封装为 `MultipartHttpServletRequest` 对象，提供给后续原件处理。详细信息，清参考 <<mvc-multipart>>。
+
+* 寻找合适的 handler。如何找到这个 handler，执行与这个 handler 关联的执行链，目的是准备一个 model 或 渲染。
+
+* 如果返回一个 model，渲染相对应的视图。反之（可能是因为 pre- 或 post- 处理器拦截了这个请求，也可能是权限问题），便不渲染任何视图，因为这个请求可能已执行完成。
+
+handler 异常解析是在 `WebApplicationContext` 声明的，接收在上述处理过程抛出的异常。使用异常解析器，你可以根据异常信息自定义其处理方式。
+
+`DispatcherServlet` 也支持返回 __last-modification-date__( 在 接口Servlet API 里有相应的)。让指定请求返回 __last-modification-date__ 的处理方式非常简单：`DispatcherServlet`  寻找是否有匹配的 handler，并检查这个 handler 是否 实现了 __LastModified__ 接口，如果实现了该接口，方法的`long getLastModified(request)` 的值会返回到客户端。
+
+你可以通过在 web.xml 里设置 Servlet 的初始化参数，来自定义一个 `DispatcherServlet` 实例。下表列出了 `DispatcherServlet` 支持的参数：
 
 [[mvc-disp-servlet-init-params-tbl]]
 .DispatcherServlet initialization parameters
 |===
-| Parameter| Explanation
+| 参数 | 说明
 
 | `contextClass`
-| Class that implements `WebApplicationContext`, which instantiates the context used by
-  this Servlet. By default, the `XmlWebApplicationContext` is used.
+| `WebApplicationContext` 的实现类，负责初始化 Servlet 所使用的上下文。默认使用 `XmlWebApplicationContext`
 
 | `contextConfigLocation`
-| String that is passed to the context instance (specified by `contextClass`) to
-  indicate where context(s) can be found. The string consists potentially of multiple
-  strings (using a comma as a delimiter) to support multiple contexts. In case of
-  multiple context locations with beans that are defined twice, the latest location
-  takes precedence.
+| 传给 上下文(`contextClass`) 使用的路径参数，用来说明在哪里查找上下文(配置文件)。支持以 , 分隔的多个路径参数。当路径参数出现重复时，近者优先。
 
 | `namespace`
-| Namespace of the `WebApplicationContext`. Defaults to `[servlet-name]-servlet`.
+|`WebApplicationContext` 命名规则. 默认是 `[servlet-name]-servlet`.
 |===
 
 
@@ -451,10 +378,7 @@ Portlet facilities.
 [TIP]
 ====
 
-Available in the https://github.com/spring-projects/[spring-projects Org on Github],
-a number of web applications leverage the annotation support described in this section
-including __MvcShowcase__, __MvcAjax__, __MvcBasic__, __PetClinic__, __PetCare__,
-and others.
+在 https://github.com/spring-projects/[spring-projects Org on Github] 上,有好几个项目都使用这一节谈到的注解，有__MvcShowcase__, __MvcAjax__, __MvcBasic__, __PetClinic__, __PetCare__等……
 ====
 
 [source,java,indent=0]
@@ -471,36 +395,20 @@ and others.
 	}
 ----
 
-As you can see, the `@Controller` and `@RequestMapping` annotations allow flexible
-method names and signatures. In this particular example the method accepts a `Model` and
-returns a view name as a `String`, but various other method parameters and return values
-can be used as explained later in this section. `@Controller` and `@RequestMapping` and
-a number of other annotations form the basis for the Spring MVC implementation. This
-section documents these annotations and how they are most commonly used in a Servlet
-environment.
-
+如你所见，`@Controller` 和 `@RequestMapping` 允许灵活的配置方法签名。在上述例子中，helloWorld 方法接受一个 `Model` 参数，并返回一个视图名称，当然也允许添加方法入参和返回不同类型的值，这些内容将会在后面解释。`@Controller` 、`@RequestMapping` 和其他一些功能注解组成了 Spring MVC 实现的基础，这一节将会谈到这些组成的注解和在 Servlet 环境的普遍用法。
 
 
 [[mvc-ann-controller]]
-==== Defining a controller with @Controller
+==== 使用 @Controller 定义控制器
 
-The `@Controller` annotation indicates that a particular class serves the role of
-a __controller__. Spring does not require you to extend any controller base class or
-reference the Servlet API. However, you can still reference Servlet-specific features if
-you need to.
+`@Controller` 表明了被注解类的服务角色——控制器。Spring 不需要去继承任何 Controller 的基类或引用任意的 Servlet API。当然了，如何你需要的， 你仍然可以引用 Servlet API。
 
-The `@Controller` annotation acts as a stereotype for the annotated class, indicating
-its role. The dispatcher scans such annotated classes for mapped methods and detects
-`@RequestMapping` annotations (see the next section).
 
-You can define annotated controller beans explicitly, using a standard Spring bean
-definition in the dispatcher's context. However, the `@Controller` stereotype also
-allows for autodetection, aligned with Spring general support for detecting component
-classes in the classpath and auto-registering bean definitions for them.
+`@Controller` 注解定义了被注解类的原型，表明了注解类的服务角色。dispatcher 会扫描这些被 `@Controller` 标记的类并检测 `@RequestMapping` 标记的方法(见下一节)。
 
-To enable autodetection of such annotated controllers, you add component scanning to
-your configuration. Use the __spring-context__ schema as shown in the following XML
-snippet:
+你可以在 dispatcher 上下文显式定义控制器 bean，不过，为了与 Spring 支持在类路径上检测 bean 并自动注册这些 bean 定义 保持一致，`@Controller` 也许允许自动检测。
+
+要开启注解控制器的扫描功能，需要在你的配置里添加组件扫描元件。如下 xml 所示，可以使用 _spring-context_ 模式开启此扫描功能：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -526,7 +434,9 @@ snippet:
 
 
 [[mvc-ann-requestmapping]]
-==== Mapping Requests With @RequestMapping
+==== 使用 @RequestMapping 映射请求
+
+你可以在类或指定 handler 方法上，使用 `@RequestMapping` 注解来映射 URL，如 `/appointments`。
 
 You use the `@RequestMapping` annotation to map URLs such as `/appointments` onto an
 entire class or a particular handler method. Typically the class-level annotation maps a
@@ -534,8 +444,7 @@ specific request path (or path pattern) onto a form controller, with additional
 method-level annotations narrowing the primary mapping for a specific HTTP method
 request method ("GET", "POST", etc.) or an HTTP request parameter condition.
 
-The following example from the __Petcare__ sample shows a controller in a Spring MVC
-application that uses this annotation:
+如下例子来自于  __Petcare__  项目，展示了如何使用 @RequestMapping 注解。 
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -577,20 +486,12 @@ application that uses this annotation:
 	}
 ----
 
-In the example, the `@RequestMapping` is used in a number of places. The first usage is
-on the type (class) level, which indicates that all handling methods on this controller
-are relative to the `/appointments` path. The `get()` method has a further
-`@RequestMapping` refinement: it only accepts GET requests, meaning that an HTTP GET for
-`/appointments` invokes this method. The `add()` has a similar refinement, and the
-`getNewForm()` combines the definition of HTTP method and path into one, so that GET
-requests for `appointments/new` are handled by that method.
+例子中，在多处地方使用 `@RequestMapping`。第一个用在了类上，表示`@RequestMapping` 这个控制器下的所有 handler 方法都是相对 `/appointments` 路径而言的。get() 方法对 `@RequestMapping` 做了进一步的细化 —— 此方法只接收 GET 请求方式，换句话说就是 `/appointments` 的GET 请求会调用这个方法; add() 方法也做一个类似的细化; getNewForm() 方法在 RequestMapping 上组合定义了 http 方法和路径，因此此方法会处理 `appointments/new` 的 GET 请求。
 
-The `getForDay()` method shows another usage of `@RequestMapping`: URI templates. (See
-<<mvc-ann-requestmapping-uri-templates,the next section >>).
+getForDay() 方法演示了 `@RequestMapping` 的另外一种使用方式 —— URI 模版(查看 <<mvc-ann-requestmapping-uri-templates,the next section >>)。
 
-A `@RequestMapping` on the class level is not required. Without it, all paths are simply
-absolute, and not relative. The following example from the __PetClinic__ sample
-application shows a multi-action controller using `@RequestMapping`:
+在类上添加 `@RequestMapping` 不是必须的，如果没有，所有的路径都是绝对路径，而不是相对路径。来自 __PetClinic__ 项目的例子展示如何使用 `@RequestMapping` 来定义一个 multi-action 控制器：
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -617,13 +518,12 @@ application shows a multi-action controller using `@RequestMapping`:
 	}
 ----
 
-The above example does not specify GET vs. PUT, POST, and so forth, because
-`@RequestMapping` maps all HTTP methods by default. Use `@RequestMapping(method=GET)`
-to narrow the mapping.
-
+上面的例子没有指定 GET、PUT、POST 等方法，因为 `@RequestMapping` 默认匹配所有的 http 方法。使用 `@RequestMapping(method=GET)` 可以缩小其映射范围。
 
 [[mvc-ann-requestmapping-proxying]]
-===== ++@Controller++'s and AOP Proxying
+===== ++@Controller++' 和 AOP 代理
+
+某些时候，控制器需要在运行时 AOP 代理修饰一番。
 
 In some cases a controller may need to be decorated with an AOP proxy at runtime.
 One example is if you choose to have `@Transactional` annotations directly on the
@@ -678,19 +578,13 @@ take advantage of new Spring MVC 3.1 features you'll need to use the new support
 
 
 [[mvc-ann-requestmapping-uri-templates]]
-===== URI Template Patterns
-__URI templates__ can be used for convenient access to selected parts of a URL in a
-`@RequestMapping` method.
+===== URI 模版模式
 
-A URI Template is a URI-like string, containing one or more variable names. When you
-substitute values for these variables, the template becomes a URI. The
-http://bitworking.org/projects/URI-Templates/[proposed RFC] for URI Templates defines
-how a URI is parameterized. For example, the URI Template
-`http://www.example.com/users/{userId}` contains the variable __userId__. Assigning the
-value __fred__ to the variable yields `http://www.example.com/users/fred`.
+__URI__ 模版能便捷访问 `@RequestMapping` 方法中 URL 的某些部分。
 
-In Spring MVC you can use the `@PathVariable` annotation on a method argument to bind it
-to the value of a URI template variable:
+__URI__ 模版是一个类似于 URI 的字符串，其中包含了一个或多个变量。当你将这些变量替换掉市，就变回了 URI。 URI 模版格式 http://bitworking.org/projects/URI-Templates/[proposed RFC] 定义了如何参数化 URI。比如，URI 模版 `http://www.example.com/users/{userId}`，包含了变量 __userId__，设置此变量为 __fred，就会变成`http://www.example.com/users/fred`。
+
+可在方法入参上使用注解 `@PathVariable` 绑定 URI 的模版参数：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -703,16 +597,12 @@ to the value of a URI template variable:
 	}
 ----
 
-The URI Template " `/owners/{ownerId}`" specifies the variable name `ownerId`. When the
-controller handles this request, the value of `ownerId` is set to the value found in the
-appropriate part of the URI. For example, when a request comes in for `/owners/fred`,
-the value of `ownerId` is `fred`.
+URI 模版 " `/owners/{ownerId}`" 指定了参数 `owernId`。当控制器处理这个请求时，会将 URI 中匹配的部分赋值给 `owernId` 变量。如，当传入 `/owners/fred` 请求时，`owernId` 的值就是 `fred`。 
 
-[TIP]
+[提示]
 ====
 
-To process the @PathVariable annotation, Spring MVC needs to find the matching URI
-template variable by name. You can specify it in the annotation:
+在处理 @PathVariable 注解时，Srping MVC 是根据名称来匹配 URI 模版变量的。你可以在注解里指定这个名称：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -723,9 +613,7 @@ template variable by name. You can specify it in the annotation:
 	}
 ----
 
-Or if the URI template variable name matches the method argument name you can omit that
-detail. As long as your code is not compiled without debugging information, Spring MVC
-will match the method argument name to the URI template variable name:
+如果URI 模版变量名和入参名一致，可以省略这个细节。只要你的代码不是不带调试信息的编译，Spring MVC 将匹配入参名和 URI 变量名。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -737,7 +625,7 @@ will match the method argument name to the URI template variable name:
 ----
 ====
 
-A method can have any number of `@PathVariable` annotations:
+一个方法可以有任意个 `@PathVariable` 注解。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -751,12 +639,9 @@ A method can have any number of `@PathVariable` annotations:
 	}
 ----
 
-When a `@PathVariable` annotation is used on a `Map<String, String>` argument, the map
-is populated with all URI template variables.
+当在 `Map<String, String>` 参数使用 `@PathVariable` 注解时，map 会填充所有 URI 模版变量。 
 
-A URI template can be assembled from type and path level __@RequestMapping__
-annotations. As a result the `findPet()` method can be invoked with a URL such as
-`/owners/42/pets/21`.
+URI 模版可以组合类型和参数路径的 __@RequestMapping__。因此，`findPet` 可以处理类似  `/owners/42/pets/21` 的URI 。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -773,20 +658,15 @@ annotations. As a result the `findPet()` method can be invoked with a URL such a
 	}
 ----
 
-A `@PathVariable` argument can be of __any simple type__ such as int, long, Date, etc.
-Spring automatically converts to the appropriate type or throws a
-`TypeMismatchException` if it fails to do so. You can also register support for parsing
-additional data types. See <<mvc-ann-typeconversion>> and <<mvc-ann-webdatabinder>>.
+`@PathVariable` 参数可以是任意的简单类型（如 int，long，Date 等），Spring 会自动将其进行类型转换，转换出错会抛出 `TypeMismatchException`。你可以注册支持解析其他数据类型，详情请看 <<mvc-ann-typeconversion>> 和 <<mvc-ann-webdatabinder>>.
 
 
 [[mvc-ann-requestmapping-uri-templates-regex]]
-===== URI Template Patterns with Regular Expressions
-Sometimes you need more precision in defining URI template variables. Consider the URL
-`"/spring-web/spring-web-3.0.5.jar"`. How do you break it down into multiple parts?
+===== 在 URI 模版上使用正则表达式
 
-The `@RequestMapping` annotation supports the use of regular expressions in URI template
-variables. The syntax is `{varName:regex}` where the first part defines the variable
-name and the second - the regular expression.For example:
+偶尔，在URI 模版变量里，你会需要用到更加精确的控制。比如 `"/spring-web/spring-web-3.0.5.jar"` 这样的URI，该如何拆分成多个部分？
+
+`@RequestMapping` 注解支持在 URI 模版变量里使用正则表达式。语法 `{变量名:正则表达式}`，第一个部分定义变量的名称，第二部分是正则表达式。如
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -800,68 +680,45 @@ name and the second - the regular expression.For example:
 
 
 [[mvc-ann-requestmapping-patterns]]
-===== Path Patterns
-In addition to URI templates, the `@RequestMapping` annotation also supports Ant-style
-path patterns (for example, `/myPath/*.do`). A combination of URI template variables and
-Ant-style globs is also supported (e.g. `/owners/*/pets/{petId}`).
+===== 路径模式
+`@RequestMapping` 注解处理支持 URI 模版，也支持使用 Ant 风格模式(如：`/myPath/*.do)。同时支持组合使用 URI 模版和 Ant 风格模式（如：e.g. `/owners/*/pets/{petId}`）。
 
 
 [[mvc-ann-requestmapping-pattern-comparison]]
-===== Path Pattern Comparison
-When a URL matches multiple patterns, a sort is used to find the most specific match.
+===== 路径模式比较
+当一个 URL 与多个模式匹配时，会设法找出最具体的那一个路径。
 
-A pattern with a lower count of URI variables and wild cards is considered more specific.
-For example `/hotels/{hotel}/*` has 1 URI variable and 1 wild card and is considered
-more specific than `/hotels/{hotel}/**` which as 1 URI variable and 2 wild cards.
+当模式中的 URI 模版变量和通配符的数量相对较少，会认为其相对具体。如：`/hotels/{hotel}/*` 相对 `/hotels/{hotel}/**` 更加合适，因为 `/hotels/{hotel}/*` 只有一个URI 模版变量和一个通配符，而 hotels/{hotel}/**` 有一个 URI 模版变量和两个通配符。
 
-If two patterns have the same count, the one that is longer is considered more specific.
-For example `/foo/bar*` is longer and considered more specific than `/foo/*`.
+当两个模式中的 URI 模版变量和通配符数量相同时，更详细的那一个会认为相对适合。如 `/foo/bar*`  比 `/foo/*` 更为详细。
 
-When two patterns have the same count and length, the pattern with fewer wild cards is considered more specific.
-For example `/hotels/{hotel}` is more specific than `/hotels/*`.
+当两个模式中变量个数详细程度相同时，使用更少通配符的那一个会相对具体。如  `/hotels/{hotel}` 比  `/hotels/{hotel}` 更加具体。
 
-There are also some additional special rules:
+一些额外的特别规定：
 
-* The *default mapping pattern* `/**` is less specific than any other pattern.
-For example `/api/{a}/{b}/{c}` is more specific.
-* A *prefix pattern* such as `/public/**` is less specific than any other pattern that doesn't contain double wildcards.
-For example `/public/path3/{a}/{b}/{c}` is more specific.
+* 任意模式都比默认全匹配 `/**` 模式具体。如：`/api/{a}/{b}/{c}` 比 `/**` 更加具体。
+* 任意不包含两个通配符的模式都比*前缀模式*（如 `/public/**`) 更加具体。`/public/path3/{a}/{b}/{c}` 比 `/public/**` 更加具体。
 
 For the full details see `AntPatternComparator` in `AntPathMatcher`. Note that the PathMatcher
 can be customized (see <<mvc-config-path-matching>> in the section on configuring Spring MVC).
 
+全部细节信息可查看 `AntPathMatcher` 的 `AntPatternComparator`。注意，PathMatcher 是可以自定义的。（可查看 <<mvc-config-path-matching>> 的 Spring MVC 配置）
 
 [[mvc-ann-requestmapping-placeholders]]
-===== Path Patterns with Placeholders
-Patterns in `@RequestMapping` annotations support ${...} placeholders against local
-properties and/or system properties and environment variables. This may be useful in
-cases where the path a controller is mapped to may need to be customized through
-configuration. For more information on placeholders, see the javadocs of the
-`PropertyPlaceholderConfigurer` class.
-
+===== 路径模式与占位符
+在 `@RequestMapping` 注解中，模式支持使用占位符来代替本地属性 和/或者 系统属性和环境变量。当路径需要通过配置文件来自定义时，适合使用占位符。占位符的详细信息，可以查看 `PropertyPlaceholderConfigurer` 的 javadoc。
 
 
 [[mvc-ann-requestmapping-suffix-pattern-match]]
-===== Path Pattern Matching By Suffix
-By default Spring MVC automatically performs `".*"` suffix pattern matching so
-that a controller mapped to `/person` is also implicitly mapped to `/person.*`.
-This allows indicating content types via file extensions, e.g. `/person.pdf`,
-`/person.xml`, etc. A common pitfall however is when the last path segment of the
-mapping is a URI variable, e.g. `/person/{id}`. While a request for `/person/1.json`
-would correctly result in path variable id=1 and extension ".json", when the id
-naturally contains a dot, e.g. `/person/joe@email.com` the result does not match
-expectations. Clearly here ".com" is not a file extension.
+===== 路径模式的后缀匹配
+Spring MVC 默认自动执行 `".*"` 的后缀匹配，所以当一个控制器匹配 `/person` 时，其也隐式匹配  `/person.*`。这样的设计允许通过文件扩展名来说明内容的类型名比如 `/person.pdf`,
+`/person.xml` 等。然而，这里会有一个常犯的陷阱，当路径最后的片段是 URI 模版变量时（如 `/person/{id}`），请求 `/person/1.json` 可以正确匹配路径,变量 id=1，拓展名为 json，可当 id 自身包含 . (如 `/person/joe@email.com`)，那匹配结果就不是我们所期望的，显然 ".com" 不是文件扩展名。
 
-The proper way to address this is to configure Spring MVC to only do suffix pattern
-matching against file extensions registered for content negotiation purposes.
-For more on this, first see <<mvc-config-content-negotiation>> and then
-<<mvc-config-path-matching>> showing how to enable suffix pattern matching
-along with how to use registered suffix patterns only.
-
+解决这个问题的正确方法是配置 Spring MVC 只对注册的文件扩展名做后缀匹配，这要求内容(扩展名)协商好。想做更多的了解，可以先看 <<mvc-config-content-negotiation>> 后看 <<mvc-config-path-matching>>，这里展示里如何启用后缀模式和如何只使用注册的后缀模式。
 
 
 [[mvc-ann-matrix-variables]]
-===== Matrix Variables
+===== 矩阵变量
 The URI specification http://tools.ietf.org/html/rfc3986#section-3.3[RFC 3986] defines
 the possibility of including name-value pairs within path segments. There is no specific
 term used in the spec. The general "URI path parameters" could be applied although the
@@ -985,10 +842,8 @@ to `false`.
 ====
 
 [[mvc-ann-requestmapping-consumes]]
-===== Consumable Media Types
-You can narrow the primary mapping by specifying a list of consumable media types. The
-request will be matched only if the __Content-Type__ request header matches the specified
-media type. For example:
+===== 可消费的媒体类型
+你可以指定一系列可消费的媒体类型来压缩主要映射。这样只用当 __Content-Type__ 请求头匹配可消费的媒体类型，才认为这个请求是可映射的。如：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -996,7 +851,7 @@ media type. For example:
 	@Controller
 	@RequestMapping(value = "/pets", method = RequestMethod.POST, **consumes="application/json"**)
 	public void addPet(@RequestBody Pet pet, Model model) {
-		// implementation omitted
+		// 实现省略
 	}
 ----
 
@@ -1006,19 +861,13 @@ all requests other than those with __Content-Type__ of __text/plain__.
 [TIP]
 ====
 
-The __consumes__ condition is supported on the type and on the method level. Unlike most
-other conditions, when used at the type level, method-level consumable types override
-rather than extend type-level consumable types.
+__consumes__ 条件支持在类和方法上使用。与大多数情况不一样的是，方法中 __consumes__ 会覆盖类上使用 的__consumes__，而不是继承 类上使用 的__consumes__。
 ====
 
 
 [[mvc-ann-requestmapping-produces]]
-===== Producible Media Types
-You can narrow the primary mapping by specifying a list of producible media types. The
-request will be matched only if the __Accept__ request header matches one of these
-values. Furthermore, use of the __produces__ condition ensures the actual content type
-used to generate the response respects the media types specified in the __produces__
-condition. For example:
+===== 可生产的媒体类型
+你可以指定一系列可消费的媒体类型来压缩主要映射。当 __Accept__ 请求头匹配可消费的媒体类型，才认为这个请求是可映射的。此外，使用 __produces__ 条件可以保证实际类容的类型，__produces__  用于形成 response 方面的媒体类型，如：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1027,7 +876,7 @@ condition. For example:
 	@RequestMapping(value = "/pets/{petId}", method = RequestMethod.GET, **produces="application/json"**)
 	@ResponseBody
 	public Pet getPet(@PathVariable String petId, Model model) {
-		// implementation omitted
+		// 省略实现
 	}
 ----
 
@@ -1037,18 +886,13 @@ value of __text/plain__.
 
 [TIP]
 ====
-The __produces__ condition is supported on the type and on the method level. Unlike most
-other conditions, when used at the type level, method-level producible types override
-rather than extend type-level producible types.
+__produces__  条件支持在类和方法上使用。与大多数情况不一样的是，方法中 __produces__  会覆盖类上使用 的__produces__ ，而不是继承 类上使用 的__produces__ 。
 ====
 
 
 [[mvc-ann-requestmapping-params-and-headers]]
-===== Request Parameters and Header Values
-You can narrow request matching through request parameter conditions such as
-`"myParam"`, `"!myParam"`, or `"myParam=myValue"`. The first two test for request
-parameter presence/absence and the third for a specific parameter value. Here is an
-example with a request parameter value condition:
+===== 请求参数和头字段值
+你可以通过请求参数条件来压缩请求匹配范围，如使用 `"myParam"`, `"!myParam"`, 或 `"myParam=myValue"`。前两种情况表示 存在/不存在，第三种指定了参数值。如下给出指定参数值的例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1059,14 +903,13 @@ example with a request parameter value condition:
 
 		@RequestMapping(value = "/pets/{petId}", method = RequestMethod.GET, **params="myParam=myValue"**)
 		public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {
-			// implementation omitted
+			// 省略实现
 		}
 
 	}
 ----
 
-The same can be done to test for request header presence/absence or to match based on a
-specific request header value:
+类似的，头字段也支持 存在/不存在 和基于指定头字段值的匹配：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1077,7 +920,7 @@ specific request header value:
 
 		@RequestMapping(value = "/pets", method = RequestMethod.GET, **headers="myHeader=myValue"**)
 		public void findPet(@PathVariable String ownerId, @PathVariable String petId, Model model) {
-			// implementation omitted
+			// 省略实现
 		}
 
 	}
@@ -1086,84 +929,52 @@ specific request header value:
 [TIP]
 ====
 
-Although you can match to __Content-Type__ and __Accept__ header values using media type
-wild cards (for example __"content-type=text/*"__ will match to __"text/plain"__ and
-__"text/html"__), it is recommended to use the __consumes__ and __produces__ conditions
-respectively instead. They are intended specifically for that purpose.
+尽管你可以使用媒体类型通配符来匹配 __Content-Type__ 和 __Accept__ 头字段（如 __"content-type=text/*"__ 可以匹配 __"text/plain"__ 和
+__"text/html"__），还是建议使用  __consumes__ 和 __produces__ 条件，因为 __consumes__ 和 __produces__ 专门为此而使用的。
 ====
 
 
 
 [[mvc-ann-methods]]
-==== Defining @RequestMapping handler methods
+==== 定义 @RequestMapping 处理方法
 
-An `@RequestMapping` handler method can have a very flexible signatures. The supported
-method arguments and return values are described in the following section. Most
-arguments can be used in arbitrary order with the only exception of `BindingResult`
-arguments. This is described in the next section.
+@RequestMapping 处理方法允许非常灵活的签名，其支持方法参数和返回值（在这一节谈到）。除了 `BindingResult` 参数，其他类型参数顺序随意（下一节会谈到）。
 
 [NOTE]
 ====
-Spring 3.1 introduced a new set of support classes for `@RequestMapping` methods called
-`RequestMappingHandlerMapping` and `RequestMappingHandlerAdapter` respectively. They are
-recommended for use and even required to take advantage of new features in Spring MVC
-3.1 and going forward. The new support classes are enabled by default from the MVC
-namespace and with use of the MVC Java config but must be configured explicitly if using
-neither.
+Spring 3.1 介绍了一套 `@RequestMapping` 方法的新支持类，分别是 `RequestMappingHandlerMapping` 和 `RequestMappingHandlerAdapter`。推荐使用新支持类，即使这个需要用到 Spring MVC 3.1+ 的新特性。新支持类和 MVC 的 java 配置方式在 MVC 命名空间都默认支持，然而，如果都不需要，必须显式配置。
 ====
 
 
 [[mvc-ann-arguments]]
-===== Supported method argument types
-The following are the supported method arguments:
+===== 可支持的方法参数类型
+如下是可以支持的方法参数：
 
-* Request or response objects (Servlet API). Choose any specific request or response
-  type, for example `ServletRequest` or `HttpServletRequest`.
-* Session object (Servlet API): of type `HttpSession`. An argument of this type enforces
-  the presence of a corresponding session. As a consequence, such an argument is never
-  `null`.
+* Request 或 response 对象 (Servlet API). 选择任意指定的 request 或 response 类型，如`ServletRequest` o或 `HttpServletRequest`.
+* Session 对象 (Servlet API):需要是 `HttpSession` 类型. 这种类型的参数会强制合适 session 的存在。因此，这个参数永远不会为 null。
 
 [NOTE]
 ====
-Session access may not be thread-safe, in particular in a Servlet environment. Consider
-setting the ++RequestMappingHandlerAdapter++'s "synchronizeOnSession" flag to "true" if
-multiple requests are allowed to access a session concurrently.
+Session 访问可能是非线程安全的，特别是在 Servlet 环境。当允许多个请求并发访问 session 时，可以考虑设置 ++RequestMappingHandlerAdapter++ 的 "synchronizeOnSession" 值为 "true"。
 ====
 
-* `org.springframework.web.context.request.WebRequest` or
-  `org.springframework.web.context.request.NativeWebRequest`. Allows for generic request
-  parameter access as well as request/session attribute access, without ties to the
-  native Servlet/Portlet API.
-* `java.util.Locale` for the current request locale, determined by the most specific
-  locale resolver available, in effect, the configured `LocaleResolver` in a Servlet
-  environment.
-* `java.io.InputStream` / `java.io.Reader` for access to the request's content. This
-  value is the raw InputStream/Reader as exposed by the Servlet API.
-* `java.io.OutputStream` / `java.io.Writer` for generating the response's content. This
-  value is the raw OutputStream/Writer as exposed by the Servlet API.
-* `org.springframework.http.HttpMethod` for the HTTP request method.
-* `java.security.Principal` containing the currently authenticated user.
-* `@PathVariable` annotated parameters for access to URI template variables. See
-  <<mvc-ann-requestmapping-uri-templates>>.
+* `org.springframework.web.context.request.WebRequest` o或
+  `org.springframework.web.context.request.NativeWebRequest`.允许通过请求参数访问和 request/session 属性访问，没有与原始的 Servlet/Portlet API 绑定。
+* `java.util.Locale` 给当前请求本地化，取决于最具体的本地化解析器，实际上取决与是 Servlet 环境配置的 `LocaleResolver` 。
+* `java.io.InputStream` / `java.io.Reader` 可访问请求的内容。这是 Servlet API 暴露的原生 InputStream/Reader 。
+* `java.io.OutputStream` / `java.io.Writer` 用于 产生 response 的内容。这是 Servlet API 暴露的原生 OutputStream/Writer.
+* `org.springframework.http.HttpMethod` 可访问 HTTP 请求方法。
+* `java.security.Principal` 包含了当前授权用户。
+* `@PathVariable` 注解参数，可访问 URI 模版变量。可查看 <<mvc-ann-requestmapping-uri-templates>>。
 * `@MatrixVariable` annotated parameters for access to name-value pairs located in URI
   path segments. See <<mvc-ann-matrix-variables>>.
-* `@RequestParam` annotated parameters for access to specific Servlet request
-  parameters. Parameter values are converted to the declared method argument type. See
-  <<mvc-ann-requestparam>>.
-* `@RequestHeader` annotated parameters for access to specific Servlet request HTTP
-  headers. Parameter values are converted to the declared method argument type.
-  See <<mvc-ann-requestheader>>.
-* `@RequestBody` annotated parameters for access to the HTTP request body. Parameter
-  values are converted to the declared method argument type using
-  ++HttpMessageConverter++s. See <<mvc-ann-requestbody>>.
-* `@RequestPart` annotated parameters for access to the content of a
-  "multipart/form-data" request part. See <<mvc-multipart-forms-non-browsers>> and
-  <<mvc-multipart>>.
-* `HttpEntity<?>` parameters for access to the Servlet request HTTP headers and
-  contents. The request stream will be converted to the entity body using
-  ++HttpMessageConverter++s. See <<mvc-ann-httpentity>>.
+* `@RequestParam` 注解参数，可访问指定 Servlet request 参数。参数值会被转换为方法参数的类型。可查看<<mvc-ann-requestparam>>.
+* `@RequestHeader` 注解参数，可访问指定 Servlet request 的 HTTP 头字段。参数值会被转换为方法参数的类型。可查看 <<mvc-ann-requestheader>>
+* `@RequestBody` 注解参数，可访问 HTTP 请求体。参数值使用 ++HttpMessageConverter++ 转换为方法参数类型，可查看  <<mvc-ann-requestbody>>
+* `@RequestPart` 注解参数，可访问 "multipart/form-data" 请求的内容。可查看 <<mvc-multipart-forms-non-browsers>> 和 <<mvc-multipart>>  
+* `HttpEntity<?>` 参数，可访问 Servlet request 的HTTP 头和内容。请求流使用 ++HttpMessageConverter++ 转换为 entity body，可查看 <<mvc-ann-httpentity>>
 * `java.util.Map` / `org.springframework.ui.Model` / `org.springframework.ui.ModelMap`
-  for enriching the implicit model that is exposed to the web view.
+  用来丰富隐式模型（暴露给 web 视图）
 * `org.springframework.web.servlet.mvc.support.RedirectAttributes` to specify the exact
   set of attributes to use in case of a redirect and also to add flash attributes
   (attributes stored temporarily on the server-side to make them available to the
@@ -1178,8 +989,7 @@ multiple requests are allowed to access a session concurrently.
   "some.package.OrderAddress". The `ModelAttribute` annotation can be used on a method
   argument to customize the model attribute name used.
 * `org.springframework.validation.Errors` /
-  `org.springframework.validation.BindingResult` validation results for a preceding
-  command or form object (the immediately preceding method argument).
+  `org.springframework.validation.BindingResult` 已执行的命令或表单对象的验证错误(the immediately preceding method argument).
 * `org.springframework.web.bind.support.SessionStatus` status handle for marking form
   processing as complete, which triggers the cleanup of session attributes that have
   been indicated by the `@SessionAttributes` annotation at the handler type level.
@@ -1187,12 +997,10 @@ multiple requests are allowed to access a session concurrently.
   relative to the current request's host, port, scheme, context path, and the literal
   part of the servlet mapping.
 
-The `Errors` or `BindingResult` parameters have to follow the model object that is being
-bound immediately as the method signature might have more that one model object and
-Spring will create a separate `BindingResult` instance for each of them so the following
-sample won't work:
 
-.Invalid ordering of BindingResult and @ModelAttribute
+`Errors` 或 `BindingResult` 参数必须跟随所绑定的模型对象，如果方法签名有超过一个模型对象的，Spring 会为其分别创建 `BindingResult` 实例。因此，如下例子没有效果：
+
+.BindingResult and @ModelAttribute 的无效顺序
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -1200,8 +1008,7 @@ sample won't work:
 	public String processSubmit(**@ModelAttribute("pet") Pet pet**, Model model, **BindingResult result**) { ... }
 ----
 
-Note, that there is a `Model` parameter in between `Pet` and `BindingResult`. To get
-this working you have to reorder the parameters as follows:
+注意，因为 `Pet` 和 `BindingResult` 之间存在参数 `Model`。要其有效，你需要重新排序参数等我位置，如下：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1219,8 +1026,8 @@ of `java.util.Optional` in those cases is equivalent to having `required=false`.
 
 
 [[mvc-ann-return-types]]
-===== Supported method return types
-The following are the supported return types:
+===== 可支持的方法返回类型
+以下是可支持的返回类型：
 
 * A `ModelAndView` object, with the model implicitly enriched with command objects and
   the results of `@ModelAttribute` annotated reference data accessor methods.
@@ -1263,12 +1070,11 @@ The following are the supported return types:
 
 
 [[mvc-ann-requestparam]]
-===== Binding request parameters to method parameters with @RequestParam
+===== 使用 @RequestParam 将请求参数绑定到方法参数
 
-Use the `@RequestParam` annotation to bind request parameters to a method parameter in
-your controller.
+在控制器里，使用 `@RequestParam` 将请求参数绑定到方法参数。 
 
-The following code snippet shows the usage:
+如下代码片段演示了其用法：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1292,22 +1098,17 @@ The following code snippet shows the usage:
 	}
 ----
 
-Parameters using this annotation are required by default, but you can specify that a
-parameter is optional by setting ++@RequestParam++'s `required` attribute to `false`
-(e.g., `@RequestParam(value="id", required=false)`).
+使用 `@RequestParam` 的参数默认是必须提供的，当然，你可以指定其为可选的，将 `@RequestParam` 的 `reqired` 属性设置 `false` 即可。(如, `@RequestParam(value="id", required=false)`).
 
-Type conversion is applied automatically if the target method parameter type is not
-`String`. See <<mvc-ann-typeconversion>>.
+如果方法参数的类型不是 `String`,类型转换会自动执行，可查看 <<mvc-ann-typeconversion>>。
 
-When an `@RequestParam` annotation is used on a `Map<String, String>` or
-`MultiValueMap<String, String>` argument, the map is populated with all request
-parameters.
+如果将 `@RequestParam` 用于 `Map<String, String>` 或
+`MultiValueMap<String, String>` 参数，此参数 map 会填充所有的请求参数。
 
 
 [[mvc-ann-requestbody]]
-===== Mapping the request body with the @RequestBody annotation
-The `@RequestBody` method parameter annotation indicates that a method parameter should
-be bound to the value of the HTTP request body. For example:
+===== 使用 @RequestBody 映射请求体
+`@RequestBody` 注解参数表示该参数将与 HTTP 请求体绑定。例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1318,26 +1119,17 @@ be bound to the value of the HTTP request body. For example:
 	}
 ----
 
-You convert the request body to the method argument by using an `HttpMessageConverter`.
-`HttpMessageConverter` is responsible for converting from the HTTP request message to an
-object and converting from an object to the HTTP response body. The
-`RequestMappingHandlerAdapter` supports the `@RequestBody` annotation with the following
-default `HttpMessageConverters`:
+你使用 `HttpMessageConverter` 将请求体转换为方法参数。`HttpMessageConverter` 负责将请求信息转换为指定对象和将指定对象转换为请求体。`RequestMappingHandlerAdapter` 默认支持 `@RequestBody` 使用以下 `HttpMessageConverters`。
 
-* `ByteArrayHttpMessageConverter` converts byte arrays.
-* `StringHttpMessageConverter` converts strings.
-* `FormHttpMessageConverter` converts form data to/from a MultiValueMap<String, String>.
-* `SourceHttpMessageConverter` converts to/from a javax.xml.transform.Source.
+* `ByteArrayHttpMessageConverter` 转换为字节数组。
+* `StringHttpMessageConverter` 转换为字符串。
+* `FormHttpMessageConverter` 表单数据与 MultiValueMap<String, String> 互转。
+* `SourceHttpMessageConverter` 表单数据与 javax.xml.transform.Source 互转。
 
-For more information on these converters, see <<rest-message-conversion,Message
-Converters>>. Also note that if using the MVC namespace or the MVC Java config, a wider
-range of message converters are registered by default. See <<mvc-config-enable>> for more information.
+转换起的详细信息，可查看 <<rest-message-conversion,Message
+Converters>>。也提醒一下，当使用 MVC 命名空间 或 MVC Java 配置时，默认注册了一系列转换器，详细信息可查看 <<mvc-config-enable>>。
 
-If you intend to read and write XML, you will need to configure the
-`MarshallingHttpMessageConverter` with a specific `Marshaller` and an `Unmarshaller`
-implementation from the `org.springframework.oxm` package. The example below shows how
-to do that directly in your configuration but if your application is configured through
-the MVC namespace or the MVC Java config see <<mvc-config-enable>> instead.
+如果你想读写 XML 的，需要注册 `MarshallingHttpMessageConverter`，`MarshallingHttpMessageConverter` 包含了 `org.springframework.oxm` 包中的 `Marshaller` 和 `Unmarshaller` 实现。如下例子演示了直接在配置文件注册 `MarshallingHttpMessageConverter`，如果你的应用通过 MVC 命名空间或 MVC Java 配置的，可查看 <<mvc-config-enable>>。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1363,30 +1155,21 @@ the MVC namespace or the MVC Java config see <<mvc-config-enable>> instead.
 	<bean id="castorMarshaller" class="org.springframework.oxm.castor.CastorMarshaller"/>
 ----
 
-An `@RequestBody` method parameter can be annotated with `@Valid`, in which case it will
-be validated using the configured `Validator` instance. When using the MVC namespace or
-the MVC Java config, a JSR-303 validator is configured automatically assuming a JSR-303
-implementation is available on the classpath.
+`@RequestBody` 方法参数可添加 `@Valid` 注解，被注解的参数会使用配置的 `Validator` 来验证。当使用 MVC 命名空间或 mvc Java 配置时，应用会自动配置 JSR-303 验证器（前提是在类路径能找到 JSR-303 的实现）。
 
-Just like with `@ModelAttribute` parameters, an `Errors` argument can be used to examine
-the errors. If such an argument is not declared, a `MethodArgumentNotValidException`
-will be raised. The exception is handled in the `DefaultHandlerExceptionResolver`, which
-sends a `400` error back to the client.
+类似于 `@ModelAttribute` 参数，`Errors` 参数也可用来检测错误。当 `Errore` 参数没有声明时，或抛出 `MethodArgumentNotValidException`。此异常会被 `DefaultHandlerExceptionResolver` 处理 —— 向客户端发送 `400` 错误。 
 
 [NOTE]
 ====
-Also see <<mvc-config-enable>> for
-information on configuring message converters and a validator through the MVC namespace
-or the MVC Java config.
+可以查看 <<mvc-config-enable>>，了解如何使用 MVC 命名空间和 MVC Java 配置来配置信息转换器和验证器。
 ====
 
 
 [[mvc-ann-responsebody]]
-===== Mapping the response body with the @ResponseBody annotation
+===== 使用 @ResponseBody 映射响应体
 
-The `@ResponseBody` annotation is similar to `@RequestBody`. This annotation can be put
-on a method and indicates that the return type should be written straight to the HTTP
-response body (and not placed in a Model, or interpreted as a view name). For example:
+`@ResponseBody` 的使用类似于 `@RequestBody`。此注解用在方法上，用来表示直接将返回数据写到 HTTP 响应体里。注意，不是将数据放到 Model 中，或解析为视图名称。例子：
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1398,36 +1181,24 @@ response body (and not placed in a Model, or interpreted as a view name). For ex
 	}
 ----
 
-The above example will result in the text `Hello World` being written to the HTTP
-response stream.
+上述例子会将 `Hello World` 文本写到 HTTP 响应流中。
 
-As with `@RequestBody`, Spring converts the returned object to a response body by using
-an `HttpMessageConverter`. For more information on these converters, see the previous
-section and <<rest-message-conversion,Message Converters>>.
+与 `@RequestBody` 一样，Spring 使用 `HttpMessageConverter` 将返回对象转换为响应体。转换的详细信息可以查看上一节<<rest-message-conversion,信息转换器>>。
 
 [[mvc-ann-restcontroller]]
-===== Creating REST Controllers with the @RestController annotation
+===== 使用 @RestController 创建 REST 控制器
 
-It's a very common use case to have Controllers implement a REST API, thus serving only
-JSON, XML or custom MediaType content. For convenience, instead of annotating all your
-`@RequestMapping` methods with `@ResponseBody`, you can annotate your Controller Class
-with `@RestController`.
+一种比较常见的场景，控制器实现 REST API，只会返回 JSON、XML 或其他自定义媒体类型。为了方便，你可以在控制器上添加 `@RestController` 注解，而不是在每一个 `@RequestMapping` 上使用 `@ResponseBody`。
 
-{javadoc-baseurl}/org/springframework/web/bind/annotation/RestController.html[`@RestController`]
-is a stereotype annotation that combines `@ResponseBody` and `@Controller`. More than
-that, it gives more meaning to your Controller and also may carry additional semantics
-in future releases of the framework.
+{javadoc-baseurl}/org/springframework/web/bind/annotation/RestController.html[`@RestController`] 是一个结合了 `@ResponseBody` 和 `@Controller` 的注解。不仅如此，`@RestController` 赋予了控制器更多的意义，在未来的版本中可能会携带额外的语义。。
 
-As with regular ++@Controller++s, a `@RestController` may be assisted by a
-`@ControllerAdvice` Bean. See the <<mvc-ann-controller-advice>> section for more details.
+与常规 ++@Controller++ 一样，`@RestController` 可以协助 `@ControllerAdvice` bean。详细信息可查看<<mvc-ann-controller-advice>>。
 
 [[mvc-ann-httpentity]]
-===== Using HttpEntity
+===== 使用 HttpEntity
 
-The `HttpEntity` is similar to `@RequestBody` and `@ResponseBody`. Besides getting
-access to the request and response body, `HttpEntity` (and the response-specific
-subclass `ResponseEntity`) also allows access to the request and response headers, like
-so:
+`HttpEntity` 的用法类似于 `@RequestBody` 和 `@ResponseBody` 注解。除了可以访问请求/响应体，`HttpEntity`(和特用与响应的子类 `ResponseEntity`) 还可以访问 request 和 response 的头字段。例子：
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1445,95 +1216,61 @@ so:
 	}
 ----
 
-The above example gets the value of the `MyRequestHeader` request header, and reads the
-body as a byte array. It adds the `MyResponseHeader` to the response, writes `Hello
-World` to the response stream, and sets the response status code to 201 (Created).
+上述例子获取了 `MyRequestHeader` 头字段的值，以字节数组的形式读取了请求体，随后将 `MyRequestHeader` 添加到 response，将 `Hello World` 写到响应流和设置响应状态码为 201(Created).
 
-As with `@RequestBody` and `@ResponseBody`, Spring uses `HttpMessageConverter` to
-convert from and to the request and response streams. For more information on these
-converters, see the previous section and <<rest-message-conversion,Message Converters>>.
+与 `@RequestBody` 和 `@ResponseBody` 一样，Srping 使用 `HttpMessageConverter` 将数据与请求/响应流互转，可查看上一节<<rest-message-conversion,信息转换器>>
 
 
 [[mvc-ann-modelattrib-methods]]
-===== Using @ModelAttribute on a method
+===== 在方法上使用 @ModelAttribute
 
-The `@ModelAttribute` annotation can be used on methods or on method arguments. This
-section explains its usage on methods while the next section explains its usage on
-method arguments.
+`@ModelAttribute` 可用欲方法或方法参数中。这一部分将介绍 `@ModelAttribute` 在方法中的使用，下一部分介绍其在方法啊参数中的使用。
 
-An `@ModelAttribute` on a method indicates the purpose of that method is to add one or
-more model attributes. Such methods support the same argument types as `@RequestMapping`
-methods but cannot be mapped directly to requests. Instead `@ModelAttribute` methods in
-a controller are invoked before `@RequestMapping` methods, within the same controller. A
-couple of examples:
+在方法上使用 `@ModelAttribute` 注解，表示此方法的目的在于添加一个或多个模型属性。这种方法所支持的参数类型与 `@RequestMapping` 一样，不同的是，其不能直接映射到 request。另外，在同一个控制器里，`@ModelAttribute` 会在 `@RequestMapping` 之前调用。举几个例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
-	// Add one attribute
-	// The return value of the method is added to the model under the name "account"
-	// You can customize the name via @ModelAttribute("myAccount")
+	// 添加一个属性
+	// 方法的返回值会以 "account" 键添加到 model
+	// 可通过 @ModelAttribute("myAccount") 自定义
 
 	@ModelAttribute
 	public Account addAccount(@RequestParam String number) {
 		return accountManager.findAccount(number);
 	}
 
-	// Add multiple attributes
+	// 添加多个属性
 
 	@ModelAttribute
 	public void populateModel(@RequestParam String number, Model model) {
 		model.addAttribute(accountManager.findAccount(number));
-		// add more ...
+		// 再添加多个……
 	}
 ----
 
-`@ModelAttribute` methods are used to populate the model with commonly needed attributes
-for example to fill a drop-down with states or with pet types, or to retrieve a command
-object like Account in order to use it to represent the data on an HTML form. The latter
-case is further discussed in the next section.
+`@ModelAttribute` 用来将常用属性填充到模型里。如：填充下拉框陈述、宠物类型、或命令对象（如 Account，用于表示 HTML 表单数据）。最后一种情况会在下一部分深入谈论。
 
-Note the two styles of `@ModelAttribute` methods. In the first, the method adds an
-attribute implicitly by returning it. In the second, the method accepts a `Model` and
-adds any number of model attributes to it. You can choose between the two styles
-depending on your needs.
+留意一下 `@ModelAttribute` 方法的两种使用方式。第一种，在方法里隐式添加一个属性并返回；第二种，方法里接收 `Model` 参数，并将任意个属性添加到 `Model`中。你可以根据自身需要选择其中一种使用方式。
 
-A controller can have any number of `@ModelAttribute` methods. All such methods are
-invoked before `@RequestMapping` methods of the same controller.
+一个控制器可以有多个 `@ModelAttribute` 方法。在同一个控制器中，所有 `@ModelAttribute` 方法都会在 `@RequestMapping` 方法之前调用。
 
-`@ModelAttribute` methods can also be defined in an ++@ControllerAdvice++-annotated class
-and such methods apply to many controllers. See the <<mvc-ann-controller-advice>> section
-for more details.
+`@ModelAttribute` 方法也可以在  ++@ControllerAdvice++ 注解的类中使用，类似的可应用于其他控制器，详细信息可查看 <<mvc-ann-controller-advice>>。
 
 [TIP]
 ====
 
-What happens when a model attribute name is not explicitly specified? In such cases a
-default name is assigned to the model attribute based on its type. For example if the
-method returns an object of type `Account`, the default name used is "account". You can
-change that through the value of the `@ModelAttribute` annotation. If adding attributes
-directly to the `Model`, use the appropriate overloaded `addAttribute(..)` method -
-i.e., with or without an attribute name.
+当模型属性名称没有显式定义，会是一种什么样的情况？在这种情况下，默认使用参数类型名称作为模型属性名称。如，当方法返回 `Account` 对象时，其默认的模型属性名称是 "account"。你可以通过设置`@ModelAttribute` 注解的 "value" 属性来自定义。当直接往 `Model` 添加属性时，请正确使用 `addAttribute(..)` 的重载方法 —— 如，是否在方法中带属性名。
 ====
 
-The `@ModelAttribute` annotation can be used on `@RequestMapping` methods as well. In
-that case the return value of the `@RequestMapping` method is interpreted as a model
-attribute rather than as a view name. The view name is derived from view name
-conventions instead much like for methods returning void -- see <<mvc-coc-r2vnt>>.
-
+`@ModelAttribute` 注解也可用在 `@RequestMapping` 方法中。这种情况下，`@RequestMapping` 方法的返回值将解析为模型属性，而不是视图名称。相反，视图名称来源于视图名称的约定，就类似于方法返回 void，可查看<<mvc-coc-r2vnt>>。
 
 [[mvc-ann-modelattrib-method-args]]
-===== Using @ModelAttribute on a method argument
+===== 在方法参数上使用 @ModelAttribute 
 
-As explained in the previous section `@ModelAttribute` can be used on methods or on
-method arguments. This section explains its usage on method arguments.
+如前文所述，`@ModelAttribute` 也可以用在方法或方法参数上。这一部分将介绍其在方法参数上的使用。
 
-An `@ModelAttribute` on a method argument indicates the argument should be retrieved
-from the model. If not present in the model, the argument should be instantiated first
-and then added to the model. Once present in the model, the argument's fields should be
-populated from all request parameters that have matching names. This is known as data
-binding in Spring MVC, a very useful mechanism that saves you from having to parse each
-form field individually.
+`@ModelAttribute` 注解的方法参数，表示该参数会从模型中检索。如果该参数不在模型中，此参数会先执行初始化或后添加到模型里；如果参数存在模型里，此参数字段会填充所有匹配其名称的请求参数。这就是大家熟知的 Spring MVC 数据绑定 —— 一个可以免除你逐个解析表单属性而又非常有用的机制。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1542,20 +1279,14 @@ form field individually.
 	public String processSubmit(**@ModelAttribute Pet pet**) { }
 ----
 
-Given the above example where can the Pet instance come from? There are several options:
+上述所给例子，Pet 实例可以在哪里获取？有以下几种选择：
 
-* It may already be in the model due to use of `@SessionAttributes` -- see
-  <<mvc-ann-sessionattrib>>.
-* It may already be in the model due to an `@ModelAttribute` method in the same
-  controller -- as explained in the previous section.
-* It may be retrieved based on a URI template variable and type converter (explained in
-  more detail below).
-* It may be instantiated using its default constructor.
+* 可能已存到模型里，自然可从模型中获取，因为使用了 `@SessionAttributes` -- 可查看 <<mvc-ann-sessionattrib>>。
+* 可能已存到模型里，自然可从模型中获取，因为同一个控制器里的 `@ModelAttribute` 方法 -- 在上一部分有解释。
+* 可以从 URI 模版变量和类型转换器获取（在下面详细描述会有所说明）
+* 可以使用默认构造函器初始化
 
-An `@ModelAttribute` method is a common way to to retrieve an attribute from the
-database, which may optionally be stored between requests through the use of
-`@SessionAttributes`. In some cases it may be convenient to retrieve the attribute by
-using an URI template variable and a type converter. Here is an example:
+`@ModelAttribute` 方法是一种从数据库检索索性的常用方式，所检索到的属性可以使用 `@SessionAttributes` 在请求之间存储。在某些情况下，使用 URI 模版变量和类型转化器可能会方便一些，举个例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1566,21 +1297,11 @@ using an URI template variable and a type converter. Here is an example:
 	}
 ----
 
-In this example the name of the model attribute (i.e. "account") matches the name of a
-URI template variable. If you register `Converter<String, Account>` that can turn the
-`String` account value into an `Account` instance, then the above example will work
-without the need for an `@ModelAttribute` method.
+上面这个例子，模型属性名称（这里为 "account") 可以映射 URI 模版模版变量。如果你注册了 `Converter<String, Account>`（一个可将 `String` 类型的 account 值转换为 `Account`实例），那上述例子在没有 `@ModelAttribute` 方法下，也是可工作的。
 
-The next step is data binding. The `WebDataBinder` class matches request parameter names
--- including query string parameters and form fields -- to model attribute fields by
-name. Matching fields are populated after type conversion (from String to the target
-field type) has been applied where necessary. Data binding and validation are covered in
-<<validation>>. Customizing the data binding process for a controller level is covered
-in <<mvc-ann-webdatabinder>>.
+下一步是数据绑定。`WebDataBinder` 类映射请求参数名 —— 包括查询字符参数和表单属性 —— 根据名称添加模型属性。在类型转换之后，如果需要，映射属性会被填充。数据绑定在验证在 <<validation>>  有介绍，在控制器层自定义数据绑定的处理方法，在 <<mvc-ann-webdatabinder>> 有介绍。
 
-As a result of data binding there may be errors such as missing required fields or type
-conversion errors. To check for such errors add a `BindingResult` argument immediately
-following the `@ModelAttribute` argument:
+在处理数据绑定中，可能会抛出错误（如缺失必要属性或类型转换错误）。如要检查这些错误，可在 `@ModelAttribute` 参数后添加 `BindingResult` 参数。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1597,14 +1318,9 @@ following the `@ModelAttribute` argument:
 	}
 ----
 
-With a `BindingResult` you can check if errors were found in which case it's common to
-render the same form where the errors can be shown with the help of Spring's `<errors>`
-form tag.
+使用 `BindingResult`， 你可以判断是否存在数据绑定错误。当存在错误时，通常会渲染此表单 —— 通过 Spring 的 `<errors>` 表单标签展示这些错误。
 
-In addition to data binding you can also invoke validation using your own custom
-validator passing the same `BindingResult` that was used to record data binding errors.
-That allows for data binding and validation errors to be accumulated in one place and
-subsequently reported back to the user:
+除了数据绑定，你也可以通过自定以验证器传递 `BindingResult` 来执行验证。当中 `BindingResult` 保存了数据绑定的错误。这样可以允许数据绑定和验证错误统一收集，随后回馈给用户。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1622,8 +1338,7 @@ subsequently reported back to the user:
 	}
 ----
 
-Or you can have validation invoked automatically by adding the JSR-303 `@Valid`
-annotation:
+你也可以自动执行验证，配置 JSR-303 `@Valid 注解即可。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1640,20 +1355,15 @@ annotation:
 	}
 ----
 
-See <<validation-beanvalidation>> and <<validation>> for details on how to configure and
-use validation.
+至于如何配置和使用验证，可查看 <<validation-beanvalidation>> 和 <<validation>>。
 
 
 [[mvc-ann-sessionattrib]]
-===== Using @SessionAttributes to store model attributes in the HTTP session between requests
+===== 使用 @SessionAttributes 将模型属性存储到 HTTP session 
 
-The type-level `@SessionAttributes` annotation declares session attributes used by a
-specific handler. This will typically list the names of model attributes or types of
-model attributes which should be transparently stored in the session or some
-conversational storage, serving as form-backing beans between subsequent requests.
+类上的 `@SessionAttributes` 注解，声明了 session 属性可以被指定 hadler 使用。这通常会列出需要透明存储到 session 或其他会话存储的模型属性或模型属性的类型，作为后续请求的 form-backing beam。
 
-The following code snippet shows the usage of this annotation, specifying the model
-attribute name:
+如下代码片段展示了 @SessionAttributes 的用法，其指定了模型属性名称：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1667,47 +1377,21 @@ attribute name:
 ----
 
 [[mvc-ann-redirect-attributes]]
-===== Specifying redirect and flash attributes
-By default all model attributes are considered to be exposed as URI template variables
-in the redirect URL. Of the remaining attributes those that are primitive types or
-collections/arrays of primitive types are automatically appended as query parameters.
+===== 指定 redirect 和 flash 属性
+在重定向 URL 中，所有模型属性默认暴露给 URI 模版变量，剩下的属性(原始类型或原始类型集合/数组)会自动拼接到查询参数中。
 
-In annotated controllers however the model may contain additional attributes originally
-added for rendering purposes (e.g. drop-down field values). To gain precise control over
-the attributes used in a redirect scenario, an `@RequestMapping` method can declare an
-argument of type `RedirectAttributes` and use it to add attributes for use in
-`RedirectView`. If the controller method does redirect, the content of
-`RedirectAttributes` is used. Otherwise the content of the default `Model` is used.
+然而，在一个带注解的控制器中，模型也许包含了额外的属性（用于渲染，如下拉框属性）。在重定向场景中，要准确控制这些属性，可在 `@RequestMapping` 方法中声明 `RedirectAttributes` 类型参数，并往其添加 `RedirectView` 使用的属性。如果这个控制方法没有重定向，将使用 `RedirectAttributes` 的内容，否则使用默认 `Model` 的内容。
 
-The `RequestMappingHandlerAdapter` provides a flag called
-`"ignoreDefaultModelOnRedirect"` that can be used to indicate the content of the default
-`Model` should never be used if a controller method redirects. Instead the controller
-method should declare an attribute of type `RedirectAttributes` or if it doesn't do so
-no attributes should be passed on to `RedirectView`. Both the MVC namespace and the MVC
-Java config keep this flag set to `false` in order to maintain backwards compatibility.
-However, for new applications we recommend setting it to `true`
+`RequestMappingHandlerAdapter` 提供了一个 `"ignoreDefaultModelOnRedirect"` 标志，用来设置在控制方法重定向时，默认`Model` 的内容是否从不使用。相反，控制器方法应该声明 `RedirectAttributes` 类型属性，否则会没有任何属性传递给 `RedirectView`。为了向后兼容，MVC 命名空间和 MVC Java 配置都将 `"ignoreDefaultModelOnRedirect"` 设置为 false。可我们还是建议你在新应用里将其设置为 true。
 
-The `RedirectAttributes` interface can also be used to add flash attributes. Unlike
-other redirect attributes, which end up in the target redirect URL, flash attributes are
-saved in the HTTP session (and hence do not appear in the URL). The model of the
-controller serving the target redirect URL automatically receives these flash attributes
-after which they are removed from the session. See <<mvc-flash-attributes>> for an
-overview of the general support for flash attributes in Spring MVC.
+`RedirectAttributes` 接口也可以用来添加 flash 属性。与其他重定向属性（在重定向 URL 中销毁）不同的是，flash 属性会保存到 HTTP session（因此 flash 属性也不会在 URL 上出现）。作用于重定向 URL 的控制器里的模型会自动接收这些 flash 属性，之后，flash 属性会从 session 中移除。可查看 <<mvc-flash-attributes>>，了解 Spring MVC 对 flash 属性的常规支持。
 
 
 [[mvc-ann-form-urlencoded-data]]
-===== Working with "application/x-www-form-urlencoded" data
+===== 处理 "application/x-www-form-urlencoded" 数据
+前一节节介绍了 `@ModelAttribute` 在客户端浏览器表单提交的使用。同时也推荐使用 `@ModelAttribute` 处理非浏览器提交的请求。然而，在处理 HTTP PUT 请求时，这里存在了一个明显的不同。浏览器支持通过 HTTP GET 或 HTTP POST 方法提交表单数据。非浏览器也支持通过 HTTP PUT 方法提交表单。这里提出了一个挑战 —— 因为 Servlet 规范要求 `ServletRequest.getParameter*()` 方法需要支持表单属性访问，而这只适用于 HTTP POST，不适用于 HTTP PUT。
 
-The previous sections covered use of `@ModelAttribute` to support form submission
-requests from browser clients. The same annotation is recommended for use with requests
-from non-browser clients as well. However there is one notable difference when it comes
-to working with HTTP PUT requests. Browsers can submit form data via HTTP GET or HTTP
-POST. Non-browser clients can also submit forms via HTTP PUT. This presents a challenge
-because the Servlet specification requires the `ServletRequest.getParameter*()` family
-of methods to support form field access only for HTTP POST, not for HTTP PUT.
-
-To support HTTP PUT and PATCH requests, the `spring-web` module provides the filter
-`HttpPutFormContentFilter`, which can be configured in `web.xml`:
+为了支持 HTTP PUT 和 PATCH 请求，`spring-web` 模块提供了 `HttpPutFormContentFilter` 过滤器，此过滤器可 `web.xml` 配置：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1728,25 +1412,20 @@ To support HTTP PUT and PATCH requests, the `spring-web` module provides the fil
 	</servlet>
 ----
 
-The above filter intercepts HTTP PUT and PATCH requests with content type
-`application/x-www-form-urlencoded`, reads the form data from the body of the request,
-and wraps the `ServletRequest` in order to make the form data available through the
-`ServletRequest.getParameter*()` family of methods.
+`HttpPutFormContentFilter` 过滤器拦截了content 类型为 `application/x-www-form-urlencoded` 的 HTTP PUT 和 PATCH 请求，它从请求体中读取表单数据并将其封装为 `ServletRequest`，以便后续使用 `ServletRequest.getParameter*()` 方法获取表单数据。
 
 [NOTE]
 ====
-As `HttpPutFormContentFilter` consumes the body of the request, it should not be
-configured for PUT or PATCH URLs that rely on other converters for
-`application/x-www-form-urlencoded`. This includes `@RequestBody MultiValueMap<String,
-String>` and `HttpEntity<MultiValueMap<String, String>>`.
+由于`HttpPutFormContentFilter`已经处理了请求体，所以不应该再给PUT和PATCH的请求配置其他依赖于处理"application/x-www-form-urlencoded"的转换器。这里包括了 `@RequestBody MultiValueMap<String,
+String>` 和 `HttpEntity<MultiValueMap<String, String>>`。
 ====
 
 
 [[mvc-ann-cookievalue]]
-===== Mapping cookie values with the @CookieValue annotation
-The `@CookieValue` annotation allows a method parameter to be bound to the value of an
-HTTP cookie.
+===== 使用 @CookieValue 映射 cookie 值
+`@CookieValue` 注解允许将方法参数与HTTP cookie 值绑定。
 
+假设下面这个 cookie 值已经从 http 请求获得。
 Let us consider that the following cookie has been received with an http request:
 
 [literal]
@@ -1755,7 +1434,7 @@ Let us consider that the following cookie has been received with an http request
 JSESSIONID=415A4AC178C59DACE0B2C9CA727CDD84
 ----
 
-The following code sample demonstrates how to get the value of the `JSESSIONID` cookie:
+一下例子演示了如何获取 `JSESSIONID` cookie 值。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1766,18 +1445,16 @@ The following code sample demonstrates how to get the value of the `JSESSIONID` 
 	}
 ----
 
-Type conversion is applied automatically if the target method parameter type is not
-`String`. See <<mvc-ann-typeconversion>>.
+如果方法参数不是 `String` 类型，类型转换会自动执行，可查看 <<mvc-ann-typeconversion>>。
 
-This annotation is supported for annotated handler methods in Servlet and Portlet
-environments.
+`@CookieValue` 注解支持在 Servlet 和 Portlet 环境中注解 handler 方法。
 
 
 [[mvc-ann-requestheader]]
-===== Mapping request header attributes with the @RequestHeader annotation
-The `@RequestHeader` annotation allows a method parameter to be bound to a request header.
+===== 使用 @RequestHeader 映射请求头字段属性
+@RequestHeader 注解允许将方法参数与请求头字段绑定。
 
-Here is a sample request header:
+如下一个请求头字段值的样例：
 
 [literal]
 [subs="verbatim,quotes"]
@@ -1790,8 +1467,7 @@ Accept-Charset          ISO-8859-1,utf-8;q=0.7,*;q=0.7
 Keep-Alive              300
 ----
 
-The following code sample demonstrates how to get the value of the `Accept-Encoding` and
-`Keep-Alive` headers:
+如下代码演示了如何获取 `Accept-Encoding` 和 `Keep-Alive` 头字段值：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1803,40 +1479,26 @@ The following code sample demonstrates how to get the value of the `Accept-Encod
 	}
 ----
 
-Type conversion is applied automatically if the method parameter is not `String`. See
-<<mvc-ann-typeconversion>>.
+如果方法参数不是 `String` 类型，类型转换会自动执行，可查看 <<mvc-ann-typeconversion>>。
 
-When an `@RequestHeader` annotation is used on a `Map<String, String>`,
-`MultiValueMap<String, String>`, or `HttpHeaders` argument, the map is populated
-with all header values.
+将注解 `@RequestHeader` 用于 `Map<String, String>`,`MultiValueMap<String, String>`, 或 `HttpHeaders` 参数，map 会填充所有头字段值。
 
 
 [TIP]
 ====
-Built-in support is available for converting a comma-separated string into an
-array/collection of strings or other types known to the type conversion system. For
-example a method parameter annotated with `@RequestHeader("Accept")` may be of type
-`String` but also `String[]` or `List<String>`.
+内置支持将逗号分隔的字符串转换为数组/集合 或 系统其他熟知的类型。比如，带有 `@RequestHeader("Accept")` 的方法参数，可以 `String` 类型，也可以是 `String[]` 或 `List<String>` 类型。
 ====
 
-This annotation is supported for annotated handler methods in Servlet and Portlet
-environments.
+`@RequestHeader` 注解支持在 Servlet 和 Portlet 环境中注解 handler 方法。
 
 
 [[mvc-ann-typeconversion]]
-===== Method Parameters And Type Conversion
-String-based values extracted from the request including request parameters, path
-variables, request headers, and cookie values may need to be converted to the target
-type of the method parameter or field (e.g., binding a request parameter to a field in
-an `@ModelAttribute` parameter) they're bound to. If the target type is not `String`,
-Spring automatically converts to the appropriate type. All simple types such as int,
-long, Date, etc. are supported. You can further customize the conversion process through
-a `WebDataBinder` (see <<mvc-ann-webdatabinder>>) or by registering `Formatters` with
-the `FormattingConversionService` (see <<format>>).
+===== 方法参数和类型转换
+从请求(包括请求参数、路径参数、请求头和cookie)里提取的字符串，基本上都需要转换为方法参数或类属性的目标类型，如将请求参数绑定到 `@ModelAttribute` 参数属性。如果目标类型不是 String，Spring 自动将其转换为合适的类型。支持所有简单类型的转换（如 int、long、Date等）。你可以进一步通过 `WebDataBinder` 自定义处理过程(可查看<<mvc-ann-webdatabinder>>)或使用 `FormattingConversionService` 注册 `Formatters`（可查看 <<format>>）。 
 
 
 [[mvc-ann-webdatabinder]]
-===== Customizing WebDataBinder initialization
+===== 自定义 WebDataBinder 的初始化
 To customize request parameter binding with PropertyEditors through Spring's
 `WebDataBinder`, you can use `@InitBinder`-annotated methods within your controller,
 `@InitBinder` methods within an `@ControllerAdvice` class, or provide a custom
