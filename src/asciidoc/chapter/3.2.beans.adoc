@@ -1,0 +1,357 @@
+
+
+
+
+[[beans-definition]]
+=== Bean overview
+A Spring IoC container manages one or more __beans__. These beans are created with the
+configuration metadata that you supply to the container, for example, in the form of XML
+`<bean/>` definitions.
+
+Within the container itself, these bean definitions are represented as `BeanDefinition`
+objects, which contain (among other information) the following metadata:
+
+* __A package-qualified class name:__ typically the actual implementation class of the
+  bean being defined.
+* Bean behavioral configuration elements, which state how the bean should behave in the
+  container (scope, lifecycle callbacks, and so forth).
+* References to other beans that are needed for the bean to do its work; these
+  references are also called __collaborators__ or __dependencies__.
+* Other configuration settings to set in the newly created object, for example, the
+  number of connections to use in a bean that manages a connection pool, or the size
+  limit of the pool.
+
+This metadata translates to a set of properties that make up each bean definition.
+
+[[beans-factory-bean-definition-tbl]]
+.The bean definition
+|===
+| Property| Explained in...
+
+| class
+| <<beans-factory-class>>
+
+| name
+| <<beans-beanname>>
+
+| scope
+| <<beans-factory-scopes>>
+
+| constructor arguments
+| <<beans-factory-collaborators>>
+
+| properties
+| <<beans-factory-collaborators>>
+
+| autowiring mode
+| <<beans-factory-autowire>>
+
+| lazy-initialization mode
+| <<beans-factory-lazy-init>>
+
+| initialization method
+| <<beans-factory-lifecycle-initializingbean>>
+
+| destruction method
+| <<beans-factory-lifecycle-disposablebean>>
+|===
+
+In addition to bean definitions that contain information on how to create a specific
+bean, the `ApplicationContext` implementations also permit the registration of existing
+objects that are created outside the container, by users. This is done by accessing the
+ApplicationContext's BeanFactory via the method `getBeanFactory()` which returns the
+BeanFactory implementation `DefaultListableBeanFactory`. `DefaultListableBeanFactory`
+supports this registration through the methods `registerSingleton(..)` and
+`registerBeanDefinition(..)`. However, typical applications work solely with beans
+defined through metadata bean definitions.
+
+
+
+[[beans-beanname]]
+==== Naming beans
+Every bean has one or more identifiers. These identifiers must be unique within the
+container that hosts the bean. A bean usually has only one identifier, but if it
+requires more than one, the extra ones can be considered aliases.
+
+In XML-based configuration metadata, you use the `id` and/or `name` attributes
+to specify the bean identifier(s). The `id` attribute allows you to specify
+exactly one id. Conventionally these names are alphanumeric ('myBean',
+'fooService', etc.), but may contain special characters as well. If you want to
+introduce other aliases to the bean, you can also specify them in the `name`
+attribute, separated by a comma (`,`), semicolon (`;`), or white space. As a
+historical note, in versions prior to Spring 3.1, the `id` attribute was
+defined as an `xsd:ID` type, which constrained possible characters. As of 3.1,
+it is defined as an `xsd:string` type. Note that bean `id` uniqueness is still
+enforced by the container, though no longer by XML parsers.
+
+You are not required to supply a name or id for a bean. If no name or id is supplied
+explicitly, the container generates a unique name for that bean. However, if you want to
+refer to that bean by name, through the use of the `ref` element or
+<<beans-servicelocator,Service Locator>> style lookup, you must provide a name.
+Motivations for not supplying a name are related to using <<beans-inner-beans,inner
+beans>> and <<beans-factory-autowire,autowiring collaborators>>.
+
+.Bean Naming Conventions
+****
+The convention is to use the standard Java convention for instance field names when
+naming beans. That is, bean names start with a lowercase letter, and are camel-cased
+from then on. Examples of such names would be (without quotes) `'accountManager'`,
+`'accountService'`, `'userDao'`, `'loginController'`, and so forth.
+
+Naming beans consistently makes your configuration easier to read and understand, and if
+you are using Spring AOP it helps a lot when applying advice to a set of beans related
+by name.
+****
+
+
+[[beans-beanname-alias]]
+===== Aliasing a bean outside the bean definition
+In a bean definition itself, you can supply more than one name for the bean, by using a
+combination of up to one name specified by the `id` attribute, and any number of other
+names in the `name` attribute. These names can be equivalent aliases to the same bean,
+and are useful for some situations, such as allowing each component in an application to
+refer to a common dependency by using a bean name that is specific to that component
+itself.
+
+Specifying all aliases where the bean is actually defined is not always adequate,
+however. It is sometimes desirable to introduce an alias for a bean that is defined
+elsewhere. This is commonly the case in large systems where configuration is split
+amongst each subsystem, each subsystem having its own set of object definitions. In
+XML-based configuration metadata, you can use the `<alias/>` element to accomplish this.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<alias name="fromName" alias="toName"/>
+----
+
+In this case, a bean in the same container which is named `fromName`, may also,
+after the use of this alias definition, be referred to as `toName`.
+
+For example, the configuration metadata for subsystem A may refer to a DataSource via
+the name `subsystemA-dataSource`. The configuration metadata for subsystem B may refer to
+a DataSource via the name `subsystemB-dataSource`. When composing the main application
+that uses both these subsystems the main application refers to the DataSource via the
+name `myApp-dataSource`. To have all three names refer to the same object you add to the
+MyApp configuration metadata the following aliases definitions:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<alias name="subsystemA-dataSource" alias="subsystemB-dataSource"/>
+	<alias name="subsystemA-dataSource" alias="myApp-dataSource" />
+----
+
+Now each component and the main application can refer to the dataSource through a name
+that is unique and guaranteed not to clash with any other definition (effectively
+creating a namespace), yet they refer to the same bean.
+
+.Java-configuration
+****
+If you are using Java-configuration, the `@Bean` annotation can be used to provide aliases
+see <<beans-java-bean-annotation>> for details.
+****
+
+[[beans-factory-class]]
+==== Instantiating beans
+A bean definition essentially is a recipe for creating one or more objects. The
+container looks at the recipe for a named bean when asked, and uses the configuration
+metadata encapsulated by that bean definition to create (or acquire) an actual object.
+
+If you use XML-based configuration metadata, you specify the type (or class) of object
+that is to be instantiated in the `class` attribute of the `<bean/>` element. This
+`class` attribute, which internally is a `Class` property on a `BeanDefinition`
+instance, is usually mandatory. (For exceptions, see
+<<beans-factory-class-instance-factory-method>> and <<beans-child-bean-definitions>>.)
+You use the `Class` property in one of two ways:
+
+* Typically, to specify the bean class to be constructed in the case where the container
+  itself directly creates the bean by calling its constructor reflectively, somewhat
+  equivalent to Java code using the `new` operator.
+* To specify the actual class containing the `static` factory method that will be
+  invoked to create the object, in the less common case where the container invokes a
+  `static` __factory__ method on a class to create the bean. The object type returned
+  from the invocation of the `static` factory method may be the same class or another
+  class entirely.
+
+****
+.Inner class names
+If you want to configure a bean definition for a `static` nested class, you have to use
+the __binary__ name of the inner class.
+
+For example, if you have a class called `Foo` in the `com.example` package, and this
+`Foo` class has a `static` inner class called `Bar`, the value of the `'class'`
+attribute on a bean definition would be...
+
+`com.example.Foo$Bar`
+
+Notice the use of the `$` character in the name to separate the inner class name from
+the outer class name.
+****
+
+
+[[beans-factory-class-ctor]]
+===== Instantiation with a constructor
+When you create a bean by the constructor approach, all normal classes are usable by and
+compatible with Spring. That is, the class being developed does not need to implement
+any specific interfaces or to be coded in a specific fashion. Simply specifying the bean
+class should suffice. However, depending on what type of IoC you use for that specific
+bean, you may need a default (empty) constructor.
+
+The Spring IoC container can manage virtually __any__ class you want it to manage; it is
+not limited to managing true JavaBeans. Most Spring users prefer actual JavaBeans with
+only a default (no-argument) constructor and appropriate setters and getters modeled
+after the properties in the container. You can also have more exotic non-bean-style
+classes in your container. If, for example, you need to use a legacy connection pool
+that absolutely does not adhere to the JavaBean specification, Spring can manage it as
+well.
+
+With XML-based configuration metadata you can specify your bean class as follows:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean id="exampleBean" class="examples.ExampleBean"/>
+
+	<bean name="anotherExample" class="examples.ExampleBeanTwo"/>
+----
+
+For details about the mechanism for supplying arguments to the constructor (if required)
+and setting object instance properties after the object is constructed, see
+<<beans-factory-collaborators,Injecting Dependencies>>.
+
+
+[[beans-factory-class-static-factory-method]]
+===== Instantiation with a static factory method
+When defining a bean that you create with a static factory method, you use the `class`
+attribute to specify the class containing the `static` factory method and an attribute
+named `factory-method` to specify the name of the factory method itself. You should be
+able to call this method (with optional arguments as described later) and return a live
+object, which subsequently is treated as if it had been created through a constructor.
+One use for such a bean definition is to call `static` factories in legacy code.
+
+The following bean definition specifies that the bean will be created by calling a
+factory-method. The definition does not specify the type (class) of the returned object,
+only the class containing the factory method. In this example, the `createInstance()`
+method must be a __static__ method.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean id="clientService"
+		class="examples.ClientService"
+		factory-method="createInstance"/>
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	public class ClientService {
+		private static ClientService clientService = new ClientService();
+		private ClientService() {}
+
+		public static ClientService createInstance() {
+			return clientService;
+		}
+	}
+----
+
+For details about the mechanism for supplying (optional) arguments to the factory method
+and setting object instance properties after the object is returned from the factory,
+see <<beans-factory-properties-detailed,Dependencies and configuration in detail>>.
+
+
+[[beans-factory-class-instance-factory-method]]
+===== Instantiation using an instance factory method
+Similar to instantiation through a <<beans-factory-class-static-factory-method,static
+factory method>>, instantiation with an instance factory method invokes a non-static
+method of an existing bean from the container to create a new bean. To use this
+mechanism, leave the `class` attribute empty, and in the `factory-bean` attribute,
+specify the name of a bean in the current (or parent/ancestor) container that contains
+the instance method that is to be invoked to create the object. Set the name of the
+factory method itself with the `factory-method` attribute.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<!-- the factory bean, which contains a method called createInstance() -->
+	<bean id="serviceLocator" class="examples.DefaultServiceLocator">
+		<!-- inject any dependencies required by this locator bean -->
+	</bean>
+
+	<!-- the bean to be created via the factory bean -->
+	<bean id="clientService"
+		factory-bean="serviceLocator"
+		factory-method="createClientServiceInstance"/>
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	public class DefaultServiceLocator {
+
+		private static ClientService clientService = new ClientServiceImpl();
+		private DefaultServiceLocator() {}
+
+		public ClientService createClientServiceInstance() {
+			return clientService;
+		}
+	}
+----
+
+One factory class can also hold more than one factory method as shown here:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean id="serviceLocator" class="examples.DefaultServiceLocator">
+		<!-- inject any dependencies required by this locator bean -->
+	</bean>
+
+	<bean id="clientService"
+		factory-bean="serviceLocator"
+		factory-method="createClientServiceInstance"/>
+
+	<bean id="accountService"
+		factory-bean="serviceLocator"
+		factory-method="createAccountServiceInstance"/>
+----
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	public class DefaultServiceLocator {
+
+		private static ClientService clientService = new ClientServiceImpl();
+		private static AccountService accountService = new AccountServiceImpl();
+
+		private DefaultServiceLocator() {}
+
+		public ClientService createClientServiceInstance() {
+			return clientService;
+		}
+
+		public AccountService createAccountServiceInstance() {
+			return accountService;
+		}
+
+	}
+----
+
+This approach shows that the factory bean itself can be managed and configured through
+dependency injection (DI). See <<beans-factory-properties-detailed,Dependencies and
+configuration in detail>>.
+
+[NOTE]
+====
+In Spring documentation,__ factory bean__ refers to a bean that is configured in the
+Spring container that will create objects through an
+<<beans-factory-class-instance-factory-method,instance>> or
+<<beans-factory-class-static-factory-method,static>> factory method. By contrast,
+`FactoryBean` (notice the capitalization) refers to a Spring-specific
+<<beans-factory-extension-factorybean, `FactoryBean` >>.
+====
+
+
+
+

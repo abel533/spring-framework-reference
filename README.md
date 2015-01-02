@@ -25,6 +25,21 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **1.introduction.adoc          - [lixiuwen](http://git.oschina.net/lixiuwen)**
 - **2.spring-whats-new.adoc      - [isea533](http://blog.csdn.net/isea533)**
 - **3.beans.adoc                 - [isea533](http://blog.csdn.net/isea533)**
+- **3.1.beans.adoc               - [isea533](http://blog.csdn.net/isea533)**
+- **3.2.beans.adoc               - [isea533](http://blog.csdn.net/isea533)**
+- 3.3.beans.adoc               -
+- 3.4.beans.adoc               -
+- 3.5.beans.adoc               -
+- 3.6.beans.adoc               -
+- 3.7.beans.adoc               -
+- 3.8.beans.adoc               -
+- 3.9.beans.adoc               -
+- 3.10.beans.adoc              -
+- 3.11.beans.adoc              -
+- 3.12.beans.adoc              -
+- 3.13.beans.adoc              -
+- 3.14.beans.adoc              -
+- 3.15.beans.adoc              -
 - **4.resources.adoc             - [tianya](tianyatianya-PC)**
 - **5.validation.adoc            - [jassen](http://git.oschina.net/thinapple)**
 - **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**

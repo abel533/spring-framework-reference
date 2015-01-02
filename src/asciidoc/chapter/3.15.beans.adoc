@@ -1,0 +1,131 @@
+[[beans-beanfactory]]
+=== The BeanFactory
+The `BeanFactory` provides the underlying basis for Spring's IoC functionality but it is
+only used directly in integration with other third-party frameworks and is now largely
+historical in nature for most users of Spring. The `BeanFactory` and related interfaces,
+such as `BeanFactoryAware`, `InitializingBean`, `DisposableBean`, are still present in
+Spring for the purposes of backward compatibility with the large number of third-party
+frameworks that integrate with Spring. Often third-party components that can not use
+more modern equivalents such as `@PostConstruct` or `@PreDestroy` in order to remain
+compatible with JDK 1.4 or to avoid a dependency on JSR-250.
+
+This section provides additional background into the differences between the
+`BeanFactory` and `ApplicationContext` and how one might access the IoC container
+directly through a classic singleton lookup.
+
+
+
+[[context-introduction-ctx-vs-beanfactory]]
+==== BeanFactory or ApplicationContext?
+
+Use an `ApplicationContext` unless you have a good reason for not doing so.
+
+Because the `ApplicationContext` includes all functionality of the `BeanFactory`, it is
+generally recommended over the `BeanFactory`, except for a few situations such as in an
+`Applet` where memory consumption might be critical and a few extra kilobytes might make
+a difference. However, for most typical enterprise applications and systems, the
+`ApplicationContext` is what you will want to use. Spring makes __heavy__
+use of the <<beans-factory-extension-bpp, `BeanPostProcessor` extension point>> (to
+effect proxying and so on). If you use only a plain `BeanFactory`, a fair amount of
+support such as transactions and AOP will not take effect, at least not without some
+extra steps on your part. This situation could be confusing because nothing is actually
+wrong with the configuration.
+
+The following table lists features provided by the `BeanFactory` and
+`ApplicationContext` interfaces and implementations.
+
+[[context-introduction-ctx-vs-beanfactory-feature-matrix]]
+.Feature Matrix
+|===
+| Feature| `BeanFactory`| `ApplicationContext`
+
+| Bean instantiation/wiring
+| Yes
+| Yes
+
+| Automatic `BeanPostProcessor` registration
+| No
+| Yes
+
+| Automatic `BeanFactoryPostProcessor` registration
+| No
+| Yes
+
+| Convenient `MessageSource` access (for i18n)
+| No
+| Yes
+
+| `ApplicationEvent` publication
+| No
+| Yes
+|===
+
+To explicitly register a bean post-processor with a `BeanFactory` implementation, you
+must write code like this:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	ConfigurableBeanFactory factory = new XmlBeanFactory(...);
+
+	// now register any needed BeanPostProcessor instances
+	MyBeanPostProcessor postProcessor = new MyBeanPostProcessor();
+	factory.addBeanPostProcessor(postProcessor);
+
+	// now start using the factory
+----
+
+To explicitly register a `BeanFactoryPostProcessor` when using a `BeanFactory`
+implementation, you must write code like this:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	XmlBeanFactory factory = new XmlBeanFactory(new FileSystemResource("beans.xml"));
+
+	// bring in some property values from a Properties file
+	PropertyPlaceholderConfigurer cfg = new PropertyPlaceholderConfigurer();
+	cfg.setLocation(new FileSystemResource("jdbc.properties"));
+
+	// now actually do the replacement
+	cfg.postProcessBeanFactory(factory);
+----
+
+In both cases, the explicit registration step is inconvenient, which is one reason why
+the various `ApplicationContext` implementations are preferred above plain `BeanFactory`
+implementations in the vast majority of Spring-backed applications, especially when
+using `BeanFactoryPostProcessors` and `BeanPostProcessors`. These mechanisms implement
+important functionality such as property placeholder replacement and AOP.
+
+
+
+[[beans-servicelocator]]
+==== Glue code and the evil singleton
+It is best to write most application code in a dependency-injection (DI) style, where
+that code is served out of a Spring IoC container, has its own dependencies supplied by
+the container when it is created, and is completely unaware of the container. However,
+for the small glue layers of code that are sometimes needed to tie other code together,
+you sometimes need a singleton (or quasi-singleton) style access to a Spring IoC
+container. For example, third-party code may try to construct new objects directly (
+`Class.forName()` style), without the ability to get these objects out of a Spring IoC
+container.If the object constructed by the third-party code is a small stub or proxy,
+which then uses a singleton style access to a Spring IoC container to get a real object
+to delegate to, then inversion of control has still been achieved for the majority of
+the code (the object coming out of the container). Thus most code is still unaware of
+the container or how it is accessed, and remains decoupled from other code, with all
+ensuing benefits. EJBs may also use this stub/proxy approach to delegate to a plain Java
+implementation object, retrieved from a Spring IoC container. While the Spring IoC
+container itself ideally does not have to be a singleton, it may be unrealistic in terms
+of memory usage or initialization times (when using beans in the Spring IoC container
+such as a Hibernate `SessionFactory`) for each bean to use its own, non-singleton Spring
+IoC container.
+
+Looking up the application context in a service locator style is sometimes the only
+option for accessing shared Spring-managed components, such as in an EJB 2.1
+environment, or when you want to share a single ApplicationContext as a parent to
+WebApplicationContexts across WAR files. In this case you should look into using the
+utility class
+{javadoc-baseurl}/org/springframework/context/access/ContextSingletonBeanFactoryLocator.html[`ContextSingletonBeanFactoryLocator`]
+locator that is described in this
+https://spring.io/blog/2007/06/11/using-a-shared-parent-application-context-in-a-multi-war-spring-application/[Spring
+team blog entry].
