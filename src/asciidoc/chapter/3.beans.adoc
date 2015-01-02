@@ -1,29 +1,14 @@
 [[spring-core]]
-= Core Technologies
+= 核心技术
 [partintro]
 --
-This part of the reference documentation covers all of those technologies that are
-absolutely integral to the Spring Framework.
+参考文档这一部分涵盖的所有技术绝对都是Spring框架不可或缺的组成部分。
 
-Foremost amongst these is the Spring Framework's Inversion of Control (IoC) container. A
-thorough treatment of the Spring Framework's IoC container is closely followed by
-comprehensive coverage of Spring's Aspect-Oriented Programming (AOP) technologies. The
-Spring Framework has its own AOP framework, which is conceptually easy to understand,
-and which successfully addresses the 80% sweet spot of AOP requirements in Java
-enterprise programming.
+其中最主要的就是Spring框架的控制反转（IoC）容器。紧随其后的是全面涵盖的Spring面向切面编程（AOP）技术。Spring有自己的AOP框架。这个AOP框架易于理解，并且成功的解决了Java企业编程中80%的AOP需求。
 
-Coverage of Spring's integration with AspectJ (currently the richest - in terms of
-features - and certainly most mature AOP implementation in the Java enterprise space) is
-also provided.
+还提供了使用AspectJ（目前最全面最成熟的的企业级AOP框架）与Spring集成的内容。
 
-Finally, the adoption of the test-driven-development (TDD) approach to software
-development is certainly advocated by the Spring team, and so coverage of Spring's
-support for integration testing is covered (alongside best practices for unit testing).
-The Spring team has found that the correct use of IoC certainly does make both unit and
-integration testing easier (in that the presence of setter methods and appropriate
-constructors on classes makes them easier to wire together in a test without having to
-set up service locator registries and suchlike)... the chapter dedicated solely to
-testing will hopefully convince you of this as well.
+最后，Spring团队提倡通过测试驱动（TDD）开发软件，所以这里也涵盖了Spring集成测试的内容（在单元测试最佳实践的旁边）。Spring团队发现正确的使用Ioc可以使单元测试和集成测试更容易（如类中存在的setter方法和适当的的构造方法可以在测试中使得它们更容易在一起，而不需要对服务定位器进行注册）...,专门致力于测试的这一章有希望说服你认同这一点。
 
 * <<beans>>
 * <<resources>>
