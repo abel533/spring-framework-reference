@@ -760,18 +760,15 @@ JDO 需要一个活动的事务来修改持久化的对象。非事务性的刷�
 
 [[orm-jpa]]
 === JPA
-The Spring JPA, available under the `org.springframework.orm.jpa` package, offers
-comprehensive support for the
+Spring JPA,存在与 `org.springframework.orm.jpa` 包，提供方便的对于
 http://www.oracle.com/technetwork/articles/javaee/jpa-137156.html[Java Persistence
-API] in a similar manner to the integration with Hibernate or JDO, while being aware of
-the underlying implementation in order to provide additional features.
+API] 的类似于 Hibernate 或者 JDO 的支持，为了解底层的实现，提供额外的功能。
 
 
 
 [[orm-jpa-setup]]
-==== Three options for JPA setup in a Spring environment
-The Spring JPA support offers three ways of setting up the JPA `EntityManagerFactory`
-that will be used by the application to obtain an entity manager.
+==== 三种设置选项
+Spring JPA 提供三种方式来设置  JPA `EntityManagerFactory` 用于应用程序实现实体的管理。
 
 
 [[orm-jpa-setup-lemfb]]
@@ -779,15 +776,10 @@ that will be used by the application to obtain an entity manager.
 
 [NOTE]
 ====
-Only use this option in simple deployment environments such as stand-alone applications
-and integration tests.
+只在简单部署环境中，比如独立的应用程序和集成测试才使用该选项
 ====
 
-The `LocalEntityManagerFactoryBean` creates an `EntityManagerFactory` suitable for
-simple deployment environments where the application uses only JPA for data access. The
-factory bean uses the JPA `PersistenceProvider` autodetection mechanism (according to
-JPA's Java SE bootstrapping) and, in most cases, requires you to specify only the
-persistence unit name:
+`LocalEntityManagerFactoryBean` 创建了一个仅使用 JPA 访问数据适合部署在简单环境下的应用程序的 `EntityManagerFactory`。工厂 bean 使用 JPA `PersistenceProvider` 自动检测机制（根据 JPA 的Java SE 引导），在大多数情况下，需要指定唯一持久单元名称：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -799,26 +791,18 @@ persistence unit name:
 	</beans>
 ----
 
-This form of JPA deployment is the simplest and the most limited. You cannot refer to an
-existing JDBC `DataSource` bean definition and no support for global transactions
-exists. Furthermore, weaving (byte-code transformation) of persistent classes is
-provider-specific, often requiring a specific JVM agent to specified on startup. This
-option is sufficient only for stand-alone applications and test environments, for which
-the JPA specification is designed.
+这种形式的 JPA 的部署是最简单和最有限的。你不能引用现有的 JDBC `DataSource` 的 bean 的定义，并且不支持全局事务的存在。此外，织入（字节码转换）持久化类是提供者特定的，往往需要一个特定的 JVM 代理在启动时指定。此选项仅适用于为 JPA 规范设计的独立的应用程序和测试环境。
 
 
 [[orm-jpa-setup-jndi]]
-===== Obtaining an EntityManagerFactory from JNDI
+===== 从 JNDI 中获得 EntityManagerFactory
 
 [NOTE]
 ====
-Use this option when deploying to a Java EE 5 server. Check your server's documentation
-on how to deploy a custom JPA provider into your server, allowing for a different
-provider than the server's default.
+当部署在 Java EE 5 服务器中使用该选项，查看你的服务器的文档来获知如何部署自定义的 JPA 提供者 在你的服务器中，允许不同于服务器默认的提供者。
 ====
 
-Obtaining an `EntityManagerFactory` from JNDI (for example in a Java EE 5 environment),
-is simply a matter of changing the XML configuration:
+从 JNDI 中获得 `EntityManagerFactory` (举例 在 Java EE 5 环境中)，只需简单配置 XML:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -828,23 +812,11 @@ is simply a matter of changing the XML configuration:
 	</beans>
 ----
 
-This action assumes standard Java EE 5 bootstrapping: the Java EE server autodetects
-persistence units (in effect, `META-INF/persistence.xml` files in application jars) and
-`persistence-unit-ref` entries in the Java EE deployment descriptor (for example,
-`web.xml`) and defines environment naming context locations for those persistence units.
+这个动作指定标准的 Java EE 5 的引导： Java EE服务器自动检测持久单元（实际上，`META-INF/persistence.xml`文件在应用的 jar 中）和在Java EE部署描述符中的 `persistence-unit-ref` 的实体（例如，web.xml）并为这些定义环境命名上下文的位置。
 
-In such a scenario, the entire persistence unit deployment, including the weaving
-(byte-code transformation) of persistent classes, is up to the Java EE server. The JDBC
-`DataSource` is defined through a JNDI location in the `META-INF/persistence.xml` file;
-EntityManager transactions are integrated with the server's JTA subsystem. Spring merely
-uses the obtained `EntityManagerFactory`, passing it on to application objects through
-dependency injection, and managing transactions for the persistence unit, typically
-through `JtaTransactionManager`.
+在这种情况下，整个持久化单元的部署，包括织入（字节码转换）持久化类，到 Java EE 服务器。JDBC `DataSource`是通过 JNDI 位置定义在META-INF/persistence.xml文件中。EntityManager 事务集成在服务器的 JTA 子系统中。Spring 只是使用获得的 `EntityManagerFactory`，通过依赖注入传递给应用程序对象，并且为持久单元管理事务，通常是通过 `JtaTransactionManager`。
 
-If multiple persistence units are used in the same application, the bean names of such
-JNDI-retrieved persistence units should match the persistence unit names that the
-application uses to refer to them, for example, in `@PersistenceUnit` and
-`@PersistenceContext` annotations.
+如果多个持久单元中使用相同的应用程序， JNDI检索的持久单元的 bean 名称应与持久单元的名称匹配，应用程序引用它们，比如，在`@PersistenceUnit` 和 `@PersistenceContext`注解。
 
 
 [[orm-jpa-setup-lcemfb]]
@@ -852,19 +824,9 @@ application uses to refer to them, for example, in `@PersistenceUnit` and
 
 [NOTE]
 ====
-Use this option for full JPA capabilities in a Spring-based application environment.
-This includes web containers such as Tomcat as well as stand-alone applications and
-integration tests with sophisticated persistence requirements.
+在基于 Spring 的使用 JPA 全功能的应用环境中，使用该选项。这个包含了 web 容器你比如 Tomcat 作为具有复杂的持续性要求的单独的应用和集成测试
 ====
-
-The `LocalContainerEntityManagerFactoryBean` gives full control over
-`EntityManagerFactory` configuration and is appropriate for environments where
-fine-grained customization is required. The `LocalContainerEntityManagerFactoryBean`
-creates a `PersistenceUnitInfo` instance based on the `persistence.xml` file, the
-supplied `dataSourceLookup` strategy, and the specified `loadTimeWeaver`. It is thus
-possible to work with custom data sources outside of JNDI and to control the weaving
-process. The following example shows a typical bean definition for a
-`LocalContainerEntityManagerFactoryBean`:
+`LocalContainerEntityManagerFactoryBean`给`EntityManagerFactory`完全控制配置和按需定制细粒度的适合的环境。`LocalContainerEntityManagerFactoryBean`创建基于 ` persistence.xml`文件 的 `PersistenceUnitInfo`的实例,提供`dataSourceLookup`的策略,指定`loadTimeWeaver`。因此可以在 JNDI 外部使用自定义数据源和控制编织过程。下面的示例显示了一个典型的定义`LocalContainerEntityManagerFactoryBean`的 bean:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -879,7 +841,7 @@ process. The following example shows a typical bean definition for a
 	</beans>
 ----
 
-The following example shows a typical `persistence.xml` file:
+下面展示常见的 persistence.xml ：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -894,63 +856,27 @@ The following example shows a typical `persistence.xml` file:
 
 [NOTE]
 ====
-The `<exclude-unlisted-classes/>` shortcut indicates that __no__ scanning for
-annotated entity classes is supposed to occur. An explicit 'true' value specified -
-`<exclude-unlisted-classes>true</exclude-unlisted-classes/>` - also means no scan.
-`<exclude-unlisted-classes>false</exclude-unlisted-classes/>` does trigger a scan;
-however, it is recommended to simply omit the `exclude-unlisted-classes` element
-if you want entity class scanning to occur.
+`<exclude-unlisted-classes/>`快捷表明应该出现未扫描的注解的实体类。一个明确的 true 值指定`<exclude-unlisted-classes>true</exclude-unlisted-classes/>` 也意味着没有扫描。`<exclude-unlisted-classes>false</exclude-unlisted-classes/> d`触发扫描；然而，它是建议干脆省略 `exclude-unlisted-classes`元素如果你想扫描产生的实体类。
 ====
 
-Using the `LocalContainerEntityManagerFactoryBean` is the most powerful JPA setup
-option, allowing for flexible local configuration within the application. It supports
-links to an existing JDBC `DataSource`, supports both local and global transactions, and
-so on. However, it also imposes requirements on the runtime environment, such as the
-availability of a weaving-capable class loader if the persistence provider demands
-byte-code transformation.
+使用 `LocalContainerEntityManagerFactoryBean` 是最强大的 JPA 设置选项，允许丰富的在应用中本地配置。它支持连接到现有的  JDBC `DataSource`,支持 包括 本地和全局的事务，等等。然而,它还对运行时环境的有特殊的需求,比如需要 weaving-capable（可织入的）的类载入器，当持久性提供者要求字节码转换时。
 
-This option may conflict with the built-in JPA capabilities of a Java EE 5 server. In a
-full Java EE 5 environment, consider obtaining your `EntityManagerFactory` from JNDI.
-Alternatively, specify a custom `persistenceXmlLocation` on your
-`LocalContainerEntityManagerFactoryBean` definition, for example,
-META-INF/my-persistence.xml, and only include a descriptor with that name in your
-application jar files. Because the Java EE 5 server only looks for default
-`META-INF/persistence.xml` files, it ignores such custom persistence units and hence
-avoid conflicts with a Spring-driven JPA setup upfront. (This applies to Resin 3.1, for
-example.)
+此选项可能 Java EE 5 服务器中内置 JPA 功能冲突。在一个完整的 Java EE 5 的环境下,考虑从 JNDI 获取你的`EntityManagerFactory`。另外,`LocalContainerEntityManagerFactoryBean`定义中指定一个自定义 `persistenceXmlLocation` ,例如, META-INF/my-persistence.xml ,并且只包含一个描述符,这个名字在你的应用程序 jar 文件。因为 Java EE 5 服务器只查找默认`META-INF/persistence.xml`文件,它忽略了这些自定义持久性单元,从而避免与 Spring 驱动的 JPA 预先设置冲突。(例如,这适用于 Resin 3.1)。
 
-.When is load-time weaving required?
+.什么时候需要载入时织入?
 ****
-Not all JPA providers require a JVM agent ; Hibernate is an example of one that does
-not. If your provider does not require an agent or you have other alternatives, such as
-applying enhancements at build time through a custom compiler or an ant task, the
-load-time weaver __should not__ be used.
+不是所有的 JPA 提供者需要 JVM 代理;Hibernate 就是这样的一个例子。如果你的提供者不需要一个代理或你有其他选择,如应用增强在构建时通过一个自定义的编译器或一个 ant 任务,此时不应使用载入时织入。
 ****
 
-The `LoadTimeWeaver` interface is a Spring-provided class that allows JPA
-`ClassTransformer` instances to be plugged in a specific manner, depending whether the
-environment is a web container or application server. Hooking `ClassTransformers`
-through an
+`LoadTimeWeaver`接口是一个 Spring 类,允许将 JPA `ClassTransformer`实例插入一个特定的方式,这取决于环境是 web 容器或应用程序服务器。通过一个
 http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html[agent]
-typically is not efficient. The agents work against the __entire virtual machine__ and
-inspect __every__ class that is loaded, which is usually undesirable in a production
-server environment.
+来挂钩 `ClassTransformers`通常是无效的。代理工作在整个虚拟机并检查每一个加载类,通常是在生产服务器环境中不受欢迎的。
 
-Spring provides a number of `LoadTimeWeaver` implementations for various environments,
-allowing `ClassTransformer` instances to be applied only __per class loader__ and not
-per VM.
+Spring 提供了许多 `LoadTimeWeaver` 各种环境的实现,允许`ClassTransformer`实例仅适用于每个类装入器,而不是每个 VM。
 
-Refer to <<aop-aj-ltw-spring>> in the AOP chapter for more insight regarding the
-`LoadTimeWeaver` implementations and their setup, either generic or customized to
-various platforms (such as Tomcat, WebLogic, GlassFish, Resin and JBoss).
+参考 AOP 章节 <<aop-aj-ltw-spring>> 了解关于`LoadTimeWeaver`实现及其设置,包括泛型或定制各种平台(如 Tomcat、WebLogic、GlassFish、Resin 和JBoss)。
 
-As described in the aforementioned section, you can configure a context-wide
-`LoadTimeWeaver` using the `@EnableLoadTimeWeaving` annotation of
-`context:load-time-weaver` XML element. Such a global weaver is picked up by all JPA
-`LocalContainerEntityManagerFactoryBeans` automatically. This is the preferred way of
-setting up a load-time weaver, delivering autodetection of the platform (WebLogic,
-GlassFish, Tomcat, Resin, JBoss or VM agent) and automatic propagation of the weaver to
-all weaver-aware beans:
+如上述所述部分,您可以配置一个context-wide（宽泛上下文的） `LoadTimeWeaver`使用`context:load-time-weaver`元素中的`@EnableLoadTimeWeaving`注释。这样一个全球织入是所有 JPA `LocalContainerEntityManagerFactoryBeans`自动捕捉到。这是设置加载时织入的首选方法,能自动识别出平台(WebLogic, GlassFish, Tomcat, Resin, JBoss 或者 VM 代理)和自动传播的织入到所有可织入的 bean 中:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -961,8 +887,7 @@ all weaver-aware beans:
 	</bean>
 ----
 
-However, if needed, one can manually specify a dedicated weaver through the
-`loadTimeWeaver` property:
+不过,如果需要,可以手动通过 `loadTimeWeaver属性`指定一个专门的织入:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -974,21 +899,13 @@ However, if needed, one can manually specify a dedicated weaver through the
 	</bean>
 ----
 
-No matter how the LTW is configured, using this technique, JPA applications relying on
-instrumentation can run in the target platform (ex: Tomcat) without needing an agent.
-This is important especially when the hosting applications rely on different JPA
-implementations because the JPA transformers are applied only at class loader level and
-thus are isolated from each other.
+无论 LTW 如何配置,使用这种技术,JPA 应用程序依赖于器可以运行在目标平台(例:Tomcat)而不需要代理的基础设施。这是非常重要的,尤其是当托管的应用程序依赖于不同的 JPA 实现，因为 JPA 转换器只在类装入器级别,因此彼此是隔离。
+
 
 
 [[orm-jpa-multiple-pu]]
-===== Dealing with multiple persistence units
-For applications that rely on multiple persistence units locations, stored in various
-JARS in the classpath, for example, Spring offers the `PersistenceUnitManager` to act as
-a central repository and to avoid the persistence units discovery process, which can be
-expensive. The default implementation allows multiple locations to be specified that are
-parsed and later retrieved through the persistence unit name. (By default, the classpath
-is searched for `META-INF/persistence.xml` files.)
+===== 处理多个持久单元
+对于依赖于多个持久单元的位置的应用程序，在类路径中，存储在不同的JAR 中，例如，Spring 提供`PersistenceUnitManager`作为中央存储库，以避免持久单元的发现过程，它可以是昂贵的。默认的实现允许多个位置被指定，稍后被通过持久单元名称检索。（默认情况下，路径搜索的的是META-INF/persistence.xml 文件。）
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -1017,31 +934,18 @@ is searched for `META-INF/persistence.xml` files.)
 	</bean>
 ----
 
-The default implementation allows customization of the `PersistenceUnitInfo` instances,
-before they are fed to the JPA provider, declaratively through its properties, which
-affect __all__ hosted units, or programmatically, through the
-`PersistenceUnitPostProcessor`, which allows persistence unit selection. If no
-`PersistenceUnitManager` is specified, one is created and used internally by
-`LocalContainerEntityManagerFactoryBean`.
+默认的实现允许的自定义 `PersistenceUnitInfo` 实例，在他们传入 JPA 提供者之前，声明通过它的属性，影响所有的单元，或以编程方式，通过 `PersistenceUnitPostProcessor`，允许持久单元的选择。如果没有指定一个 `PersistenceUnitManager`，由`LocalContainerEntityManagerFactoryBean`内部创建和使用。
 
 
 
 [[orm-jpa-straight]]
-==== Implementing DAOs based on plain JPA
+==== 基于平常 JPA的 DAO 的实现
 [NOTE]
 ====
-Although `EntityManagerFactory` instances are thread-safe, `EntityManager` instances are
-not. The injected JPA `EntityManager` behaves like an `EntityManager` fetched from an
-application server's JNDI environment, as defined by the JPA specification. It delegates
-all calls to the current transactional `EntityManager`, if any; otherwise, it falls back
-to a newly created `EntityManager` per operation, in effect making its usage thread-safe.
+虽然 `EntityManagerFactory` 实例是线程安全的 , 但 `EntityManager` 不是。注入的 JPA `EntityManager` 的行为像一个 从应用服务器的 JNDI 环境中通过 JPA 规范定义的 `EntityManager` 。它代表所有调用当前事务`EntityManager`，如果是的话；否则，它在每次操作时返回新创建的`EntityManager`，使其线程安全。
 ====
 
-It is possible to write code against the plain JPA without any Spring dependencies, by
-using an injected `EntityManagerFactory` or `EntityManager`. Spring can understand
-`@PersistenceUnit` and `@PersistenceContext` annotations both at field and method level
-if a `PersistenceAnnotationBeanPostProcessor` is enabled. A plain JPA DAO implementation
-using the `@PersistenceUnit` annotation might look like this:
+通过注入`EntityManagerFactory` 或 `EntityManager`，对于编写平常 JPA 代码对 Spring 没有任何依赖。 Spring 可以理解`@PersistenceUnit`和`@PersistenceContext`和注解在字段和方法层面，如果启动 `PersistenceAnnotationBeanPostProcessor`的话。普通的JPA DAO实现使用 `@PersistenceUnit`注解可能看起来像这样:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1071,9 +975,7 @@ using the `@PersistenceUnit` annotation might look like this:
 	}
 ----
 
-The DAO above has no dependency on Spring and still fits nicely into a Spring
-application context. Moreover, the DAO takes advantage of annotations to require the
-injection of the default `EntityManagerFactory`:
+上面的 DAO 没有依赖 Spring ,但 任然非常符合 Spring 应用的上下文。此外，该 DAO 充分利用 `EntityManagerFactory` 默认注解：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1088,11 +990,7 @@ injection of the default `EntityManagerFactory`:
 	</beans>
 ----
 
-As an alternative to defining a `PersistenceAnnotationBeanPostProcessor` explicitly,
-consider using the Spring `context:annotation-config` XML element in your application
-context configuration. Doing so automatically registers all Spring standard
-post-processors for annotation-based configuration, including
-`CommonAnnotationBeanPostProcessor` and so on.
+作为一种明确替代定义 `PersistenceAnnotationBeanPostProcessor`，考虑使用 Spring  `context:annotation-config`  在你的应用程序环境配置。这样做自动注册所有的 Spring 基于注释的配置标准处理器，包括`CommonAnnotationBeanPostProcessor`等等。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1107,11 +1005,7 @@ post-processors for annotation-based configuration, including
 	</beans>
 ----
 
-The main problem with such a DAO is that it always creates a new `EntityManager` through
-the factory. You can avoid this by requesting a transactional `EntityManager` (also
-called "shared EntityManager" because it is a shared, thread-safe proxy for the actual
-transactional EntityManager) to be injected instead of the factory:
-
+这样的 DAO 的主要的问题是，它总是通过工厂创建一个新的 `EntityManager` 。你可以请求一个事务`EntityManager`（也被称为“共享 EntityManager ”因为它是一个共享的，线程安全的代理在实际事务 EntityManager 中）被注入而不是工厂来避免这种情况：
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -1128,53 +1022,32 @@ transactional EntityManager) to be injected instead of the factory:
 	}
 ----
 
-The `@PersistenceContext` annotation has an optional attribute `type`, which defaults to
-`PersistenceContextType.TRANSACTION`. This default is what you need to receive a shared
-EntityManager proxy. The alternative, `PersistenceContextType.EXTENDED`, is a completely
-different affair: This results in a so-called extended EntityManager, which is __not
-thread-safe__ and hence must not be used in a concurrently accessed component such as a
-Spring-managed singleton bean. Extended EntityManagers are only supposed to be used in
-stateful components that, for example, reside in a session, with the lifecycle of the
-EntityManager not tied to a current transaction but rather being completely up to the
-application.
+`@PersistenceContext`注解有个可选属性`type`, 默认值是` PersistenceContextType.TRANSACTION` 。默认的是你需要接收共享的`EntityManager`代理。`PersistenceContextType.EXTENDED`，是一个完全不同的事情,这个结果对 `EntityManager`的扩展，它不是线程安全的，因此不能用于并发访问的组件如 Spring 管理单例 bean。扩展的 EntityManager 只能用在有状态的组件，例如，驻留在一个会话上，这样EntityManager 的生命周期不依赖于当前事务，而是完全取决于应用程序。
 
 .Method- and field-level Injection
 ****
-Annotations that indicate dependency injections (such as `@PersistenceUnit` and
-`@PersistenceContext`) can be applied on field or methods inside a class, hence the
-expressions __method-level injection__ and __field-level injection__. Field-level
-annotations are concise and easier to use while method-level allows for further
-processing of the injected dependency. In both cases the member visibility (public,
-protected, private) does not matter.
+注释表明依赖注入（如 `@PersistenceUnit` 和 `@PersistenceContext`）可应用于类中的字段或方法，因此表现方法级别的注入和字段级别的注入。字段级别的注入是简洁和容易使用而方法级别允许进一步处理注入的依赖。在这两种情况下的成员可见性（公共，保护，私人）不要紧。
 
-What about class-level annotations?
+那类级别的注入呢？
 
-On the Java EE 5 platform, they are used for dependency declaration and not for resource
-injection.
+在 Java EE 5 平台，它们是用来声明依赖而不是资源注入
 ****
 
-The injected `EntityManager` is Spring-managed (aware of the ongoing transaction). It is
-important to note that even though the new DAO implementation uses method level
-injection of an `EntityManager` instead of an `EntityManagerFactory`, no change is
-required in the application context XML due to annotation usage.
 
-The main advantage of this DAO style is that it only depends on Java Persistence API; no
-import of any Spring class is required. Moreover, as the JPA annotations are understood,
-the injections are applied automatically by the Spring container. This is appealing from
-a non-invasiveness perspective, and might feel more natural to JPA developers.
+注入`EntityManager`是 Spring 管理的（意识到正在进行的事务）。需要注意的是，尽管新的 DAO 实现使用一个 `EntityManager` 方法注入而不是一个`EntityManagerFactory`，在应用程序上下文的 XML 注释的用法无需改变。
+
+这种 DAO 风格的主要优点是，它不仅取决于 Java Persistence API;（Java 持久性API），而无需引进任何 Spring 的类。此外，作为 JPA 注释更容易理解，注解可以被 Spring 容器自动应用。这是从非侵袭性的的角度看很具有吸引力，对于 JPA 的开发人员来说可能感觉更自然。
 
 
 
 [[orm-jpa-tx]]
-==== Transaction Management
+==== 事务管理
 [NOTE]
 ====
-You are __strongly__ encouraged to read <<transaction-declarative>> if you have not done
-so, to get a more detailed coverage of Spring's declarative transaction support.
+如果你还没有看过 <<transaction-declarative>> 强烈建议你看下，获取更多Spring 声明式事务的支持*
 ====
 
-To execute service operations within transactions, you can use Spring's common
-declarative transaction facilities. For example:
+执行服务的事务操作，使用 Spring 常见的声明式事务功能，举例：
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -1216,34 +1089,19 @@ declarative transaction facilities. For example:
 	</beans>
 ----
 
-Spring JPA allows a configured `JpaTransactionManager` to expose a JPA transaction to
-JDBC access code that accesses the same JDBC `DataSource`, provided that the registered
-`JpaDialect` supports retrieval of the underlying JDBC `Connection`. Out of the box,
-Spring provides dialects for the Toplink, Hibernate and OpenJPA JPA implementations. See
-the next section for details on the `JpaDialect` mechanism.
+Spring 的 JPA 允许配置 `JpaTransactionManager`来欂栌 JPA 事务的 JDBC 访问代码从而访问同一个 JDBC `DataSource`，提供注册`JpaDialect`支持底层的 JDBC `Connection`检索。开箱即用，Spring 提供了 TopLink ，Hibernate 和 OpenJPA 的 JPA 实现的方言。请参阅下一节 `JpaDialect`机制。
 
 
 
 [[orm-jpa-dialect]]
 ==== JpaDialect
 
-As an advanced feature `JpaTemplate`, `JpaTransactionManager` and subclasses of
-`AbstractEntityManagerFactoryBean` support a custom `JpaDialect`, to be passed into the
-`jpaDialect` bean property. In such a scenario, the DAOs do not receive an
-`EntityManagerFactory` reference but rather a full `JpaTemplate` instance (for example,
-passed into the `jpaTemplate` property of `JpaDaoSupport`). A `JpaDialect`
-implementation can enable some advanced features supported by Spring, usually in a
-vendor-specific manner:
+作为一个高级功能 `JpaTemplate`,`JpaTransactionManager `和`AbstractEntityManagerFactoryBean`子类支持自定义 JpaDialect,传递到 `JpaDialect` bean 属性。在这种情况下,DAO 未得到`EntityManagerFactory`的引用,而是一个完整的`JpaTemplate`实例(例如,传递到`JpaDaoSupport`的`JpaTemplate` 属性)。`JpaDialect`实现可以使一些 Spring 支持的高级功能,通常取决于特定供应商的方式:
 
-* Applying specific transaction semantics such as custom isolation level or transaction
-  timeout)
-* Retrieving the transactional JDBC `Connection` for exposure to JDBC-based DAOs)
-* Advanced translation of `PersistenceExceptions` to Spring `DataAccessExceptions`
+* 应用特定的事务语义,如自定义隔离级别或事务超时)
+* 检索事务暴露于基于 JDBC 的 DAO 的 JDBC `Connection`)
+* `PersistenceExceptions` 到 Spring `DataAccessExceptions`的高级转换
 
-This is particularly valuable for special transaction semantics and for advanced
-translation of exception. The default implementation used ( `DefaultJpaDialect`) does
-not provide any special capabilities and if the above features are required, you have to
-specify the appropriate dialect.
+这对于特殊事务语义和高级的异常转换来说是非常有价值的。默认实现使用(`DefaultJpaDialect`)不提供任何特殊功能,如果需要上面的功能,你必须指定适当的方言。
 
-See the `JpaDialect` javadocs for more details of its operations and how they are used
-within Spring's JPA support.
+查看 `JpaDialect` 的 javadocs 获取更多如果使用 Spring JPA 的细节
