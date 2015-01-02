@@ -523,17 +523,14 @@ further JDBC access is allowed within this transaction.
 
 [[orm-jdo]]
 === JDO
-Spring supports the standard JDO 2.0 and 2.1 APIs as data access strategy, following the
-same style as the Hibernate support. The corresponding integration classes reside in the
-`org.springframework.orm.jdo` package.
+Spring 支持标准的 JDO 2.0 和 2.1 API 的数据访问策略，按照与 Hibernate 同样的支持方式。相应的集成类驻留在`org.springframework.orm.jdo` 包。
 
 
 
 [[orm-jdo-setup]]
-==== PersistenceManagerFactory setup
+==== PersistenceManagerFactory 设置
 
-Spring provides a `LocalPersistenceManagerFactoryBean` class that allows you to define a
-local JDO `PersistenceManagerFactory` within a Spring application context:
+Spring提供 `LocalPersistenceManagerFactoryBean` 类允许您在一个 Spring 应用上下文定义了一个局部的 JDO 的`PersistenceManagerFactory`：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -547,14 +544,8 @@ local JDO `PersistenceManagerFactory` within a Spring application context:
 	</beans>
 ----
 
-Alternatively, you can set up a `PersistenceManagerFactory` through direct instantiation
-of a `PersistenceManagerFactory` implementation class. A JDO `PersistenceManagerFactory`
-implementation class follows the JavaBeans pattern, just like a JDBC `DataSource`
-implementation class, which is a natural fit for a configuration that uses Spring. This
-setup style usually supports a Spring-defined JDBC `DataSource`, passed into the
-`connectionFactory` property. For example, for the open source JDO implementation
-DataNucleus (formerly JPOX) ( http://www.datanucleus.org/[http://www.datanucleus.org/]),
-this is the XML configuration of the `PersistenceManagerFactory` implementation:
+另外，你可以通过一个 `PersistenceManagerFactory`实现类的的实例化来设置 `PersistenceManagerFactory`。一个 JDO 的`PersistenceManagerFactory`实现类遵循 JavaBean 模式，就像一个JDBC `DataSource` 的实现类，这是在 Spring 里配置使用是非常合适的。这种设置方式通常支持一个 Spring 定义的JDBC `DataSource`，传递给 `connectionFactory`。例如，对于开源的 JDO 实现DataNucleus (原名 JPOX) ( http://www.datanucleus.org/[http://www.datanucleus.org/]),
+下面是`PersistenceManagerFactory`实现的 XML 配置：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -576,21 +567,14 @@ this is the XML configuration of the `PersistenceManagerFactory` implementation:
 	</beans>
 ----
 
-You can also set up JDO `PersistenceManagerFactory` in the JNDI environment of a Java EE
-application server, usually through the JCA connector provided by the particular JDO
-implementation. Spring's standard `JndiObjectFactoryBean` or `<jee:jndi-lookup>` can be
-used to retrieve and expose such a `PersistenceManagerFactory`. However, outside an EJB
-context, no real benefit exists in holding the `PersistenceManagerFactory` in JNDI: only
-choose such a setup for a good reason. See <<orm-hibernate-resources>> for a discussion;
-the arguments there apply to JDO as well.
+也可以在  Java EE 应用服务的 JNDI 环境中 设置 JDO `PersistenceManagerFactory`，通常是通过  JCA 连接器提供包含 JDO 的实现。Spring 的标准中 `JndiObjectFactoryBean` 或 `<jee:jndi-lookup>`可以用来检索和暴露比如`PersistenceManagerFactory`。然而，在 EJB 上下文 之外,没有真正的存在于在 JNDI 中保持 `PersistenceManagerFactory` :只选择这样的一个设置是一个很好的理由。请参见 <<orm-hibernate-resources>> for a discussion;
+讨论;那里的论点适用于JDO。
 
 
 
 [[orm-jdo-daos-straight]]
-==== Implementing DAOs based on the plain JDO API
-DAOs can also be written directly against plain JDO API, without any Spring
-dependencies, by using an injected `PersistenceManagerFactory`. The following is an
-example of a corresponding DAO implementation:
+==== 基于平常  JDO API 的 DAO 的实现
+利用注入的 `PersistenceManagerFactory`，也可以直接利用平常的JDO API来写 DAO，而无需 Spring 的依赖。以下是相应的 DAO 实现的一个例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -617,8 +601,7 @@ example of a corresponding DAO implementation:
 	}
 ----
 
-Because the above DAO follows the dependency injection pattern, it fits nicely into a
-Spring container, just as it would if coded against Spring's `JdoTemplate`:
+因为上面的 DAO 依赖注入模式，它适合在 Spring 容器中，就像在Spring 的 `JdoTemplate` 中编码：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -632,11 +615,7 @@ Spring container, just as it would if coded against Spring's `JdoTemplate`:
 	</beans>
 ----
 
-The main problem with such DAOs is that they always get a new `PersistenceManager` from
-the factory. To access a Spring-managed transactional `PersistenceManager`, define a
-`TransactionAwarePersistenceManagerFactoryProxy` (as included in Spring) in front of
-your target `PersistenceManagerFactory`, then passing a reference to that proxy into
-your DAOs as in the following example:
+这样的 DAO 主要的问题是，他们总是从工厂获得一个新的`PersistenceManager`。为了访问 Spring 管理的事务 `PersistenceManager`，需要定义一个`TransactionAwarePersistenceManagerFactoryProxy`（包含在Spring 中）在你的目标 `PersistenceManagerFactory` 面前，然后传递一个那个代理的引用到你的 DAO，如下面的示例：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -655,16 +634,9 @@ your DAOs as in the following example:
 	</beans>
 ----
 
-Your data access code will receive a transactional `PersistenceManager` (if any) from
-the `PersistenceManagerFactory.getPersistenceManager()` method that it calls. The latter
-method call goes through the proxy, which first checks for a current transactional
-`PersistenceManager` before getting a new one from the factory. Any `close()` calls on
-the `PersistenceManager` are ignored in case of a transactional `PersistenceManager`.
+你的数据访问代码将收到一个来自 `PersistenceManagerFactory.getPersistenceManager()`调用的事务性的`PersistenceManager`（如果有）的方法。后者的方法的调用会通过代理，在从从工厂获得一个新的之前它首先检查当前事务性的`PersistenceManager`。由于 事务性的`PersistenceManager`，任何 close() 的调用将会被忽略。
 
-If your data access code always runs within an active transaction (or at least within
-active transaction synchronization), it is safe to omit the `PersistenceManager.close()`
-call and thus the entire `finally` block, which you might do to keep your DAO
-implementations concise:
+如果你的数据访问代码总是运行在一个活跃的事务中（或至少与活跃的事务同步），它会安全的忽略 `PersistenceManager.close()`的调用。这样整个`finally`的块，可以让你的 DAO 实现更加简洁：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -686,9 +658,7 @@ implementations concise:
 	}
 ----
 
-With such DAOs that rely on active transactions, it is recommended that you enforce
-active transactions through turning off
-`TransactionAwarePersistenceManagerFactoryProxy`'s `allowCreate` flag:
+由于这样 DAO 依来活动的事务，所有建议您通过关闭`TransactionAwarePersistenceManagerFactoryProxy`的 `allowCreate` 标签来强制激活事务：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -708,21 +678,12 @@ active transactions through turning off
 	</beans>
 ----
 
-The main advantage of this DAO style is that it depends on JDO API only; no import of
-any Spring class is required. This is of course appealing from a non-invasiveness
-perspective, and might feel more natural to JDO developers.
+这种 DAO 风格的主要优势是,它只依赖于 JDO API;不需要引进任何的Spring 类。从非侵入性的角度来说更吸引人，并且对于 JDO 开发人员来说可能会觉得更自然。
 
-However, the DAO throws plain `JDOException` (which is unchecked, so does not have to be
-declared or caught), which means that callers can only treat exceptions as fatal, unless
-you want to depend on JDO's own exception structure. Catching specific causes such as an
-optimistic locking failure is not possible without tying the caller to the
-implementation strategy. This trade off might be acceptable to applications that are
-strongly JDO-based and/or do not need any special exception treatment.
+然而,DAO 抛出平常的 `JDOException`(未检查的,因此不需要声明或捕获),这意味着调用者只能将异常当做是致命的,除非你想依靠 JDO 的异常结构。捕捉乐观锁失败等特殊原因是不可能，除非把调用者与实现策略相关联。取消这交易可能会更容易受应用程序接受，因为基于 JDO 和/或 不需要任何特殊的异常处理。
 
-In summary, you can DAOs based on the plain JDO API, and they can still participate in
-Spring-managed transactions. This strategy might appeal to you if you are already
-familiar with JDO. However, such DAOs throw plain `JDOException`, and you would have to
-convert explicitly to Spring's `DataAccessException` (if desired).
+总之,你可以根据平常的 JDO API 生产 DAO ,他们仍然可以参与 Spring管理事务。这策略会可能会吸引你如果你已经熟悉了 JDO。然而,这样的DAO 抛出平常的 `JDOException`,您必须显式地转换为 Spring 的`DataAccessException`(如果需要)。
+
 
 
 
@@ -730,12 +691,10 @@ convert explicitly to Spring's `DataAccessException` (if desired).
 ==== Transaction management
 [NOTE]
 ====
-You are __strongly__ encouraged to read <<transaction-declarative>> if you have not done
-so, to get a more detailed coverage of Spring's declarative transaction support.
+如果你还没有看过 <<transaction-declarative>> 强烈建议你看下，获取更多Spring 声明式事务的支持.
 ====
 
-To execute service operations within transactions, you can use Spring's common
-declarative transaction facilities. For example:
+执行服务的事务操作，使用 Spring 常见的声明式事务功能，举例：
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -777,44 +736,24 @@ declarative transaction facilities. For example:
 
 	</beans>
 ----
+JDO 需要一个活动的事务来修改持久化的对象。非事务性的刷新概念并不存在于 JDO，相对于 Hibernate。为此，你需要为特定的环境设置选择的JDO 的实现。具体来说，你需要设置明确的 JTA 同步，来检测一个活跃的JTA 事务本身。这对于 Spring 的 `JdoTransactionManager`执行的本地事务来说是没有必要的，但有必要参与 JTA 事务，不管是由 Spring `JtaTransactionManager`驱动 还是 EJB CMT 和普通的 JTA。
 
-JDO requires an active transaction to modify a persistent object. The non-transactional
-flush concept does not exist in JDO, in contrast to Hibernate. For this reason, you need
-to set up the chosen JDO implementation for a specific environment. Specifically, you
-need to set it up explicitly for JTA synchronization, to detect an active JTA
-transaction itself. This is not necessary for local transactions as performed by
-Spring's `JdoTransactionManager`, but it is necessary to participate in JTA
-transactions, whether driven by Spring's `JtaTransactionManager` or by EJB CMT and plain
-JTA.
-
-`JdoTransactionManager` is capable of exposing a JDO transaction to JDBC access code
-that accesses the same JDBC `DataSource`, provided that the registered `JdoDialect`
-supports retrieval of the underlying JDBC `Connection`. This is the case for JDBC-based
-JDO 2.0 implementations by default.
+`JdoTransactionManager`能够使 JDO 事务 JDBC 访问代码f访问同一个JDBC`DataSource`，提供注册的 `JdoDialect` 支持底层的 JDBC ` Connection`检索。这是默认情况下基于JDBC 的 JDO 2.0实现
 
 
 
 [[orm-jdo-dialect]]
 ==== JdoDialect
 
-As an advanced feature, both `JdoTemplate` and `JdoTransactionManager` support a custom
-`JdoDialect` that can be passed into the `jdoDialect` bean property. In this scenario,
-the DAOs will not receive a `PersistenceManagerFactory` reference but rather a full
-`JdoTemplate` instance (for example, passed into the `jdoTemplate` property of
-`JdoDaoSupport`). Using a `JdoDialect` implementation, you can enable advanced features
-supported by Spring, usually in a vendor-specific manner:
+作为一个高级功能,`JdoTemplate` 和`JdoTransactionManager`支持自定义`JdoDialect`可以传递到`JdoDialect`的 bean 属性。在这个场景中,DAO 不接受 `PersistenceManagerFactory`的引用,而是一个完整的`JdoTemplate`实例(例如,传递到`JdoDaoSupport`的属性`JdoTemplate` 中)。使用`JdoDialect`实现,您可以启用 Spring 的高级特性支持,通常特定于供应商的方式:
 
-* Applying specific transaction semantics such as custom isolation level or transaction
-  timeout
-* Retrieving the transactional JDBC `Connection` for exposure to JDBC-based DAOs
-* Applying query timeouts, which are automatically calculated from Spring-managed
-  transaction timeouts
-* Eagerly flushing a `PersistenceManager,` to make transactional changes visible to
-  JDBC-based data access code
-* Advanced translation of `JDOExceptions` to Spring `DataAccessExceptions`
+* 应用于特定的事务语义,如自定义隔离级别或事务超时
+* 检索事务性的 JDBC `Connection`,用来暴露基于 JDBC 的 DAO
+* 应用查询超时,自动从 Spring 管理事务超时进行计算
+* 及时刷新 `PersistenceManager`,使事务变化对于基于 JDBC 的数据访问代码可见
+* 从 `JDOExceptions` 向 Spring     `DataAccessExceptions`的高级转换
 
-See the `JdoDialect` javadocs for more details on its operations and how to use them
-within Spring's JDO support.
+查看 `JdoDialect` 的 javadocs 获取更多如果使用 Spring JDO 的细节
 
 
 
