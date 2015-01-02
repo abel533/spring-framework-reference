@@ -62,25 +62,15 @@ Data with JPA</a> &#25552;&#20379;&#20102;&#19968;&#20010;&#24456;&#22909;&#3034
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="orm-hibernate" href="#orm-hibernate"></a>15.3&nbsp;Hibernate</h2></div></div></div>
 
-<p>We will start with a coverage of <a class="ulink" href="http://www.hibernate.org/" target="_top">Hibernate 3</a> in a Spring
-environment, using it to demonstrate the approach that Spring takes towards integrating
-O/R mappers. This section will cover many issues in detail and show different variations
-of DAO implementations and transaction demarcation. Most of these patterns can be
-directly translated to all other supported ORM tools. The following sections in this
-chapter will then cover the other ORM technologies, showing briefer examples there.</p>
+<p>&#29616;&#22312;&#35201;&#24320;&#22987;&#35848;&#19979; Spring &#29615;&#22659;&#20013;&#30340;  <a class="ulink" href="http://www.hibernate.org/" target="_top">Hibernate 3</a> &#29992;&#23427;&#26469;&#23637;&#31034; Spring &#23545;&#38598;&#25104; O/R &#26144;&#23556;&#30340;&#26041;&#27861;&#12290;&#26412;&#33410;&#23558;&#35814;&#32454;&#35752;&#35770;&#35768;&#22810;&#38382;&#39064;,&#24182;&#26174;&#31034;&#19981;&#21516;&#30340; DAO &#23454;&#29616;&#21644;&#20107;&#21153;&#30028;&#23450;&#12290;&#22823;&#22810;&#25968;&#36825;&#20123;&#27169;&#24335;&#21487;&#20197;&#30452;&#25509;&#20174;&#25152;&#26377;&#20854;&#20182;&#25903;&#25345; ORM &#30340;&#24037;&#20855;&#20013;&#36716;&#25442;&#12290;&#20197;&#19979;&#37096;&#20998;&#22312;&#26412;&#31456;&#23558;&#35206;&#30422;&#20854;&#20182;&#30340; ORM &#25216;&#26415;,&#24182;&#26174;&#31034;&#31616;&#30701;&#30340;&#20363;&#23376;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>As of Spring 4.0, Spring requires Hibernate 3.6 or later.</p>
+<p>&#23545;&#20110;Spring 4.0, Spring &#38656;&#35201; Hibernate 3.6 &#25110;&#32773;&#26356;&#39640;&#29256;&#26412;</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-session-factory-setup" href="#orm-session-factory-setup"></a>15.3.1&nbsp;SessionFactory setup in a Spring container</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-session-factory-setup" href="#orm-session-factory-setup"></a>15.3.1&nbsp;&#22312; Spring &#23481;&#22120;&#20013;&#35774;&#32622; SessionFactory</h3></div></div></div>
 
-<p>To avoid tying application objects to hard-coded resource lookups, you can define
-resources such as a JDBC <code class="literal">DataSource</code> or a Hibernate <code class="literal">SessionFactory</code> as beans in the
-Spring container. Application objects that need to access resources receive references
-to such predefined instances through bean references, as illustrated in the DAO
-definition in the next section.</p>
-<p>The following excerpt from an XML application context definition shows how to set up a
-JDBC <code class="literal">DataSource</code> and a Hibernate <code class="literal">SessionFactory</code> on top of it:</p>
+<p>&#20026;&#20102;&#36991;&#20813;&#24212;&#29992;&#31243;&#24207;&#23545;&#35937;&#19982;&#30828;&#32534;&#30721;&#30340;&#36164;&#28304;&#26597;&#25214;&#24819;&#32465;&#23450;&#65292;&#24744;&#21487;&#20197;&#23450;&#20041;&#36164;&#28304;&#22914; JDBC <code class="literal">DataSource</code> &#25110;&#32773; Hibernate <code class="literal">SessionFactory</code> &#20026; Spring &#23481;&#22120;&#30340; bean&#12290;&#24212;&#29992;&#23545;&#35937;&#38656;&#35201;&#36890;&#36807;&#23545; bean &#30340;&#24341;&#29992;&#26469;&#35775;&#38382;&#36164;&#28304;&#25509;&#21463;&#24341;&#29992;&#65292;&#23601;&#22914;&#22312;&#19979;&#19968;&#33410;&#20013;&#35828;&#26126;&#30340; DAO &#30340;&#23450;&#20041;&#12290;</p>
+<p>&#20197;&#19979;&#25688;&#24405;&#33258; XML &#24212;&#29992;&#31243;&#24207;&#19978;&#19979;&#25991;&#23450;&#20041;&#65292;&#23637;&#31034;&#20102;&#22914;&#20309;&#35774;&#32622; JDBC <code class="literal">DataSource</code> &#25110;&#32773; Hibernate <code class="literal">SessionFactory</code> :</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myDataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
@@ -106,23 +96,16 @@ JDBC <code class="literal">DataSource</code> and a Hibernate <code class="litera
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>Switching from a local Jakarta Commons DBCP <code class="literal">BasicDataSource</code> to a JNDI-located
-<code class="literal">DataSource</code> (usually managed by an application server) is just a matter of
-configuration:</p>
+<p>&#20174; Jakarta Commons DBCP <code class="literal">BasicDataSource</code> &#36716;&#20026; JNDI-located <code class="literal">DataSource</code>, &#20027;&#35201;&#30340;&#37197;&#32622;&#20026;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;jee:jndi-lookup</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myDataSource"</span> <span class="hl-attribute">jndi-name</span>=<span class="hl-value">"java:comp/env/jdbc/myds"</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>You can also access a JNDI-located <code class="literal">SessionFactory</code>, using Spring&#8217;s
-<code class="literal">JndiObjectFactoryBean</code> / <code class="literal">&lt;jee:jndi-lookup&gt;</code> to retrieve and expose it. However, that
-is typically not common outside of an EJB context.</p>
+<p>&#24744;&#36824;&#21487;&#20197;&#35775;&#38382; JNDI-located <code class="literal">SessionFactory</code>,&#20351;&#29992; Spring &#30340;<code class="literal">JndiObjectFactoryBean</code>/<code class="literal">&lt;jee:jndi-lookup&gt;</code> &#26469;&#26816;&#32034;&#21644;&#26292;&#38706;&#20182;&#12290;&#28982;&#32780;,&#36890;&#24120;&#22312; EJB &#29615;&#22659;&#22806;&#19981;&#24120;&#29992;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-straight" href="#orm-hibernate-straight"></a>15.3.2&nbsp;Implementing DAOs based on plain Hibernate 3 API</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-straight" href="#orm-hibernate-straight"></a>15.3.2&nbsp;&#22522;&#20110;&#24179;&#24120;&#30340; Hibernate 3 API &#26469;&#23454;&#29616; DAO</h3></div></div></div>
 
-<p>Hibernate 3 has a feature called contextual sessions, wherein Hibernate itself manages
-one current <code class="literal">Session</code> per transaction. This is roughly equivalent to Spring&#8217;s
-synchronization of one Hibernate <code class="literal">Session</code> per transaction. A corresponding DAO
-implementation resembles the following example, based on the plain Hibernate API:</p>
+<p>Hibernate 3 &#26377;&#19968;&#20010;&#29305;&#24615;&#31216;&#20026;&#19978;&#19979;&#25991;&#20250;&#35805;,Hibernate &#26412;&#36523;&#22312;&#27599;&#20010;&#20107;&#21153;&#31649;&#29702;&#19968;&#20010;&#24403;&#21069; <code class="literal">Session</code> &#12290;&#36825;&#26159;&#22823;&#33268;&#30456;&#24403;&#20110; Spring &#30340; &#27599;&#20010;&#20107;&#21153;&#19968;&#20010;&#24403;&#21069; Hibernate <code class="literal">Session</code>&#30340;&#21516;&#27493;&#12290;&#30456;&#24212;&#30340; DAO &#23454;&#29616;&#20687;&#19979;&#38754;&#30340;&#20363;&#23376;,&#22522;&#20110;&#26222;&#36890;Hibernate API</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
 
     <span class="hl-keyword">private</span> SessionFactory sessionFactory;
@@ -139,16 +122,8 @@ implementation resembles the following example, based on the plain Hibernate API
     }
 }</pre>
 
-<p>This style is similar to that of the Hibernate reference documentation and examples,
-except for holding the <code class="literal">SessionFactory</code> in an instance variable. We strongly recommend
-such an instance-based setup over the old-school <code class="literal">static</code> <code class="literal">HibernateUtil</code> class from
-Hibernate&#8217;s CaveatEmptor sample application. (In general, do not keep any resources in
-<code class="literal">static</code> variables unless <span class="emphasis"><em>absolutely</em></span> necessary.)</p>
-<p>The above DAO follows the dependency injection pattern: it fits nicely into a Spring IoC
-container, just as it would if coded against Spring&#8217;s <code class="literal">HibernateTemplate</code>. Of course,
-such a DAO can also be set up in plain Java (for example, in unit tests). Simply
-instantiate it and call <code class="literal">setSessionFactory(..)</code> with the desired factory reference. As a
-Spring bean definition, the DAO would resemble the following:</p>
+<p>&#36825;&#31181;&#39118;&#26684;&#31867;&#20284;&#20110; Hibernate &#21442;&#32771;&#25991;&#26723;&#21644;&#20363;&#23376;,&#38500;&#20102;&#22312;&#19968;&#20010;&#23454;&#20363;&#21464;&#37327;&#20013;&#20445;&#23384; <code class="literal">SessionFactory</code>&#12290;&#25105;&#20204;&#24378;&#28872;&#24314;&#35758;&#22522;&#20110;&#23454;&#20363;&#30340;&#35774;&#32622;,&#26367;&#25442;&#32769;&#27966;&#30340;Hibernate &#30340; CaveatEmptor &#31034;&#20363;&#24212;&#29992;&#31243;&#24207;&#20013;&#30340;<code class="literal">static</code> <code class="literal">HibernateUtil</code>&#31867;&#12290;(&#19968;&#33324;&#26469;&#35828;,&#19981;&#20445;&#30041;&#20219;&#20309;&#36164;&#28304;<code class="literal">static</code>&#21464;&#37327;,&#38500;&#38750;&#32477;&#23545;&#24517;&#35201;)</p>
+<p>&#19978;&#38754;&#30340; DAO &#26159;&#20381;&#36182;&#27880;&#20837;&#27169;&#24335;:&#36825;&#27491;&#22909;&#31526;&#21512; Spring IoC &#23481;&#22120;,&#23601;&#20687;&#23545;Spring &#30340; <code class="literal">HibernateTemplate</code> &#32534;&#30721;&#12290;&#24403;&#28982;,&#36825;&#31181; DAO &#20063;&#21487;&#20197;&#22312;&#26222;&#36890;&#30340; Java &#35774;&#32622;(&#20363;&#22914;,&#22312;&#21333;&#20803;&#27979;&#35797;)&#12290;&#31616;&#21333;&#30340;&#23454;&#20363;&#21270;,&#24182;&#29992;&#25152;&#38656;&#30340;&#24037;&#21378;&#24341;&#29992;&#35843;&#29992;<code class="literal">setSessionFactory(..)</code>&#12290;Spring bean &#23450;&#20041; DAO &#23601;&#20687;&#19979;&#38754;&#19968;&#26679;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myProductDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"product.ProductDaoImpl"</span><span class="hl-tag">&gt;</span>
@@ -157,43 +132,21 @@ Spring bean definition, the DAO would resemble the following:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The main advantage of this DAO style is that it depends on Hibernate API only; no import
-of any Spring class is required. This is of course appealing from a non-invasiveness
-perspective, and will no doubt feel more natural to Hibernate developers.</p>
-<p>However, the DAO throws plain <code class="literal">HibernateException</code> (which is unchecked, so does not have
-to be declared or caught), which means that callers can only treat exceptions as
-generally fatal - unless they want to depend on Hibernate&#8217;s own exception hierarchy.
-Catching specific causes such as an optimistic locking failure is not possible without
-tying the caller to the implementation strategy. This trade off might be acceptable to
-applications that are strongly Hibernate-based and/or do not need any special exception
-treatment.</p>
-<p>Fortunately, Spring&#8217;s <code class="literal">LocalSessionFactoryBean</code> supports Hibernate&#8217;s
-<code class="literal">SessionFactory.getCurrentSession()</code> method for any Spring transaction strategy,
-returning the current Spring-managed transactional <code class="literal">Session</code> even with
-<code class="literal">HibernateTransactionManager</code>. Of course, the standard behavior of that method remains
-the return of the current <code class="literal">Session</code> associated with the ongoing JTA transaction, if any.
-This behavior applies regardless of whether you are using Spring&#8217;s
-<code class="literal">JtaTransactionManager</code>, EJB container managed transactions (CMTs), or JTA.</p>
-<p>In summary: you can implement DAOs based on the plain Hibernate 3 API, while still being
-able to participate in Spring-managed transactions.</p>
+<p>DAO &#39118;&#26684;&#30340;&#20027;&#35201;&#20248;&#28857;&#26159;&#65292;&#23427;&#21482;&#20381;&#36182;&#20110; Hibernate API &#65292;&#32780;&#27809;&#26377;&#24341;&#36827;&#20219;&#20309;Spring &#24517;&#38656;&#30340;&#31867;&#12290;&#20174;&#38750;&#20405;&#20837;&#24615;&#30340;&#35270;&#35282;&#30475;&#36825;&#24403;&#28982;&#26159;&#26377;&#21560;&#24341;&#21147;&#30340;&#65292;&#23545;Hibernate &#24320;&#21457;&#32773;&#26469;&#35828;&#26080;&#30097;&#20250;&#24863;&#35273;&#26356;&#33258;&#28982;&#12290;</p>
+<p>&#28982;&#32780;&#65292;DAO &#23558;&#24179;&#24120;&#30340; <code class="literal">HibernateException</code>&#65288;&#36825;&#26159;&#26410;&#26816;&#26597;&#30340;&#65292;&#25152;&#20197;&#19981;&#38656;&#35201;&#22768;&#26126;&#25110;&#32773;&#25429;&#33719;&#65289;&#65292;&#36825;&#24847;&#21619;&#30528;&#35843;&#29992;&#32773;&#24403;&#24322;&#24120;&#20026;&#19968;&#20010;&#26222;&#36890;&#30340;&#33268;&#21629;&#38382;&#39064;&#8212;&#8212;&#38500;&#38750;&#20182;&#20204;&#24819;&#35201;&#20381;&#36182;&#20110; Hibernate &#33258;&#36523;&#30340;&#24322;&#24120;&#32467;&#26500;&#12290;&#25429;&#25417;&#20048;&#35266;&#38145;&#23450;&#22833;&#36133;&#31561;&#20855;&#20307;&#21407;&#22240;&#26159;&#19981;&#21487;&#33021;&#38500;&#38750;&#25226;&#35843;&#29992;&#32773;&#19982;&#23454;&#29616;&#31574;&#30053;&#30456;&#32852;&#31995;&#12290;&#21462;&#28040;&#36825;&#20132;&#25442;&#26159;&#21487;&#25509;&#21463;&#30340;&#23545;&#20110;&#24212;&#29992;&#31243;&#24207;&#26159;&#22522;&#20110; Hibernate &#21644;/&#25110; &#19981;&#38656;&#35201;&#20219;&#20309;&#29305;&#27530;&#30340;&#24322;&#24120;&#22788;&#29702;&#12290;</p>
+<p>&#24184;&#36816;&#30340;&#26159;,Spring &#30340; <code class="literal">LocalSessionFactoryBean</code> &#25903;&#25345; Hibernate <code class="literal">SessionFactory.getCurrentSession()</code>&#26041;&#27861;&#29992;&#20110;&#20219;&#20309; Spring &#20107;&#21153;&#31574;&#30053;,&#36820;&#22238;&#24403;&#21069; Spring &#31649;&#29702;&#30340;&#20107;&#21153; <code class="literal">Session</code>&#21363;&#20351;&#26159;<code class="literal">HibernateTransactionManager.</code>&#12290;&#24403;&#28982;,&#36825;&#31181;&#26041;&#27861;&#30340;&#26631;&#20934;&#34892;&#20026;&#36820;&#22238;&#20173;&#28982;&#26159;&#24403;&#21069;<code class="literal">Session</code>&#19982;&#25345;&#32493;&#30340;JTA&#20107;&#21153;&#26377;&#20851;&#12290;&#36825;&#31181;&#34892;&#20026;&#36866;&#29992;&#20110;&#19981;&#31649;&#24744;&#20351;&#29992;&#26159;Spring &#30340; <code class="literal">JtaTransactionManager</code>,EJB&#23481;&#22120;&#31649;&#29702;&#30340;&#20107;&#21153;(CMT),&#25110; JTA&#12290;</p>
+<p>&#24635;&#20043;:&#20320;&#21487;&#20197;&#22522;&#20110;&#24179;&#24120;&#30340; Hibernate 3 API &#26469;&#23454;&#29616; DAO,&#21516;&#26102;&#20173;&#28982;&#33021;&#22815;&#21442;&#19982; Spring &#31649;&#29702;&#20107;&#21153;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-declarative" href="#orm-hibernate-tx-declarative"></a>15.3.3&nbsp;Declarative transaction demarcation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-declarative" href="#orm-hibernate-tx-declarative"></a>15.3.3&nbsp;&#22768;&#26126;&#24335;&#20107;&#21153;&#21010;&#20998;</h3></div></div></div>
 
-<p>We recommend that you use Spring&#8217;s declarative transaction support, which enables you to
-replace explicit transaction demarcation API calls in your Java code with an AOP
-transaction interceptor. This transaction interceptor can be configured in a Spring
-container using either Java annotations or XML.This declarative transaction capability
-allows you to keep business services free of repetitive transaction demarcation code and
-to focus on adding business logic, which is the real value of your application.</p>
+<p>&#24314;&#35758;&#20320;&#20351;&#29992; Spring &#22768;&#26126;&#24335;&#20107;&#21153;&#30340;&#25903;&#25345;,&#36825;&#20351;&#24744;&#33021;&#22815;&#20195;&#26367;&#26174;&#24335;&#20107;&#21153;&#21010;&#20998; API&#35843;&#29992; AOP &#20107;&#21153;&#25318;&#25130;&#22120;&#20013;&#30340; Java &#20195;&#30721;&#12290;&#36825;&#20010;&#20107;&#21153;&#25318;&#25130;&#22120;&#21487;&#20197;&#37197;&#32622; Spring&#23481;&#22120;&#36890;&#36807;&#20351;&#29992; Java &#27880;&#37322;&#25110; XML&#12290;&#36825;&#20010;&#22768;&#26126;&#24335;&#20107;&#21153;&#33021;&#21147;&#20801;&#35768;&#24744;&#20445;&#25345;&#19994;&#21153;&#26381;&#21153;&#20013;&#30340;&#37325;&#22797;&#24615;&#20107;&#21153;&#21010;&#20998;&#20195;&#30721;&#30721;&#26356;&#33258;&#30001;&#65292;&#24182;&#19988;&#35753;&#20320;&#21482;&#20851;&#27880;&#28155;&#21152;&#19994;&#21153;&#36923;&#36753;,&#32780;&#36825;&#26159;&#24744;&#30340;&#24212;&#29992;&#31243;&#24207;&#30340;&#30495;&#27491;&#20215;&#20540;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Prior to continuing, you are <span class="emphasis"><em>strongly</em></span> encouraged to read <a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a>
-if you have not done so.</p>
+<p>&#22312;&#32487;&#32493;&#20043;&#21069;&#65292;&#24378;&#28872;&#24314;&#35758;&#20320;&#35835;<a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a>
+&#22914;&#26524;&#20320;&#36824;&#27809;&#26377;&#36825;&#26679;&#20570;</p>
 </td></tr></table></div>
 
-<p>Furthermore, transaction semantics like propagation behavior and isolation level can be
-changed in a configuration file and do not affect the business service implementations.</p>
-<p>The following example shows how you can configure an AOP transaction interceptor, using
-XML, for a simple service class:</p>
+<p>&#27492;&#22806;&#65292;&#20107;&#21153;&#35821;&#20041;&#27604;&#22914;&#20256;&#25773;&#34892;&#20026;&#21644;&#38548;&#31163;&#27700;&#24179;&#21487;&#20197;&#22312;&#37197;&#32622;&#25991;&#20214;&#30340;&#25913;&#21464;&#65292;&#19981;&#24433;&#21709;&#19994;&#21153;&#26381;&#21153;&#30340;&#23454;&#29616;&#12290;</p>
+<p>&#19979;&#38754;&#30340;&#31034;&#20363;&#35828;&#26126;&#22914;&#20309;&#20351;&#29992; XML &#37197;&#32622; AOP &#20107;&#21153;&#25318;&#25130;&#22120;&#65292;&#19968;&#20010;&#31616;&#21333;&#30340;&#26381;&#21153;&#31867;&#65306;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -234,7 +187,7 @@ XML, for a simple service class:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>This is the service class that is advised:</p>
+<p>&#19979;&#38754;&#26159;&#35201;&#22788;&#29702;&#30340;&#26381;&#21153;&#31867;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductServiceImpl <span class="hl-keyword">implements</span> ProductService {
 
     <span class="hl-keyword">private</span> ProductDao productDao;
@@ -252,10 +205,7 @@ XML, for a simple service class:</p>
     }
 }</pre>
 
-<p>We also show an attribute-support based configuration, in the following example. You
-annotate the service layer with @Transactional annotations and instruct the Spring
-container to find these annotations and provide transactional semantics for these
-annotated methods.</p>
+<p>&#25105;&#20204;&#36824;&#23637;&#31034;&#20102;&#19968;&#20010;&#22522;&#20110;&#37197;&#32622;&#23646;&#24615;&#30340;&#25903;&#25345;&#65292;&#22312;&#19979;&#38754;&#30340;&#20363;&#23376;&#20013;&#12290;&#20320;&#36890;&#36807; <code class="literal">@Transactional</code>&#27880;&#37322;&#30340;&#26381;&#21153;&#23618;,&#24182;&#24341;&#23548; Spring &#23481;&#22120;&#25214;&#21040;&#36825;&#20123;&#27880;&#37322;&#65292;&#36825;&#20123;&#27880;&#37322;&#30340;&#26041;&#27861;&#25552;&#20379;&#20107;&#21153;&#24615;&#35821;&#20041;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductServiceImpl <span class="hl-keyword">implements</span> ProductService {
 
     <span class="hl-keyword">private</span> ProductDao productDao;
@@ -277,10 +227,7 @@ annotated methods.</p>
 
 }</pre>
 
-<p>As you can see from the following configuration example, the configuration is much
-simplified, compared to the XML example above, while still providing the same
-functionality driven by the annotations in the service layer code. All you need to
-provide is the TransactionManager implementation and a "&lt;tx:annotation-driven/&gt;" entry.</p>
+<p>&#27491;&#22914;&#20320;&#21487;&#20197;&#30475;&#21040;&#19979;&#38754;&#30340;&#37197;&#32622;&#23454;&#20363;&#65292;&#37197;&#32622;&#26356;&#21152;&#31616;&#21270;&#65292;&#19982;&#19978;&#36848; XML &#23454;&#20363;&#65292;&#21516;&#26102;&#36824;&#25552;&#20379;&#20102;&#22312;&#26381;&#21153;&#23618;&#30340;&#20195;&#30721;&#27880;&#37322;&#39537;&#21160;&#30456;&#21516;&#30340;&#21151;&#33021;&#12290;&#25152;&#26377;&#24744;&#38656;&#35201;&#25552;&#20379;&#30340;&#26159;TransactionManager &#30340;&#23454;&#29616;&#21644;"&lt;tx:annotation-driven/&gt;" &#23454;&#20307;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -310,16 +257,9 @@ provide is the TransactionManager implementation and a "&lt;tx:annotation-driven
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-programmatic" href="#orm-hibernate-tx-programmatic"></a>15.3.4&nbsp;Programmatic transaction demarcation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-programmatic" href="#orm-hibernate-tx-programmatic"></a>15.3.4&nbsp;&#32534;&#31243;&#24335;&#20107;&#21153;&#21010;&#20998;</h3></div></div></div>
 
-<p>You can demarcate transactions in a higher level of the application, on top of such
-lower-level data access services spanning any number of operations. Nor do restrictions
-exist on the implementation of the surrounding business service; it just needs a Spring
-<code class="literal">PlatformTransactionManager</code>. Again, the latter can come from anywhere, but preferably
-as a bean reference through a <code class="literal">setTransactionManager(..)</code> method, just as the
-<code class="literal">productDAO</code> should be set by a <code class="literal">setProductDao(..)</code> method. The following snippets show
-a transaction manager and a business service definition in a Spring application context,
-and an example for a business method implementation:</p>
+<p>&#21487;&#20197;&#22312;&#39640;&#32423;&#30340;&#24212;&#29992;&#20013;&#21010;&#20998;&#20107;&#21153;&#65292;&#22312;&#36825;&#26679;&#30340;&#24213;&#23618;&#25968;&#25454;&#35775;&#38382;&#26381;&#21153;&#29983;&#25104;&#20219;&#24847;&#25968;&#37327;&#30340;&#25805;&#20316;&#12290;&#38480;&#21046;&#20063;&#19981;&#23384;&#22312;&#20110;&#21608;&#36793;&#19994;&#21153;&#26381;&#21153;&#30340;&#23454;&#29616;;&#23427;&#21482;&#38656;&#35201;&#19968;&#20010; Spring <code class="literal">PlatformTransactionManager</code>&#12290;&#20877;&#27425;,&#21518;&#32773;&#21487;&#20197;&#26469;&#33258;&#20219;&#20309;&#22320;&#26041;,&#20294;&#26368;&#22909;&#26159;&#36890;&#36807; <code class="literal">setTransactionManager(..)</code>&#26041;&#27861;&#26469;&#23545; bean &#24341;&#29992;,&#27491;&#22914;&#30001;<code class="literal">setProductDao(..)</code>&#26041;&#27861;&#26469;&#35774;&#32622; <code class="literal">productDAO</code>&#12290;&#19979;&#38754;&#30340;&#20195;&#30721;&#29255;&#27573;&#26174;&#31034;&#20102;&#22312;Spring &#24212;&#29992;&#31243;&#24207;&#19978;&#19979;&#25991;&#20013;&#23450;&#20041;&#19968;&#20010;&#20107;&#21153;&#31649;&#29702;&#22120;&#21644;&#19994;&#21153;&#26381;&#21153;,&#20197;&#21450;&#19968;&#20010;&#19994;&#21153;&#26041;&#27861;&#23454;&#29616;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myTxManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.hibernate3.HibernateTransactionManager"</span><span class="hl-tag">&gt;</span>
@@ -356,33 +296,12 @@ and an example for a business method implementation:</p>
     }
 }</pre>
 
-<p>Spring&#8217;s <code class="literal">TransactionInterceptor</code> allows any checked application exception to be thrown
-with the callback code, while <code class="literal">TransactionTemplate</code> is restricted to unchecked
-exceptions within the callback. <code class="literal">TransactionTemplate</code> triggers a rollback in case of an
-unchecked application exception, or if the transaction is marked rollback-only by the
-application (via <code class="literal">TransactionStatus</code>). <code class="literal">TransactionInterceptor</code> behaves the same way by
-default but allows configurable rollback policies per method.</p>
+<p>Spring <code class="literal">TransactionInterceptor</code> &#20801;&#35768;&#20219;&#20309;&#26816;&#26597;&#30340;&#24212;&#29992;&#24322;&#24120;&#21487;&#20197;&#36319;&#30528;&#22238;&#35843;&#20195;&#30721;&#25243;&#20986;&#65292;&#32780; <code class="literal">TransactionTemplate</code>&#26159;&#38480;&#21046;&#20110;&#26410;&#26816;&#26597;&#30340;&#22238;&#35843;&#30340;&#24322;&#24120;&#12290;&#24403;&#36935;&#21040;&#19968;&#20010;&#26410;&#26816;&#26597;&#30340;&#24212;&#29992;&#24322;&#24120;&#25110;&#32773;&#26159;&#20107;&#21153;&#34987;&#24212;&#29992;&#65288;&#36890;&#36807;<code class="literal">TransactionStatus</code>&#65289;&#26631;&#35760;&#20026; rollback-only&#65288;&#21482;&#22238;&#28378;&#65289; ,<code class="literal">TransactionTemplate</code>&#35302;&#21457;&#22238;&#28378;&#20107;&#21153;&#12290;&#40664;&#35748;&#26102; <code class="literal">TransactionInterceptor</code>&#34920;&#29616;&#26159;&#19968;&#26679;&#30340;&#65292;&#20294;&#26159;&#20801;&#35768;&#22312;&#27599;&#20010;&#26041;&#27861;&#20013;&#37197;&#32622;&#22238;&#28378;&#31574;&#30053;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-strategies" href="#orm-hibernate-tx-strategies"></a>15.3.5&nbsp;Transaction management strategies</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-tx-strategies" href="#orm-hibernate-tx-strategies"></a>15.3.5&nbsp;&#20107;&#21153;&#31649;&#29702;&#31574;&#30053;</h3></div></div></div>
 
-<p>Both <code class="literal">TransactionTemplate</code> and <code class="literal">TransactionInterceptor</code> delegate the actual transaction
-handling to a <code class="literal">PlatformTransactionManager</code> instance, which can be a
-<code class="literal">HibernateTransactionManager</code> (for a single Hibernate <code class="literal">SessionFactory</code>, using a
-<code class="literal">ThreadLocal</code> <code class="literal">Session</code> under the hood) or a <code class="literal">JtaTransactionManager</code> (delegating to the
-JTA subsystem of the container) for Hibernate applications. You can even use a custom
-<code class="literal">PlatformTransactionManager</code> implementation. Switching from native Hibernate transaction
-management to JTA, such as when facing distributed transaction requirements for certain
-deployments of your application, is just a matter of configuration. Simply replace
-the Hibernate transaction manager with Spring&#8217;s JTA transaction implementation. Both
-transaction demarcation and data access code will work without changes, because they
-just use the generic transaction management APIs.</p>
-<p>For distributed transactions across multiple Hibernate session factories, simply combine
-<code class="literal">JtaTransactionManager</code> as a transaction strategy with multiple
-<code class="literal">LocalSessionFactoryBean</code> definitions. Each DAO then gets one specific <code class="literal">SessionFactory</code>
-reference passed into its corresponding bean property. If all underlying JDBC data
-sources are transactional container ones, a business service can demarcate transactions
-across any number of DAOs and any number of session factories without special regard, as
-long as it is using <code class="literal">JtaTransactionManager</code> as the strategy.</p>
+<p><code class="literal">TransactionTemplate</code> &#21644; <code class="literal">TransactionInterceptor</code>&#20195;&#34920;&#20102;&#23545; <code class="literal">PlatformTransactionManager</code> &#23454;&#20363;&#30340;&#23454;&#38469;&#20107;&#21153;&#22788;&#29702;&#65292;&#22312; Hibernate &#30340;&#24212;&#29992;&#20013;&#23427;&#20204;&#21487;&#20197;&#26159;&#19968;&#20010; <code class="literal">HibernateTransactionManager</code>&#65288;&#19968;&#20010;Hibernate &#30340; <code class="literal">SessionFactory</code>&#65292;&#22312;&#24341;&#25806;&#19979;&#20351;&#29992;&#30340;&#26159;<code class="literal">ThreadLocal</code> <code class="literal">Session</code>&#65289;&#25110; <code class="literal">JtaTransactionManager</code>&#65288;&#22996;&#27966;&#21040;&#23481;&#22120;&#30340; JTA &#23376;&#31995;&#32479;&#65289;&#12290;&#20320;&#29978;&#33267;&#21487;&#20197;&#20351;&#29992;&#19968;&#20010;&#33258;&#23450;&#20041;&#30340;<code class="literal">PlatformTransactionManager</code> &#23454;&#29616;&#12290;&#20174;&#21407;&#29983; Hibernate &#20107;&#21153;&#31649;&#29702; &#36716;&#21040; JTA&#65292;&#22914;&#20320;&#30340;&#26576;&#20123;&#24212;&#29992;&#31243;&#24207;&#37096;&#32626;&#20855;&#26377;&#20998;&#24067;&#24335;&#20107;&#21153;&#22788;&#29702;&#30340;&#35201;&#27714;&#65292;&#37027;&#20040;&#36825;&#20165;&#20165;&#26159;&#19968;&#20010;&#37197;&#32622;&#30340;&#38382;&#39064;&#65292;&#21482;&#35201;&#23558; Hibernate &#20107;&#21153;&#31649;&#29702;&#31616;&#21333;&#30340;&#26367;&#25442;&#20026; Spring &#30340; JTA &#21363;&#21487;&#12290;&#20004;&#20010;&#30340;&#20107;&#21153;&#21010;&#20998;&#21644;&#25968;&#25454;&#35775;&#38382;&#20195;&#30721;&#30340;&#19981;&#29992;&#25913;&#21464;&#65292;&#22240;&#20026;&#20182;&#20204;&#21482;&#26159;&#20351;&#29992;&#20102;&#36890;&#29992;&#30340;&#20107;&#21153;&#31649;&#29702; API&#12290;</p>
+<p>&#23545;&#20110;&#20998;&#24067;&#24335;&#20107;&#21153;&#36328;&#22810;&#20010; Hibernate &#20250;&#35805;&#24037;&#21378;&#65292;&#21482;&#35201;&#31616;&#21333;&#22320;&#25226;<code class="literal">JtaTransactionManager</code> &#19982;&#20855;&#26377;&#22810;&#20010;&#23450;&#20041;&#30340;<code class="literal">LocalSessionFactoryBean</code>&#32452;&#21512;&#25104;&#20026;&#19968;&#20010;&#20107;&#21153;&#31574;&#30053;&#12290;&#27599;&#20010; DAO &#24471;&#21040;&#19968;&#20010;&#29305;&#23450;&#30340;<code class="literal">SessionFactory</code>&#30340;&#24341;&#29992;&#20256;&#36882;&#21040;&#20854;&#30456;&#24212;&#30340; bean &#23646;&#24615;&#12290;&#22914;&#26524;&#25152;&#26377;&#24213;&#23618;&#30340; JDBC &#25968;&#25454;&#28304;&#30340;&#20107;&#21153;&#23481;&#22120;&#65292;&#19994;&#21153;&#26381;&#21153;&#21487;&#20197;&#21010;&#20998;&#20107;&#21153;&#21040;&#20219;&#24847;&#25968;&#37327;&#30340;DAO &#21644;&#20219;&#20309;&#25968;&#37327;&#30340;&#20250;&#35805;&#24037;&#21378;&#65292;&#32780;&#36825;&#26080;&#38656;&#27809;&#26377;&#29305;&#27530;&#30340;&#22788;&#29702;&#65292;&#21482;&#35201;&#26159;&#20351;&#29992;<code class="literal">JtaTransactionManager</code>&#31574;&#30053;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;jee:jndi-lookup</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource1"</span> <span class="hl-attribute">jndi-name</span>=<span class="hl-value">"java:comp/env/jdbc/myds1"</span><span class="hl-tag">/&gt;</span>
@@ -451,143 +370,63 @@ long as it is using <code class="literal">JtaTransactionManager</code> as the st
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>Both <code class="literal">HibernateTransactionManager</code> and <code class="literal">JtaTransactionManager</code> allow for proper
-JVM-level cache handling with Hibernate, without container-specific transaction manager
-lookup or a JCA connector (if you are not using EJB to initiate transactions).</p>
-<p><code class="literal">HibernateTransactionManager</code> can export the Hibernate JDBC <code class="literal">Connection</code> to plain JDBC
-access code, for a specific <code class="literal">DataSource</code>. This capability allows for high-level
-transaction demarcation with mixed Hibernate and JDBC data access completely without
-JTA, if you are accessing only one database. <code class="literal">HibernateTransactionManager</code> automatically
-exposes the Hibernate transaction as a JDBC transaction if you have set up the passed-in
-<code class="literal">SessionFactory</code> with a <code class="literal">DataSource</code> through the <code class="literal">dataSource</code> property of the
-<code class="literal">LocalSessionFactoryBean</code> class. Alternatively, you can specify explicitly the
-<code class="literal">DataSource</code> for which the transactions are supposed to be exposed through the
-<code class="literal">dataSource</code> property of the <code class="literal">HibernateTransactionManager</code> class.</p>
+<p><code class="literal">HibernateTransactionManager</code> &#21644; <code class="literal">JtaTransactionManager</code>&#20801;&#35768;&#36866;&#24403;&#30340; JVM &#32423;&#21035;&#30340; Hibernate &#32531;&#23384;&#22788;&#29702;,&#32780;&#19981;&#38656;&#35201;&#23481;&#22120;&#29305;&#23450;&#30340;&#20107;&#21153;&#31649;&#29702;&#26597;&#25214;&#25110; JCA &#36830;&#25509;&#22120;(&#22914;&#26524;&#20320;&#19981;&#20351;&#29992; EJB &#21551;&#21160;&#20107;&#21153;)&#12290;</p>
+<p><code class="literal">HibernateTransactionManager</code>&#21487;&#20197;&#20026;&#19968;&#20010;&#29305;&#23450;&#30340;<code class="literal">DataSource</code>&#23548;&#20986; Hibernate JDBC <code class="literal">Connection</code>&#21040;&#26222;&#36890; JDBC &#35775;&#38382;&#20195;&#30721;&#12290;&#27492;&#21151;&#33021;&#20801;&#35768;&#39640;&#32423;&#30340;&#28151;&#21512; Hibernate &#21644; JDBC &#25968;&#25454;&#35775;&#38382;&#30340;&#23436;&#20840;&#27809;&#26377; JTA &#30340;&#20107;&#21153;&#21010;&#20998;,&#22914;&#26524;&#20320;&#21482;&#35775;&#38382;&#19968;&#20010;&#25968;&#25454;&#24211;&#12290;&#22914;&#26524;&#20320;&#26377;&#35774;&#32622;&#36890;&#36807; <code class="literal">LocalSessionFactoryBean</code>&#31867;&#30340;<code class="literal">dataSource</code>&#23646;&#24615;&#20256;&#20837;<code class="literal">SessionFactory</code>&#30340;<code class="literal">DataSource</code>&#65292;<code class="literal">HibernateTransactionManager</code>&#33258;&#21160;&#26292;&#38706; Hibernate &#20107;&#21153;&#20316;&#20026;&#19968;&#20010; JDBC &#20107;&#21153;&#12290;&#25110;&#32773;,&#24744;&#21487;&#20197;&#26126;&#30830;&#25351;&#23450;<code class="literal">DataSource</code>&#20013;&#21738;&#20123;&#20107;&#21153;&#26159;&#38656;&#35201;&#25903;&#25345;&#36890;&#36807; HibernateTransactionManager &#31867;&#30340;<code class="literal">dataSource</code>&#23646;&#24615;&#26292;&#38706;&#30340;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-resources" href="#orm-hibernate-resources"></a>15.3.6&nbsp;Comparing container-managed and locally defined resources</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-resources" href="#orm-hibernate-resources"></a>15.3.6&nbsp;&#27604;&#36739;&#23481;&#22120;&#31649;&#29702;&#21644;&#26412;&#22320;&#23450;&#20041;&#30340;&#36164;&#28304;</h3></div></div></div>
 
-<p>You can switch between a container-managed JNDI <code class="literal">SessionFactory</code> and a locally defined
-one, without having to change a single line of application code. Whether to keep
-resource definitions in the container or locally within the application is mainly a
-matter of the transaction strategy that you use. Compared to a Spring-defined local
-<code class="literal">SessionFactory</code>, a manually registered JNDI <code class="literal">SessionFactory</code> does not provide any
-benefits. Deploying a <code class="literal">SessionFactory</code> through Hibernate&#8217;s JCA connector provides the
-added value of participating in the Java EE server&#8217;s management infrastructure, but does
-not add actual value beyond that.</p>
-<p>Spring&#8217;s transaction support is not bound to a container. Configured with any strategy
-other than JTA, transaction support also works in a stand-alone or test environment.
-Especially in the typical case of single-database transactions, Spring&#8217;s single-resource
-local transaction support is a lightweight and powerful alternative to JTA. When you use
-local EJB stateless session beans to drive transactions, you depend both on an EJB
-container and JTA, even if you access only a single database, and only use stateless
-session beans to provide declarative transactions through container-managed
-transactions. Also, direct use of JTA programmatically requires a Java EE environment as
-well. JTA does not involve only container dependencies in terms of JTA itself and of
-JNDI <code class="literal">DataSource</code> instances. For non-Spring, JTA-driven Hibernate transactions, you have
-to use the Hibernate JCA connector, or extra Hibernate transaction code with the
-<code class="literal">TransactionManagerLookup</code> configured for proper JVM-level caching.</p>
-<p>Spring-driven transactions can work as well with a locally defined Hibernate
-<code class="literal">SessionFactory</code> as they do with a local JDBC <code class="literal">DataSource</code> if they are accessing a
-single database. Thus you only have to use Spring&#8217;s JTA transaction strategy when you
-have distributed transaction requirements. A JCA connector requires container-specific
-deployment steps, and obviously JCA support in the first place. This configuration
-requires more work than deploying a simple web application with local resource
-definitions and Spring-driven transactions. Also, you often need the Enterprise Edition
-of your container if you are using, for example, WebLogic Express, which does not
-provide JCA. A Spring application with local resources and transactions spanning one
-single database works in any Java EE web container (without JTA, JCA, or EJB) such as
-Tomcat, Resin, or even plain Jetty. Additionally, you can easily reuse such a middle
-tier in desktop applications or test suites.</p>
-<p>All things considered, if you do not use EJBs, stick with local <code class="literal">SessionFactory</code> setup
-and Spring&#8217;s <code class="literal">HibernateTransactionManager</code> or <code class="literal">JtaTransactionManager</code>. You get all of
-the benefits, including proper transactional JVM-level caching and distributed
-transactions, without the inconvenience of container deployment. JNDI registration of a
-Hibernate <code class="literal">SessionFactory</code> through the JCA connector only adds value when used in
-conjunction with EJBs.</p>
+<p>&#20320;&#21487;&#20197;&#22312;&#19968;&#20010;&#23481;&#22120;&#31649;&#29702;&#30340; JNDI <code class="literal">SessionFactory</code>&#21644;&#26412;&#22320;&#23450;&#20041;&#30340;&#20114;&#30456;&#20999;&#25442;,&#32780;&#26080;&#38656;&#26356;&#25913;&#24212;&#29992;&#31243;&#24207;&#30340;&#20195;&#30721;&#12290;&#26159;&#21542;&#20445;&#25345;&#36164;&#28304;&#23450;&#20041;&#22312;&#23481;&#22120;&#25110;&#26412;&#22320;&#24212;&#29992;&#31243;&#24207;&#20013;&#65292;&#20027;&#35201;&#21462;&#20915;&#20110;&#20351;&#29992;&#30340;&#20107;&#21153;&#31574;&#30053;&#12290;&#23545;&#27604; Spring &#23450;&#20041;&#30340;&#26412;&#22320;&#30340;<code class="literal">SessionFactory</code>,&#25163;&#21160;&#27880;&#20876; JNDI <code class="literal">SessionFactory</code>&#27809;&#26377;&#20219;&#20309;&#22909;&#22788;&#12290;&#37096;&#32626;&#19968;&#20010;&#36890;&#36807; Hibernate JCA &#36830;&#25509;&#22120;&#30340;<code class="literal">SessionFactory</code>&#26469;&#25552;&#20379; Java EE &#26381;&#21153;&#22120;&#30340;&#31649;&#29702;&#22522;&#30784;&#35774;&#26045;&#30340;&#38468;&#21152;&#20540;,&#20294;&#22312;&#36825;&#20043;&#21069;&#19981;&#22686;&#21152;&#20219;&#20309;&#23454;&#38469;&#30340;&#20540;&#12290;</p>
+<p>Spring &#30340;&#20107;&#21153;&#25903;&#25345;&#19981;&#26159;&#32465;&#23450;&#21040;&#19968;&#20010;&#23481;&#22120;&#20013;&#12290;&#22312;&#37197;&#32622;&#38500;&#20102; JTA &#20197;&#22806;&#30340;&#20219;&#20309;&#31574;&#30053;&#21518;&#65292;&#20107;&#21153;&#25903;&#25345;&#21516;&#26679;&#20063;&#33021;&#22312;&#19968;&#20010;&#29420;&#31435;&#30340;&#25110;&#27979;&#35797;&#30340;&#29615;&#22659;&#20013;&#24037;&#20316;&#12290;&#29305;&#21035;&#26159;&#22312;&#21333;&#29420;&#30340;&#25968;&#25454;&#24211;&#20107;&#21153;&#30340;&#20856;&#22411;&#24212;&#29992;&#20013;&#12290;Spring &#26159;&#19968;&#20010;&#36731;&#37327;&#32423;&#30340;&#21333;&#36164;&#28304;&#26412;&#22320;&#20107;&#21153;&#25903;&#25345;&#21644;&#24378;&#22823;&#30340; JTA &#30340;&#26367;&#20195;&#21697;&#12290;&#24403;&#20320;&#20351;&#29992;&#26412;&#22320; EJB &#26080;&#29366;&#24577;&#20250;&#35805; bean &#26469;&#39537;&#21160;&#20107;&#21153;,&#20320;&#37117;&#24517;&#39035;&#35201;&#20381;&#36182; EJB &#23481;&#22120;&#21644; JTA,&#21363;&#20351;&#20320;&#21482;&#35775;&#38382;&#19968;&#20010;&#25968;&#25454;&#24211;,&#24182;&#19988;&#21482;&#20351;&#29992;&#26080;&#29366;&#24577;&#20250;&#35805; bean &#36890;&#36807;&#23481;&#22120;&#31649;&#29702;&#30340;&#20107;&#21153;&#26469;&#25552;&#20379;&#22768;&#26126;&#24335;&#20107;&#21153;&#12290;&#21478;&#22806;,&#30452;&#25509;&#20351;&#29992; JTA &#32534;&#31243;&#38656;&#35201;&#19968;&#20010; Java EE &#29615;&#22659;&#12290;JTA &#24182;&#19981;&#21482;&#28041;&#21450;&#23481;&#22120;&#20381;&#36182;&#24615;&#30340;JTA &#26412;&#36523;&#21644; JNDI <code class="literal">DataSource</code> &#23454;&#20363;&#12290;&#23545;&#20110; &#38750; Spring,JTA &#39537;&#21160;&#30340; Hibernate &#20107;&#21153;&#20132;&#26131;,&#24744;&#24517;&#39035;&#20351;&#29992; Hibernate JCA &#36830;&#25509;&#22120;,&#25110;&#39069;&#22806;&#30340;Hibernate &#20107;&#21153;&#20195;&#30721;<code class="literal">TransactionManagerLookup</code>&#20026;&#36866;&#24403;&#30340; JVM &#32423;&#21035;&#37197;&#32622;&#32531;&#23384;&#12290;</p>
+<p>Spring &#39537;&#21160;&#20107;&#21153;&#21487;&#20197;&#19982;&#26412;&#22320;&#23450;&#20041;&#30340; Hibernate <code class="literal">SessionFactory</code>&#21644;&#26412;&#22320;&#30340;JDBC <code class="literal">DataSource</code>&#24456;&#22909;&#30340;&#24037;&#20316;&#65292;&#22914;&#26524;&#20182;&#20204;&#35775;&#38382;&#19968;&#20010;&#25968;&#25454;&#24211;&#12290;&#22240;&#27492;&#20320;&#21482;&#38656;&#35201;&#20351;&#29992; Spring &#30340; JTA &#20107;&#21153;&#31574;&#30053;&#65292;&#22312;&#24403;&#20320;&#26377;&#20998;&#24067;&#24335;&#20107;&#21153;&#30340;&#38656;&#27714;&#30340;&#26102;&#20505;&#12290;JCA &#36830;&#25509;&#22120;&#38656;&#35201;&#29305;&#23450;&#23481;&#22120;&#37096;&#32626;&#27493;&#39588;,&#26174;&#28982;&#39318;&#20808;&#38656;&#35201;&#30340;&#26159; JCA &#30340;&#25903;&#25345;&#12290;&#36825;&#20010;&#37197;&#32622;&#27604;&#37096;&#32626;&#19968;&#20010;&#31616;&#21333;&#30340; &#20351;&#29992;&#26412;&#22320;&#36164;&#28304;&#23450;&#20041;&#21644; Spring &#39537;&#21160;&#20107;&#21153; web &#24212;&#29992;&#31243;&#24207;&#38656;&#35201;&#26356;&#22810;&#30340;&#24037;&#20316;&#12290;&#21516;&#26679;,&#20320;&#32463;&#24120;&#38656;&#35201;&#20320;&#30340;&#23481;&#22120;&#26159;&#20351;&#29992;&#30340;&#26159;&#20225;&#19994;&#29256;,&#20363;&#22914;,WebLogic Express, &#24182;&#19988;&#26159;&#19981;&#25552;&#20379; JCA&#12290;Spring &#30340;&#24212;&#29992;&#31243;&#24207;&#20855;&#26377;&#26412;&#22320;&#36164;&#28304;&#21644;&#20107;&#21153;&#36328;&#36234;&#25968;&#25454;&#24211;&#30340;&#33021;&#21147;&#65292;&#21487;&#20197;&#22312;&#20219;&#20309; Java EE web&#23481;&#22120;(&#27809;&#26377; JTA&#12289;JCA &#25110; EJB )&#22914;Tomcat&#12289;Resin&#12289;&#29978;&#33267;&#26222;&#36890;&#30340; Jetty &#20013;&#24037;&#20316;&#12290;&#27492;&#22806;,&#24744;&#21487;&#20197;&#24456;&#23481;&#26131;&#22320;&#37325;&#29992;&#36825;&#26679;&#30340;&#19968;&#20010;&#20013;&#38388;&#23618;&#22312;&#26700;&#38754;&#24212;&#29992;&#31243;&#24207;&#25110;&#27979;&#35797;&#22871;&#20214;&#20013;&#12290;</p>
+<p>&#20174;&#20840;&#38754;&#32771;&#34385;,&#22914;&#26524;&#20320;&#19981;&#20351;&#29992; EJB,&#35831;&#22362;&#25345;&#20351;&#29992;&#26412;&#22320; <code class="literal">SessionFactory</code>&#35774;&#32622;&#21644; Spring &#30340;<code class="literal">HibernateTransactionManager</code>&#25110;<code class="literal">JtaTransactionManager</code>&#12290;&#20320;&#24471;&#21040;&#25152;&#26377;&#30340;&#22909;&#22788;,&#21253;&#25324;&#36866;&#24403;&#30340;&#20107;&#21153; JVM &#32423;&#21035;&#32531;&#23384;&#21644;&#20998;&#24067;&#24335;&#20107;&#21153;,&#27809;&#26377;&#23481;&#22120;&#37096;&#32626;&#30340;&#19981;&#20415;&#12290;JNDI &#36890;&#36807; JCA &#36830;&#25509;&#22120;&#27880;&#20876; Hibernate <code class="literal">SessionFactory</code>,&#22312;&#19982; EJB &#19968;&#36215;&#20351;&#29992;&#26102;&#21482;&#26159;&#22686;&#21152;&#20102;&#20540;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-invalid-jdbc-access-error" href="#orm-hibernate-invalid-jdbc-access-error"></a>15.3.7&nbsp;Spurious application server warnings with Hibernate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-hibernate-invalid-jdbc-access-error" href="#orm-hibernate-invalid-jdbc-access-error"></a>15.3.7&nbsp;&#22312; Hibernate &#20013;&#30340;&#34394;&#20551;&#24212;&#29992;&#26381;&#21153;&#22120;&#21578;&#35686;</h3></div></div></div>
 
-<p>In some JTA environments with very strict <code class="literal">XADataSource</code> implementations&#8201;&#8212;&#8201;currently
-only some WebLogic Server and WebSphere versions&#8201;&#8212;&#8201;when Hibernate is configured without
-regard to the JTA <code class="literal">PlatformTransactionManager</code> object for that environment, it is
-possible for spurious warning or exceptions to show up in the application server log.
-These warnings or exceptions indicate that the connection being accessed is no longer
-valid, or JDBC access is no longer valid, possibly because the transaction is no longer
-active. As an example, here is an actual exception from WebLogic:</p>
+<p>&#22312;&#19968;&#20123; JTA &#30340;&#38750;&#24120;&#20005;&#26684;&#30340; <code class="literal">XADataSource</code>&#23454;&#29616;&#30340;&#29615;&#22659;&#20013;&#8201;&#8212; &#30446;&#21069;&#21482;&#22312;&#19968;&#20123;  WebLogic Server &#21644; WebSphere &#29256;&#26412;&#20013;&#8201;&#8212; &#24403; Hibernate &#37197;&#32622;&#26102;&#27809;&#26377;&#30041;&#24847;&#29615;&#22659;&#20013;&#30340; JTA &#30340; <code class="literal">PlatformTransactionManager</code>&#23545;&#35937;&#65292;&#36825;&#21487;&#33021;&#20250;&#23548;&#33268; &#34394;&#20551;&#21578;&#35686;&#25110;&#32773;&#24322;&#24120;&#26174;&#31034;&#22312;&#24212;&#29992;&#26381;&#21153;&#22120;&#30340;&#26085;&#24535;&#20013;&#12290;&#36825;&#20123;&#21578;&#35686;&#25110;&#32773;&#24322;&#24120;&#26174;&#31034;&#36830;&#25509;&#35775;&#38382;&#19981;&#20877;&#26377;&#25928;,&#25110; JDBC &#35775;&#38382;&#19981;&#20877;&#26377;&#25928;,&#36825;&#21487;&#33021;&#26159;&#22240;&#20026;&#20107;&#21153;&#24050;&#32463;&#19981;&#20877;&#27963;&#21160;&#20102;&#12290;&#20030;&#20010;&#20363;&#23376;,&#36825;&#26159;&#19968;&#20010;&#30495;&#23454;&#30340; WebLogic &#24322;&#24120;:</p>
 
 <pre class="literallayout">java.sql.SQLException: The transaction is no longer active - status: <span class="emphasis"><em>Committed</em></span>. No
 further JDBC access is allowed within this transaction.</pre>
 
-<p>You resolve this warning by simply making Hibernate aware of the JTA
-<code class="literal">PlatformTransactionManager</code> instance, to which it will synchronize (along with Spring).
-You have two options for doing this:</p>
+<p>&#35201;&#35299;&#20915;&#27492;&#35686;&#21578;&#65292;&#21482;&#38656;&#35201;&#20351; Hibernate &#30693;&#36947; JTA <code class="literal">PlatformTransactionManager</code>&#23454;&#20363;&#65292;&#23427;&#23558;&#21516;&#27493;&#65288;&#36830;&#21516; Spring&#65289;&#12290;&#23454;&#29616;&#36825;&#20010;&#26377;&#20004;&#20010;&#36873;&#39033;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-If in your application context you are already directly obtaining the JTA
-<code class="literal">PlatformTransactionManager</code> object (presumably from JNDI through
-<code class="literal">JndiObjectFactoryBean</code> or <code class="literal">&lt;jee:jndi-lookup&gt;</code>) and feeding it, for example, to
-Spring&#8217;s <code class="literal">JtaTransactionManager</code>, then the easiest way is to specify a reference to
-the bean defining this JTA <code class="literal">PlatformTransactionManager</code> instance as the value of the
-<code class="literal">jtaTransactionManager</code> property for <code class="literal">LocalSessionFactoryBean.</code> Spring then makes the
-object available to Hibernate.
+&#22914;&#26524;&#22312;&#20320;&#30340;&#24212;&#29992;&#31243;&#24207;&#19978;&#19979;&#25991;&#20013;&#20320;&#24050;&#32463;&#30452;&#25509;&#33719;&#21462; JTA <code class="literal">PlatformTransactionManager</code>&#23545;&#35937;&#65288;&#22823;&#27010;&#26159;&#20174; JNDI &#36890;&#36807;<code class="literal">JndiObjectFactoryBean</code> &#25110; <code class="literal">&lt;jee:jndi-lookup&gt;</code>&#65289;&#23558;&#23427;&#25552;&#20379;&#32473;&#65292;&#20363;&#22914;&#65292;Spring &#30340; <code class="literal">JtaTransactionManager</code>&#65292;&#37027;&#20040;&#26368;&#31616;&#21333;&#30340;&#26041;&#27861;&#26159;&#36890;&#36807;&#24341;&#29992;&#23450;&#20041;&#20102;&#36825;&#20010; JTA <code class="literal">PlatformTransactionManager</code>&#23454;&#20363;&#30340; bean&#32473;<code class="literal">LocalSessionFactoryBean</code>&#25351;&#23450;&#19968;&#20010;<code class="literal">jtaTransactionManager</code>&#30340;&#23646;&#24615;&#20540;&#12290;&#37027;&#20040; Spring &#23601;&#20250;&#20351;&#23545;&#35937;&#22312; Hibernate &#20013;&#21487;&#29992;
 </li><li class="listitem">
-More likely you do not already have the JTA <code class="literal">PlatformTransactionManager</code> instance,
-because Spring&#8217;s <code class="literal">JtaTransactionManager</code> can find it itself. Thus you need to
-configure Hibernate to look up JTA <code class="literal">PlatformTransactionManager</code> directly. You do this
-by configuring an application server- specific <code class="literal">TransactionManagerLookup</code> class in the
-Hibernate configuration, as described in the Hibernate manual.
+&#20320;&#24456;&#26377;&#21487;&#33021;&#27809;&#26377; JTA <code class="literal">PlatformTransactionManager</code>&#23454;&#20363;&#65292;&#22240;&#20026;Spring &#30340; <code class="literal">JtaTransactionManager</code> &#26412;&#36523;&#21487;&#20197;&#25214;&#21040;&#23427;&#12290;&#22240;&#27492;&#65292;&#20320;&#38656;&#35201;&#37197;&#32622; Hibernate &#30452;&#25509;&#26597;&#25214; JTA <code class="literal">PlatformTransactionManager</code>&#12290;&#20320;&#21487;&#20197;&#22312; Hibernate &#37197;&#32622;&#20013;&#36890;&#36807;&#37197;&#32622;&#24212;&#29992;&#31243;&#24207;&#26381;&#21153;&#22120;&#29305;&#23450;&#30340;<code class="literal">ransactionManagerLookup</code>&#31867;&#23454;&#29616;&#36825;&#20010;&#65292;&#27491;&#22914; Hibernate &#25163;&#20876;&#25152;&#25551;&#36848;&#30340;&#37027;&#26679;
 </li></ul></div>
 
-<p>The remainder of this section describes the sequence of events that occur with and
-without Hibernate&#8217;s awareness of the JTA <code class="literal">PlatformTransactionManager</code>.</p>
-<p>When Hibernate is not configured with any awareness of the JTA
-<code class="literal">PlatformTransactionManager</code>, the following events occur when a JTA transaction commits:</p>
+<p>&#26412;&#33410;&#30340;&#20854;&#20313;&#37096;&#20998;&#25551;&#36848;&#20102;&#20107;&#20214;&#21457;&#29983;&#30340;&#39034;&#24207;&#21644; Hibernate &#23545; JTA <code class="literal">PlatformTransactionManager</code>&#30340;&#35748;&#30693;&#12290;</p>
+<p>&#24403; Hibernate &#27809;&#26377;&#37197;&#32622;&#20219;&#20309; JTA <code class="literal">PlatformTransactionManager</code> &#30340;&#35748;&#30693;&#26102;,&#24403;&#19968;&#20010; JTA &#20107;&#21153;&#25552;&#20132;&#26102;&#20197;&#19979;&#20107;&#20214;&#21457;&#29983;:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-The JTA transaction commits.
+JTA &#20107;&#21153;&#25552;&#20132;&#12290;
 </li><li class="listitem">
-Spring&#8217;s <code class="literal">JtaTransactionManager</code> is synchronized to the JTA transaction, so it is
-called back through an <span class="emphasis"><em>afterCompletion</em></span> callback by the JTA transaction manager.
+Spring &#30340; <code class="literal">JtaTransactionManager</code>&#19982; JTA &#20107;&#21153;&#21516;&#27493;&#26102;&#65292;&#36890;&#36807; JTA &#20107;&#21153;&#31649;&#29702;&#25191;&#34892;&#19968;&#20010; afterCompletion &#30340;&#22238;&#35843;&#12290;
 </li><li class="listitem">
-Among other activities, this synchronization can trigger a callback by Spring to
-Hibernate, through Hibernate&#8217;s <code class="literal">afterTransactionCompletion</code> callback (used to clear
-the Hibernate cache), followed by an explicit <code class="literal">close()</code> call on the Hibernate Session,
-which causes Hibernate to attempt to <code class="literal">close()</code> the JDBC Connection.
+&#22312;&#20854;&#20182;&#27963;&#21160;&#20013;&#65292;&#20174; Spring &#21040; Hibernate &#30340;&#21516;&#27493;&#21487;&#20197;&#35302;&#21457;&#22238;&#35843;&#65292;&#36890;&#36807;Hibernate &#30340; <code class="literal">afterTransactionCompletion</code>&#22238;&#35843;&#65288;&#29992;&#20110;&#28165;&#38500; Hibernate &#32531;&#23384;&#65289;&#65292;&#38543;&#21518;&#30340;&#26159;&#19968;&#20010;&#26174;&#24335; close() &#35843;&#29992;&#22312; Hibernate Session,,&#23548;&#33268; Hibernate &#35797;&#22270;  close() JDBC &#36830;&#25509;&#12290;
 </li><li class="listitem">
-In some environments, this <code class="literal">Connection.close()</code> call then triggers the warning or
-error, as the application server no longer considers the <code class="literal">Connection</code> usable at all,
-because the transaction has already been committed.
+&#22312;&#26576;&#20123;&#29615;&#22659;&#20013;,&#36825;&#20010; <code class="literal">Connection.close()</code>&#35843;&#29992;&#28982;&#21518;&#35302;&#21457;&#35686;&#21578;&#25110;&#38169;&#35823;,&#22240;&#20026;&#24212;&#29992;&#31243;&#24207;&#26381;&#21153;&#22120;&#19981;&#20877;&#35748;&#20026;<code class="literal">Connection</code>&#26159;&#21487;&#29992;&#30340;,&#22240;&#20026;&#20107;&#21153;&#24050;&#32463;&#25552;&#20132;&#20102;&#12290;
 </li></ul></div>
 
-<p>When Hibernate is configured with awareness of the JTA <code class="literal">PlatformTransactionManager</code>, the
-following events occur when a JTA transaction commits:</p>
+<p>&#24403;Hibernate &#37197;&#32622;&#20102; JTA <code class="literal">PlatformTransactionManager</code>&#30340;&#35748;&#30693;,&#24403;&#19968;&#20010;JTA&#20107;&#21153;&#25552;&#20132;&#65292;&#20197;&#19979;&#20107;&#20214;&#21457;&#29983;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-the JTA transaction is ready to commit.
+JTA &#20107;&#21153;&#20934;&#22791;&#25552;&#20132;&#12290;
 </li><li class="listitem">
-Spring&#8217;s <code class="literal">JtaTransactionManager</code> is synchronized to the JTA transaction, so the
-transaction is called back through a <span class="emphasis"><em>beforeCompletion</em></span> callback by the JTA
-transaction manager.
+Spring &#30340; <code class="literal">JtaTransactionManager</code> &#36319; JTA &#20107;&#21153;&#26159;&#21516;&#27493;&#30340;,&#25152;&#20197;&#36890;&#36807; JTA &#20107;&#21153;&#31649;&#29702;&#22120;&#30340; <code class="literal">beforeCompletion</code>&#22238;&#35843;&#26469;&#25191;&#34892;&#20107;&#21153;&#30340;&#22238;&#35843;&#12290;
 </li><li class="listitem">
-Spring is aware that Hibernate itself is synchronized to the JTA transaction, and
-behaves differently than in the previous scenario. Assuming the Hibernate <code class="literal">Session</code>
-needs to be closed at all, Spring will close it now.
+Spring &#24863;&#30693;&#21040; Hibernate &#26412;&#36523;&#19982; JTA &#20107;&#21153;&#26159;&#21516;&#27493;&#30340;,&#24182;&#19988;&#34892;&#20026;&#19981;&#21516;&#20110;&#22312;&#21069;&#38754;&#30340;&#22330;&#26223;&#12290;&#20551;&#35774;&#38656;&#35201; Hibernate <code class="literal">Session</code>&#20851;&#38381;, &#37027;&#20040; Spring&#23558;&#20250;&#20851;&#38381;&#23427;&#12290;
 </li><li class="listitem">
-The JTA transaction commits.
+JTA &#20107;&#21153;&#25552;&#20132;
 </li><li class="listitem">
-Hibernate is synchronized to the JTA transaction, so the transaction is called back
-through an <span class="emphasis"><em>afterCompletion</em></span> callback by the JTA transaction manager, and can
-properly clear its cache.
+Hibernate &#19982; JTA &#20107;&#21153;&#26159;&#21516;&#27493;&#30340;,&#25152;&#20197;&#36890;&#36807; JTA &#20107;&#21153;&#31649;&#29702;&#22120;&#30340; <code class="literal">beforeCompletion</code>&#22238;&#35843;&#26469;&#25191;&#34892;&#20107;&#21153;&#30340;&#22238;&#35843;&#65292;&#24182;&#33021;&#27491;&#30830;&#28165;&#26970;&#20854;&#32531;&#23384;&#12290;
 </li></ul></div>
 
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="orm-jdo" href="#orm-jdo"></a>15.4&nbsp;JDO</h2></div></div></div>
 
-<p>Spring supports the standard JDO 2.0 and 2.1 APIs as data access strategy, following the
-same style as the Hibernate support. The corresponding integration classes reside in the
-<code class="literal">org.springframework.orm.jdo</code> package.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-setup" href="#orm-jdo-setup"></a>15.4.1&nbsp;PersistenceManagerFactory setup</h3></div></div></div>
+<p>Spring &#25903;&#25345;&#26631;&#20934;&#30340; JDO 2.0 &#21644; 2.1 API &#30340;&#25968;&#25454;&#35775;&#38382;&#31574;&#30053;&#65292;&#25353;&#29031;&#19982; Hibernate &#21516;&#26679;&#30340;&#25903;&#25345;&#26041;&#24335;&#12290;&#30456;&#24212;&#30340;&#38598;&#25104;&#31867;&#39547;&#30041;&#22312;<code class="literal">org.springframework.orm.jdo</code> &#21253;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-setup" href="#orm-jdo-setup"></a>15.4.1&nbsp;PersistenceManagerFactory &#35774;&#32622;</h3></div></div></div>
 
-<p>Spring provides a <code class="literal">LocalPersistenceManagerFactoryBean</code> class that allows you to define a
-local JDO <code class="literal">PersistenceManagerFactory</code> within a Spring application context:</p>
+<p>Spring&#25552;&#20379; <code class="literal">LocalPersistenceManagerFactoryBean</code> &#31867;&#20801;&#35768;&#24744;&#22312;&#19968;&#20010; Spring &#24212;&#29992;&#19978;&#19979;&#25991;&#23450;&#20041;&#20102;&#19968;&#20010;&#23616;&#37096;&#30340; JDO &#30340;<code class="literal">PersistenceManagerFactory</code>&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myPmf"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jdo.LocalPersistenceManagerFactoryBean"</span><span class="hl-tag">&gt;</span>
@@ -596,14 +435,8 @@ local JDO <code class="literal">PersistenceManagerFactory</code> within a Spring
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>Alternatively, you can set up a <code class="literal">PersistenceManagerFactory</code> through direct instantiation
-of a <code class="literal">PersistenceManagerFactory</code> implementation class. A JDO <code class="literal">PersistenceManagerFactory</code>
-implementation class follows the JavaBeans pattern, just like a JDBC <code class="literal">DataSource</code>
-implementation class, which is a natural fit for a configuration that uses Spring. This
-setup style usually supports a Spring-defined JDBC <code class="literal">DataSource</code>, passed into the
-<code class="literal">connectionFactory</code> property. For example, for the open source JDO implementation
-DataNucleus (formerly JPOX) ( <a class="ulink" href="http://www.datanucleus.org/" target="_top">http://www.datanucleus.org/</a>),
-this is the XML configuration of the <code class="literal">PersistenceManagerFactory</code> implementation:</p>
+<p>&#21478;&#22806;&#65292;&#20320;&#21487;&#20197;&#36890;&#36807;&#19968;&#20010; <code class="literal">PersistenceManagerFactory</code>&#23454;&#29616;&#31867;&#30340;&#30340;&#23454;&#20363;&#21270;&#26469;&#35774;&#32622; <code class="literal">PersistenceManagerFactory</code>&#12290;&#19968;&#20010; JDO &#30340;<code class="literal">PersistenceManagerFactory</code>&#23454;&#29616;&#31867;&#36981;&#24490; JavaBean &#27169;&#24335;&#65292;&#23601;&#20687;&#19968;&#20010;JDBC <code class="literal">DataSource</code> &#30340;&#23454;&#29616;&#31867;&#65292;&#36825;&#26159;&#22312; Spring &#37324;&#37197;&#32622;&#20351;&#29992;&#26159;&#38750;&#24120;&#21512;&#36866;&#30340;&#12290;&#36825;&#31181;&#35774;&#32622;&#26041;&#24335;&#36890;&#24120;&#25903;&#25345;&#19968;&#20010; Spring &#23450;&#20041;&#30340;JDBC <code class="literal">DataSource</code>&#65292;&#20256;&#36882;&#32473; <code class="literal">connectionFactory</code>&#12290;&#20363;&#22914;&#65292;&#23545;&#20110;&#24320;&#28304;&#30340; JDO &#23454;&#29616;DataNucleus (&#21407;&#21517; JPOX) ( <a class="ulink" href="http://www.datanucleus.org/" target="_top">http://www.datanucleus.org/</a>),
+&#19979;&#38754;&#26159;<code class="literal">PersistenceManagerFactory</code>&#23454;&#29616;&#30340; XML &#37197;&#32622;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
  <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
@@ -620,19 +453,12 @@ this is the XML configuration of the <code class="literal">PersistenceManagerFac
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>You can also set up JDO <code class="literal">PersistenceManagerFactory</code> in the JNDI environment of a Java EE
-application server, usually through the JCA connector provided by the particular JDO
-implementation. Spring&#8217;s standard <code class="literal">JndiObjectFactoryBean</code> or <code class="literal">&lt;jee:jndi-lookup&gt;</code> can be
-used to retrieve and expose such a <code class="literal">PersistenceManagerFactory</code>. However, outside an EJB
-context, no real benefit exists in holding the <code class="literal">PersistenceManagerFactory</code> in JNDI: only
-choose such a setup for a good reason. See <a class="xref" href="orm.html#orm-hibernate-resources" title="15.3.6&nbsp;Comparing container-managed and locally defined resources">Section&nbsp;15.3.6, &#8220;Comparing container-managed and locally defined resources&#8221;</a> for a discussion;
-the arguments there apply to JDO as well.</p>
+<p>&#20063;&#21487;&#20197;&#22312;  Java EE &#24212;&#29992;&#26381;&#21153;&#30340; JNDI &#29615;&#22659;&#20013; &#35774;&#32622; JDO <code class="literal">PersistenceManagerFactory</code>&#65292;&#36890;&#24120;&#26159;&#36890;&#36807;  JCA &#36830;&#25509;&#22120;&#25552;&#20379;&#21253;&#21547; JDO &#30340;&#23454;&#29616;&#12290;Spring &#30340;&#26631;&#20934;&#20013; <code class="literal">JndiObjectFactoryBean</code> &#25110; <code class="literal">&lt;jee:jndi-lookup&gt;</code>&#21487;&#20197;&#29992;&#26469;&#26816;&#32034;&#21644;&#26292;&#38706;&#27604;&#22914;<code class="literal">PersistenceManagerFactory</code>&#12290;&#28982;&#32780;&#65292;&#22312; EJB &#19978;&#19979;&#25991; &#20043;&#22806;,&#27809;&#26377;&#30495;&#27491;&#30340;&#23384;&#22312;&#20110;&#22312; JNDI &#20013;&#20445;&#25345; <code class="literal">PersistenceManagerFactory</code> :&#21482;&#36873;&#25321;&#36825;&#26679;&#30340;&#19968;&#20010;&#35774;&#32622;&#26159;&#19968;&#20010;&#24456;&#22909;&#30340;&#29702;&#30001;&#12290;&#35831;&#21442;&#35265; <a class="xref" href="orm.html#orm-hibernate-resources" title="15.3.6&nbsp;&#27604;&#36739;&#23481;&#22120;&#31649;&#29702;&#21644;&#26412;&#22320;&#23450;&#20041;&#30340;&#36164;&#28304;">Section&nbsp;15.3.6, &#8220;&#27604;&#36739;&#23481;&#22120;&#31649;&#29702;&#21644;&#26412;&#22320;&#23450;&#20041;&#30340;&#36164;&#28304;&#8221;</a> for a discussion;
+&#35752;&#35770;;&#37027;&#37324;&#30340;&#35770;&#28857;&#36866;&#29992;&#20110;JDO&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-daos-straight" href="#orm-jdo-daos-straight"></a>15.4.2&nbsp;Implementing DAOs based on the plain JDO API</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-daos-straight" href="#orm-jdo-daos-straight"></a>15.4.2&nbsp;&#22522;&#20110;&#24179;&#24120;  JDO API &#30340; DAO &#30340;&#23454;&#29616;</h3></div></div></div>
 
-<p>DAOs can also be written directly against plain JDO API, without any Spring
-dependencies, by using an injected <code class="literal">PersistenceManagerFactory</code>. The following is an
-example of a corresponding DAO implementation:</p>
+<p>&#21033;&#29992;&#27880;&#20837;&#30340; <code class="literal">PersistenceManagerFactory</code>&#65292;&#20063;&#21487;&#20197;&#30452;&#25509;&#21033;&#29992;&#24179;&#24120;&#30340;JDO API&#26469;&#20889; DAO&#65292;&#32780;&#26080;&#38656; Spring &#30340;&#20381;&#36182;&#12290;&#20197;&#19979;&#26159;&#30456;&#24212;&#30340; DAO &#23454;&#29616;&#30340;&#19968;&#20010;&#20363;&#23376;&#65306;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
 
     <span class="hl-keyword">private</span> PersistenceManagerFactory persistenceManagerFactory;
@@ -654,8 +480,7 @@ example of a corresponding DAO implementation:</p>
     }
 }</pre>
 
-<p>Because the above DAO follows the dependency injection pattern, it fits nicely into a
-Spring container, just as it would if coded against Spring&#8217;s <code class="literal">JdoTemplate</code>:</p>
+<p>&#22240;&#20026;&#19978;&#38754;&#30340; DAO &#20381;&#36182;&#27880;&#20837;&#27169;&#24335;&#65292;&#23427;&#36866;&#21512;&#22312; Spring &#23481;&#22120;&#20013;&#65292;&#23601;&#20687;&#22312;Spring &#30340; <code class="literal">JdoTemplate</code> &#20013;&#32534;&#30721;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myProductDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"product.ProductDaoImpl"</span><span class="hl-tag">&gt;</span>
@@ -664,11 +489,7 @@ Spring container, just as it would if coded against Spring&#8217;s <code class="
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The main problem with such DAOs is that they always get a new <code class="literal">PersistenceManager</code> from
-the factory. To access a Spring-managed transactional <code class="literal">PersistenceManager</code>, define a
-<code class="literal">TransactionAwarePersistenceManagerFactoryProxy</code> (as included in Spring) in front of
-your target <code class="literal">PersistenceManagerFactory</code>, then passing a reference to that proxy into
-your DAOs as in the following example:</p>
+<p>&#36825;&#26679;&#30340; DAO &#20027;&#35201;&#30340;&#38382;&#39064;&#26159;&#65292;&#20182;&#20204;&#24635;&#26159;&#20174;&#24037;&#21378;&#33719;&#24471;&#19968;&#20010;&#26032;&#30340;<code class="literal">PersistenceManager</code>&#12290;&#20026;&#20102;&#35775;&#38382; Spring &#31649;&#29702;&#30340;&#20107;&#21153; <code class="literal">PersistenceManager</code>&#65292;&#38656;&#35201;&#23450;&#20041;&#19968;&#20010;<code class="literal">TransactionAwarePersistenceManagerFactoryProxy</code>&#65288;&#21253;&#21547;&#22312;Spring &#20013;&#65289;&#22312;&#20320;&#30340;&#30446;&#26631; <code class="literal">PersistenceManagerFactory</code> &#38754;&#21069;&#65292;&#28982;&#21518;&#20256;&#36882;&#19968;&#20010;&#37027;&#20010;&#20195;&#29702;&#30340;&#24341;&#29992;&#21040;&#20320;&#30340; DAO&#65292;&#22914;&#19979;&#38754;&#30340;&#31034;&#20363;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myPmfProxy"</span>
@@ -682,15 +503,8 @@ your DAOs as in the following example:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>Your data access code will receive a transactional <code class="literal">PersistenceManager</code> (if any) from
-the <code class="literal">PersistenceManagerFactory.getPersistenceManager()</code> method that it calls. The latter
-method call goes through the proxy, which first checks for a current transactional
-<code class="literal">PersistenceManager</code> before getting a new one from the factory. Any <code class="literal">close()</code> calls on
-the <code class="literal">PersistenceManager</code> are ignored in case of a transactional <code class="literal">PersistenceManager</code>.</p>
-<p>If your data access code always runs within an active transaction (or at least within
-active transaction synchronization), it is safe to omit the <code class="literal">PersistenceManager.close()</code>
-call and thus the entire <code class="literal">finally</code> block, which you might do to keep your DAO
-implementations concise:</p>
+<p>&#20320;&#30340;&#25968;&#25454;&#35775;&#38382;&#20195;&#30721;&#23558;&#25910;&#21040;&#19968;&#20010;&#26469;&#33258; <code class="literal">PersistenceManagerFactory.getPersistenceManager()</code>&#35843;&#29992;&#30340;&#20107;&#21153;&#24615;&#30340;<code class="literal">PersistenceManager</code>&#65288;&#22914;&#26524;&#26377;&#65289;&#30340;&#26041;&#27861;&#12290;&#21518;&#32773;&#30340;&#26041;&#27861;&#30340;&#35843;&#29992;&#20250;&#36890;&#36807;&#20195;&#29702;&#65292;&#22312;&#20174;&#20174;&#24037;&#21378;&#33719;&#24471;&#19968;&#20010;&#26032;&#30340;&#20043;&#21069;&#23427;&#39318;&#20808;&#26816;&#26597;&#24403;&#21069;&#20107;&#21153;&#24615;&#30340;<code class="literal">PersistenceManager</code>&#12290;&#30001;&#20110; &#20107;&#21153;&#24615;&#30340;<code class="literal">PersistenceManager</code>&#65292;&#20219;&#20309; close() &#30340;&#35843;&#29992;&#23558;&#20250;&#34987;&#24573;&#30053;&#12290;</p>
+<p>&#22914;&#26524;&#20320;&#30340;&#25968;&#25454;&#35775;&#38382;&#20195;&#30721;&#24635;&#26159;&#36816;&#34892;&#22312;&#19968;&#20010;&#27963;&#36291;&#30340;&#20107;&#21153;&#20013;&#65288;&#25110;&#33267;&#23569;&#19982;&#27963;&#36291;&#30340;&#20107;&#21153;&#21516;&#27493;&#65289;&#65292;&#23427;&#20250;&#23433;&#20840;&#30340;&#24573;&#30053; <code class="literal">PersistenceManager.close()</code>&#30340;&#35843;&#29992;&#12290;&#36825;&#26679;&#25972;&#20010;<code class="literal">finally</code>&#30340;&#22359;&#65292;&#21487;&#20197;&#35753;&#20320;&#30340; DAO &#23454;&#29616;&#26356;&#21152;&#31616;&#27905;&#65306;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
 
     <span class="hl-keyword">private</span> PersistenceManagerFactory persistenceManagerFactory;
@@ -707,9 +521,7 @@ implementations concise:</p>
     }
 }</pre>
 
-<p>With such DAOs that rely on active transactions, it is recommended that you enforce
-active transactions through turning off
-<code class="literal">TransactionAwarePersistenceManagerFactoryProxy</code>'s <code class="literal">allowCreate</code> flag:</p>
+<p>&#30001;&#20110;&#36825;&#26679; DAO &#20381;&#26469;&#27963;&#21160;&#30340;&#20107;&#21153;&#65292;&#25152;&#26377;&#24314;&#35758;&#24744;&#36890;&#36807;&#20851;&#38381;<code class="literal">TransactionAwarePersistenceManagerFactoryProxy</code>&#30340; <code class="literal">allowCreate</code> &#26631;&#31614;&#26469;&#24378;&#21046;&#28608;&#27963;&#20107;&#21153;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myPmfProxy"</span>
@@ -724,29 +536,17 @@ active transactions through turning off
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The main advantage of this DAO style is that it depends on JDO API only; no import of
-any Spring class is required. This is of course appealing from a non-invasiveness
-perspective, and might feel more natural to JDO developers.</p>
-<p>However, the DAO throws plain <code class="literal">JDOException</code> (which is unchecked, so does not have to be
-declared or caught), which means that callers can only treat exceptions as fatal, unless
-you want to depend on JDO&#8217;s own exception structure. Catching specific causes such as an
-optimistic locking failure is not possible without tying the caller to the
-implementation strategy. This trade off might be acceptable to applications that are
-strongly JDO-based and/or do not need any special exception treatment.</p>
-<p>In summary, you can DAOs based on the plain JDO API, and they can still participate in
-Spring-managed transactions. This strategy might appeal to you if you are already
-familiar with JDO. However, such DAOs throw plain <code class="literal">JDOException</code>, and you would have to
-convert explicitly to Spring&#8217;s <code class="literal">DataAccessException</code> (if desired).</p>
+<p>&#36825;&#31181; DAO &#39118;&#26684;&#30340;&#20027;&#35201;&#20248;&#21183;&#26159;,&#23427;&#21482;&#20381;&#36182;&#20110; JDO API;&#19981;&#38656;&#35201;&#24341;&#36827;&#20219;&#20309;&#30340;Spring &#31867;&#12290;&#20174;&#38750;&#20405;&#20837;&#24615;&#30340;&#35282;&#24230;&#26469;&#35828;&#26356;&#21560;&#24341;&#20154;&#65292;&#24182;&#19988;&#23545;&#20110; JDO &#24320;&#21457;&#20154;&#21592;&#26469;&#35828;&#21487;&#33021;&#20250;&#35273;&#24471;&#26356;&#33258;&#28982;&#12290;</p>
+<p>&#28982;&#32780;,DAO &#25243;&#20986;&#24179;&#24120;&#30340; <code class="literal">JDOException</code>(&#26410;&#26816;&#26597;&#30340;,&#22240;&#27492;&#19981;&#38656;&#35201;&#22768;&#26126;&#25110;&#25429;&#33719;),&#36825;&#24847;&#21619;&#30528;&#35843;&#29992;&#32773;&#21482;&#33021;&#23558;&#24322;&#24120;&#24403;&#20570;&#26159;&#33268;&#21629;&#30340;,&#38500;&#38750;&#20320;&#24819;&#20381;&#38752; JDO &#30340;&#24322;&#24120;&#32467;&#26500;&#12290;&#25429;&#25417;&#20048;&#35266;&#38145;&#22833;&#36133;&#31561;&#29305;&#27530;&#21407;&#22240;&#26159;&#19981;&#21487;&#33021;&#65292;&#38500;&#38750;&#25226;&#35843;&#29992;&#32773;&#19982;&#23454;&#29616;&#31574;&#30053;&#30456;&#20851;&#32852;&#12290;&#21462;&#28040;&#36825;&#20132;&#26131;&#21487;&#33021;&#20250;&#26356;&#23481;&#26131;&#21463;&#24212;&#29992;&#31243;&#24207;&#25509;&#21463;&#65292;&#22240;&#20026;&#22522;&#20110; JDO &#21644;/&#25110; &#19981;&#38656;&#35201;&#20219;&#20309;&#29305;&#27530;&#30340;&#24322;&#24120;&#22788;&#29702;&#12290;</p>
+<p>&#24635;&#20043;,&#20320;&#21487;&#20197;&#26681;&#25454;&#24179;&#24120;&#30340; JDO API &#29983;&#20135; DAO ,&#20182;&#20204;&#20173;&#28982;&#21487;&#20197;&#21442;&#19982; Spring&#31649;&#29702;&#20107;&#21153;&#12290;&#36825;&#31574;&#30053;&#20250;&#21487;&#33021;&#20250;&#21560;&#24341;&#20320;&#22914;&#26524;&#20320;&#24050;&#32463;&#29087;&#24713;&#20102; JDO&#12290;&#28982;&#32780;,&#36825;&#26679;&#30340;DAO &#25243;&#20986;&#24179;&#24120;&#30340; <code class="literal">JDOException</code>,&#24744;&#24517;&#39035;&#26174;&#24335;&#22320;&#36716;&#25442;&#20026; Spring &#30340;<code class="literal">DataAccessException</code>(&#22914;&#26524;&#38656;&#35201;)&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-tx" href="#orm-jdo-tx"></a>15.4.3&nbsp;Transaction management</h3></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>You are <span class="emphasis"><em>strongly</em></span> encouraged to read <a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a> if you have not done
-so, to get a more detailed coverage of Spring&#8217;s declarative transaction support.</p>
+<p>&#22914;&#26524;&#20320;&#36824;&#27809;&#26377;&#30475;&#36807; <a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a> &#24378;&#28872;&#24314;&#35758;&#20320;&#30475;&#19979;&#65292;&#33719;&#21462;&#26356;&#22810;Spring &#22768;&#26126;&#24335;&#20107;&#21153;&#30340;&#25903;&#25345;.</p>
 </td></tr></table></div>
 
-<p>To execute service operations within transactions, you can use Spring&#8217;s common
-declarative transaction facilities. For example:</p>
+<p>&#25191;&#34892;&#26381;&#21153;&#30340;&#20107;&#21153;&#25805;&#20316;&#65292;&#20351;&#29992; Spring &#24120;&#35265;&#30340;&#22768;&#26126;&#24335;&#20107;&#21153;&#21151;&#33021;&#65292;&#20030;&#20363;&#65306;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -784,128 +584,72 @@ declarative transaction facilities. For example:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>JDO requires an active transaction to modify a persistent object. The non-transactional
-flush concept does not exist in JDO, in contrast to Hibernate. For this reason, you need
-to set up the chosen JDO implementation for a specific environment. Specifically, you
-need to set it up explicitly for JTA synchronization, to detect an active JTA
-transaction itself. This is not necessary for local transactions as performed by
-Spring&#8217;s <code class="literal">JdoTransactionManager</code>, but it is necessary to participate in JTA
-transactions, whether driven by Spring&#8217;s <code class="literal">JtaTransactionManager</code> or by EJB CMT and plain
-JTA.</p>
-<p><code class="literal">JdoTransactionManager</code> is capable of exposing a JDO transaction to JDBC access code
-that accesses the same JDBC <code class="literal">DataSource</code>, provided that the registered <code class="literal">JdoDialect</code>
-supports retrieval of the underlying JDBC <code class="literal">Connection</code>. This is the case for JDBC-based
-JDO 2.0 implementations by default.</p>
+<p>JDO &#38656;&#35201;&#19968;&#20010;&#27963;&#21160;&#30340;&#20107;&#21153;&#26469;&#20462;&#25913;&#25345;&#20037;&#21270;&#30340;&#23545;&#35937;&#12290;&#38750;&#20107;&#21153;&#24615;&#30340;&#21047;&#26032;&#27010;&#24565;&#24182;&#19981;&#23384;&#22312;&#20110; JDO&#65292;&#30456;&#23545;&#20110; Hibernate&#12290;&#20026;&#27492;&#65292;&#20320;&#38656;&#35201;&#20026;&#29305;&#23450;&#30340;&#29615;&#22659;&#35774;&#32622;&#36873;&#25321;&#30340;JDO &#30340;&#23454;&#29616;&#12290;&#20855;&#20307;&#26469;&#35828;&#65292;&#20320;&#38656;&#35201;&#35774;&#32622;&#26126;&#30830;&#30340; JTA &#21516;&#27493;&#65292;&#26469;&#26816;&#27979;&#19968;&#20010;&#27963;&#36291;&#30340;JTA &#20107;&#21153;&#26412;&#36523;&#12290;&#36825;&#23545;&#20110; Spring &#30340; <code class="literal">JdoTransactionManager</code>&#25191;&#34892;&#30340;&#26412;&#22320;&#20107;&#21153;&#26469;&#35828;&#26159;&#27809;&#26377;&#24517;&#35201;&#30340;&#65292;&#20294;&#26377;&#24517;&#35201;&#21442;&#19982; JTA &#20107;&#21153;&#65292;&#19981;&#31649;&#26159;&#30001; Spring <code class="literal">JtaTransactionManager</code>&#39537;&#21160; &#36824;&#26159; EJB CMT &#21644;&#26222;&#36890;&#30340; JTA&#12290;</p>
+<p><code class="literal">JdoTransactionManager</code>&#33021;&#22815;&#20351; JDO &#20107;&#21153; JDBC &#35775;&#38382;&#20195;&#30721;f&#35775;&#38382;&#21516;&#19968;&#20010;JDBC`DataSource`&#65292;&#25552;&#20379;&#27880;&#20876;&#30340; <code class="literal">JdoDialect</code> &#25903;&#25345;&#24213;&#23618;&#30340; JDBC ` Connection`&#26816;&#32034;&#12290;&#36825;&#26159;&#40664;&#35748;&#24773;&#20917;&#19979;&#22522;&#20110;JDBC &#30340; JDO 2.0&#23454;&#29616;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jdo-dialect" href="#orm-jdo-dialect"></a>15.4.4&nbsp;JdoDialect</h3></div></div></div>
 
-<p>As an advanced feature, both <code class="literal">JdoTemplate</code> and <code class="literal">JdoTransactionManager</code> support a custom
-<code class="literal">JdoDialect</code> that can be passed into the <code class="literal">jdoDialect</code> bean property. In this scenario,
-the DAOs will not receive a <code class="literal">PersistenceManagerFactory</code> reference but rather a full
-<code class="literal">JdoTemplate</code> instance (for example, passed into the <code class="literal">jdoTemplate</code> property of
-<code class="literal">JdoDaoSupport</code>). Using a <code class="literal">JdoDialect</code> implementation, you can enable advanced features
-supported by Spring, usually in a vendor-specific manner:</p>
+<p>&#20316;&#20026;&#19968;&#20010;&#39640;&#32423;&#21151;&#33021;,<code class="literal">JdoTemplate</code> &#21644;<code class="literal">JdoTransactionManager</code>&#25903;&#25345;&#33258;&#23450;&#20041;<code class="literal">JdoDialect</code>&#21487;&#20197;&#20256;&#36882;&#21040;<code class="literal">JdoDialect</code>&#30340; bean &#23646;&#24615;&#12290;&#22312;&#36825;&#20010;&#22330;&#26223;&#20013;,DAO &#19981;&#25509;&#21463; <code class="literal">PersistenceManagerFactory</code>&#30340;&#24341;&#29992;,&#32780;&#26159;&#19968;&#20010;&#23436;&#25972;&#30340;<code class="literal">JdoTemplate</code>&#23454;&#20363;(&#20363;&#22914;,&#20256;&#36882;&#21040;<code class="literal">JdoDaoSupport</code>&#30340;&#23646;&#24615;<code class="literal">JdoTemplate</code> &#20013;)&#12290;&#20351;&#29992;<code class="literal">JdoDialect</code>&#23454;&#29616;,&#24744;&#21487;&#20197;&#21551;&#29992; Spring &#30340;&#39640;&#32423;&#29305;&#24615;&#25903;&#25345;,&#36890;&#24120;&#29305;&#23450;&#20110;&#20379;&#24212;&#21830;&#30340;&#26041;&#24335;:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Applying specific transaction semantics such as custom isolation level or transaction
-timeout
+&#24212;&#29992;&#20110;&#29305;&#23450;&#30340;&#20107;&#21153;&#35821;&#20041;,&#22914;&#33258;&#23450;&#20041;&#38548;&#31163;&#32423;&#21035;&#25110;&#20107;&#21153;&#36229;&#26102;
 </li><li class="listitem">
-Retrieving the transactional JDBC <code class="literal">Connection</code> for exposure to JDBC-based DAOs
+&#26816;&#32034;&#20107;&#21153;&#24615;&#30340; JDBC <code class="literal">Connection</code>,&#29992;&#26469;&#26292;&#38706;&#22522;&#20110; JDBC &#30340; DAO
 </li><li class="listitem">
-Applying query timeouts, which are automatically calculated from Spring-managed
-transaction timeouts
+&#24212;&#29992;&#26597;&#35810;&#36229;&#26102;,&#33258;&#21160;&#20174; Spring &#31649;&#29702;&#20107;&#21153;&#36229;&#26102;&#36827;&#34892;&#35745;&#31639;
 </li><li class="listitem">
-Eagerly flushing a <code class="literal">PersistenceManager,</code> to make transactional changes visible to
-JDBC-based data access code
+&#21450;&#26102;&#21047;&#26032; <code class="literal">PersistenceManager</code>,&#20351;&#20107;&#21153;&#21464;&#21270;&#23545;&#20110;&#22522;&#20110; JDBC &#30340;&#25968;&#25454;&#35775;&#38382;&#20195;&#30721;&#21487;&#35265;
 </li><li class="listitem">
-Advanced translation of <code class="literal">JDOExceptions</code> to Spring <code class="literal">DataAccessExceptions</code>
+&#20174; <code class="literal">JDOExceptions</code> &#21521; Spring     <code class="literal">DataAccessExceptions</code>&#30340;&#39640;&#32423;&#36716;&#25442;
 </li></ul></div>
 
-<p>See the <code class="literal">JdoDialect</code> javadocs for more details on its operations and how to use them
-within Spring&#8217;s JDO support.</p>
+<p>&#26597;&#30475; <code class="literal">JdoDialect</code> &#30340; javadocs &#33719;&#21462;&#26356;&#22810;&#22914;&#26524;&#20351;&#29992; Spring JDO &#30340;&#32454;&#33410;</p>
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="orm-jpa" href="#orm-jpa"></a>15.5&nbsp;JPA</h2></div></div></div>
 
-<p>The Spring JPA, available under the <code class="literal">org.springframework.orm.jpa</code> package, offers
-comprehensive support for the
+<p>Spring JPA,&#23384;&#22312;&#19982; <code class="literal">org.springframework.orm.jpa</code> &#21253;&#65292;&#25552;&#20379;&#26041;&#20415;&#30340;&#23545;&#20110;
 <a class="ulink" href="http://www.oracle.com/technetwork/articles/javaee/jpa-137156.html" target="_top">Java Persistence
-API</a> in a similar manner to the integration with Hibernate or JDO, while being aware of
-the underlying implementation in order to provide additional features.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-setup" href="#orm-jpa-setup"></a>15.5.1&nbsp;Three options for JPA setup in a Spring environment</h3></div></div></div>
+API</a> &#30340;&#31867;&#20284;&#20110; Hibernate &#25110;&#32773; JDO &#30340;&#25903;&#25345;&#65292;&#20026;&#20102;&#35299;&#24213;&#23618;&#30340;&#23454;&#29616;&#65292;&#25552;&#20379;&#39069;&#22806;&#30340;&#21151;&#33021;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-setup" href="#orm-jpa-setup"></a>15.5.1&nbsp;&#19977;&#31181;&#35774;&#32622;&#36873;&#39033;</h3></div></div></div>
 
-<p>The Spring JPA support offers three ways of setting up the JPA <code class="literal">EntityManagerFactory</code>
-that will be used by the application to obtain an entity manager.</p>
+<p>Spring JPA &#25552;&#20379;&#19977;&#31181;&#26041;&#24335;&#26469;&#35774;&#32622;  JPA <code class="literal">EntityManagerFactory</code> &#29992;&#20110;&#24212;&#29992;&#31243;&#24207;&#23454;&#29616;&#23454;&#20307;&#30340;&#31649;&#29702;&#12290;</p>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-setup-lemfb" href="#orm-jpa-setup-lemfb"></a>LocalEntityManagerFactoryBean</h4></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Only use this option in simple deployment environments such as stand-alone applications
-and integration tests.</p>
+<p>&#21482;&#22312;&#31616;&#21333;&#37096;&#32626;&#29615;&#22659;&#20013;&#65292;&#27604;&#22914;&#29420;&#31435;&#30340;&#24212;&#29992;&#31243;&#24207;&#21644;&#38598;&#25104;&#27979;&#35797;&#25165;&#20351;&#29992;&#35813;&#36873;&#39033;</p>
 </td></tr></table></div>
 
-<p>The <code class="literal">LocalEntityManagerFactoryBean</code> creates an <code class="literal">EntityManagerFactory</code> suitable for
-simple deployment environments where the application uses only JPA for data access. The
-factory bean uses the JPA <code class="literal">PersistenceProvider</code> autodetection mechanism (according to
-JPA&#8217;s Java SE bootstrapping) and, in most cases, requires you to specify only the
-persistence unit name:</p>
+<p><code class="literal">LocalEntityManagerFactoryBean</code> &#21019;&#24314;&#20102;&#19968;&#20010;&#20165;&#20351;&#29992; JPA &#35775;&#38382;&#25968;&#25454;&#36866;&#21512;&#37096;&#32626;&#22312;&#31616;&#21333;&#29615;&#22659;&#19979;&#30340;&#24212;&#29992;&#31243;&#24207;&#30340; <code class="literal">EntityManagerFactory</code>&#12290;&#24037;&#21378; bean &#20351;&#29992; JPA <code class="literal">PersistenceProvider</code> &#33258;&#21160;&#26816;&#27979;&#26426;&#21046;&#65288;&#26681;&#25454; JPA &#30340;Java SE &#24341;&#23548;&#65289;&#65292;&#22312;&#22823;&#22810;&#25968;&#24773;&#20917;&#19979;&#65292;&#38656;&#35201;&#25351;&#23450;&#21807;&#19968;&#25345;&#20037;&#21333;&#20803;&#21517;&#31216;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myEmf"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jpa.LocalEntityManagerFactoryBean"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"persistenceUnitName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"myPersistenceUnit"</span><span class="hl-tag">/&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>This form of JPA deployment is the simplest and the most limited. You cannot refer to an
-existing JDBC <code class="literal">DataSource</code> bean definition and no support for global transactions
-exists. Furthermore, weaving (byte-code transformation) of persistent classes is
-provider-specific, often requiring a specific JVM agent to specified on startup. This
-option is sufficient only for stand-alone applications and test environments, for which
-the JPA specification is designed.</p>
+<p>&#36825;&#31181;&#24418;&#24335;&#30340; JPA &#30340;&#37096;&#32626;&#26159;&#26368;&#31616;&#21333;&#21644;&#26368;&#26377;&#38480;&#30340;&#12290;&#20320;&#19981;&#33021;&#24341;&#29992;&#29616;&#26377;&#30340; JDBC <code class="literal">DataSource</code> &#30340; bean &#30340;&#23450;&#20041;&#65292;&#24182;&#19988;&#19981;&#25903;&#25345;&#20840;&#23616;&#20107;&#21153;&#30340;&#23384;&#22312;&#12290;&#27492;&#22806;&#65292;&#32455;&#20837;&#65288;&#23383;&#33410;&#30721;&#36716;&#25442;&#65289;&#25345;&#20037;&#21270;&#31867;&#26159;&#25552;&#20379;&#32773;&#29305;&#23450;&#30340;&#65292;&#24448;&#24448;&#38656;&#35201;&#19968;&#20010;&#29305;&#23450;&#30340; JVM &#20195;&#29702;&#22312;&#21551;&#21160;&#26102;&#25351;&#23450;&#12290;&#27492;&#36873;&#39033;&#20165;&#36866;&#29992;&#20110;&#20026; JPA &#35268;&#33539;&#35774;&#35745;&#30340;&#29420;&#31435;&#30340;&#24212;&#29992;&#31243;&#24207;&#21644;&#27979;&#35797;&#29615;&#22659;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-setup-jndi" href="#orm-jpa-setup-jndi"></a>Obtaining an EntityManagerFactory from JNDI</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-setup-jndi" href="#orm-jpa-setup-jndi"></a>&#20174; JNDI &#20013;&#33719;&#24471; EntityManagerFactory</h4></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Use this option when deploying to a Java EE 5 server. Check your server&#8217;s documentation
-on how to deploy a custom JPA provider into your server, allowing for a different
-provider than the server&#8217;s default.</p>
+<p>&#24403;&#37096;&#32626;&#22312; Java EE 5 &#26381;&#21153;&#22120;&#20013;&#20351;&#29992;&#35813;&#36873;&#39033;&#65292;&#26597;&#30475;&#20320;&#30340;&#26381;&#21153;&#22120;&#30340;&#25991;&#26723;&#26469;&#33719;&#30693;&#22914;&#20309;&#37096;&#32626;&#33258;&#23450;&#20041;&#30340; JPA &#25552;&#20379;&#32773; &#22312;&#20320;&#30340;&#26381;&#21153;&#22120;&#20013;&#65292;&#20801;&#35768;&#19981;&#21516;&#20110;&#26381;&#21153;&#22120;&#40664;&#35748;&#30340;&#25552;&#20379;&#32773;&#12290;</p>
 </td></tr></table></div>
 
-<p>Obtaining an <code class="literal">EntityManagerFactory</code> from JNDI (for example in a Java EE 5 environment),
-is simply a matter of changing the XML configuration:</p>
+<p>&#20174; JNDI &#20013;&#33719;&#24471; <code class="literal">EntityManagerFactory</code> (&#20030;&#20363; &#22312; Java EE 5 &#29615;&#22659;&#20013;)&#65292;&#21482;&#38656;&#31616;&#21333;&#37197;&#32622; XML:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;jee:jndi-lookup</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myEmf"</span> <span class="hl-attribute">jndi-name</span>=<span class="hl-value">"persistence/myPersistenceUnit"</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>This action assumes standard Java EE 5 bootstrapping: the Java EE server autodetects
-persistence units (in effect, <code class="literal">META-INF/persistence.xml</code> files in application jars) and
-<code class="literal">persistence-unit-ref</code> entries in the Java EE deployment descriptor (for example,
-<code class="literal">web.xml</code>) and defines environment naming context locations for those persistence units.</p>
-<p>In such a scenario, the entire persistence unit deployment, including the weaving
-(byte-code transformation) of persistent classes, is up to the Java EE server. The JDBC
-<code class="literal">DataSource</code> is defined through a JNDI location in the <code class="literal">META-INF/persistence.xml</code> file;
-EntityManager transactions are integrated with the server&#8217;s JTA subsystem. Spring merely
-uses the obtained <code class="literal">EntityManagerFactory</code>, passing it on to application objects through
-dependency injection, and managing transactions for the persistence unit, typically
-through <code class="literal">JtaTransactionManager</code>.</p>
-<p>If multiple persistence units are used in the same application, the bean names of such
-JNDI-retrieved persistence units should match the persistence unit names that the
-application uses to refer to them, for example, in <code class="literal">@PersistenceUnit</code> and
-<code class="literal">@PersistenceContext</code> annotations.</p>
+<p>&#36825;&#20010;&#21160;&#20316;&#25351;&#23450;&#26631;&#20934;&#30340; Java EE 5 &#30340;&#24341;&#23548;&#65306; Java EE&#26381;&#21153;&#22120;&#33258;&#21160;&#26816;&#27979;&#25345;&#20037;&#21333;&#20803;&#65288;&#23454;&#38469;&#19978;&#65292;<code class="literal">META-INF/persistence.xml</code>&#25991;&#20214;&#22312;&#24212;&#29992;&#30340; jar &#20013;&#65289;&#21644;&#22312;Java EE&#37096;&#32626;&#25551;&#36848;&#31526;&#20013;&#30340; <code class="literal">persistence-unit-ref</code> &#30340;&#23454;&#20307;&#65288;&#20363;&#22914;&#65292;web.xml&#65289;&#24182;&#20026;&#36825;&#20123;&#23450;&#20041;&#29615;&#22659;&#21629;&#21517;&#19978;&#19979;&#25991;&#30340;&#20301;&#32622;&#12290;</p>
+<p>&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#25972;&#20010;&#25345;&#20037;&#21270;&#21333;&#20803;&#30340;&#37096;&#32626;&#65292;&#21253;&#25324;&#32455;&#20837;&#65288;&#23383;&#33410;&#30721;&#36716;&#25442;&#65289;&#25345;&#20037;&#21270;&#31867;&#65292;&#21040; Java EE &#26381;&#21153;&#22120;&#12290;JDBC <code class="literal">DataSource</code>&#26159;&#36890;&#36807; JNDI &#20301;&#32622;&#23450;&#20041;&#22312;META-INF/persistence.xml&#25991;&#20214;&#20013;&#12290;EntityManager &#20107;&#21153;&#38598;&#25104;&#22312;&#26381;&#21153;&#22120;&#30340; JTA &#23376;&#31995;&#32479;&#20013;&#12290;Spring &#21482;&#26159;&#20351;&#29992;&#33719;&#24471;&#30340; <code class="literal">EntityManagerFactory</code>&#65292;&#36890;&#36807;&#20381;&#36182;&#27880;&#20837;&#20256;&#36882;&#32473;&#24212;&#29992;&#31243;&#24207;&#23545;&#35937;&#65292;&#24182;&#19988;&#20026;&#25345;&#20037;&#21333;&#20803;&#31649;&#29702;&#20107;&#21153;&#65292;&#36890;&#24120;&#26159;&#36890;&#36807; <code class="literal">JtaTransactionManager</code>&#12290;</p>
+<p>&#22914;&#26524;&#22810;&#20010;&#25345;&#20037;&#21333;&#20803;&#20013;&#20351;&#29992;&#30456;&#21516;&#30340;&#24212;&#29992;&#31243;&#24207;&#65292; JNDI&#26816;&#32034;&#30340;&#25345;&#20037;&#21333;&#20803;&#30340; bean &#21517;&#31216;&#24212;&#19982;&#25345;&#20037;&#21333;&#20803;&#30340;&#21517;&#31216;&#21305;&#37197;&#65292;&#24212;&#29992;&#31243;&#24207;&#24341;&#29992;&#23427;&#20204;&#65292;&#27604;&#22914;&#65292;&#22312;<code class="literal">@PersistenceUnit</code> &#21644; <code class="literal">@PersistenceContext</code>&#27880;&#35299;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-setup-lcemfb" href="#orm-jpa-setup-lcemfb"></a>LocalContainerEntityManagerFactoryBean</h4></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Use this option for full JPA capabilities in a Spring-based application environment.
-This includes web containers such as Tomcat as well as stand-alone applications and
-integration tests with sophisticated persistence requirements.</p>
+<p>&#22312;&#22522;&#20110; Spring &#30340;&#20351;&#29992; JPA &#20840;&#21151;&#33021;&#30340;&#24212;&#29992;&#29615;&#22659;&#20013;&#65292;&#20351;&#29992;&#35813;&#36873;&#39033;&#12290;&#36825;&#20010;&#21253;&#21547;&#20102; web &#23481;&#22120;&#20320;&#27604;&#22914; Tomcat &#20316;&#20026;&#20855;&#26377;&#22797;&#26434;&#30340;&#25345;&#32493;&#24615;&#35201;&#27714;&#30340;&#21333;&#29420;&#30340;&#24212;&#29992;&#21644;&#38598;&#25104;&#27979;&#35797;</p>
 </td></tr></table></div>
 
-<p>The <code class="literal">LocalContainerEntityManagerFactoryBean</code> gives full control over
-<code class="literal">EntityManagerFactory</code> configuration and is appropriate for environments where
-fine-grained customization is required. The <code class="literal">LocalContainerEntityManagerFactoryBean</code>
-creates a <code class="literal">PersistenceUnitInfo</code> instance based on the <code class="literal">persistence.xml</code> file, the
-supplied <code class="literal">dataSourceLookup</code> strategy, and the specified <code class="literal">loadTimeWeaver</code>. It is thus
-possible to work with custom data sources outside of JNDI and to control the weaving
-process. The following example shows a typical bean definition for a
-<code class="literal">LocalContainerEntityManagerFactoryBean</code>:</p>
+<p><code class="literal">LocalContainerEntityManagerFactoryBean</code>&#32473;<code class="literal">EntityManagerFactory</code>&#23436;&#20840;&#25511;&#21046;&#37197;&#32622;&#21644;&#25353;&#38656;&#23450;&#21046;&#32454;&#31890;&#24230;&#30340;&#36866;&#21512;&#30340;&#29615;&#22659;&#12290;<code class="literal">LocalContainerEntityManagerFactoryBean</code>&#21019;&#24314;&#22522;&#20110; ` persistence.xml`&#25991;&#20214; &#30340; <code class="literal">PersistenceUnitInfo</code>&#30340;&#23454;&#20363;,&#25552;&#20379;<code class="literal">dataSourceLookup</code>&#30340;&#31574;&#30053;,&#25351;&#23450;<code class="literal">loadTimeWeaver</code>&#12290;&#22240;&#27492;&#21487;&#20197;&#22312; JNDI &#22806;&#37096;&#20351;&#29992;&#33258;&#23450;&#20041;&#25968;&#25454;&#28304;&#21644;&#25511;&#21046;&#32534;&#32455;&#36807;&#31243;&#12290;&#19979;&#38754;&#30340;&#31034;&#20363;&#26174;&#31034;&#20102;&#19968;&#20010;&#20856;&#22411;&#30340;&#23450;&#20041;<code class="literal">LocalContainerEntityManagerFactoryBean</code>&#30340; bean:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myEmf"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"someDataSource"</span><span class="hl-tag">/&gt;</span>
@@ -915,7 +659,7 @@ process. The following example shows a typical bean definition for a
     <span class="hl-tag">&lt;/bean&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The following example shows a typical <code class="literal">persistence.xml</code> file:</p>
+<p>&#19979;&#38754;&#23637;&#31034;&#24120;&#35265;&#30340; persistence.xml &#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;persistence</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://java.sun.com/xml/ns/persistence"</span> <span class="hl-attribute">version</span>=<span class="hl-value">"1.0"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;persistence-unit</span> <span class="hl-attribute">name</span>=<span class="hl-value">"myUnit"</span> <span class="hl-attribute">transaction-type</span>=<span class="hl-value">"RESOURCE_LOCAL"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;mapping-file&gt;</span>META-INF/orm.xml<span class="hl-tag">&lt;/mapping-file&gt;</span>
@@ -924,85 +668,39 @@ process. The following example shows a typical bean definition for a
 <span class="hl-tag">&lt;/persistence&gt;</span></pre>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>The <code class="literal">&lt;exclude-unlisted-classes/&gt;</code> shortcut indicates that <span class="emphasis"><em>no</em></span> scanning for
-annotated entity classes is supposed to occur. An explicit <span class="emphasis"><em>true</em></span> value specified -
-<code class="literal">&lt;exclude-unlisted-classes&gt;true&lt;/exclude-unlisted-classes/&gt;</code> - also means no scan.
-<code class="literal">&lt;exclude-unlisted-classes&gt;false&lt;/exclude-unlisted-classes/&gt;</code> does trigger a scan;
-however, it is recommended to simply omit the <code class="literal">exclude-unlisted-classes</code> element
-if you want entity class scanning to occur.</p>
+<p><code class="literal">&lt;exclude-unlisted-classes/&gt;</code>&#24555;&#25463;&#34920;&#26126;&#24212;&#35813;&#20986;&#29616;&#26410;&#25195;&#25551;&#30340;&#27880;&#35299;&#30340;&#23454;&#20307;&#31867;&#12290;&#19968;&#20010;&#26126;&#30830;&#30340; true &#20540;&#25351;&#23450;<code class="literal">&lt;exclude-unlisted-classes&gt;true&lt;/exclude-unlisted-classes/&gt;</code> &#20063;&#24847;&#21619;&#30528;&#27809;&#26377;&#25195;&#25551;&#12290;<code class="literal">&lt;exclude-unlisted-classes&gt;false&lt;/exclude-unlisted-classes/&gt; d</code>&#35302;&#21457;&#25195;&#25551;&#65307;&#28982;&#32780;&#65292;&#23427;&#26159;&#24314;&#35758;&#24178;&#33030;&#30465;&#30053; <code class="literal">exclude-unlisted-classes</code>&#20803;&#32032;&#22914;&#26524;&#20320;&#24819;&#25195;&#25551;&#20135;&#29983;&#30340;&#23454;&#20307;&#31867;&#12290;</p>
 </td></tr></table></div>
 
-<p>Using the <code class="literal">LocalContainerEntityManagerFactoryBean</code> is the most powerful JPA setup
-option, allowing for flexible local configuration within the application. It supports
-links to an existing JDBC <code class="literal">DataSource</code>, supports both local and global transactions, and
-so on. However, it also imposes requirements on the runtime environment, such as the
-availability of a weaving-capable class loader if the persistence provider demands
-byte-code transformation.</p>
-<p>This option may conflict with the built-in JPA capabilities of a Java EE 5 server. In a
-full Java EE 5 environment, consider obtaining your <code class="literal">EntityManagerFactory</code> from JNDI.
-Alternatively, specify a custom <code class="literal">persistenceXmlLocation</code> on your
-<code class="literal">LocalContainerEntityManagerFactoryBean</code> definition, for example,
-META-INF/my-persistence.xml, and only include a descriptor with that name in your
-application jar files. Because the Java EE 5 server only looks for default
-<code class="literal">META-INF/persistence.xml</code> files, it ignores such custom persistence units and hence
-avoid conflicts with a Spring-driven JPA setup upfront. (This applies to Resin 3.1, for
-example.)</p>
-<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>When is load-time weaving required?</b></p></div></div></div>
+<p>&#20351;&#29992; <code class="literal">LocalContainerEntityManagerFactoryBean</code> &#26159;&#26368;&#24378;&#22823;&#30340; JPA &#35774;&#32622;&#36873;&#39033;&#65292;&#20801;&#35768;&#20016;&#23500;&#30340;&#22312;&#24212;&#29992;&#20013;&#26412;&#22320;&#37197;&#32622;&#12290;&#23427;&#25903;&#25345;&#36830;&#25509;&#21040;&#29616;&#26377;&#30340;  JDBC <code class="literal">DataSource</code>,&#25903;&#25345; &#21253;&#25324; &#26412;&#22320;&#21644;&#20840;&#23616;&#30340;&#20107;&#21153;&#65292;&#31561;&#31561;&#12290;&#28982;&#32780;,&#23427;&#36824;&#23545;&#36816;&#34892;&#26102;&#29615;&#22659;&#30340;&#26377;&#29305;&#27530;&#30340;&#38656;&#27714;,&#27604;&#22914;&#38656;&#35201; weaving-capable&#65288;&#21487;&#32455;&#20837;&#30340;&#65289;&#30340;&#31867;&#36733;&#20837;&#22120;&#65292;&#24403;&#25345;&#20037;&#24615;&#25552;&#20379;&#32773;&#35201;&#27714;&#23383;&#33410;&#30721;&#36716;&#25442;&#26102;&#12290;</p>
+<p>&#27492;&#36873;&#39033;&#21487;&#33021; Java EE 5 &#26381;&#21153;&#22120;&#20013;&#20869;&#32622; JPA &#21151;&#33021;&#20914;&#31361;&#12290;&#22312;&#19968;&#20010;&#23436;&#25972;&#30340; Java EE 5 &#30340;&#29615;&#22659;&#19979;,&#32771;&#34385;&#20174; JNDI &#33719;&#21462;&#20320;&#30340;<code class="literal">EntityManagerFactory</code>&#12290;&#21478;&#22806;,<code class="literal">LocalContainerEntityManagerFactoryBean</code>&#23450;&#20041;&#20013;&#25351;&#23450;&#19968;&#20010;&#33258;&#23450;&#20041; <code class="literal">persistenceXmlLocation</code> ,&#20363;&#22914;, META-INF/my-persistence.xml ,&#24182;&#19988;&#21482;&#21253;&#21547;&#19968;&#20010;&#25551;&#36848;&#31526;,&#36825;&#20010;&#21517;&#23383;&#22312;&#20320;&#30340;&#24212;&#29992;&#31243;&#24207; jar &#25991;&#20214;&#12290;&#22240;&#20026; Java EE 5 &#26381;&#21153;&#22120;&#21482;&#26597;&#25214;&#40664;&#35748;<code class="literal">META-INF/persistence.xml</code>&#25991;&#20214;,&#23427;&#24573;&#30053;&#20102;&#36825;&#20123;&#33258;&#23450;&#20041;&#25345;&#20037;&#24615;&#21333;&#20803;,&#20174;&#32780;&#36991;&#20813;&#19982; Spring &#39537;&#21160;&#30340; JPA &#39044;&#20808;&#35774;&#32622;&#20914;&#31361;&#12290;(&#20363;&#22914;,&#36825;&#36866;&#29992;&#20110; Resin 3.1)&#12290;</p>
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>&#20160;&#20040;&#26102;&#20505;&#38656;&#35201;&#36733;&#20837;&#26102;&#32455;&#20837;?</b></p></div></div></div>
 
-<p>Not all JPA providers require a JVM agent ; Hibernate is an example of one that does
-not. If your provider does not require an agent or you have other alternatives, such as
-applying enhancements at build time through a custom compiler or an ant task, the
-load-time weaver <span class="emphasis"><em>should not</em></span> be used.</p>
+<p>&#19981;&#26159;&#25152;&#26377;&#30340; JPA &#25552;&#20379;&#32773;&#38656;&#35201; JVM &#20195;&#29702;;Hibernate &#23601;&#26159;&#36825;&#26679;&#30340;&#19968;&#20010;&#20363;&#23376;&#12290;&#22914;&#26524;&#20320;&#30340;&#25552;&#20379;&#32773;&#19981;&#38656;&#35201;&#19968;&#20010;&#20195;&#29702;&#25110;&#20320;&#26377;&#20854;&#20182;&#36873;&#25321;,&#22914;&#24212;&#29992;&#22686;&#24378;&#22312;&#26500;&#24314;&#26102;&#36890;&#36807;&#19968;&#20010;&#33258;&#23450;&#20041;&#30340;&#32534;&#35793;&#22120;&#25110;&#19968;&#20010; ant &#20219;&#21153;,&#27492;&#26102;&#19981;&#24212;&#20351;&#29992;&#36733;&#20837;&#26102;&#32455;&#20837;&#12290;</p>
 </div>
 
-<p>The <code class="literal">LoadTimeWeaver</code> interface is a Spring-provided class that allows JPA
-<code class="literal">ClassTransformer</code> instances to be plugged in a specific manner, depending whether the
-environment is a web container or application server. Hooking <code class="literal">ClassTransformers</code>
-through an
+<p><code class="literal">LoadTimeWeaver</code>&#25509;&#21475;&#26159;&#19968;&#20010; Spring &#31867;,&#20801;&#35768;&#23558; JPA <code class="literal">ClassTransformer</code>&#23454;&#20363;&#25554;&#20837;&#19968;&#20010;&#29305;&#23450;&#30340;&#26041;&#24335;,&#36825;&#21462;&#20915;&#20110;&#29615;&#22659;&#26159; web &#23481;&#22120;&#25110;&#24212;&#29992;&#31243;&#24207;&#26381;&#21153;&#22120;&#12290;&#36890;&#36807;&#19968;&#20010;
 <a class="ulink" href="http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html" target="_top">agent</a>
-typically is not efficient. The agents work against the <span class="emphasis"><em>entire virtual machine</em></span> and
-inspect <span class="emphasis"><em>every</em></span> class that is loaded, which is usually undesirable in a production
-server environment.</p>
-<p>Spring provides a number of <code class="literal">LoadTimeWeaver</code> implementations for various environments,
-allowing <code class="literal">ClassTransformer</code> instances to be applied only <span class="emphasis"><em>per class loader</em></span> and not
-per VM.</p>
-<p>Refer to <a class="xref" href="aop.html#aop-aj-ltw-spring" title="Spring configuration">the section called &#8220;Spring configuration&#8221;</a> in the AOP chapter for more insight regarding the
-<code class="literal">LoadTimeWeaver</code> implementations and their setup, either generic or customized to
-various platforms (such as Tomcat, WebLogic, GlassFish, Resin and JBoss).</p>
-<p>As described in the aforementioned section, you can configure a context-wide
-<code class="literal">LoadTimeWeaver</code> using the <code class="literal">@EnableLoadTimeWeaving</code> annotation of
-<code class="literal">context:load-time-weaver</code> XML element. Such a global weaver is picked up by all JPA
-<code class="literal">LocalContainerEntityManagerFactoryBeans</code> automatically. This is the preferred way of
-setting up a load-time weaver, delivering autodetection of the platform (WebLogic,
-GlassFish, Tomcat, Resin, JBoss or VM agent) and automatic propagation of the weaver to
-all weaver-aware beans:</p>
+&#26469;&#25346;&#38057; <code class="literal">ClassTransformers</code>&#36890;&#24120;&#26159;&#26080;&#25928;&#30340;&#12290;&#20195;&#29702;&#24037;&#20316;&#22312;&#25972;&#20010;&#34394;&#25311;&#26426;&#24182;&#26816;&#26597;&#27599;&#19968;&#20010;&#21152;&#36733;&#31867;,&#36890;&#24120;&#26159;&#22312;&#29983;&#20135;&#26381;&#21153;&#22120;&#29615;&#22659;&#20013;&#19981;&#21463;&#27426;&#36814;&#30340;&#12290;</p>
+<p>Spring &#25552;&#20379;&#20102;&#35768;&#22810; <code class="literal">LoadTimeWeaver</code> &#21508;&#31181;&#29615;&#22659;&#30340;&#23454;&#29616;,&#20801;&#35768;<code class="literal">ClassTransformer</code>&#23454;&#20363;&#20165;&#36866;&#29992;&#20110;&#27599;&#20010;&#31867;&#35013;&#20837;&#22120;,&#32780;&#19981;&#26159;&#27599;&#20010; VM&#12290;</p>
+<p>&#21442;&#32771; AOP &#31456;&#33410; <a class="xref" href="aop.html#aop-aj-ltw-spring" title="Spring configuration">the section called &#8220;Spring configuration&#8221;</a> &#20102;&#35299;&#20851;&#20110;<code class="literal">LoadTimeWeaver</code>&#23454;&#29616;&#21450;&#20854;&#35774;&#32622;,&#21253;&#25324;&#27867;&#22411;&#25110;&#23450;&#21046;&#21508;&#31181;&#24179;&#21488;(&#22914; Tomcat&#12289;WebLogic&#12289;GlassFish&#12289;Resin &#21644;JBoss)&#12290;</p>
+<p>&#22914;&#19978;&#36848;&#25152;&#36848;&#37096;&#20998;,&#24744;&#21487;&#20197;&#37197;&#32622;&#19968;&#20010;context-wide&#65288;&#23485;&#27867;&#19978;&#19979;&#25991;&#30340;&#65289; <code class="literal">LoadTimeWeaver</code>&#20351;&#29992;<code class="literal">context:load-time-weaver</code>&#20803;&#32032;&#20013;&#30340;<code class="literal">@EnableLoadTimeWeaving</code>&#27880;&#37322;&#12290;&#36825;&#26679;&#19968;&#20010;&#20840;&#29699;&#32455;&#20837;&#26159;&#25152;&#26377; JPA <code class="literal">LocalContainerEntityManagerFactoryBeans</code>&#33258;&#21160;&#25429;&#25417;&#21040;&#12290;&#36825;&#26159;&#35774;&#32622;&#21152;&#36733;&#26102;&#32455;&#20837;&#30340;&#39318;&#36873;&#26041;&#27861;,&#33021;&#33258;&#21160;&#35782;&#21035;&#20986;&#24179;&#21488;(WebLogic, GlassFish, Tomcat, Resin, JBoss &#25110;&#32773; VM &#20195;&#29702;)&#21644;&#33258;&#21160;&#20256;&#25773;&#30340;&#32455;&#20837;&#21040;&#25152;&#26377;&#21487;&#32455;&#20837;&#30340; bean &#20013;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;context:load-time-weaver/&gt;</span>
 <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"emf"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"</span><span class="hl-tag">&gt;</span>
     ...
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>However, if needed, one can manually specify a dedicated weaver through the
-<code class="literal">loadTimeWeaver</code> property:</p>
+<p>&#19981;&#36807;,&#22914;&#26524;&#38656;&#35201;,&#21487;&#20197;&#25163;&#21160;&#36890;&#36807; <code class="literal">loadTimeWeaver&#23646;&#24615;</code>&#25351;&#23450;&#19968;&#20010;&#19987;&#38376;&#30340;&#32455;&#20837;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"emf"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"loadTimeWeaver"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.instrument.classloading.ReflectiveLoadTimeWeaver"</span><span class="hl-tag">/&gt;</span>
     <span class="hl-tag">&lt;/property&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>No matter how the LTW is configured, using this technique, JPA applications relying on
-instrumentation can run in the target platform (ex: Tomcat) without needing an agent.
-This is important especially when the hosting applications rely on different JPA
-implementations because the JPA transformers are applied only at class loader level and
-thus are isolated from each other.</p>
+<p>&#26080;&#35770; LTW &#22914;&#20309;&#37197;&#32622;,&#20351;&#29992;&#36825;&#31181;&#25216;&#26415;,JPA &#24212;&#29992;&#31243;&#24207;&#20381;&#36182;&#20110;&#22120;&#21487;&#20197;&#36816;&#34892;&#22312;&#30446;&#26631;&#24179;&#21488;(&#20363;:Tomcat)&#32780;&#19981;&#38656;&#35201;&#20195;&#29702;&#30340;&#22522;&#30784;&#35774;&#26045;&#12290;&#36825;&#26159;&#38750;&#24120;&#37325;&#35201;&#30340;,&#23588;&#20854;&#26159;&#24403;&#25176;&#31649;&#30340;&#24212;&#29992;&#31243;&#24207;&#20381;&#36182;&#20110;&#19981;&#21516;&#30340; JPA &#23454;&#29616;&#65292;&#22240;&#20026; JPA &#36716;&#25442;&#22120;&#21482;&#22312;&#31867;&#35013;&#20837;&#22120;&#32423;&#21035;,&#22240;&#27492;&#24444;&#27492;&#26159;&#38548;&#31163;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-multiple-pu" href="#orm-jpa-multiple-pu"></a>Dealing with multiple persistence units</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="orm-jpa-multiple-pu" href="#orm-jpa-multiple-pu"></a>&#22788;&#29702;&#22810;&#20010;&#25345;&#20037;&#21333;&#20803;</h4></div></div></div>
 
-<p>For applications that rely on multiple persistence units locations, stored in various
-JARS in the classpath, for example, Spring offers the <code class="literal">PersistenceUnitManager</code> to act as
-a central repository and to avoid the persistence units discovery process, which can be
-expensive. The default implementation allows multiple locations to be specified that are
-parsed and later retrieved through the persistence unit name. (By default, the classpath
-is searched for <code class="literal">META-INF/persistence.xml</code> files.)</p>
+<p>&#23545;&#20110;&#20381;&#36182;&#20110;&#22810;&#20010;&#25345;&#20037;&#21333;&#20803;&#30340;&#20301;&#32622;&#30340;&#24212;&#29992;&#31243;&#24207;&#65292;&#22312;&#31867;&#36335;&#24452;&#20013;&#65292;&#23384;&#20648;&#22312;&#19981;&#21516;&#30340;JAR &#20013;&#65292;&#20363;&#22914;&#65292;Spring &#25552;&#20379;<code class="literal">PersistenceUnitManager</code>&#20316;&#20026;&#20013;&#22830;&#23384;&#20648;&#24211;&#65292;&#20197;&#36991;&#20813;&#25345;&#20037;&#21333;&#20803;&#30340;&#21457;&#29616;&#36807;&#31243;&#65292;&#23427;&#21487;&#20197;&#26159;&#26114;&#36149;&#30340;&#12290;&#40664;&#35748;&#30340;&#23454;&#29616;&#20801;&#35768;&#22810;&#20010;&#20301;&#32622;&#34987;&#25351;&#23450;&#65292;&#31245;&#21518;&#34987;&#36890;&#36807;&#25345;&#20037;&#21333;&#20803;&#21517;&#31216;&#26816;&#32034;&#12290;&#65288;&#40664;&#35748;&#24773;&#20917;&#19979;&#65292;&#36335;&#24452;&#25628;&#32034;&#30340;&#30340;&#26159;META-INF/persistence.xml &#25991;&#20214;&#12290;&#65289;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"pum"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.jpa.persistenceunit.DefaultPersistenceUnitManager"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"persistenceXmlLocations"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;list&gt;</span>
@@ -1026,29 +724,16 @@ is searched for <code class="literal">META-INF/persistence.xml</code> files.)</p
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"persistenceUnitName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"myCustomUnit"</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>The default implementation allows customization of the <code class="literal">PersistenceUnitInfo</code> instances,
-before they are fed to the JPA provider, declaratively through its properties, which
-affect <span class="emphasis"><em>all</em></span> hosted units, or programmatically, through the
-<code class="literal">PersistenceUnitPostProcessor</code>, which allows persistence unit selection. If no
-<code class="literal">PersistenceUnitManager</code> is specified, one is created and used internally by
-<code class="literal">LocalContainerEntityManagerFactoryBean</code>.</p>
+<p>&#40664;&#35748;&#30340;&#23454;&#29616;&#20801;&#35768;&#30340;&#33258;&#23450;&#20041; <code class="literal">PersistenceUnitInfo</code> &#23454;&#20363;&#65292;&#22312;&#20182;&#20204;&#20256;&#20837; JPA &#25552;&#20379;&#32773;&#20043;&#21069;&#65292;&#22768;&#26126;&#36890;&#36807;&#23427;&#30340;&#23646;&#24615;&#65292;&#24433;&#21709;&#25152;&#26377;&#30340;&#21333;&#20803;&#65292;&#25110;&#20197;&#32534;&#31243;&#26041;&#24335;&#65292;&#36890;&#36807; <code class="literal">PersistenceUnitPostProcessor</code>&#65292;&#20801;&#35768;&#25345;&#20037;&#21333;&#20803;&#30340;&#36873;&#25321;&#12290;&#22914;&#26524;&#27809;&#26377;&#25351;&#23450;&#19968;&#20010; <code class="literal">PersistenceUnitManager</code>&#65292;&#30001;<code class="literal">LocalContainerEntityManagerFactoryBean</code>&#20869;&#37096;&#21019;&#24314;&#21644;&#20351;&#29992;&#12290;</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-straight" href="#orm-jpa-straight"></a>15.5.2&nbsp;Implementing DAOs based on plain JPA</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-straight" href="#orm-jpa-straight"></a>15.5.2&nbsp;&#22522;&#20110;&#24179;&#24120; JPA&#30340; DAO &#30340;&#23454;&#29616;</h3></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Although <code class="literal">EntityManagerFactory</code> instances are thread-safe, <code class="literal">EntityManager</code> instances are
-not. The injected JPA <code class="literal">EntityManager</code> behaves like an <code class="literal">EntityManager</code> fetched from an
-application server&#8217;s JNDI environment, as defined by the JPA specification. It delegates
-all calls to the current transactional <code class="literal">EntityManager</code>, if any; otherwise, it falls back
-to a newly created <code class="literal">EntityManager</code> per operation, in effect making its usage thread-safe.</p>
+<p>&#34429;&#28982; <code class="literal">EntityManagerFactory</code> &#23454;&#20363;&#26159;&#32447;&#31243;&#23433;&#20840;&#30340; , &#20294; <code class="literal">EntityManager</code> &#19981;&#26159;&#12290;&#27880;&#20837;&#30340; JPA <code class="literal">EntityManager</code> &#30340;&#34892;&#20026;&#20687;&#19968;&#20010; &#20174;&#24212;&#29992;&#26381;&#21153;&#22120;&#30340; JNDI &#29615;&#22659;&#20013;&#36890;&#36807; JPA &#35268;&#33539;&#23450;&#20041;&#30340; <code class="literal">EntityManager</code> &#12290;&#23427;&#20195;&#34920;&#25152;&#26377;&#35843;&#29992;&#24403;&#21069;&#20107;&#21153;<code class="literal">EntityManager</code>&#65292;&#22914;&#26524;&#26159;&#30340;&#35805;&#65307;&#21542;&#21017;&#65292;&#23427;&#22312;&#27599;&#27425;&#25805;&#20316;&#26102;&#36820;&#22238;&#26032;&#21019;&#24314;&#30340;<code class="literal">EntityManager</code>&#65292;&#20351;&#20854;&#32447;&#31243;&#23433;&#20840;&#12290;</p>
 </td></tr></table></div>
 
-<p>It is possible to write code against the plain JPA without any Spring dependencies, by
-using an injected <code class="literal">EntityManagerFactory</code> or <code class="literal">EntityManager</code>. Spring can understand
-<code class="literal">@PersistenceUnit</code> and <code class="literal">@PersistenceContext</code> annotations both at field and method level
-if a <code class="literal">PersistenceAnnotationBeanPostProcessor</code> is enabled. A plain JPA DAO implementation
-using the <code class="literal">@PersistenceUnit</code> annotation might look like this:</p>
+<p>&#36890;&#36807;&#27880;&#20837;<code class="literal">EntityManagerFactory</code> &#25110; <code class="literal">EntityManager</code>&#65292;&#23545;&#20110;&#32534;&#20889;&#24179;&#24120; JPA &#20195;&#30721;&#23545; Spring &#27809;&#26377;&#20219;&#20309;&#20381;&#36182;&#12290; Spring &#21487;&#20197;&#29702;&#35299;<code class="literal">@PersistenceUnit</code>&#21644;<code class="literal">@PersistenceContext</code>&#21644;&#27880;&#35299;&#22312;&#23383;&#27573;&#21644;&#26041;&#27861;&#23618;&#38754;&#65292;&#22914;&#26524;&#21551;&#21160; <code class="literal">PersistenceAnnotationBeanPostProcessor</code>&#30340;&#35805;&#12290;&#26222;&#36890;&#30340;JPA DAO&#23454;&#29616;&#20351;&#29992; <code class="literal">@PersistenceUnit</code>&#27880;&#35299;&#21487;&#33021;&#30475;&#36215;&#26469;&#20687;&#36825;&#26679;:</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
 
     <span class="hl-keyword">private</span> EntityManagerFactory emf;
@@ -1073,9 +758,7 @@ using the <code class="literal">@PersistenceUnit</code> annotation might look li
     }
 }</pre>
 
-<p>The DAO above has no dependency on Spring and still fits nicely into a Spring
-application context. Moreover, the DAO takes advantage of annotations to require the
-injection of the default <code class="literal">EntityManagerFactory</code>:</p>
+<p>&#19978;&#38754;&#30340; DAO &#27809;&#26377;&#20381;&#36182; Spring ,&#20294; &#20219;&#28982;&#38750;&#24120;&#31526;&#21512; Spring &#24212;&#29992;&#30340;&#19978;&#19979;&#25991;&#12290;&#27492;&#22806;&#65292;&#35813; DAO &#20805;&#20998;&#21033;&#29992; <code class="literal">EntityManagerFactory</code> &#40664;&#35748;&#27880;&#35299;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-comment">&lt;!-- bean post-processor for JPA annotations --&gt;</span>
@@ -1085,11 +768,7 @@ injection of the default <code class="literal">EntityManagerFactory</code>:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>As an alternative to defining a <code class="literal">PersistenceAnnotationBeanPostProcessor</code> explicitly,
-consider using the Spring <code class="literal">context:annotation-config</code> XML element in your application
-context configuration. Doing so automatically registers all Spring standard
-post-processors for annotation-based configuration, including
-<code class="literal">CommonAnnotationBeanPostProcessor</code> and so on.</p>
+<p>&#20316;&#20026;&#19968;&#31181;&#26126;&#30830;&#26367;&#20195;&#23450;&#20041; <code class="literal">PersistenceAnnotationBeanPostProcessor</code>&#65292;&#32771;&#34385;&#20351;&#29992; Spring  <code class="literal">context:annotation-config</code>  &#22312;&#20320;&#30340;&#24212;&#29992;&#31243;&#24207;&#29615;&#22659;&#37197;&#32622;&#12290;&#36825;&#26679;&#20570;&#33258;&#21160;&#27880;&#20876;&#25152;&#26377;&#30340; Spring &#22522;&#20110;&#27880;&#37322;&#30340;&#37197;&#32622;&#26631;&#20934;&#22788;&#29702;&#22120;&#65292;&#21253;&#25324;<code class="literal">CommonAnnotationBeanPostProcessor</code>&#31561;&#31561;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
 
     <span class="hl-comment">&lt;!-- post-processors for all standard config annotations --&gt;</span>
@@ -1099,10 +778,7 @@ post-processors for annotation-based configuration, including
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The main problem with such a DAO is that it always creates a new <code class="literal">EntityManager</code> through
-the factory. You can avoid this by requesting a transactional <code class="literal">EntityManager</code> (also
-called "shared EntityManager" because it is a shared, thread-safe proxy for the actual
-transactional EntityManager) to be injected instead of the factory:</p>
+<p>&#36825;&#26679;&#30340; DAO &#30340;&#20027;&#35201;&#30340;&#38382;&#39064;&#26159;&#65292;&#23427;&#24635;&#26159;&#36890;&#36807;&#24037;&#21378;&#21019;&#24314;&#19968;&#20010;&#26032;&#30340; <code class="literal">EntityManager</code> &#12290;&#20320;&#21487;&#20197;&#35831;&#27714;&#19968;&#20010;&#20107;&#21153;<code class="literal">EntityManager</code>&#65288;&#20063;&#34987;&#31216;&#20026;&#8220;&#20849;&#20139; EntityManager &#8221;&#22240;&#20026;&#23427;&#26159;&#19968;&#20010;&#20849;&#20139;&#30340;&#65292;&#32447;&#31243;&#23433;&#20840;&#30340;&#20195;&#29702;&#22312;&#23454;&#38469;&#20107;&#21153; EntityManager &#20013;&#65289;&#34987;&#27880;&#20837;&#32780;&#19981;&#26159;&#24037;&#21378;&#26469;&#36991;&#20813;&#36825;&#31181;&#24773;&#20917;&#65306;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ProductDaoImpl <span class="hl-keyword">implements</span> ProductDao {
 
     <em><span class="hl-annotation" style="color: gray">@PersistenceContext</span></em>
@@ -1115,46 +791,24 @@ transactional EntityManager) to be injected instead of the factory:</p>
     }
 }</pre>
 
-<p>The <code class="literal">@PersistenceContext</code> annotation has an optional attribute <code class="literal">type</code>, which defaults to
-<code class="literal">PersistenceContextType.TRANSACTION</code>. This default is what you need to receive a shared
-EntityManager proxy. The alternative, <code class="literal">PersistenceContextType.EXTENDED</code>, is a completely
-different affair: This results in a so-called extended EntityManager, which is <span class="emphasis"><em>not
-thread-safe</em></span> and hence must not be used in a concurrently accessed component such as a
-Spring-managed singleton bean. Extended EntityManagers are only supposed to be used in
-stateful components that, for example, reside in a session, with the lifecycle of the
-EntityManager not tied to a current transaction but rather being completely up to the
-application.</p>
+<p><code class="literal">@PersistenceContext</code>&#27880;&#35299;&#26377;&#20010;&#21487;&#36873;&#23646;&#24615;<code class="literal">type</code>, &#40664;&#35748;&#20540;&#26159;` PersistenceContextType.TRANSACTION` &#12290;&#40664;&#35748;&#30340;&#26159;&#20320;&#38656;&#35201;&#25509;&#25910;&#20849;&#20139;&#30340;<code class="literal">EntityManager</code>&#20195;&#29702;&#12290;<code class="literal">PersistenceContextType.EXTENDED</code>&#65292;&#26159;&#19968;&#20010;&#23436;&#20840;&#19981;&#21516;&#30340;&#20107;&#24773;,&#36825;&#20010;&#32467;&#26524;&#23545; <code class="literal">EntityManager</code>&#30340;&#25193;&#23637;&#65292;&#23427;&#19981;&#26159;&#32447;&#31243;&#23433;&#20840;&#30340;&#65292;&#22240;&#27492;&#19981;&#33021;&#29992;&#20110;&#24182;&#21457;&#35775;&#38382;&#30340;&#32452;&#20214;&#22914; Spring &#31649;&#29702;&#21333;&#20363; bean&#12290;&#25193;&#23637;&#30340; EntityManager &#21482;&#33021;&#29992;&#22312;&#26377;&#29366;&#24577;&#30340;&#32452;&#20214;&#65292;&#20363;&#22914;&#65292;&#39547;&#30041;&#22312;&#19968;&#20010;&#20250;&#35805;&#19978;&#65292;&#36825;&#26679;EntityManager &#30340;&#29983;&#21629;&#21608;&#26399;&#19981;&#20381;&#36182;&#20110;&#24403;&#21069;&#20107;&#21153;&#65292;&#32780;&#26159;&#23436;&#20840;&#21462;&#20915;&#20110;&#24212;&#29992;&#31243;&#24207;&#12290;</p>
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Method- and field-level Injection</b></p></div></div></div>
 
-<p>Annotations that indicate dependency injections (such as <code class="literal">@PersistenceUnit</code> and
-<code class="literal">@PersistenceContext</code>) can be applied on field or methods inside a class, hence the
-expressions <span class="emphasis"><em>method-level injection</em></span> and <span class="emphasis"><em>field-level injection</em></span>. Field-level
-annotations are concise and easier to use while method-level allows for further
-processing of the injected dependency. In both cases the member visibility (public,
-protected, private) does not matter.</p>
-<p>What about class-level annotations?</p>
-<p>On the Java EE 5 platform, they are used for dependency declaration and not for resource
-injection.</p>
+<p>&#27880;&#37322;&#34920;&#26126;&#20381;&#36182;&#27880;&#20837;&#65288;&#22914; <code class="literal">@PersistenceUnit</code> &#21644; <code class="literal">@PersistenceContext</code>&#65289;&#21487;&#24212;&#29992;&#20110;&#31867;&#20013;&#30340;&#23383;&#27573;&#25110;&#26041;&#27861;&#65292;&#22240;&#27492;&#34920;&#29616;&#26041;&#27861;&#32423;&#21035;&#30340;&#27880;&#20837;&#21644;&#23383;&#27573;&#32423;&#21035;&#30340;&#27880;&#20837;&#12290;&#23383;&#27573;&#32423;&#21035;&#30340;&#27880;&#20837;&#26159;&#31616;&#27905;&#21644;&#23481;&#26131;&#20351;&#29992;&#32780;&#26041;&#27861;&#32423;&#21035;&#20801;&#35768;&#36827;&#19968;&#27493;&#22788;&#29702;&#27880;&#20837;&#30340;&#20381;&#36182;&#12290;&#22312;&#36825;&#20004;&#31181;&#24773;&#20917;&#19979;&#30340;&#25104;&#21592;&#21487;&#35265;&#24615;&#65288;&#20844;&#20849;&#65292;&#20445;&#25252;&#65292;&#31169;&#20154;&#65289;&#19981;&#35201;&#32039;&#12290;</p>
+<p>&#37027;&#31867;&#32423;&#21035;&#30340;&#27880;&#20837;&#21602;&#65311;</p>
+<p>&#22312; Java EE 5 &#24179;&#21488;&#65292;&#23427;&#20204;&#26159;&#29992;&#26469;&#22768;&#26126;&#20381;&#36182;&#32780;&#19981;&#26159;&#36164;&#28304;&#27880;&#20837;</p>
 </div>
 
-<p>The injected <code class="literal">EntityManager</code> is Spring-managed (aware of the ongoing transaction). It is
-important to note that even though the new DAO implementation uses method level
-injection of an <code class="literal">EntityManager</code> instead of an <code class="literal">EntityManagerFactory</code>, no change is
-required in the application context XML due to annotation usage.</p>
-<p>The main advantage of this DAO style is that it only depends on Java Persistence API; no
-import of any Spring class is required. Moreover, as the JPA annotations are understood,
-the injections are applied automatically by the Spring container. This is appealing from
-a non-invasiveness perspective, and might feel more natural to JPA developers.</p>
+<p>&#27880;&#20837;<code class="literal">EntityManager</code>&#26159; Spring &#31649;&#29702;&#30340;&#65288;&#24847;&#35782;&#21040;&#27491;&#22312;&#36827;&#34892;&#30340;&#20107;&#21153;&#65289;&#12290;&#38656;&#35201;&#27880;&#24847;&#30340;&#26159;&#65292;&#23613;&#31649;&#26032;&#30340; DAO &#23454;&#29616;&#20351;&#29992;&#19968;&#20010; <code class="literal">EntityManager</code> &#26041;&#27861;&#27880;&#20837;&#32780;&#19981;&#26159;&#19968;&#20010;<code class="literal">EntityManagerFactory</code>&#65292;&#22312;&#24212;&#29992;&#31243;&#24207;&#19978;&#19979;&#25991;&#30340; XML &#27880;&#37322;&#30340;&#29992;&#27861;&#26080;&#38656;&#25913;&#21464;&#12290;</p>
+<p>&#36825;&#31181; DAO &#39118;&#26684;&#30340;&#20027;&#35201;&#20248;&#28857;&#26159;&#65292;&#23427;&#19981;&#20165;&#21462;&#20915;&#20110; Java Persistence API;&#65288;Java &#25345;&#20037;&#24615;API&#65289;&#65292;&#32780;&#26080;&#38656;&#24341;&#36827;&#20219;&#20309; Spring &#30340;&#31867;&#12290;&#27492;&#22806;&#65292;&#20316;&#20026; JPA &#27880;&#37322;&#26356;&#23481;&#26131;&#29702;&#35299;&#65292;&#27880;&#35299;&#21487;&#20197;&#34987; Spring &#23481;&#22120;&#33258;&#21160;&#24212;&#29992;&#12290;&#36825;&#26159;&#20174;&#38750;&#20405;&#34989;&#24615;&#30340;&#30340;&#35282;&#24230;&#30475;&#24456;&#20855;&#26377;&#21560;&#24341;&#21147;&#65292;&#23545;&#20110; JPA &#30340;&#24320;&#21457;&#20154;&#21592;&#26469;&#35828;&#21487;&#33021;&#24863;&#35273;&#26356;&#33258;&#28982;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-tx" href="#orm-jpa-tx"></a>15.5.3&nbsp;Transaction Management</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-tx" href="#orm-jpa-tx"></a>15.5.3&nbsp;&#20107;&#21153;&#31649;&#29702;</h3></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>You are <span class="emphasis"><em>strongly</em></span> encouraged to read <a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a> if you have not done
-so, to get a more detailed coverage of Spring&#8217;s declarative transaction support.</p>
+<p>&#22914;&#26524;&#20320;&#36824;&#27809;&#26377;&#30475;&#36807; <a class="xref" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Section&nbsp;12.5, &#8220;Declarative transaction management&#8221;</a> &#24378;&#28872;&#24314;&#35758;&#20320;&#30475;&#19979;&#65292;&#33719;&#21462;&#26356;&#22810;Spring &#22768;&#26126;&#24335;&#20107;&#21153;&#30340;&#25903;&#25345;*</p>
 </td></tr></table></div>
 
-<p>To execute service operations within transactions, you can use Spring&#8217;s common
-declarative transaction facilities. For example:</p>
+<p>&#25191;&#34892;&#26381;&#21153;&#30340;&#20107;&#21153;&#25805;&#20316;&#65292;&#20351;&#29992; Spring &#24120;&#35265;&#30340;&#22768;&#26126;&#24335;&#20107;&#21153;&#21151;&#33021;&#65292;&#20030;&#20363;&#65306;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -1191,36 +845,21 @@ declarative transaction facilities. For example:</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>Spring JPA allows a configured <code class="literal">JpaTransactionManager</code> to expose a JPA transaction to
-JDBC access code that accesses the same JDBC <code class="literal">DataSource</code>, provided that the registered
-<code class="literal">JpaDialect</code> supports retrieval of the underlying JDBC <code class="literal">Connection</code>. Out of the box,
-Spring provides dialects for the Toplink, Hibernate and OpenJPA JPA implementations. See
-the next section for details on the <code class="literal">JpaDialect</code> mechanism.</p>
+<p>Spring &#30340; JPA &#20801;&#35768;&#37197;&#32622; <code class="literal">JpaTransactionManager</code>&#26469;&#27394;&#26636; JPA &#20107;&#21153;&#30340; JDBC &#35775;&#38382;&#20195;&#30721;&#20174;&#32780;&#35775;&#38382;&#21516;&#19968;&#20010; JDBC <code class="literal">DataSource</code>&#65292;&#25552;&#20379;&#27880;&#20876;<code class="literal">JpaDialect</code>&#25903;&#25345;&#24213;&#23618;&#30340; JDBC <code class="literal">Connection</code>&#26816;&#32034;&#12290;&#24320;&#31665;&#21363;&#29992;&#65292;Spring &#25552;&#20379;&#20102; TopLink &#65292;Hibernate &#21644; OpenJPA &#30340; JPA &#23454;&#29616;&#30340;&#26041;&#35328;&#12290;&#35831;&#21442;&#38405;&#19979;&#19968;&#33410; <code class="literal">JpaDialect</code>&#26426;&#21046;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="orm-jpa-dialect" href="#orm-jpa-dialect"></a>15.5.4&nbsp;JpaDialect</h3></div></div></div>
 
-<p>As an advanced feature <code class="literal">JpaTemplate</code>, <code class="literal">JpaTransactionManager</code> and subclasses of
-<code class="literal">AbstractEntityManagerFactoryBean</code> support a custom <code class="literal">JpaDialect</code>, to be passed into the
-<code class="literal">jpaDialect</code> bean property. In such a scenario, the DAOs do not receive an
-<code class="literal">EntityManagerFactory</code> reference but rather a full <code class="literal">JpaTemplate</code> instance (for example,
-passed into the <code class="literal">jpaTemplate</code> property of <code class="literal">JpaDaoSupport</code>). A <code class="literal">JpaDialect</code>
-implementation can enable some advanced features supported by Spring, usually in a
-vendor-specific manner:</p>
+<p>&#20316;&#20026;&#19968;&#20010;&#39640;&#32423;&#21151;&#33021; <code class="literal">JpaTemplate</code>,<code class="literal">JpaTransactionManager `&#21644;`AbstractEntityManagerFactoryBean</code>&#23376;&#31867;&#25903;&#25345;&#33258;&#23450;&#20041; JpaDialect,&#20256;&#36882;&#21040; <code class="literal">JpaDialect</code> bean &#23646;&#24615;&#12290;&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;,DAO &#26410;&#24471;&#21040;<code class="literal">EntityManagerFactory</code>&#30340;&#24341;&#29992;,&#32780;&#26159;&#19968;&#20010;&#23436;&#25972;&#30340;<code class="literal">JpaTemplate</code>&#23454;&#20363;(&#20363;&#22914;,&#20256;&#36882;&#21040;<code class="literal">JpaDaoSupport</code>&#30340;<code class="literal">JpaTemplate</code> &#23646;&#24615;)&#12290;<code class="literal">JpaDialect</code>&#23454;&#29616;&#21487;&#20197;&#20351;&#19968;&#20123; Spring &#25903;&#25345;&#30340;&#39640;&#32423;&#21151;&#33021;,&#36890;&#24120;&#21462;&#20915;&#20110;&#29305;&#23450;&#20379;&#24212;&#21830;&#30340;&#26041;&#24335;:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Applying specific transaction semantics such as custom isolation level or transaction
-timeout)
+&#24212;&#29992;&#29305;&#23450;&#30340;&#20107;&#21153;&#35821;&#20041;,&#22914;&#33258;&#23450;&#20041;&#38548;&#31163;&#32423;&#21035;&#25110;&#20107;&#21153;&#36229;&#26102;)
 </li><li class="listitem">
-Retrieving the transactional JDBC <code class="literal">Connection</code> for exposure to JDBC-based DAOs)
+&#26816;&#32034;&#20107;&#21153;&#26292;&#38706;&#20110;&#22522;&#20110; JDBC &#30340; DAO &#30340; JDBC <code class="literal">Connection</code>)
 </li><li class="listitem">
-Advanced translation of <code class="literal">PersistenceExceptions</code> to Spring <code class="literal">DataAccessExceptions</code>
+<code class="literal">PersistenceExceptions</code> &#21040; Spring <code class="literal">DataAccessExceptions</code>&#30340;&#39640;&#32423;&#36716;&#25442;
 </li></ul></div>
 
-<p>This is particularly valuable for special transaction semantics and for advanced
-translation of exception. The default implementation used ( <code class="literal">DefaultJpaDialect</code>) does
-not provide any special capabilities and if the above features are required, you have to
-specify the appropriate dialect.</p>
-<p>See the <code class="literal">JpaDialect</code> javadocs for more details of its operations and how they are used
-within Spring&#8217;s JPA support.</p>
+<p>&#36825;&#23545;&#20110;&#29305;&#27530;&#20107;&#21153;&#35821;&#20041;&#21644;&#39640;&#32423;&#30340;&#24322;&#24120;&#36716;&#25442;&#26469;&#35828;&#26159;&#38750;&#24120;&#26377;&#20215;&#20540;&#30340;&#12290;&#40664;&#35748;&#23454;&#29616;&#20351;&#29992;(<code class="literal">DefaultJpaDialect</code>)&#19981;&#25552;&#20379;&#20219;&#20309;&#29305;&#27530;&#21151;&#33021;,&#22914;&#26524;&#38656;&#35201;&#19978;&#38754;&#30340;&#21151;&#33021;,&#20320;&#24517;&#39035;&#25351;&#23450;&#36866;&#24403;&#30340;&#26041;&#35328;&#12290;</p>
+<p>&#26597;&#30475; <code class="literal">JpaDialect</code> &#30340; javadocs &#33719;&#21462;&#26356;&#22810;&#22914;&#26524;&#20351;&#29992; Spring JPA &#30340;&#32454;&#33410;</p>
 </div>
 </div>
 </div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jdbc.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="oxm.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">14.&nbsp;Data access with JDBC&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;16.&nbsp;Marshalling XML using O/X Mappers</td></tr></table></div></body></html>
