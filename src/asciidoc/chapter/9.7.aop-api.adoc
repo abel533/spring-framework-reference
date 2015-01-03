@@ -1,0 +1,262 @@
+[[aop-autoproxy]]
+=== Using the "auto-proxy" facility
+So far we've considered explicit creation of AOP proxies using a `ProxyFactoryBean` or
+similar factory bean.
+
+Spring also allows us to use "auto-proxy" bean definitions, which can automatically
+proxy selected bean definitions. This is built on Spring "bean post processor"
+infrastructure, which enables modification of any bean definition as the container loads.
+
+In this model, you set up some special bean definitions in your XML bean definition file
+to configure the auto proxy infrastructure. This allows you just to declare the targets
+eligible for auto-proxying: you don't need to use `ProxyFactoryBean`.
+
+There are two ways to do this:
+
+* Using an auto-proxy creator that refers to specific beans in the current context.
+* A special case of auto-proxy creation that deserves to be considered separately;
+  auto-proxy creation driven by source-level metadata attributes.
+
+
+
+[[aop-autoproxy-choices]]
+==== Autoproxy bean definitions
+The `org.springframework.aop.framework.autoproxy` package provides the following
+standard auto-proxy creators.
+
+
+[[aop-api-autoproxy]]
+===== BeanNameAutoProxyCreator
+The `BeanNameAutoProxyCreator` class is a `BeanPostProcessor` that automatically creates
+AOP proxies for beans with names matching literal values or wildcards.
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="beanNames" value="jdk*,onlyJdk"/>
+		<property name="interceptorNames">
+			<list>
+				<value>myInterceptor</value>
+			</list>
+		</property>
+	</bean>
+----
+
+As with `ProxyFactoryBean`, there is an `interceptorNames` property rather than a list
+of interceptors, to allow correct behavior for prototype advisors. Named "interceptors"
+can be advisors or any advice type.
+
+As with auto proxying in general, the main point of using `BeanNameAutoProxyCreator` is
+to apply the same configuration consistently to multiple objects, with minimal volume of
+configuration. It is a popular choice for applying declarative transactions to multiple
+objects.
+
+Bean definitions whose names match, such as "jdkMyBean" and "onlyJdk" in the above
+example, are plain old bean definitions with the target class. An AOP proxy will be
+created automatically by the `BeanNameAutoProxyCreator`. The same advice will be applied
+to all matching beans. Note that if advisors are used (rather than the interceptor in
+the above example), the pointcuts may apply differently to different beans.
+
+
+[[aop-api-autoproxy-default]]
+===== DefaultAdvisorAutoProxyCreator
+A more general and extremely powerful auto proxy creator is
+`DefaultAdvisorAutoProxyCreator`. This will automagically apply eligible advisors in the
+current context, without the need to include specific bean names in the auto-proxy
+advisor's bean definition. It offers the same merit of consistent configuration and
+avoidance of duplication as `BeanNameAutoProxyCreator`.
+
+Using this mechanism involves:
+
+* Specifying a `DefaultAdvisorAutoProxyCreator` bean definition.
+* Specifying any number of Advisors in the same or related contexts. Note that these
+  __must__ be Advisors, not just interceptors or other advices. This is necessary
+  because there must be a pointcut to evaluate, to check the eligibility of each advice
+  to candidate bean definitions.
+
+The `DefaultAdvisorAutoProxyCreator` will automatically evaluate the pointcut contained
+in each advisor, to see what (if any) advice it should apply to each business object
+(such as "businessObject1" and "businessObject2" in the example).
+
+This means that any number of advisors can be applied automatically to each business
+object. If no pointcut in any of the advisors matches any method in a business object,
+the object will not be proxied. As bean definitions are added for new business objects,
+they will automatically be proxied if necessary.
+
+Autoproxying in general has the advantage of making it impossible for callers or
+dependencies to obtain an un-advised object. Calling getBean("businessObject1") on this
+ApplicationContext will return an AOP proxy, not the target business object. (The "inner
+bean" idiom shown earlier also offers this benefit.)
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+	<bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+		<property name="transactionInterceptor" ref="transactionInterceptor"/>
+	</bean>
+
+	<bean id="customAdvisor" class="com.mycompany.MyAdvisor"/>
+
+	<bean id="businessObject1" class="com.mycompany.BusinessObject1">
+		<!-- Properties omitted -->
+	</bean>
+
+	<bean id="businessObject2" class="com.mycompany.BusinessObject2"/>
+----
+
+The `DefaultAdvisorAutoProxyCreator` is very useful if you want to apply the same advice
+consistently to many business objects. Once the infrastructure definitions are in place,
+you can simply add new business objects without including specific proxy configuration.
+You can also drop in additional aspects very easily - for example, tracing or
+performance monitoring aspects - with minimal change to configuration.
+
+The DefaultAdvisorAutoProxyCreator offers support for filtering (using a naming
+convention so that only certain advisors are evaluated, allowing use of multiple,
+differently configured, AdvisorAutoProxyCreators in the same factory) and ordering.
+Advisors can implement the `org.springframework.core.Ordered` interface to ensure
+correct ordering if this is an issue. The TransactionAttributeSourceAdvisor used in the
+above example has a configurable order value; the default setting is unordered.
+
+
+[[aop-api-autoproxy-abstract]]
+===== AbstractAdvisorAutoProxyCreator
+This is the superclass of DefaultAdvisorAutoProxyCreator. You can create your own
+auto-proxy creators by subclassing this class, in the unlikely event that advisor
+definitions offer insufficient customization to the behavior of the framework
+`DefaultAdvisorAutoProxyCreator`.
+
+
+
+[[aop-autoproxy-metadata]]
+==== Using metadata-driven auto-proxying
+A particularly important type of auto-proxying is driven by metadata. This produces a
+similar programming model to .NET `ServicedComponents`. Instead of defining metadata in
+XML descriptors, configuration for transaction management and other enterprise services
+is held in source-level attributes.
+
+In this case, you use the `DefaultAdvisorAutoProxyCreator`, in combination with Advisors
+that understand metadata attributes. The metadata specifics are held in the pointcut
+part of the candidate advisors, rather than in the auto-proxy creation class itself.
+
+This is really a special case of the `DefaultAdvisorAutoProxyCreator`, but deserves
+consideration on its own. (The metadata-aware code is in the pointcuts contained in the
+advisors, not the AOP framework itself.)
+
+The `/attributes` directory of the JPetStore sample application shows the use of
+attribute-driven auto-proxying. In this case, there's no need to use the
+`TransactionProxyFactoryBean`. Simply defining transactional attributes on business
+objects is sufficient, because of the use of metadata-aware pointcuts. The bean
+definitions include the following code, in `/WEB-INF/declarativeServices.xml`. Note that
+this is generic, and can be used outside the JPetStore:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+	<bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+		<property name="transactionInterceptor" ref="transactionInterceptor"/>
+	</bean>
+
+	<bean id="transactionInterceptor"
+			class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="transactionAttributeSource">
+			<bean class="org.springframework.transaction.interceptor.AttributesTransactionAttributeSource">
+				<property name="attributes" ref="attributes"/>
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="attributes" class="org.springframework.metadata.commons.CommonsAttributes"/>
+----
+
+The `DefaultAdvisorAutoProxyCreator` bean definition (the name is not significant, hence
+it can even be omitted) will pick up all eligible pointcuts in the current application
+context. In this case, the "transactionAdvisor" bean definition, of type
+`TransactionAttributeSourceAdvisor`, will apply to classes or methods carrying a
+transaction attribute. The TransactionAttributeSourceAdvisor depends on a
+TransactionInterceptor, via constructor dependency. The example resolves this via
+autowiring. The `AttributesTransactionAttributeSource` depends on an implementation of
+the `org.springframework.metadata.Attributes` interface. In this fragment, the
+"attributes" bean satisfies this, using the Jakarta Commons Attributes API to obtain
+attribute information. (The application code must have been compiled using the Commons
+Attributes compilation task.)
+
+The `/annotation` directory of the JPetStore sample application contains an analogous
+example for auto-proxying driven by JDK 1.5+ annotations. The following configuration
+enables automatic detection of Spring's `Transactional` annotation, leading to implicit
+proxies for beans containing that annotation:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+	<bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+		<property name="transactionInterceptor" ref="transactionInterceptor"/>
+	</bean>
+
+	<bean id="transactionInterceptor"
+			class="org.springframework.transaction.interceptor.TransactionInterceptor">
+		<property name="transactionManager" ref="transactionManager"/>
+		<property name="transactionAttributeSource">
+			<bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+		</property>
+	</bean>
+----
+
+The `TransactionInterceptor` defined here depends on a `PlatformTransactionManager`
+definition, which is not included in this generic file (although it could be) because it
+will be specific to the application's transaction requirements (typically JTA, as in
+this example, or Hibernate, JDO or JDBC):
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean id="transactionManager"
+			class="org.springframework.transaction.jta.JtaTransactionManager"/>
+----
+
+[TIP]
+====
+
+If you require only declarative transaction management, using these generic XML
+definitions will result in Spring automatically proxying all classes or methods with
+transaction attributes. You won't need to work directly with AOP, and the programming
+model is similar to that of .NET ServicedComponents.
+====
+
+This mechanism is extensible. It's possible to do auto-proxying based on custom
+attributes. You need to:
+
+* Define your custom attribute.
+* Specify an Advisor with the necessary advice, including a pointcut that is triggered
+  by the presence of the custom attribute on a class or method. You may be able to use
+  an existing advice, merely implementing a static pointcut that picks up the custom
+  attribute.
+
+It's possible for such advisors to be unique to each advised class (for example, mixins):
+they simply need to be defined as prototype, rather than singleton, bean definitions.
+For example, the `LockMixin` introduction interceptor from the Spring test suite,
+shown above, could be used in conjunction with a generic `DefaultIntroductionAdvisor`:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<bean id="lockMixin" class="test.mixin.LockMixin" scope="prototype"/>
+
+	<bean id="lockableAdvisor" class="org.springframework.aop.support.DefaultIntroductionAdvisor"
+			scope="prototype">
+		<constructor-arg ref="lockMixin"/>
+	</bean>
+----
+
+Note that both `lockMixin` and `lockableAdvisor` are defined as prototypes.
+
+
+
+

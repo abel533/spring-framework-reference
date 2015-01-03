@@ -1,77 +1,61 @@
 [[expressions]]
-== Spring Expression Language (SpEL)
+== Spring 表达式语言 (SpEL)
 
 
 
 
 [[expressions-intro]]
-=== Introduction
-The Spring Expression Language (SpEL for short) is a powerful expression language that
-supports querying and manipulating an object graph at runtime. The language syntax is
-similar to Unified EL but offers additional features, most notably method invocation and
-basic string templating functionality.
+=== 介绍
+Spring表达式语言（简称SpEl）是一个支持查询和操作运行时对象图功能的强大的表达式语言.
+它的语法类似于传统EL，但提供额外的功能，most notably method invocation和
+基础字符串操作的模版。
 
-While there are several other Java expression languages available, OGNL, MVEL, and JBoss
-EL, to name a few, the Spring Expression Language was created to provide the Spring
-community with a single well supported expression language that can be used across all
-the products in the Spring portfolio. Its language features are driven by the
-requirements of the projects in the Spring portfolio, including tooling requirements for
-code completion support within the eclipse based Spring Tool Suite. That said,
-SpEL is based on a technology agnostic API allowing other expression language
-implementations to be integrated should the need arise.
+当然还有其他一些可用Java表达式语言，OGNL，MVEL和JBoss EL，Spring表达语言的创建提供Spring社区用于贯穿整个Spring产品线的良好的单一表达式语言支持它的语言特性是由Spring组合项目的需求驱动的，包括对基于eclipse的STS IDE的代码自动补全的加工支持也就是说,SpEL基于一个允许另一种表达式语言实现的与技术无关的API。
 
-While SpEL serves as the foundation for expression evaluation within the Spring
-portfolio, it is not directly tied to Spring and can be used independently. In order to
-be self contained, many of the examples in this chapter use SpEL as if it were an
-independent expression language. This requires creating a few bootstrapping
-infrastructure classes such as the parser. Most Spring users will not need to deal with
-this infrastructure and will instead only author expression strings for evaluation. An
-example of this typical use is the integration of SpEL into creating XML or annotated
-based bean definitions as shown in the section <<expressions-beandef,Expression support
-for defining bean definitions.>>
+虽然SpEL引擎作为Spring 组合里的表达式解析的基础
+，但它不直接依赖于Spring,可独立使用。为了整合，许多在本章使用SpEL例子就好像它是一个独立的表达式语言。这就需要创建一些引导
+如解析器这样的基础构造类。大多数Spring用户将不再需要处理这些基础构建，而是仅将作者表达的字符串进行解析。一个传统的使用例子是集成SpEL去创建XML或者定义Bean的注解,可以选择这里看到 <<expressions-beandef,表达式支持定义bean.>>
 
-This chapter covers the features of the expression language, its API, and its language
-syntax. In several places an Inventor and Inventor's Society class are used as the
-target objects for expression evaluation. These class declarations and the data used to
-populate them are listed at the end of the chapter.
+本章讲介绍SpEL的API，其语言语法的特点。在几个地方，Inventor和Inventor's Society 类被用做表达式解析的目标对象 。
+这些类声明和使用数据一直贯穿本章结尾。
 
 
 
 
 [[expressions-features]]
-=== Feature Overview
-The expression language supports the following functionality
+=== 功能概述
+表达式语言支持以下功能
 
-* Literal expressions
-* Boolean and relational operators
-* Regular expressions
-* Class expressions
-* Accessing properties, arrays, lists, maps
-* Method invocation
-* Relational operators
-* Assignment
-* Calling constructors
-* Bean references
-* Array construction
-* Inline lists
-* Inline maps
-* Ternary operator
-* Variables
-* User defined functions
-* Collection projection
-* Collection selection
-* Templated expressions
+* 文字表达式
+* 布尔和关系运算符
+* 正则表达式
+* 类表达式
+* 访问 properties, arrays, lists, maps
+* 方法调用
+* 关系运算符
+* 参数
+* 调用构造函数
+* Bean引用
+* 构造Array
+* 内嵌lists
+* 内嵌maps
+* 三元运算符
+* 变量
+* 用户定义的函数
+* 集合投影
+* 集合筛选
+* 模板表达式
+
 
 
 
 
 [[expressions-evaluation]]
-=== Expression Evaluation using Spring's Expression Interface
-This section introduces the simple use of SpEL interfaces and its expression language.
-The complete language reference can be found in the section
-<<expressions-language-ref,Language Reference>>.
+=== 使用Spring的表达接口 表达式求值
+本节介绍了简单的使用SpEL表达语言。
+完整的语言参考可以在<<expressions-language-ref,语言参考>>一节中找到
 
-The following code introduces the SpEL API to evaluate the literal string expression
+下面的代码使用SpEL API来解析文本字符串表达式
 'Hello World'.
 
 [source,java,indent=0]
@@ -82,22 +66,15 @@ The following code introduces the SpEL API to evaluate the literal string expres
 	String message = (String) exp.getValue();
 ----
 
-The value of the message variable is simply 'Hello World'.
+消息变量的值是简单的“hello world”。
 
-The SpEL classes and interfaces you are most likely to use are located in the packages
-`org.springframework.expression` and its sub packages and `spel.support`.
+该SpEL类和接口，你最有可能使用的是`org.springframework.expression`以及它的子包和 `spel.support`。
 
-The interface `ExpressionParser` is responsible for parsing an expression string. In
-this example the expression string is a string literal denoted by the surrounding single
-quotes. The interface `Expression` is responsible for evaluating the previously defined
-expression string. There are two exceptions that can be thrown, `ParseException` and
-`EvaluationException` when calling '`parser.parseExpression`' and '`exp.getValue`'
-respectively.
+接口`ExpressionParser`负责解析表达式字符串。这个正则字符串例子是通过单引号扩起来的一个字符串排版声明。接口`Expression`负责解析之前被定义的字符串表达式
 
-SpEL supports a wide range of features, such as calling methods, accessing properties,
-and calling constructors.
+SpEL支持很多功能特性，如调用方法，访问属性，调用构造函数。
 
-As an example of method invocation, we call the 'concat' method on the string literal.
+作为方法调用的一个例子，我们调用字符串的“CONCAT”的方法。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -107,10 +84,9 @@ As an example of method invocation, we call the 'concat' method on the string li
 	String message = (String) exp.getValue();
 ----
 
-The value of message is now 'Hello World!'.
+结果将是 'Hello World!'
 
-As an example of calling a JavaBean property, the String property 'Bytes' can be called
-as shown below.
+作为调用JavaBean属性的一个例子，String属性“Bytes”在下面被调用了。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -122,10 +98,9 @@ as shown below.
 	byte[] bytes = (byte[]) exp.getValue();
 ----
 
-SpEL also supports nested properties using standard 'dot' notation, i.e.
-prop1.prop2.prop3 and the setting of property values
+SpEL还支持使用标准的“.”符号，即嵌套属性prop1.prop2.prop3和属性值的设置
 
-Public fields may also be accessed.
+公共字段也可被访问。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -137,7 +112,7 @@ Public fields may also be accessed.
 	int length = (Integer) exp.getValue();
 ----
 
-The String's constructor can be called instead of using a string literal.
+字符串的构造函数的调用被一个巧妙的字符代替了。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -147,16 +122,15 @@ The String's constructor can be called instead of using a string literal.
 	String message = exp.getValue(String.class);
 ----
 
-Note the use of the generic method `public <T> T getValue(Class<T> desiredResultType)`.
-Using this method removes the need to cast the value of the expression to the desired
-result type. An `EvaluationException` will be thrown if the value cannot be cast to the
-type `T` or converted using the registered type converter.
+注意这里用到一般方法 `public <T> T getValue(Class<T> desiredResultType)`.
+使用这种方法没必要实例化表达式的值的结果类型.
+如果该值不能被转换为
+类型`T`或使用已注册的类型转换器转换,那么一个`EvaluationException`会抛出。
 
-The more common usage of SpEL is to provide an expression string that is evaluated
-against a specific object instance (called the root object). There are two options here
-and which to choose depends on whether the object against which the expression is being
-evaluated will be changing with each call to evaluate the expression. In the following
-example we retrieve the `name` property from an instance of the Inventor class.
+SpEL比较常见的用途是针对一个特定的对象实例（称为root object）提供被解析的表达式字符串.
+这里有两种选择and which to choose depends on whether the object against which the expression is being
+evaluated will be changing with each call to evaluate the expression. 在下面的例子中,
+我们检索一个Inventor类的实例的`name`的属性。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -175,12 +149,12 @@ example we retrieve the `name` property from an instance of the Inventor class.
 	String name = (String) exp.getValue(context);
 ----
 
-In the last line, the value of the string variable 'name' will be set to "Nikola Tesla".
-The class StandardEvaluationContext is where you can specify which object the "name"
-property will be evaluated against. This is the mechanism to use if the root object is
-unlikely to change, it can simply be set once in the evaluation context. If the root
-object is likely to change repeatedly, it can be supplied on each call to `getValue`, as
-this next example shows:
+在最后一行，该字符串变量'name'的值将被设定为“Nikola Tesla”。
+类StandardEvaluationContext是可以指定哪些对象的“name”
+属性将被解析。如果root object不太可能改变.
+，就可以简单地在评估上下文中设置一次。如果root object反复变化
+，它可以在每次调用`getValue`，如
+接下来的例子说明：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -197,31 +171,31 @@ this next example shows:
 	String name = (String) exp.getValue(tesla);
 ----
 
-In this case the inventor `tesla` has been supplied directly to `getValue` and the
-expression evaluation infrastructure creates and manages a default evaluation context
-internally - it did not require one to be supplied.
+在这种情况下，inventor `tesla`已直接应用到`getValue`和
+表达式计算基础架构创建和管理一个默认的解析环境
+在内部 - 它不要求再次解析。
 
-The StandardEvaluationContext is relatively expensive to construct and during repeated
-usage it builds up cached state that enables subsequent expression evaluations to be
-performed more quickly. For this reason it is better to cache and reuse them where
-possible, rather than construct a new one for each expression evaluation.
+StandardEvaluationContext是相对昂贵的构造和在重复
+使用它建立缓存的状态，使得后续的解析将会变得更快.
+出于这个原因，它将尽可能的更好的缓存和重用这些对象,
+而不是建立一个新的每个表达式求值。
 
-In some cases it can be desirable to use a configured evaluation context and yet still
-supply a different root object on each call to `getValue`. `getValue` allows both to be
-specified on the same call. In these situations the root object passed on the call is
-considered to override any (which maybe null) specified on the evaluation context.
+在某些情况下，它可以是理想的使用配置解析上下文，但仍然
+在每次调用`getValue`提供不同的root object。 `getValue`允许既要
+在同一个调用中指定。在这些情况下对root object通过调用要考虑
+到覆盖任何（这可能为空）在解析范围内的指定。
 
-[NOTE]
+[注意]
 ====
-In standalone usage of SpEL there is a need to create the parser, parse expressions and
-perhaps provide evaluation contexts and a root context object. However, more common
-usage is to provide only the SpEL expression string as part of a configuration file, for
-example for Spring bean or Spring Web Flow definitions. In this case, the parser,
-evaluation context, root object and any predefined variables are all set up implicitly,
-requiring the user to specify nothing other than the expressions.
+在SpEL的独立使用的时候，需要创建parser,parse expressions,
+同时可能需要提供解析的context和root context object。然而，更常见的
+用法是只提供一个SpEL表达式字符串作为配置文件的一部分，
+例如，对于Spring的bean或Spring Web Flow的定义。在这种情况下，解析器
+求值的context，root object和所有预定义变量都设置了隐式，
+没有什么要用户去指定了,除了声明表达式.
 ====
-As a final introductory example, the use of a boolean operator is shown using the
-Inventor object in the previous example.
+作为最后一个例子，使用了一个boolean运算符去调用
+inventor object 在前面的例子中。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -233,38 +207,39 @@ Inventor object in the previous example.
 
 
 [[expressions-evaluation-context]]
-==== The EvaluationContext interface
-The interface `EvaluationContext` is used when evaluating an expression to resolve
-properties, methods, fields, and to help perform type conversion. The out-of-the-box
-implementation, `StandardEvaluationContext`, uses reflection to manipulate the object,
-caching `java.lang.reflect`'s `Method`, `Field`, and `Constructor` instances for
-increased performance.
+==== EvaluationContext 接口
+当计算表达式解析properties, methods, fields，并帮助执行类型转换, 使用接口`EvaluationContext`
+这是一个开箱即用的实现,
+`StandardEvaluationContext`，使用反射来操纵对象，
+缓存`java.lang.reflect`的`Method`，`Field`，和`Constructor`实例
+提高性能。
 
-The `StandardEvaluationContext` is where you may specify the root object to evaluate
-against via the method `setRootObject()` or passing the root object into the
-constructor. You can also specify variables and functions that will be used in the
-expression using the methods `setVariable()` and `registerFunction()`. The use of
-variables and functions are described in the language reference sections
-<<expressions-ref-variables,Variables>> and <<expressions-ref-functions,Functions>>. The
-`StandardEvaluationContext` is also where you can register custom
+该`StandardEvaluationContext`是你可以指定root object通过使用
+`setRootObject（）`或传递root object到构造函数.
+你也可以指定变量和函数
+使用方法'的setVariable（）`和`registerFunction（）`的表达式。
+变量和函数的使用将在<<expressions-ref-variables,变量>>中介绍
+，同时 <<expressions-ref-functions,函数>>. 
+`StandardEvaluationContext`也是在那里你可以自定义的注册
 ++ConstructorResolver++s, ++MethodResolver++s, and ++PropertyAccessor++s to extend how SpEL
-evaluates expressions. Please refer to the JavaDoc of these classes for more details.
+evaluates expressions. 请参见这些类的Javadoc获得更多信息。
+
 
 
 [[expressions-type-conversion]]
-===== Type Conversion
-By default SpEL uses the conversion service available in Spring core (
-`org.springframework.core.convert.ConversionService`). This conversion service comes
-with many converters built in for common conversions but is also fully extensible so
-custom conversions between types can be added. Additionally it has the key capability
-that it is generics aware. This means that when working with generic types in
-expressions, SpEL will attempt conversions to maintain type correctness for any objects
-it encounters.
+===== 类型转换
+默认情况下，SpEL使用Spring-core的转换服务（
+`org.springframework.core.convert。ConversionService`）。这种转换的服务
+许多转换器内置了常用的转换，但也完全可扩展
+类型之间的定制的转换可以增加。此外，它拥有的关键能力
+是泛型感知。这意味着，当与通用类型的工作
+表达式，SpEL将尝试转换他遇到的维持对任何对象类型的正确性
 
-What does this mean in practice? Suppose assignment, using `setValue()`, is being used
-to set a `List` property. The type of the property is actually `List<Boolean>`. SpEL
-will recognize that the elements of the list need to be converted to `Boolean` before
-being placed in it. A simple example:
+
+这做法是什么意思呢？假设分配，使用`的setValue（）'，正在使用
+以设置一个`List`属性。该属性的类型实际上是`List<Boolean>`。SpEL
+将认识到，需要在列表中的元素之前，必须转换成`Boolean`
+一个简单的例子：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -288,15 +263,15 @@ being placed in it. A simple example:
 ----
 
 [[expressions-parser-configuration]]
-==== Parser configuration
-It is possible to configure the SpEL expression parser using a parser configuration object
-(`org.springframework.expression.spel.SpelParserConfiguration`). The configuration
-object controls the behaviour of some of the expression components. For example, if
-indexing into an array or collection and the element at the specified index is `null`
-it is possible to automatically create the element. This is useful when using expressions made up of a
-chain of property references. If indexing into an array or list
-and specifying an index that is beyond the end of the current size of the array or
-list it is possible to automatically grow the array or list to accommodate that index.
+==== 解析器配置
+用一个parser configuration object去配置SpEL解析器是可能的,
+（`org.springframework.expression.spel.SpelParserConfiguration`）.配置
+对象控制的一些表达组件的行为。例如，如果数据为
+索引到指定索引处的数组或集合的元素是`null`
+它可以自动地创建的元素。当用表达式组合一个链式属性引用时这将非常有用.
+如果索引到一个数组或列表
+并指定一个索引超出数组的当前大小或
+自动增长的数组或队列去容纳
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -322,69 +297,67 @@ list it is possible to automatically grow the array or list to accommodate that 
 	// Each entry is a new empty String
 ----
 
-It is also possible to configure the behaviour of the SpEL expression compiler.
+另外，也可以配置一个SpEL表达式编译器的行为。
 
 [[expressions-spel-compilation]]
-==== SpEL compilation
+==== SpEL 编译
 
-Spring Framework 4.1 includes a basic expression compiler. Expressions are usually
-interpreted which provides a lot of dynamic flexibility during evaluation but
-does not provide the optimum performance. For occasional expression usage
-this is fine, but when used by other components like Spring Integration,
-performance can be very important and there is no real need for the dynamism.
+Spring Framework 4.1 包含了一个基本的表达式编译器. 表达式通常
+解释其执行过程中提供了大量的动态灵活性，但
+不提供最佳性能。对于偶尔使用的表达
+这是好的，而是由其他组件，如Spring集成使用时，
+性能是非常重要的，并没有为活力提供真正的需要。
 
-The new SpEL compiler is intended to address this need. The
-compiler will generate a real Java class on the fly during evaluation that embodies the
-expression behaviour and use that to achieve much faster expression
-evaluation. Due to the lack of typing around expressions the compiler
-uses information gathered during the interpreted evaluations of an
-expression when performing compilation. For example, it does not know the type
-of a property reference purely from the expression but during the first
-interpreted evaluation it will find out what it is. Of course, basing the
-compilation on this information could cause trouble later if the types of
-the various expression elements change over time. For this reason compilation
-is best suited to expressions whose type information is not going to change
-on repeated evaluations.
+新使用SpEL编译旨在解决这一需要。然后该 
+编译器将执行这体现了中动态生成一个真正的Java类
+表达行为，并用它来实现更快的表达
+式执行。由于缺乏各种表达式编译器
+使用过程中的一个评估收集的评价的信息
+当执行编译的表达。例如，它不知道的类型
+参考表达，但在第一属性参考
+解释执行会发现它是什么。当然，基于该
+编译这些信息可能会造成的麻烦后，如果类型
+各种表达元件随着时间而改变。出于这个原因汇编
+是最适合返回执行不会改变其表达式类型的信息。
 
-For a basic expression like this:
+对于基本的表达是这样的：
 
-`someArray[0].someProperty.someOtherProperty < 0.1`
+`someArray [0] .someProperty.someOtherProperty <0.1`
 
-which involves array access, some property derefencing and numeric operations, the performance
-gain can be very noticeable. In an example microbenchmark run of 50000 iterations, it was
-taking 75ms to evaluate using only the interpreter and just 3ms using the compiled version
-of the expression.
+其中涉及数组访问，部分属性引用和数字运算，性能
+增益可以很明显的。在50000迭代一个例子微基准来看，它是
+使用了75ms用来执行翻译，而仅仅3ms编译表达式的version。
 
 [[expressions-compiler-configuration]]
-===== Compiler configuration
+=====编译器配置
 
-The compiler is not turned on by default, but there are two ways to turn
-it on. It can be turned on using the parser configuration process discussed earlier or
-via a system property when SpEL usage is embedded inside another component. This section
-discusses both of these options.
+编译器默认是并未开启的，但有两种方式打开
+它。它被打开用parser configuration process 或者
+通过系统属性将SpEL使用嵌入另一个组件中。本节
+讨论这两个选项。
 
-Is is important to understand that there are a few modes the compiler can operate in, captured
-in an enum (`org.springframework.expression.spel.SpelCompilerMode`). The modes are as follows:
+重要的是要明白，编译器可工作在几个模式下，查看详细可以用过一个enum
+(`org.springframework.expression.spel.SpelCompilerMode`). 模式如下：
 
-- `OFF` - The compiler is switched off; this is the default.
-- `IMMEDIATE` - In immediate mode the expressions are compiled as soon as possible. This
-is typically after the first interpreted evaluation. If the compiled expression fails
-(typically due to a type changing, as described above) then the caller of the expression
-evaluation will receive an exception.
-- `MIXED` - In mixed mode the expressions silently switch between interpreted and compiled
-mode over time.  After some number of interpreted runs they will switch to compiled
-form and if something goes wrong with the compiled form (like a type changing, as
-described above) then the expression will automatically switch back to interpreted form
-again. Sometime later it may generate another compiled form and switch to it. Basically
-the exception that the user gets in `IMMEDIATE` mode is instead handled internally.
+- `OFF` - 编译器被关闭;这是默认的。
+- `IMMEDIATE` - 在直接模式下，表达式尽快编制。
+这是一个典型的首个编译选项。如果编译错误的表达式
+（通常是由于一个类型变化，如上面所描述的）调用者将会得到一个异常。
 
-`IMMEDIATE` mode exists because `MIXED` mode could cause issues for expressions that
-have side effects. If a compiled expression blows up after partially succeeding it
-may have already done something that has affected the state of the system. If this
-has happened the caller may not want it to silently re-run in interpreted mode
-since part of the expression may be running twice.
+- `MIXED` - 在混合模式下，随着时间的推移，表达式默默地解释和编译之间切换。
+经过解释运行的一些数字后，他们就会切换去编译源码
+，如果出现问题，编译形式（如一种变化，如
+如上所述），那么表达式将自动切换回解释形式
+。一段时间后，可能产生另一种形式的编制，并切换到它。基本上
+相比用户`IMMEDIATE`模式，不同之处在于对于异常的处理，混合模式是隐式的（原话是： Basically the exception that the user gets in `IMMEDIATE` mode is instead handled internally。）。
 
-After selecting a mode, use the `SpelParserConfiguration` to configure the parser:
+`IMMEDIATE` 模式的存在是因为`MIXED`模式可能会导致问题的表达式
+有副作用。如果在后面的部分是一个编译表达的摧毁
+可能已经做了一些这已经影响到了系统的状态。如果这
+已经发生的调用可能不希望它默默地重新运行在解释模式
+因为表达的一部分可能运行两次。
+
+选择模式后，使用`SpelParserConfiguration`配置解析器：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -401,45 +374,44 @@ After selecting a mode, use the `SpelParserConfiguration` to configure the parse
 	Object payload = expr.getValue(message);
 ----
 
-When specifying the compiler mode it is also possible to specify a classloader (passing null is allowed).
-Compiled expressions will be defined in a child classloader created under any that is supplied.
-It is important to ensure if a classloader is specified it can see all the types involved in
-the expression evaluation process.
-If none is specified then a default classloader will be used (typically the context classloader for
-the thread that is running during expression evaluation).
+当指定编译器模式，也可以指定一个类加载器（传递null是允许的）。
+编译表达式将在根据任何被供应创建一个子类加载器来限定。
+确保如果指定一个类加载器就可以看到所有涉及的类型是很重要的
+表达式求值的过程。
+如果没有指定，那么默认的类加载器将使用（一般为上下文类加载器
+这是在表达式求值运行的线程）。
 
-The second way to configure the compiler is for use when SpEL is embedded inside some other
-component and it may not be possible to configure via a configuration object.
-In these cases it is possible to use a system property. The property
-`spring.expression.compiler.mode` can be set to one of the `SpelCompilerMode`
-enum values (`off`, `immediate` or `mixed`).
+来配置编译器的第二种方法是用于当使用SpEL嵌入里面的一些其它
+组件和它可能无法通过配置对象来配置。
+在这些情况下，有可能使用一个系统属性。属性
+`spring.expression.compiler.mode`可设置到`SpelCompilerMode`
+枚举值（`off`，`immediate`或`mixed`）之一。
 
 [[expressions-compiler-limitations]]
-===== Compiler limitations
+===== 编译器限制
 
-With Spring Framework 4.1 the basic compilation framework is in place. However, the framework does not
-yet support compiling every kind of expression. The initial focus has been on the common expressions that are
-likely to be used in performance critical contexts.  These kinds of expression cannot be compiled
-at the moment:
+随着Spring框架4.1的基本编制框架到位。然而，该框架
+还没有支持编译每一种表情式。最初的重点一直是共同的表达
+有可能在性能关键上下文中使用。这些种类的表达不能被编译
+这些情况：
 
-- expressions involving assignment
-- expressions relying on the conversion service
-- expressions using custom resolvers or accessors
-- expressions using selection or projection
+- 涉及赋值表达式
+- 依托转换服务表达式
+- 使用自定义解析器或访问表达式
+- 使用选择或投影表达式
 
-More and more types of expression will be compilable in the future.
+未来将支持越来越多类型的表达式。
 
 [[expressions-beandef]]
-=== Expression support for defining bean definitions
-SpEL expressions can be used with XML or annotation-based configuration metadata for
-defining ++BeanDefinition++s. In both cases the syntax to define the expression is of the
-form `#{ <expression string> }`.
-
-
+=== 定义bean的beandef表达支持
+SpEL表达式可以与XML或基于注释的配置元数据使用
+定义BeanDefinitions。在这两种情况下，以定义表达式语法的
+形式`＃{<表达式字符串>}`。
 
 [[expressions-beandef-xml-based]]
-==== XML based configuration
-A property or constructor-arg value can be set using expressions as shown below.
+==== 基于XML的配置
+一个属性或构造带参数的值可以使用表达式如下所示进行设置。
+
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -451,9 +423,9 @@ A property or constructor-arg value can be set using expressions as shown below.
 	</bean>
 ----
 
-The variable `systemProperties` is predefined, so you can use it in your expressions as
-shown below. Note that you do not have to prefix the predefined variable with the `#`
-symbol in this context.
+变量`systemProperties`是预定义的，所以你可以在你的表达式使用
+如下所示。请注意，您不必用``＃前缀的预定义变量
+符号于该上下文。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -465,7 +437,7 @@ symbol in this context.
 	</bean>
 ----
 
-You can also refer to other bean properties by name, for example.
+还可以参考其他bean属性的名字，例如。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -486,11 +458,11 @@ You can also refer to other bean properties by name, for example.
 
 
 [[expressions-beandef-annotation-based]]
-==== Annotation-based configuration
-The `@Value` annotation can be placed on fields, methods and method/constructor
-parameters to specify a default value.
+==== 基于注解的配置
+`@ Value`注解可以放在字段，方法和方法/​​构造
+参数里，以指定默认值。
 
-Here is an example to set the default value of a field variable.
+这里是一个例子，设置一个字段变量的缺省值。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -511,7 +483,7 @@ Here is an example to set the default value of a field variable.
 	}
 ----
 
-The equivalent but on a property setter method is shown below.
+等效的属性setter方法​​如下所示。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -532,7 +504,7 @@ The equivalent but on a property setter method is shown below.
 	}
 ----
 
-Autowired methods and constructors can also use the `@Value` annotation.
+自动装配方法和构造也可以使用`@ Value`注解。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -577,18 +549,18 @@ Autowired methods and constructors can also use the `@Value` annotation.
 
 
 [[expressions-language-ref]]
-=== Language Reference
+=== 语言参考
 
 
 
 [[expressions-ref-literal]]
-==== Literal expressions
-The types of literal expressions supported are strings, dates, numeric values (int,
-real, and hex), boolean and null. Strings are delimited by single quotes. To put a
-single quote itself in a string use two single quote characters. The following listing
-shows simple usage of literals. Typically they would not be used in isolation like this,
-but as part of a more complex expression, for example using a literal on one side of a
-logical comparison operator.
+==== 文字表达式
+支持文字表达的类型是字符串，日期，数值（int，
+real，十六进制），布尔和空。字符串使用单引号分隔。一个
+单引号本身在字符串中使用两个单引号字符表示。下面的列表
+显示文字的简单用法。通常，它们将不被使用在隔离像这样，
+但作为一个更复杂的表达式的一部分，例如，使用一个文字上的一侧
+逻辑比较操作符。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -608,18 +580,17 @@ logical comparison operator.
 	Object nullValue = parser.parseExpression("null").getValue();
 ----
 
-Numbers support the use of the negative sign, exponential notation, and decimal points.
-By default real numbers are parsed using Double.parseDouble().
+数字支持使用负号，指数符号和小数点。
+默认情况下，实数使用Double.parseDouble()。
 
 
 
 [[expressions-properties-arrays]]
 ==== Properties, Arrays, Lists, Maps, Indexers
-Navigating with property references is easy: just use a period to indicate a nested
-property value. The instances of the `Inventor` class, pupin, and tesla, were populated with
-data listed in the section <<expressions-example-classes,Classes used in the examples>>.
-To navigate "down" and get Tesla's year of birth and Pupin's city of birth the following
-expressions are used.
+用属性引用引导很简单：只要用一个`.`表示嵌套
+属性值。实现Inventor类, pupin和tesla, 被添加
+被添加。在章节<<expressions-example-classes,classes的例子>>.
+使用表达式引导 "down" 同时获取 Tesla's 出生年 和 Pupin's 出生城市
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -630,8 +601,8 @@ expressions are used.
 	String city = (String) parser.parseExpression("placeOfBirth.City").getValue(context);
 ----
 
-Case insensitivity is allowed for the first letter of property names. The contents of
-arrays and lists are obtained using square bracket notation.
+不区分大小写允许的属性名称的第一个字母。
+数组和列表使用方括号获得内容。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -658,9 +629,9 @@ arrays and lists are obtained using square bracket notation.
 			societyContext, String.class);
 ----
 
-The contents of maps are obtained by specifying the literal key value within the
-brackets. In this case, because keys for the Officers map are strings, we can specify
-string literals.
+maps的内容由内指定的key值获得.
+在这种情况下，因为对于人员的键映射是字符串，我们可以指定
+字符串。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -682,8 +653,8 @@ string literals.
 
 
 [[expressions-inline-lists]]
-==== Inline lists
-Lists can be expressed directly in an expression using `{}` notation.
+==== 内联列表
+列表可以直接在表达式中使用`{}`符号来表示。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -694,13 +665,13 @@ Lists can be expressed directly in an expression using `{}` notation.
 	List listOfLists = (List) parser.parseExpression("{{''a'',''b''},{''x'',''y''}}").getValue(context);
 ----
 
-`{}` by itself means an empty list. For performance reasons, if the list is itself
-entirely composed of fixed literals then a constant list is created to represent the
-expression, rather than building a new list on each evaluation.
+`{}`本身意味着空列表。出于性能的考虑，如果列表本身
+完全由固定面值的则恒定列表被创建以代表
+表达，而不是建立一个新的列表上的每个都执行。
 
 [[expressions-inline-maps]]
-==== Inline Maps
-Maps can also be expressed directly in an expression using `{key:value}` notation.
+==== 内联maps
+{key:value}`记号的maps也可以使用`表达式直接表示。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -710,15 +681,15 @@ Maps can also be expressed directly in an expression using `{key:value}` notatio
 
 	Map mapOfMaps = (Map) parser.parseExpression("{name:{first:''Nikola'',last:''Tesla''},dob:{day:10,month:''July'',year:1856}}").getValue(context);
 ----
-`{:}` by itself means an empty map. For performance reasons, if the map is itself composed
-of fixed literals or other nested constant structures (lists or maps) then a constant map is created
-to represent the expression, rather than building a new map on each evaluation. Quoting of the map keys
-is optional, the examples above are not using quoted keys.
+`{：}`本身意味着一个空映射。出于性能的考虑，如果map本身是由
+固定的文字或其他嵌套结构不变的（list或者map），那么一个恒定的map创建
+代表表达，而不是建立新map每次去执行。使用.引用map的key
+是可选的，上面的例子并没有使用.引用key。
 
 [[expressions-array-construction]]
-==== Array construction
-Arrays can be built using the familiar Java syntax, optionally supplying an initializer
-to have the array populated at construction time.
+==== array构造
+array可以使用熟悉的Java语法，选择性地提供一个初始建立
+有在构造时的数组。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -732,15 +703,13 @@ to have the array populated at construction time.
 	int[][] numbers3 = (int[][]) parser.parseExpression("new int[4][5]").getValue(context);
 ----
 
-It is not currently allowed to supply an initializer when constructing a
-multi-dimensional array.
-
+即未被初始化的多维数组也可以被构造。
 
 
 [[expressions-methods]]
-==== Methods
-Methods are invoked using typical Java programming syntax. You may also invoke methods
-on literals. Varargs are also supported.
+==== 方法
+方法被调用通过java典型的编程语法实现，您也可以调用方法
+在表示式当中。可变参数也支持。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -756,13 +725,13 @@ on literals. Varargs are also supported.
 
 
 [[expressions-operators]]
-==== Operators
+==== 运算符
 
 
 [[expressions-operators-relational]]
-===== Relational operators
-The relational operators; equal, not equal, less than, less than or equal, greater than,
-and greater than or equal are supported using standard operator notation.
+===== 关系运算符
+关系运算符;等于，不等于，小于，小于或等于，大于，
+和大于或等于使用标准算子表示法的支持。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -777,8 +746,8 @@ and greater than or equal are supported using standard operator notation.
 	boolean trueValue = parser.parseExpression("''black'' < ''block''").getValue(Boolean.class);
 ----
 
-In addition to standard relational operators SpEL supports the `instanceof` and regular
-expression based `matches` operator.
+除了标准的关系运算符SpEL支持`instanceof`和
+增则表达式的`matches`操作。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -796,17 +765,17 @@ expression based `matches` operator.
 			"''5.0067'' matches ''\^-?\\d+(\\.\\d{2})?$''").getValue(Boolean.class);
 ----
 
-Each symbolic operator can also be specified as a purely alphabetic equivalent. This
-avoids problems where the symbols used have special meaning for the document type in
-which the expression is embedded (eg. an XML document). The textual equivalents are
-shown here: `lt` (`<`), `gt` (`>`), `le` (`<=`), `ge` (`>=`), `eq` (`==`),
-`ne` (`!=`), `div` (`/`), `mod` (`%`), `not` (`!`). These are case insensitive.
+每个符号操作者也可以被指定为一个纯字母变量。这个
+避免了在使用的符号有特殊含义的文档类型的问题
+其表达被嵌入（例如，XML文档）。文本是等值
+比如: `lt` (`<`), `gt` (`>`), `le` (`<=`), `ge` (`>=`), `eq` (`==`),
+`ne` (`!=`), `div` (`/`), `mod` (`%`), `not` (`!`). 这些都是不区分大小写。
 
 
 [[expressions-operators-logical]]
-===== Logical operators
-The logical operators that are supported are and, or, and not. Their use is demonstrated
-below.
+===== 逻辑运算符
+所以支持的逻辑运算符 and, or, and not. 下文将证明他们的使用
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -841,11 +810,11 @@ below.
 
 
 [[expressions-operators-mathematical]]
-===== Mathematical operators
-The addition operator can be used on both numbers and strings. Subtraction, multiplication
-and division can be used only on numbers. Other mathematical operators supported are
-modulus (%) and exponential power (^). Standard operator precedence is enforced. These
-operators are demonstrated below.
+===== 数学运​​算符
+加法运算符可以用于数字和字符串。减法，乘法
+和除法只能在数字被使用。支持其他数学运算符
+模量（％）和指数幂（^）。标准的运算符优先级执行。 这些 
+运算符展示在下文。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -883,9 +852,9 @@ operators are demonstrated below.
 
 
 [[expressions-assignment]]
-==== Assignment
-Setting of a property is done by using the assignment operator. This would typically be
-done within a call to `setValue` but can also be done inside a call to `getValue`.
+==== 赋值
+设置一个属性是通过使用赋值操作完成。这通常是
+调用`setValue`，但也可以在调用`getValue`内完成。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -904,13 +873,13 @@ done within a call to `setValue` but can also be done inside a call to `getValue
 
 
 [[expressions-types]]
-==== Types
-The special `T` operator can be used to specify an instance of java.lang.Class (the
-_type_). Static methods are invoked using this operator as well. The
-`StandardEvaluationContext` uses a `TypeLocator` to find types and the
-`StandardTypeLocator` (which can be replaced) is built with an understanding of the
-java.lang package. This means T() references to types within java.lang do not need to be
-fully qualified, but all other type references must be.
+==== 类型
+`T`操作可以被用来指定安装一个java.lang.ClassClass (the
+_type_). 静态方法也可以使用该运算符调用。然后该 
+`StandardEvaluationContext`使用`TypeLocator`找到类型和
+`StandardTypeLocator`（可替换）是建立与的理解
+java.lang package. 这意味着T()引用内的java.lang类型不需要是
+完全限定，但所有其他类型的引用必须。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -927,10 +896,10 @@ fully qualified, but all other type references must be.
 
 
 [[expressions-constructors]]
-==== Constructors
-Constructors can be invoked using the new operator. The fully qualified class name
-should be used for all but the primitive type and String (where int, float, etc, can be
-used).
+==== 构造
+构造函数可以使用new运算符调用。所有地方的类名应该是符合要求的，
+，除了原语类型和字符串（其中整数，浮点，等等，都可以
+使用）。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -948,9 +917,9 @@ used).
 
 
 [[expressions-ref-variables]]
-==== Variables
-Variables can be referenced in the expression using the syntax `#variableName`. Variables
-are set using the method setVariable on the `StandardEvaluationContext`.
+==== 变量
+变量可以在使用语法`＃variableName`表达引用。变量
+使用在`StandardEvaluationContext`方法的setVariable设置。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -966,11 +935,11 @@ are set using the method setVariable on the `StandardEvaluationContext`.
 
 
 [[expressions-this-root]]
-===== The #this and #root variables
-The variable #this is always defined and refers to the current evaluation object
-(against which unqualified references are resolved). The variable #root is always
-defined and refers to the root context object. Although #this may vary as components of
-an expression are evaluated, #root always refers to the root.
+===== 该＃this 和 #root变量
+变量#this 始终定义和指向的是当前的执行对象
+（不支持对其中不合格的引用解析）。变量#root总是
+定义和指向root context object。虽然＃this可能作为表达式的一些组件被执行
+，但#root总是指 root。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -993,10 +962,10 @@ an expression are evaluated, #root always refers to the root.
 
 
 [[expressions-ref-functions]]
-==== Functions
-You can extend SpEL by registering user defined functions that can be called within the
-expression string. The function is registered with the `StandardEvaluationContext` using
-the method.
+==== 函数
+您可以通过注册，可以在该调用用户自定义函数扩展SpEL
+表达式字符串。该函数注册到'StandardEvaluationContext`使用
+该方法。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1004,8 +973,8 @@ the method.
 	public void registerFunction(String name, Method m)
 ----
 
-A reference to a Java Method provides the implementation of the function. For example, a
-utility method to reverse a string is shown below.
+引用一个Java方法提供了函数的实现。举个例子
+一个实用的方法来扭转字符串如下所示。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1022,8 +991,7 @@ utility method to reverse a string is shown below.
 	}
 ----
 
-This method is then registered with the evaluation context and can be used within an
-expression string.
+这个方法在解析器上线文当中被注册，作为字符串被调用。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1041,9 +1009,9 @@ expression string.
 
 
 [[expressions-bean-references]]
-==== Bean references
-If the evaluation context has been configured with a bean resolver it is possible to
-lookup beans from an expression using the (@) symbol.
+==== bean引用
+如果解析上下文已经配置，那么bean解析器能够
+从表达式使用（@）符号查找bean类。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1059,9 +1027,9 @@ lookup beans from an expression using the (@) symbol.
 
 
 [[expressions-operator-ternary]]
-==== Ternary Operator (If-Then-Else)
-You can use the ternary operator for performing if-then-else conditional logic inside
-the expression. A minimal example is:
+==== 三元运算符（IF-THEN-ELSE）
+您可以使用三元运算符内部执行的if-then-else条件逻辑
+的表达。一个最简单的例子是：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1070,8 +1038,8 @@ the expression. A minimal example is:
 			"false ? ''trueExp'' : ''falseExp''").getValue(String.class);
 ----
 
-In this case, the boolean false results in returning the string value 'falseExp'. A more
-realistic example is shown below.
+在这种情况下，在返回字符串值“falseExp'布尔假的结果。
+更多案例:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1087,17 +1055,15 @@ realistic example is shown below.
 	// queryResultString = "Nikola Tesla is a member of the IEEE Society"
 ----
 
-Also see the next section on the Elvis operator for an even shorter syntax for the
-ternary operator.
-
+同时可以在下一节看到 Elvis 运算符 使用一个更短的三元运算符语法。
 
 
 [[expressions-operator-elvis]]
-==== The Elvis Operator
-The Elvis operator is a shortening of the ternary operator syntax and is used in the
-http://groovy.codehaus.org/Operators#Operators-ElvisOperator(%3F%3A)[Groovy] language.
-With the ternary operator syntax you usually have to repeat a variable twice, for
-example:
+==== Elvis操作符
+Elvis操作符是三元运算符语法的缩短，并用于在
+http://groovy.codehaus.org/Operators#Operators-ElvisOperator(%3F%3A)[Groovy]语言。
+与三元运算符的语法，你通常要重复变量两次，
+示例：
 
 [source,groovy,indent=0]
 [subs="verbatim,quotes"]
@@ -1106,7 +1072,7 @@ example:
 	String displayName = name != null ? name : "Unknown";
 ----
 
-Instead you can use the Elvis operator, named for the resemblance to Elvis' hair style.
+取而代之，你可以使用Elvis操作符，命名灵感来自猫王的发型风格。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1118,7 +1084,7 @@ Instead you can use the Elvis operator, named for the resemblance to Elvis' hair
 	System.out.println(name); // 'Unknown'
 ----
 
-Here is a more complex example.
+这里是一个更复杂的例子。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1142,12 +1108,12 @@ Here is a more complex example.
 
 
 [[expressions-operator-safe-navigation]]
-==== Safe Navigation operator
-The Safe Navigation operator is used to avoid a `NullPointerException` and comes from
-the http://groovy.codehaus.org/Operators#Operators-SafeNavigationOperator(%3F.)[Groovy]
-language. Typically when you have a reference to an object you might need to verify that
-it is not null before accessing methods or properties of the object. To avoid this, the
-safe navigation operator will simply return null instead of throwing an exception.
+==== 安全导航运算符
+安全导航操作符是用来避免'NullPointerException`和来自
+该http://groovy.codehaus.org/Operators#Operators-SafeNavigationOperator(%3F.)[Groovy]
+语言。通常情况下，当你有一个参考的对象，你可能需要验证
+它不是访问方法或对象的属性之前空。为了避免这种情况，该
+安全航行运算符将简单地返回空代替抛出的异常。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1169,10 +1135,10 @@ safe navigation operator will simply return null instead of throwing an exceptio
 	System.out.println(city); // null - does not throw NullPointerException!!!
 ----
 
-[NOTE]
+[注意]
 ====
-The Elvis operator can be used to apply default values in expressions, e.g. in an
-`@Value` expression:
+Elvis操作符可用于应用中的表达式的默认值，例如在一个
+`@ Value`表达式：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1180,19 +1146,19 @@ The Elvis operator can be used to apply default values in expressions, e.g. in a
 	@Value("#{systemProperties[''pop3.port''] ?: 25}")
 ----
 
-This will inject a system property `pop3.port` if it is defined or 25 if not.
+如果它不存在,那么将定义为25
 ====
 
 
 
 [[expressions-collection-selection]]
-==== Collection Selection
-Selection is a powerful expression language feature that allows you to transform some
-source collection into another by selecting from its entries.
+==== 集合选择
+选择是一个强大的表达式语言功能，他允许你转换一些
+源集合到另一个通过其条目选择。
 
-Selection uses the syntax `?[selectionExpression]`. This will filter the collection and
-return a new collection containing a subset of the original elements. For example,
-selection would allow us to easily get a list of Serbian inventors:
+选择使用语法`？[selectionExpression]`.这将过滤收集和
+返回一个包含原有元素的子集的新的集合。例如，
+选择使我们能够轻松地获得Serbian inventors的列表：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1201,14 +1167,13 @@ selection would allow us to easily get a list of Serbian inventors:
 			"Members.?[Nationality == ''Serbian'']").getValue(societyContext);
 ----
 
-Selection is possible upon both lists and maps. In the former case the selection
-criteria is evaluated against each individual list element whilst against a map the
-selection criteria is evaluated against each map entry (objects of the Java type
-`Map.Entry`). Map entries have their key and value accessible as properties for use in
-the selection.
+选择可以被使用在lists或者maps集合当中。在前者的情况下，选择
+标准执行对每个列表元素，同时针对map
+选择定义的操作将会对map中的每个key执行。
+（对象类似‘Map.Entry’）
+Map entries have their key and value accessible as properties for use in the selection。
 
-This expression will return a new map consisting of those elements of the original map
-where the entry value is less than 27.
+下面这个例子将返回由原始映射（其中条目值小于27）所取得的这些元素的新map。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1216,19 +1181,19 @@ where the entry value is less than 27.
 	Map newMap = parser.parseExpression("map.?[value<27]").getValue();
 ----
 
-In addition to returning all the selected elements, it is possible to retrieve just the
-first or the last value. To obtain the first entry matching the selection the syntax is
-`^[...]` whilst to obtain the last matching selection the syntax is `$[...]`.
+除了返回所有选定的元素，也可以用来获取
+第一或最后一个值。以获得第一条目相匹配的选择的语法是
+`^ [...]`而获得最后一个匹配选择语法是`$ [...]`.
 
 
 
 [[expressions-collection-projection]]
-==== Collection Projection
-Projection allows a collection to drive the evaluation of a sub-expression and the
-result is a new collection. The syntax for projection is `![projectionExpression]`. Most
-easily understood by example, suppose we have a list of inventors but want the list of
-cities where they were born. Effectively we want to evaluate 'placeOfBirth.city' for
-every entry in the inventor list. Using projection:
+==== 集合投影
+投影允许集合驱动子表达式和解析
+生成一个新的集合。语法投影`！[projectionExpression]`. 多数
+功能通过实例容易理解，假设我们有Inventor list，希望得到
+他们出生的城市。有效的方式是我们要使用“placeOfBirth.city”解析
+在Inventor 中的每个条目。使用投影：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1237,18 +1202,17 @@ every entry in the inventor list. Using projection:
 	List placesOfBirth = (List)parser.parseExpression("Members.![placeOfBirth.city]");
 ----
 
-A map can also be used to drive projection and in this case the projection expression is
-evaluated against each entry in the map (represented as a Java `Map.Entry`). The result
-of a projection across a map is a list consisting of the evaluation of the projection
-expression against each map entry.
+一个map也可以用于驱动投影。 在这种情况下，投影表达式
+将解析map中的每一个元素（作为Java `Map.Entry`方法的一个代理）。
+通过投影一个map将获得一个由投影表达式遍历每个元素所得到的list。
 
 
 
 [[expressions-templating]]
-==== Expression templating
-Expression templates allow a mixing of literal text with one or more evaluation blocks.
-Each evaluation block is delimited with prefix and suffix characters that you can
-define, a common choice is to use `#{ }` as the delimiters. For example,
+==== 表达模板
+表达式模板允许文字文本与一个或多个解析块的混合。
+你可以每个解析块分隔前缀和后缀的字符，
+当然，常见的选择是使用`＃{}`作为分隔符。例如，
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1260,12 +1224,12 @@ define, a common choice is to use `#{ }` as the delimiters. For example,
 	// evaluates to "random number is 0.7038186818312008"
 ----
 
-The string is evaluated by concatenating the literal text 'random number is ' with the
-result of evaluating the expression inside the #{ } delimiter, in this case the result
-of calling that random() method. The second argument to the method `parseExpression()`
-is of the type `ParserContext`. The `ParserContext` interface is used to influence how
-the expression is parsed in order to support the expression templating functionality.
-The definition of `TemplateParserContext` is shown below.
+该字符串是通过连接文字“random number is”与
+计算表达式的＃{}定界符获取的结果，在此情况下的结果
+中调用一个随机（）方法。第二个参数的方法`parseExpression（）`
+是类型`ParserContext`的。在`ParserContext`接口用于影响如何
+表达被解析，以便支持所述表达模板的功能。
+`的TemplateParserContext`的定义如下所示。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]

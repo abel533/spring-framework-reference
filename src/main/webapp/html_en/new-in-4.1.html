@@ -1,0 +1,244 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>4.&nbsp;New Features and Enhancements in Spring Framework 4.1</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-whats-new.html" title="Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x"><link rel="prev" href="new-in-4.0.html" title="3.&nbsp;New Features and Enhancements in Spring Framework 4.0"><link rel="next" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">4.&nbsp;New Features and Enhancements in Spring Framework 4.1</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;II.&nbsp;What&#8217;s New in Spring Framework 4.x</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="new-in-4.1" href="#new-in-4.1"></a>4.&nbsp;New Features and Enhancements in Spring Framework 4.1</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_jms_improvements" href="#_jms_improvements"></a>4.1&nbsp;JMS Improvements</h2></div></div></div>
+
+<p>Spring 4.1 introduces a much simpler infrastructure <a class="link" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">to register JMS
+listener endpoints</a> by annotating bean methods with
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListener.html" target="_top"><code class="literal">@JmsListener</code></a>.
+The XML namespace has been enhanced to support this new style (<code class="literal">jms:annotation-driven</code>),
+and it is also possible to fully configure the infrastructure using Java config
+(<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/EnableJms.html" target="_top"><code class="literal">@EnableJms</code></a>,
+<code class="literal">JmsListenerContainerFactory</code>). It is also possible to register listener endpoints
+programmatically using
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListenerConfigurer.html" target="_top"><code class="literal">JmsListenerConfigurer</code></a>.</p>
+<p>Spring 4.1 also aligns its JMS support to allow you to benefit from the <code class="literal">spring-messaging</code>
+abstraction introduced in 4.0, that is:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Message listener endpoints can have a more flexible signature and benefit from
+standard messaging annotations such as <code class="literal">@Payload</code>, <code class="literal">@Header</code>, <code class="literal">@Headers</code>, and <code class="literal">@SendTo</code>. It
+is also possible to use a standard <code class="literal">Message</code> in lieu of <code class="literal">javax.jms.Message</code> as method
+argument.
+</li><li class="listitem">
+A new <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/core/JmsMessageOperations.html" target="_top"><code class="literal">JmsMessageOperations</code></a>
+interface is available and permits <code class="literal">JmsTemplate</code> like operations using the <code class="literal">Message</code>
+abstraction.
+</li></ul></div>
+
+<p>Finally, Spring 4.1 provides additional miscellaneous improvements:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Synchronous request-reply operations support in <code class="literal">JmsTemplate</code>
+</li><li class="listitem">
+Listener priority can be specified per <code class="literal">&lt;jms:listener/&gt;</code> element
+</li><li class="listitem">
+Recovery options for the message listener container are configurable using a
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/backoff/BackOff.html" target="_top"><code class="literal">BackOff</code></a> implementation
+</li><li class="listitem">
+JMS 2.0 shared consumers are supported
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_caching_improvements" href="#_caching_improvements"></a>4.2&nbsp;Caching Improvements</h2></div></div></div>
+
+<p>Spring 4.1 supports <a class="link" href="cache.html#cache-jsr-107" title="30.4&nbsp;JCache (JSR-107) annotations">JCache (JSR-107) annotations</a> using Spring&#8217;s
+existing cache configuration and infrastructure abstraction; no changes are required
+to use the standard annotations.</p>
+<p>Spring 4.1 also improves its own caching abstraction significantly:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Caches can be resolved at runtime using a
+<a class="link" href="cache.html#cache-annotations-cacheable-cache-resolver" title="Custom cache resolution"><code class="literal">CacheResolver</code></a>. As a result the
+<code class="literal">value</code> argument defining the cache name(s) to use is no longer mandatory.
+</li><li class="listitem">
+More operation-level customizations: cache resolver, cache manager, key
+generator
+</li><li class="listitem">
+A new <a class="link" href="cache.html#cache-annotations-config" title="30.3.5&nbsp;@CacheConfig annotation"><code class="literal">@CacheConfig</code> class-level annotation</a> allows
+common settings to be shared at the class level <span class="strong"><strong>without</strong></span> enabling any cache operation.
+</li><li class="listitem">
+Better exception handling of cached methods using <code class="literal">CacheErrorHandler</code>
+</li></ul></div>
+
+<p>Spring 4.1 also has a breaking change in the <code class="literal">CacheInterface</code> as a new <code class="literal">putIfAbsent</code>
+method has been added.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_web_improvements" href="#_web_improvements"></a>4.3&nbsp;Web Improvements</h2></div></div></div>
+
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The existing support for resource handling based on the <code class="literal">ResourceHttpRequestHandler</code>
+has been expanded with new abstractions <code class="literal">ResourceResolver</code>, <code class="literal">ResourceTransformer</code>,
+and <code class="literal">ResourceUrlProvider</code>. A number of built-in implementations provide support
+for versioned resource URLs (for effective HTTP caching), locating gzipped resources,
+generating an HTML 5 AppCache manifests, and more. See <a class="xref" href="mvc.html#mvc-config-static-resources" title="17.16.7&nbsp;Serving of Resources">Section&nbsp;17.16.7, &#8220;Serving of Resources&#8221;</a>.
+</li><li class="listitem">
+JDK 1.8&#8217;s <code class="literal">java.util.Optional</code> is now supported for <code class="literal">@RequestParam</code>, <code class="literal">@RequestHeader</code>,
+and <code class="literal">@MatrixVariable</code> controller method arguments.
+</li><li class="listitem">
+<code class="literal">ListenableFuture</code> is supported as a return value alternative to <code class="literal">DeferredResult</code>
+where an underlying service (or perhaps a call to <code class="literal">AsyncRestTemplate</code>) already
+returns <code class="literal">ListenableFuture</code>.
+</li><li class="listitem">
+<code class="literal">@ModelAttribute</code> methods are now invoked in an order that respects inter-dependencies.
+See <a class="ulink" href="https://jira.spring.io/browse/SPR-6299" target="_top">SPR-6299</a>.
+</li><li class="listitem">
+Jackson&#8217;s <code class="literal">@JsonView</code> is supported directly on <code class="literal">@ResponseBody</code> and <code class="literal">ResponseEntity</code>
+controller methods for serializing different amounts of detail for the same POJO (e.g.
+summary vs. detail page). This is also supported with View-based rendering by
+adding the serialization view type as a model attribute under a special key.
+See <a class="xref" href="mvc.html#mvc-ann-jsonview" title="Jackson Serialization View Support">the section called &#8220;Jackson Serialization View Support&#8221;</a> for details.
+</li><li class="listitem">
+JSONP is now supported with Jackson. See <a class="xref" href="mvc.html#mvc-ann-jsonp" title="Jackson JSONP Support">the section called &#8220;Jackson JSONP Support&#8221;</a>.
+</li><li class="listitem">
+A new lifecycle option is available for intercepting <code class="literal">@ResponseBody</code> and <code class="literal">ResponseEntity</code>
+methods just after the controller method returns and before the response is written.
+To take advantage declare an <code class="literal">@ControllerAdvice</code> bean that implements <code class="literal">ResponseBodyAdvice</code>.
+The built-in support for <code class="literal">@JsonView</code> and JSONP take advantage of this.
+See <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="17.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;17.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a>.
+</li><li class="listitem">
+<p class="simpara">There are three new <code class="literal">HttpMessageConverter</code> options:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+Gson&#8201;&#8212;&#8201;lighter footprint than Jackson; has already been in use in Spring Android.
+</li><li class="listitem">
+Google Protocol Buffers&#8201;&#8212;&#8201;efficient and effective as an inter-service communication
+data protocol within an enterprise but can also be exposed as JSON and XML for browsers.
+</li><li class="listitem">
+Jackson based XML serialization is now supported through the
+<a class="ulink" href="https://github.com/FasterXML/jackson-dataformat-xml" target="_top">jackson-dataformat-xml</a> extension.
+When using <code class="literal">@EnableWebMvc</code> or <code class="literal">&lt;mvc:annotation-driven/&gt;</code>, this is used by default
+instead of JAXB2 if <code class="literal">jackson-dataformat-xml</code> is in the classpath.
+</li></ul></div>
+
+</li><li class="listitem">
+Views such as JSPs can now build links to controllers by referring to controller mappings
+by name. A default name is assigned to every <code class="literal">@RequestMapping</code>. For example <code class="literal">FooController</code>
+with method <code class="literal">handleFoo</code> is named "FC#handleFoo". The naming strategy is pluggable.
+It is also possible to name an <code class="literal">@RequestMapping</code> explicitly through its name attribute.
+A new <code class="literal">mvcUrl</code> function in the Spring JSP tag library makes this easy to use in JSP pages.
+See <a class="xref" href="mvc.html#mvc-links-to-controllers-from-views" title="17.7.2&nbsp;Building URIs to Controllers and methods from views">Section&nbsp;17.7.2, &#8220;Building URIs to Controllers and methods from views&#8221;</a>.
+</li><li class="listitem">
+<code class="literal">ResponseEntity</code> provides a builder-style API to guide controller methods
+towards the preparation of server-side responses, e.g. <code class="literal">ResponseEntity.ok()</code>.
+</li><li class="listitem">
+<code class="literal">RequestEntity</code> is a new type that provides a builder-style API to guide client-side REST
+code towards the preparation of HTTP requests.
+</li><li class="listitem">
+<p class="simpara">MVC Java config and XML namespace:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+View resolvers can now be configured including support for content
+negotiation, see <a class="xref" href="mvc.html#mvc-config-view-resolvers" title="17.16.6&nbsp;View Resolvers">Section&nbsp;17.16.6, &#8220;View Resolvers&#8221;</a>.
+</li><li class="listitem">
+View controllers now have built-in support for redirects and for setting the response
+status. An application can use this to configure redirect URLs, render 404 responses
+with a view, send "no content" responses, etc.
+Some use cases are
+<a class="ulink" href="https://jira.spring.io/browse/SPR-11543?focusedCommentId=100308&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-100308" target="_top">listed here</a>.
+</li><li class="listitem">
+Path matching customizations are frequently used and now built-in.
+See <a class="xref" href="mvc.html#mvc-config-path-matching" title="17.16.9&nbsp;Path Matching">Section&nbsp;17.16.9, &#8220;Path Matching&#8221;</a>.
+</li></ul></div>
+
+</li><li class="listitem">
+<a class="ulink" href="http://groovy-lang.org/docs/groovy-2.3.6/html/documentation/markup-template-engine.html" target="_top">Groovy markup template</a>
+support (based on Groovy 2.3). See the <code class="literal">GroovyMarkupConfigurer</code> and respecitve
+<code class="literal">ViewResolver</code> and &#8216;View&#8217; implementations.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_websocket_stomp_messaging_improvements" href="#_websocket_stomp_messaging_improvements"></a>4.4&nbsp;WebSocket STOMP Messaging Improvements</h2></div></div></div>
+
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+SockJS (Java) client-side support. See <code class="literal">SockJsClient</code> and classes in same package.
+</li><li class="listitem">
+New application context events <code class="literal">SessionSubscribeEvent</code> and <code class="literal">SessionUnubscribeEvent</code> published
+when STOMP clients subscribe and unsubscribe.
+</li><li class="listitem">
+New "websocket" scope. See <a class="xref" href="websocket.html#websocket-stomp-websocket-scope" title="21.4.13&nbsp;WebSocket Scope">Section&nbsp;21.4.13, &#8220;WebSocket Scope&#8221;</a>.
+</li><li class="listitem">
+<code class="literal">@SendToUser</code> can target only a single session and does not require an authenticated user.
+</li><li class="listitem">
+<code class="literal">@MessageMapping</code> methods can use dot "." instead of slash "/" as path separator.
+See <a class="ulink" href="https://jira.spring.io/browse/SPR-11660" target="_top">SPR-11660</a>.
+</li><li class="listitem">
+STOMP/WebSocket monitoring info collected and logged. See <a class="xref" href="websocket.html#websocket-stomp-stats" title="21.4.15&nbsp;Runtime Monitoring">Section&nbsp;21.4.15, &#8220;Runtime Monitoring&#8221;</a>.
+</li><li class="listitem">
+Significantly optimized and improved logging that should remain very readable
+and compact even at DEBUG level.
+</li><li class="listitem">
+Optimized message creation including support for temporary message mutability
+and avoiding automatic message id and timestamp creation. See Javadoc of
+<code class="literal">MessageHeaderAccessor</code>.
+</li><li class="listitem">
+STOMP/WebSocket connections that have not activity 60 seconds after the WebSocket
+session is established. See <a class="ulink" href="https://jira.spring.io/browse/SPR-11884" target="_top">SPR-11884</a>.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_testing_improvements_2" href="#_testing_improvements_2"></a>4.5&nbsp;Testing Improvements</h2></div></div></div>
+
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<p class="simpara">Groovy scripts can now be used to configure the <code class="literal">ApplicationContext</code> loaded for
+integration tests in the TestContext framework.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-ctx-management-groovy" title="Context configuration with Groovy scripts">the section called &#8220;Context configuration with Groovy scripts&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">Test-managed transactions can now be programmatically started and ended within
+transactional test methods via the new <code class="literal">TestTransaction</code> API.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-tx-programmatic-tx-mgt" title="Programmatic transaction management">the section called &#8220;Programmatic transaction management&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">SQL script execution can now be configured declaratively via the new <code class="literal">@Sql</code> and
+<code class="literal">@SqlConfig</code> annotations on a per-class or per-method basis.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-executing-sql" title="Executing SQL scripts">the section called &#8220;Executing SQL scripts&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">Test property sources which automatically override system and application property
+sources can be configured via the new <code class="literal">@TestPropertySource</code> annotation.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-ctx-management-property-sources" title="Context configuration with test property sources">the section called &#8220;Context configuration with test property sources&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">Default <code class="literal">TestExecutionListener</code>s can now be automatically discovered.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-tel-config-automatic-discovery" title="Automatic discovery of default TestExecutionListeners">the section called &#8220;Automatic discovery of default TestExecutionListeners&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">Custom <code class="literal">TestExecutionListener</code>s can now be automatically merged with the default
+listeners.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-tel-config-merging" title="Merging TestExecutionListeners">the section called &#8220;Merging TestExecutionListeners&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+<p class="simpara">The documentation for transactional testing support in the TestContext framework has
+been improved with more thorough explanations and additional examples.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
+See <a class="xref" href="testing.html#testcontext-tx" title="Transaction management">the section called &#8220;Transaction management&#8221;</a> for details.
+</li></ul></div>
+
+</li><li class="listitem">
+Various improvements to <code class="literal">MockServletContext</code>, <code class="literal">MockHttpServletRequest</code>, and other
+Servlet API mocks.
+</li><li class="listitem">
+<code class="literal">AssertThrows</code> has been refactored to support <code class="literal">Throwable</code> instead of <code class="literal">Exception</code>.
+</li><li class="listitem">
+In Spring MVC Test, JSON responses can be asserted with <a class="ulink" href="https://github.com/skyscreamer/JSONassert" target="_top">JSON Assert</a>
+as an extra option to using JSONPath much like it has been possible to do for XML with
+XMLUnit.
+</li><li class="listitem">
+<code class="literal">MockMvcBuilder</code> <span class="emphasis"><em>recipes</em></span> can now be created with the help of <code class="literal">MockMvcConfigurer</code>. This
+was added to make it easy to apply Spring Security setup but can be used to encapsulate
+common setup for any 3rd party framework or within a project.
+</li><li class="listitem">
+<code class="literal">MockRestServiceServer</code> now supports the <code class="literal">AsyncRestTemplate</code> for client-side testing.
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="new-in-4.0.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-whats-new.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-core.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">3.&nbsp;New Features and Enhancements in Spring Framework 4.0&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;III.&nbsp;Core Technologies</td></tr></table></div></body></html>

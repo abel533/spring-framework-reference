@@ -167,7 +167,7 @@ caching (while the rest are used only by the method logic). For example:</p>
 they are no use for the cache. Further more what if only one of the two is important
 while the other is not?</p>
 <p>For such cases, the <code class="literal">@Cacheable</code> annotation allows the user to specify how the key is
-generated through its <code class="literal">key</code> attribute. The developer can use <a class="link" href="expressions.html" title="8.&nbsp;Spring Expression Language (SpEL)">SpEL</a> to
+generated through its <code class="literal">key</code> attribute. The developer can use <a class="link" href="expressions.html" title="8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)">SpEL</a> to
 pick the arguments of interest (or their nested properties), perform operations or even
 invoke arbitrary methods without having to write any code or implement any interface.
 This is the recommended approach over the
@@ -175,7 +175,7 @@ This is the recommended approach over the
 quite different in signatures as the code base grows; while the default strategy might
 work for some methods, it rarely does for all methods.</p>
 <p>Below are some examples of various SpEL declarations - if you are not familiar with it,
-do yourself a favor and read <a class="xref" href="expressions.html" title="8.&nbsp;Spring Expression Language (SpEL)">Chapter&nbsp;8, <i>Spring Expression Language (SpEL)</i></a>:</p>
+do yourself a favor and read <a class="xref" href="expressions.html" title="8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)">Chapter&nbsp;8, <i>Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)</i></a>:</p>
 <pre class="programlisting">@Cacheable(value=<span class="hl-string">"books"</span>, <span class="strong"><strong>key="#isbn"</strong></span>)
 <span class="hl-keyword">public</span> Book findBook(ISBN isbn, <span class="hl-keyword">boolean</span> checkWarehouse, <span class="hl-keyword">boolean</span> includeUsed)
 
@@ -258,7 +258,7 @@ only want to cache paperback books:</p>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="cache-spel-context" href="#cache-spel-context"></a>Available caching SpEL evaluation context</h4></div></div></div>
 
 <p>Each <code class="literal">SpEL</code> expression evaluates again a dedicated
-<a class="link" href="expressions.html#expressions-language-ref" title="8.5&nbsp;Language Reference"><code class="literal">context</code></a>. In addition to the build in parameters, the
+<a class="link" href="expressions.html#expressions-language-ref" title="8.5&nbsp;&#35821;&#35328;&#21442;&#32771;"><code class="literal">context</code></a>. In addition to the build in parameters, the
 framework provides dedicated caching related metadata such as the argument names. The
 next table lists the items made available to the context so one can use them for key and
 conditional computations:</p>
@@ -517,7 +517,7 @@ your cache storage (or configuration, for that matter).</p>
 <p>For those who are familiar with Spring&#8217;s caching annotations, the following table
 describes the main differences between the Spring annotations and the JSR-107
 counterpart:</p>
-<div class="table"><a name="d5e23337" href="#d5e23337"></a><p class="title"><b>Table&nbsp;30.3.&nbsp;Spring vs. JSR-107 caching annotations</b></p><div class="table-contents">
+<div class="table"><a name="d5e23313" href="#d5e23313"></a><p class="title"><b>Table&nbsp;30.3.&nbsp;Spring vs. JSR-107 caching annotations</b></p><div class="table-contents">
 
   <table summary="Spring vs. JSR-107 caching annotations" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Spring</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">JSR-107</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Remark</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@Cacheable</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CacheResult</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Fairly similar. <code class="literal">@CacheResult</code> can cache specific exceptions and force the
   execution of the method regardless of the content of the cache.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CachePut</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CachePut</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>While Spring updates the cache with the result of the method invocation, JCache

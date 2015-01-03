@@ -67,23 +67,23 @@ artifact name and the topics they cover. Artifact names correlate to <span class
 in <a class="link" href="overview.html#dependency-management" title="2.3.1&nbsp;Dependency Management and Naming Conventions">Dependency Management tools</a>.</p>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="overview-core-container" href="#overview-core-container"></a>2.2.1&nbsp;Core Container</h3></div></div></div>
 
-<p>The <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Introduction to the Spring IoC container and beans"><span class="emphasis"><em>Core Container</em></span></a> consists of the <code class="literal">spring-core</code>,
+<p>The <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Spring IoC&#23481;&#22120;&#21644;Bean&#27010;&#36848;"><span class="emphasis"><em>Core Container</em></span></a> consists of the <code class="literal">spring-core</code>,
 <code class="literal">spring-beans</code>, <code class="literal">spring-context</code>, and <code class="literal">spring-expression</code> (Spring Expression Language)
 modules.</p>
-<p>The <code class="literal">spring-core</code> and <code class="literal">spring-beans</code> modules <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Introduction to the Spring IoC container and beans">provide the fundamental
+<p>The <code class="literal">spring-core</code> and <code class="literal">spring-beans</code> modules <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Spring IoC&#23481;&#22120;&#21644;Bean&#27010;&#36848;">provide the fundamental
 parts of the framework</a>, including the IoC and Dependency Injection features. The
 <code class="literal">BeanFactory</code> is a sophisticated implementation of the factory pattern. It removes the
 need for programmatic singletons and allows you to decouple the configuration and
 specification of dependencies from your actual program logic.</p>
 <p>The <a class="link" href="beans.html#context-introduction" title="5.15&nbsp;Additional Capabilities of the ApplicationContext"><span class="emphasis"><em>Context</em></span></a> (<code class="literal">spring-context</code>) module builds on the solid
-base provided by the <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Introduction to the Spring IoC container and beans"><span class="emphasis"><em>Core and Beans</em></span></a> modules: it is a means to
+base provided by the <a class="link" href="beans.html#beans-introduction" title="5.1&nbsp;Spring IoC&#23481;&#22120;&#21644;Bean&#27010;&#36848;"><span class="emphasis"><em>Core and Beans</em></span></a> modules: it is a means to
 access objects in a framework-style manner that is similar to a JNDI registry. The
 Context module inherits its features from the Beans module and adds support for
 internationalization (using, for example, resource bundles), event propagation, resource
 loading, and the transparent creation of contexts by, for example, a Servlet container.
 The Context module also supports Java EE features such as EJB, JMX, and basic remoting.
 The <code class="literal">ApplicationContext</code> interface is the focal point of the Context module.</p>
-<p>The <code class="literal">spring-expression</code> module provides a powerful <a class="link" href="expressions.html" title="8.&nbsp;Spring Expression Language (SpEL)"><span class="emphasis"><em>Expression
+<p>The <code class="literal">spring-expression</code> module provides a powerful <a class="link" href="expressions.html" title="8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)"><span class="emphasis"><em>Expression
 Language</em></span></a> for querying and manipulating an object graph at runtime. It is an extension
 of the unified expression language (unified EL) as specified in the JSP 2.1
 specification. The language supports setting and getting property values, property

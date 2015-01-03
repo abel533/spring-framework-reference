@@ -1,0 +1,1609 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>12.&nbsp;Transaction Management</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="next" href="dao.html" title="13.&nbsp;DAO support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.&nbsp;Transaction Management</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="transaction" href="#transaction"></a>12.&nbsp;Transaction Management</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-intro" href="#transaction-intro"></a>12.1&nbsp;Introduction to Spring Framework transaction management</h2></div></div></div>
+
+<p>Comprehensive transaction support is among the most compelling reasons to use the Spring
+Framework. The Spring Framework provides a consistent abstraction for transaction
+management that delivers the following benefits:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Consistent programming model across different transaction APIs such as Java
+Transaction API (JTA), JDBC, Hibernate, Java Persistence API (JPA), and Java Data
+Objects (JDO).
+</li><li class="listitem">
+Support for <a class="link" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">declarative transaction management</a>.
+</li><li class="listitem">
+Simpler API for <a class="link" href="transaction.html#transaction-programmatic" title="12.6&nbsp;Programmatic transaction management">programmatic</a> transaction management than
+complex transaction APIs such as JTA.
+</li><li class="listitem">
+Excellent integration with Spring&#8217;s data access abstractions.
+</li></ul></div>
+
+<p>The following sections describe the Spring Framework&#8217;s transaction value-adds and
+technologies. (The chapter also includes discussions of best practices, application
+server integration, and solutions to common problems.)</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="transaction.html#transaction-motivation" title="12.2&nbsp;Advantages of the Spring Framework&#8217;s transaction support model">Advantages of the Spring Framework&#8217;s transaction support
+model</a> describes <span class="emphasis"><em>why</em></span> you would use the Spring Framework&#8217;s transaction abstraction
+instead of EJB Container-Managed Transactions (CMT) or choosing to drive local
+transactions through a proprietary API such as Hibernate.
+</li><li class="listitem">
+<a class="link" href="transaction.html#transaction-strategies" title="12.3&nbsp;Understanding the Spring Framework transaction abstraction">Understanding the Spring Framework transaction abstraction</a>
+outlines the core classes and describes how to configure and obtain <code class="literal">DataSource</code>
+instances from a variety of sources.
+</li><li class="listitem">
+<a class="link" href="transaction.html#tx-resource-synchronization" title="12.4&nbsp;Synchronizing resources with transactions">Synchronizing resources with transactions</a>describes
+how the application code ensures that resources are created, reused, and cleaned up
+properly.
+</li><li class="listitem">
+<a class="link" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">Declarative transaction management</a> describes support for
+declarative transaction management.
+</li><li class="listitem">
+<a class="link" href="transaction.html#transaction-programmatic" title="12.6&nbsp;Programmatic transaction management">Programmatic transaction management</a> covers support for
+programmatic (that is, explicitly coded) transaction management.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-motivation" href="#transaction-motivation"></a>12.2&nbsp;Advantages of the Spring Framework&#8217;s transaction support model</h2></div></div></div>
+
+<p>Traditionally, Java EE developers have had two choices for transaction management:
+<span class="emphasis"><em>global</em></span> or <span class="emphasis"><em>local</em></span> transactions, both of which have profound limitations. Global
+and local transaction management is reviewed in the next two sections, followed by a
+discussion of how the Spring Framework&#8217;s transaction management support addresses the
+limitations of the global and local transaction models.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-global" href="#transaction-global"></a>12.2.1&nbsp;Global transactions</h3></div></div></div>
+
+<p>Global transactions enable you to work with multiple transactional resources, typically
+relational databases and message queues. The application server manages global
+transactions through the JTA, which is a cumbersome API to use (partly due to its
+exception model). Furthermore, a JTA <code class="literal">UserTransaction</code> normally needs to be sourced from
+JNDI, meaning that you <span class="emphasis"><em>also</em></span> need to use JNDI in order to use JTA. Obviously the use
+of global transactions would limit any potential reuse of application code, as JTA is
+normally only available in an application server environment.</p>
+<p>Previously, the preferred way to use global transactions was via EJB <span class="emphasis"><em>CMT</em></span>
+(<span class="emphasis"><em>Container Managed Transaction</em></span>): CMT is a form of <span class="emphasis"><em>declarative transaction
+management</em></span> (as distinguished from <span class="emphasis"><em>programmatic transaction management</em></span>). EJB CMT
+removes the need for transaction-related JNDI lookups, although of course the use of EJB
+itself necessitates the use of JNDI. It removes most but not all of the need to write
+Java code to control transactions. The significant downside is that CMT is tied to JTA
+and an application server environment. Also, it is only available if one chooses to
+implement business logic in EJBs, or at least behind a transactional EJB facade. The
+negatives of EJB in general are so great that this is not an attractive proposition,
+especially in the face of compelling alternatives for declarative transaction management.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-local" href="#transaction-local"></a>12.2.2&nbsp;Local transactions</h3></div></div></div>
+
+<p>Local transactions are resource-specific, such as a transaction associated with a JDBC
+connection. Local transactions may be easier to use, but have significant disadvantages:
+they cannot work across multiple transactional resources. For example, code that manages
+transactions using a JDBC connection cannot run within a global JTA transaction. Because
+the application server is not involved in transaction management, it cannot help ensure
+correctness across multiple resources. (It is worth noting that most applications use a
+single transaction resource.) Another downside is that local transactions are invasive
+to the programming model.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-programming-model" href="#transaction-programming-model"></a>12.2.3&nbsp;Spring Framework&#8217;s consistent programming model</h3></div></div></div>
+
+<p>Spring resolves the disadvantages of global and local transactions. It enables
+application developers to use a <span class="emphasis"><em>consistent</em></span> programming model <span class="emphasis"><em>in any environment</em></span>.
+You write your code once, and it can benefit from different transaction management
+strategies in different environments. The Spring Framework provides both declarative and
+programmatic transaction management. Most users prefer declarative transaction
+management, which is recommended in most cases.</p>
+<p>With programmatic transaction management, developers work with the Spring Framework
+transaction abstraction, which can run over any underlying transaction infrastructure.
+With the preferred declarative model, developers typically write little or no code
+related to transaction management, and hence do not depend on the Spring Framework
+transaction API, or any other transaction API.</p>
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Do you need an application server for transaction management?</b></p></div></div></div>
+
+<p>The Spring Framework&#8217;s transaction management support changes traditional rules as to
+when an enterprise Java application requires an application server.</p>
+<p>In particular, you do not need an application server simply for declarative transactions
+through EJBs. In fact, even if your application server has powerful JTA capabilities,
+you may decide that the Spring Framework&#8217;s declarative transactions offer more power and
+a more productive programming model than EJB CMT.</p>
+<p>Typically you need an application server&#8217;s JTA capability only if your application needs
+to handle transactions across multiple resources, which is not a requirement for many
+applications. Many high-end applications use a single, highly scalable database (such as
+Oracle RAC) instead. Standalone transaction managers such as
+<a class="ulink" href="http://www.atomikos.com/" target="_top">Atomikos Transactions</a> and <a class="ulink" href="http://jotm.objectweb.org/" target="_top">JOTM</a>
+are other options. Of course, you may need other application server capabilities such as
+Java Message Service (JMS) and Java EE Connector Architecture (JCA).</p>
+<p>The Spring Framework <span class="emphasis"><em>gives you the choice of when to scale your application to a fully
+loaded application server</em></span>. Gone are the days when the only alternative to using EJB
+CMT or JTA was to write code with local transactions such as those on JDBC connections,
+and face a hefty rework if you need that code to run within global, container-managed
+transactions. With the Spring Framework, only some of the bean definitions in your
+configuration file, rather than your code, need to change.</p>
+</div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-strategies" href="#transaction-strategies"></a>12.3&nbsp;Understanding the Spring Framework transaction abstraction</h2></div></div></div>
+
+<p>The key to the Spring transaction abstraction is the notion of a <span class="emphasis"><em>transaction
+strategy</em></span>. A transaction strategy is defined by the
+<code class="literal">org.springframework.transaction.PlatformTransactionManager</code> interface:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> PlatformTransactionManager {
+
+    TransactionStatus getTransaction(
+            TransactionDefinition definition) <span class="hl-keyword">throws</span> TransactionException;
+
+    <span class="hl-keyword">void</span> commit(TransactionStatus status) <span class="hl-keyword">throws</span> TransactionException;
+
+    <span class="hl-keyword">void</span> rollback(TransactionStatus status) <span class="hl-keyword">throws</span> TransactionException;
+}</pre>
+
+<p>This is primarily a service provider interface (SPI), although it can be used
+<a class="link" href="transaction.html#transaction-programmatic-ptm" title="12.6.2&nbsp;Using the PlatformTransactionManager">programmatically</a> from your application code. Because
+<code class="literal">PlatformTransactionManager</code> is an <span class="emphasis"><em>interface</em></span>, it can be easily mocked or stubbed as
+necessary. It is not tied to a lookup strategy such as JNDI.
+<code class="literal">PlatformTransactionManager</code> implementations are defined like any other object (or bean)
+in the Spring Framework IoC container. This benefit alone makes Spring Framework
+transactions a worthwhile abstraction even when you work with JTA. Transactional code
+can be tested much more easily than if it used JTA directly.</p>
+<p>Again in keeping with Spring&#8217;s philosophy, the <code class="literal">TransactionException</code> that can be thrown
+by any of the <code class="literal">PlatformTransactionManager</code> interface&#8217;s methods is <span class="emphasis"><em>unchecked</em></span> (that
+is, it extends the <code class="literal">java.lang.RuntimeException</code> class). Transaction infrastructure
+failures are almost invariably fatal. In rare cases where application code can actually
+recover from a transaction failure, the application developer can still choose to catch
+and handle <code class="literal">TransactionException</code>. The salient point is that developers are not
+<span class="emphasis"><em>forced</em></span> to do so.</p>
+<p>The <code class="literal">getTransaction(..)</code> method returns a <code class="literal">TransactionStatus</code> object, depending on a
+<code class="literal">TransactionDefinition</code> parameter. The returned <code class="literal">TransactionStatus</code> might represent a
+new transaction, or can represent an existing transaction if a matching transaction
+exists in the current call stack. The implication in this latter case is that, as with
+Java EE transaction contexts, a <code class="literal">TransactionStatus</code> is associated with a <span class="emphasis"><em>thread</em></span> of
+execution.</p>
+<p>The <code class="literal">TransactionDefinition</code> interface specifies:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>Isolation</em></span>: The degree to which this transaction is isolated from the work of other
+transactions. For example, can this transaction see uncommitted writes from other
+transactions?
+</li><li class="listitem">
+<span class="emphasis"><em>Propagation</em></span>: Typically, all code executed within a transaction scope will run in
+that transaction. However, you have the option of specifying the behavior in the event
+that a transactional method is executed when a transaction context already exists. For
+example, code can continue running in the existing transaction (the common case); or
+the existing transaction can be suspended and a new transaction created. <span class="emphasis"><em>Spring
+offers all of the transaction propagation options familiar from EJB CMT</em></span>. To read
+about the semantics of transaction propagation in Spring, see <a class="xref" href="transaction.html#tx-propagation" title="12.5.7&nbsp;Transaction propagation">Section&nbsp;12.5.7, &#8220;Transaction propagation&#8221;</a>.
+</li><li class="listitem">
+<span class="emphasis"><em>Timeout</em></span>: How long this transaction runs before timing out and being rolled back
+automatically by the underlying transaction infrastructure.
+</li><li class="listitem">
+<span class="emphasis"><em>Read-only status</em></span>: A read-only transaction can be used when your code reads but
+does not modify data. Read-only transactions can be a useful optimization in some
+cases, such as when you are using Hibernate.
+</li></ul></div>
+
+<p>These settings reflect standard transactional concepts. If necessary, refer to resources
+that discuss transaction isolation levels and other core transaction concepts.
+Understanding these concepts is essential to using the Spring Framework or any
+transaction management solution.</p>
+<p>The <code class="literal">TransactionStatus</code> interface provides a simple way for transactional code to
+control transaction execution and query transaction status. The concepts should be
+familiar, as they are common to all transaction APIs:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> TransactionStatus <span class="hl-keyword">extends</span> SavepointManager {
+
+    <span class="hl-keyword">boolean</span> isNewTransaction();
+
+    <span class="hl-keyword">boolean</span> hasSavepoint();
+
+    <span class="hl-keyword">void</span> setRollbackOnly();
+
+    <span class="hl-keyword">boolean</span> isRollbackOnly();
+
+    <span class="hl-keyword">void</span> flush();
+
+    <span class="hl-keyword">boolean</span> isCompleted();
+
+}</pre>
+
+<p>Regardless of whether you opt for declarative or programmatic transaction management in
+Spring, defining the correct <code class="literal">PlatformTransactionManager</code> implementation is absolutely
+essential. You typically define this implementation through dependency injection.</p>
+<p><code class="literal">PlatformTransactionManager</code> implementations normally require knowledge of the
+environment in which they work: JDBC, JTA, Hibernate, and so on. The following examples
+show how you can define a local <code class="literal">PlatformTransactionManager</code> implementation. (This
+example works with plain JDBC.)</p>
+<p>You define a JDBC <code class="literal">DataSource</code></p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"driverClassName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.driverClassName}"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"url"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.url}"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"username"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.username}"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"password"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.password}"</span><span class="hl-tag"> /&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>The related <code class="literal">PlatformTransactionManager</code> bean definition will then have a reference to
+the <code class="literal">DataSource</code> definition. It will look like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>If you use JTA in a Java EE container then you use a container <code class="literal">DataSource</code>, obtained
+through JNDI, in conjunction with Spring&#8217;s <code class="literal">JtaTransactionManager</code>. This is what the JTA
+and JNDI lookup version would look like:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:jee</span>=<span class="hl-value">"http://www.springframework.org/schema/jee"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jee
+        http://www.springframework.org/schema/jee/spring-jee.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;jee:jndi-lookup</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">jndi-name</span>=<span class="hl-value">"jdbc/jpetstore"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.jta.JtaTransactionManager"</span><span class="hl-tag"> /&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other &lt;bean/&gt; definitions here --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The <code class="literal">JtaTransactionManager</code> does not need to know about the <code class="literal">DataSource</code>, or any other
+specific resources, because it uses the container&#8217;s global transaction management
+infrastructure.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The above definition of the <code class="literal">dataSource</code> bean uses the <code class="literal">&lt;jndi-lookup/&gt;</code> tag from the
+<code class="literal">jee</code> namespace. For more information on schema-based configuration, see <a class="xref" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration">Chapter&nbsp;34, <i>XML Schema-based configuration</i></a>,
+and for more information on the <code class="literal">&lt;jee/&gt;</code> tags see the section entitled
+<a class="xref" href="xsd-config.html#xsd-config-body-schemas-jee" title="34.2.3&nbsp;the jee schema">Section&nbsp;34.2.3, &#8220;the jee schema&#8221;</a>.</p>
+</td></tr></table></div>
+
+<p>You can also use Hibernate local transactions easily, as shown in the following
+examples. In this case, you need to define a Hibernate <code class="literal">LocalSessionFactoryBean</code>, which
+your application code will use to obtain Hibernate <code class="literal">Session</code> instances.</p>
+<p>The <code class="literal">DataSource</code> bean definition will be similar to the local JDBC example shown
+previously and thus is not shown in the following example.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>If the <code class="literal">DataSource</code>, used by any non-JTA transaction manager, is looked up via JNDI and
+managed by a Java EE container, then it should be non-transactional because the Spring
+Framework, rather than the Java EE container, will manage the transactions.</p>
+</td></tr></table></div>
+
+<p>The <code class="literal">txManager</code> bean in this case is of the <code class="literal">HibernateTransactionManager</code> type. In the
+same way as the <code class="literal">DataSourceTransactionManager</code> needs a reference to the <code class="literal">DataSource</code>,
+the <code class="literal">HibernateTransactionManager</code> needs a reference to the <code class="literal">SessionFactory</code>.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"sessionFactory"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.hibernate3.LocalSessionFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappingResources"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;list&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>org/springframework/samples/petclinic/hibernate/petclinic.hbm.xml<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/list&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"hibernateProperties"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;value&gt;</span>
+            hibernate.dialect=${hibernate.dialect}
+        <span class="hl-tag">&lt;/value&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.orm.hibernate3.HibernateTransactionManager"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"sessionFactory"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"sessionFactory"</span><span class="hl-tag"> /&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>If you are using Hibernate and Java EE container-managed JTA transactions, then you
+should simply use the same <code class="literal">JtaTransactionManager</code> as in the previous JTA example for
+JDBC.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.jta.JtaTransactionManager"</span><span class="hl-tag">/&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>If you use JTA , then your transaction manager definition will look the same regardless
+of what data access technology you use, be it JDBC, Hibernate JPA or any other supported
+technology. This is due to the fact that JTA transactions are global transactions, which
+can enlist any transactional resource.</p>
+</td></tr></table></div>
+
+<p>In all these cases, application code does not need to change. You can change how
+transactions are managed merely by changing configuration, even if that change means
+moving from local to global transactions or vice versa.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tx-resource-synchronization" href="#tx-resource-synchronization"></a>12.4&nbsp;Synchronizing resources with transactions</h2></div></div></div>
+
+<p>It should now be clear how you create different transaction managers, and how they are
+linked to related resources that need to be synchronized to transactions (for example
+<code class="literal">DataSourceTransactionManager</code> to a JDBC <code class="literal">DataSource</code>, <code class="literal">HibernateTransactionManager</code> to
+a Hibernate <code class="literal">SessionFactory</code>, and so forth). This section describes how the application
+code, directly or indirectly using a persistence API such as JDBC, Hibernate, or JDO,
+ensures that these resources are created, reused, and cleaned up properly. The section
+also discusses how transaction synchronization is triggered (optionally) through the
+relevant <code class="literal">PlatformTransactionManager</code>.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-resource-synchronization-high" href="#tx-resource-synchronization-high"></a>12.4.1&nbsp;High-level synchronization approach</h3></div></div></div>
+
+<p>The preferred approach is to use Spring&#8217;s highest level template based persistence
+integration APIs or to use native ORM APIs with transaction- aware factory beans or
+proxies for managing the native resource factories. These transaction-aware solutions
+internally handle resource creation and reuse, cleanup, optional transaction
+synchronization of the resources, and exception mapping. Thus user data access code does
+not have to address these tasks, but can be focused purely on non-boilerplate
+persistence logic. Generally, you use the native ORM API or take a <span class="emphasis"><em>template</em></span> approach
+for JDBC access by using the <code class="literal">JdbcTemplate</code>. These solutions are detailed in subsequent
+chapters of this reference documentation.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-resource-synchronization-low" href="#tx-resource-synchronization-low"></a>12.4.2&nbsp;Low-level synchronization approach</h3></div></div></div>
+
+<p>Classes such as <code class="literal">DataSourceUtils</code> (for JDBC), <code class="literal">EntityManagerFactoryUtils</code> (for JPA),
+<code class="literal">SessionFactoryUtils</code> (for Hibernate), <code class="literal">PersistenceManagerFactoryUtils</code> (for JDO), and
+so on exist at a lower level. When you want the application code to deal directly with
+the resource types of the native persistence APIs, you use these classes to ensure that
+proper Spring Framework-managed instances are obtained, transactions are (optionally)
+synchronized, and exceptions that occur in the process are properly mapped to a
+consistent API.</p>
+<p>For example, in the case of JDBC, instead of the traditional JDBC approach of calling
+the <code class="literal">getConnection()</code> method on the <code class="literal">DataSource</code>, you instead use Spring&#8217;s
+<code class="literal">org.springframework.jdbc.datasource.DataSourceUtils</code> class as follows:</p>
+<pre class="programlisting">Connection conn = DataSourceUtils.getConnection(dataSource);</pre>
+
+<p>If an existing transaction already has a connection synchronized (linked) to it, that
+instance is returned. Otherwise, the method call triggers the creation of a new
+connection, which is (optionally) synchronized to any existing transaction, and made
+available for subsequent reuse in that same transaction. As mentioned, any
+<code class="literal">SQLException</code> is wrapped in a Spring Framework <code class="literal">CannotGetJdbcConnectionException</code>, one
+of the Spring Framework&#8217;s hierarchy of unchecked DataAccessExceptions. This approach
+gives you more information than can be obtained easily from the <code class="literal">SQLException</code>, and
+ensures portability across databases, even across different persistence technologies.</p>
+<p>This approach also works without Spring transaction management (transaction
+synchronization is optional), so you can use it whether or not you are using Spring for
+transaction management.</p>
+<p>Of course, once you have used Spring&#8217;s JDBC support, JPA support or Hibernate support,
+you will generally prefer not to use <code class="literal">DataSourceUtils</code> or the other helper classes,
+because you will be much happier working through the Spring abstraction than directly
+with the relevant APIs. For example, if you use the Spring <code class="literal">JdbcTemplate</code> or
+<code class="literal">jdbc.object</code> package to simplify your use of JDBC, correct connection retrieval occurs
+behind the scenes and you won&#8217;t need to write any special code.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-resource-synchronization-tadsp" href="#tx-resource-synchronization-tadsp"></a>12.4.3&nbsp;TransactionAwareDataSourceProxy</h3></div></div></div>
+
+<p>At the very lowest level exists the <code class="literal">TransactionAwareDataSourceProxy</code> class. This is a
+proxy for a target <code class="literal">DataSource</code>, which wraps the target <code class="literal">DataSource</code> to add awareness of
+Spring-managed transactions. In this respect, it is similar to a transactional JNDI
+<code class="literal">DataSource</code> as provided by a Java EE server.</p>
+<p>It should almost never be necessary or desirable to use this class, except when existing
+code must be called and passed a standard JDBC <code class="literal">DataSource</code> interface implementation. In
+that case, it is possible that this code is usable, but participating in Spring managed
+transactions. It is preferable to write your new code by using the higher level
+abstractions mentioned above.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-declarative" href="#transaction-declarative"></a>12.5&nbsp;Declarative transaction management</h2></div></div></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Most Spring Framework users choose declarative transaction management. This option has
+the least impact on application code, and hence is most consistent with the ideals of a
+<span class="emphasis"><em>non-invasive</em></span> lightweight container.</p>
+</td></tr></table></div>
+
+<p>The Spring Framework&#8217;s declarative transaction management is made possible with Spring
+aspect-oriented programming (AOP), although, as the transactional aspects code comes
+with the Spring Framework distribution and may be used in a boilerplate fashion, AOP
+concepts do not generally have to be understood to make effective use of this code.</p>
+<p>The Spring Framework&#8217;s declarative transaction management is similar to EJB CMT in that
+you can specify transaction behavior (or lack of it) down to individual method level. It
+is possible to make a <code class="literal">setRollbackOnly()</code> call within a transaction context if
+necessary. The differences between the two types of transaction management are:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Unlike EJB CMT, which is tied to JTA, the Spring Framework&#8217;s declarative transaction
+management works in any environment. It can work with JTA transactions or local
+transactions using JDBC, JPA, Hibernate or JDO by simply adjusting the configuration
+files.
+</li><li class="listitem">
+You can apply the Spring Framework declarative transaction management to any class,
+not merely special classes such as EJBs.
+</li><li class="listitem">
+The Spring Framework offers declarative
+<a class="link" href="transaction.html#transaction-declarative-rolling-back" title="12.5.3&nbsp;Rolling back a declarative transaction"><span class="emphasis"><em>rollback rules</em></span>,</a>a feature with no EJB
+equivalent. Both programmatic and declarative support for rollback rules is provided.
+</li><li class="listitem">
+The Spring Framework enables you to customize transactional behavior, by using AOP.
+For example, you can insert custom behavior in the case of transaction rollback. You
+can also add arbitrary advice, along with the transactional advice. With EJB CMT, you
+cannot influence the container&#8217;s transaction management except with
+<code class="literal">setRollbackOnly()</code>.
+</li><li class="listitem">
+The Spring Framework does not support propagation of transaction contexts across
+remote calls, as do high-end application servers. If you need this feature, we
+recommend that you use EJB. However, consider carefully before using such a feature,
+because normally, one does not want transactions to span remote calls.
+</li></ul></div>
+
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Where is TransactionProxyFactoryBean?</b></p></div></div></div>
+
+<p>Declarative transaction configuration in versions of Spring 2.0 and above differs
+considerably from previous versions of Spring. The main difference is that there is no
+longer any need to configure <code class="literal">TransactionProxyFactoryBean</code> beans.</p>
+<p>The pre-Spring 2.0 configuration style is still 100% valid configuration; think of the
+new <code class="literal">&lt;tx:tags/&gt;</code> as simply defining <code class="literal">TransactionProxyFactoryBean</code> beans on your behalf.</p>
+</div>
+
+<p>The concept of rollback rules is important: they enable you to specify which exceptions
+(and throwables) should cause automatic rollback. You specify this declaratively, in
+configuration, not in Java code. So, although you can still call <code class="literal">setRollbackOnly()</code> on
+the <code class="literal">TransactionStatus</code> object to roll back the current transaction back, most often you
+can specify a rule that <code class="literal">MyApplicationException</code> must always result in rollback. The
+significant advantage to this option is that business objects do not depend on the
+transaction infrastructure. For example, they typically do not need to import Spring
+transaction APIs or other Spring APIs.</p>
+<p>Although EJB container default behavior automatically rolls back the transaction on a
+<span class="emphasis"><em>system exception</em></span> (usually a runtime exception), EJB CMT does not roll back the
+transaction automatically on an<span class="emphasis"><em>application exception</em></span> (that is, a checked exception
+other than <code class="literal">java.rmi.RemoteException</code>). While the Spring default behavior for
+declarative transaction management follows EJB convention (roll back is automatic only
+on unchecked exceptions), it is often useful to customize this behavior.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-decl-explained" href="#tx-decl-explained"></a>12.5.1&nbsp;Understanding the Spring Framework&#8217;s declarative transaction implementation</h3></div></div></div>
+
+<p>It is not sufficient to tell you simply to annotate your classes with the
+<code class="literal">@Transactional</code> annotation, add <code class="literal">@EnableTransactionManagement</code> to your configuration,
+and then expect you to understand how it all works. This section explains the inner
+workings of the Spring Framework&#8217;s declarative transaction infrastructure in the event
+of transaction-related issues.</p>
+<p>The most important concepts to grasp with regard to the Spring Framework&#8217;s declarative
+transaction support are that this support is enabled
+<a class="link" href="aop.html#aop-understanding-aop-proxies" title="9.6.1&nbsp;Understanding AOP proxies"><span class="emphasis"><em>via AOP proxies</em></span></a>, and that the transactional advice
+is driven by <span class="emphasis"><em>metadata</em></span> (currently XML- or annotation-based). The combination of AOP
+with transactional metadata yields an AOP proxy that uses a <code class="literal">TransactionInterceptor</code> in
+conjunction with an appropriate <code class="literal">PlatformTransactionManager</code> implementation to drive
+transactions <span class="emphasis"><em>around method invocations</em></span>.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Spring AOP is covered in <a class="xref" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">Chapter&nbsp;9, <i>Aspect Oriented Programming with Spring</i></a>.</p>
+</td></tr></table></div>
+
+<p>Conceptually, calling a method on a transactional proxy looks like this&#8230;</p>
+<div class="figure"><a name="d5e11101" href="#d5e11101"></a><p class="title"><b>Figure&nbsp;12.1.&nbsp;</b></p><div class="figure-contents">
+  <div class="mediaobject"><img src="images/tx.png" alt="tx"></div>
+</div></div><br class="figure-break">
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-first-example" href="#transaction-declarative-first-example"></a>12.5.2&nbsp;Example of declarative transaction implementation</h3></div></div></div>
+
+<p>Consider the following interface, and its attendant implementation. This example uses
+<code class="literal">Foo</code> and <code class="literal">Bar</code> classes as placeholders so that you can concentrate on the transaction
+usage without focusing on a particular domain model. For the purposes of this example,
+the fact that the <code class="literal">DefaultFooService</code> class throws <code class="literal">UnsupportedOperationException</code>
+instances in the body of each implemented method is good; it allows you to see
+transactions created and then rolled back in response to the
+<code class="literal">UnsupportedOperationException</code> instance.</p>
+<pre class="programlisting"><span class="hl-comment">// the service interface that we want to make transactional</span>
+
+<span class="hl-keyword">package</span> x.y.service;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> FooService {
+
+    Foo getFoo(String fooName);
+
+    Foo getFoo(String fooName, String barName);
+
+    <span class="hl-keyword">void</span> insertFoo(Foo foo);
+
+    <span class="hl-keyword">void</span> updateFoo(Foo foo);
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-comment">// an implementation of the above interface</span>
+
+<span class="hl-keyword">package</span> x.y.service;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> DefaultFooService <span class="hl-keyword">implements</span> FooService {
+
+    <span class="hl-keyword">public</span> Foo getFoo(String fooName) {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> UnsupportedOperationException();
+    }
+
+    <span class="hl-keyword">public</span> Foo getFoo(String fooName, String barName) {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> UnsupportedOperationException();
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> insertFoo(Foo foo) {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> UnsupportedOperationException();
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> updateFoo(Foo foo) {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> UnsupportedOperationException();
+    }
+
+}</pre>
+
+<p>Assume that the first two methods of the <code class="literal">FooService</code> interface, <code class="literal">getFoo(String)</code> and
+<code class="literal">getFoo(String, String)</code>, must execute in the context of a transaction with read-only
+semantics, and that the other methods, <code class="literal">insertFoo(Foo)</code> and <code class="literal">updateFoo(Foo)</code>, must
+execute in the context of a transaction with read-write semantics. The following
+configuration is explained in detail in the next few paragraphs.</p>
+<pre class="programlisting"><span class="hl-comment">&lt;!-- from the file 'context.xml' --&gt;</span>
+<span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-comment">&lt;!-- this is the service object that we want to make transactional --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- the transactional advice (what 'happens'; see the &lt;aop:advisor/&gt; bean below) --&gt;</span>
+    <span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">transaction-manager</span>=<span class="hl-value">"txManager"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- the transactional semantics... --&gt;</span>
+        <span class="hl-tag">&lt;tx:attributes&gt;</span>
+            <span class="hl-comment">&lt;!-- all methods starting with 'get' are read-only --&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"get*"</span> <span class="hl-attribute">read-only</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-comment">&lt;!-- other methods use the default transaction settings (see below) --&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;/tx:advice&gt;</span>
+
+    <span class="hl-comment">&lt;!-- ensure that the above transactional advice runs for any execution
+        of an operation defined by the FooService interface --&gt;</span>
+    <span class="hl-tag">&lt;aop:config&gt;</span>
+        <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooServiceOperation"</span> <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y.service.FooService.*(..))"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"fooServiceOperation"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/aop:config&gt;</span>
+
+    <span class="hl-comment">&lt;!-- don't forget the DataSource --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"driverClassName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"oracle.jdbc.driver.OracleDriver"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"url"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"jdbc:oracle:thin:@rj-t42:1521:elvis"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"username"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"scott"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"password"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"tiger"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- similarly, don't forget the PlatformTransactionManager --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other &lt;bean/&gt; definitions here --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Examine the preceding configuration. You want to make a service object, the <code class="literal">fooService</code>
+bean, transactional. The transaction semantics to apply are encapsulated in the
+<code class="literal">&lt;tx:advice/&gt;</code> definition. The <code class="literal">&lt;tx:advice/&gt;</code> definition reads as "<span class="emphasis"><em>&#8230; all methods on
+starting with <code class="literal">'get'</code> are to execute in the context of a read-only transaction, and all
+other methods are to execute with the default transaction semantics</em></span>". The
+<code class="literal">transaction-manager</code> attribute of the <code class="literal">&lt;tx:advice/&gt;</code> tag is set to the name of the
+<code class="literal">PlatformTransactionManager</code> bean that is going to <span class="emphasis"><em>drive</em></span> the transactions, in this
+case, the <code class="literal">txManager</code> bean.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>You can omit the <code class="literal">transaction-manager</code> attribute in the transactional advice (
+<code class="literal">&lt;tx:advice/&gt;</code>) if the bean name of the <code class="literal">PlatformTransactionManager</code> that you want to
+wire in has the name <code class="literal">transactionManager</code>. If the <code class="literal">PlatformTransactionManager</code> bean that
+you want to wire in has any other name, then you must use the <code class="literal">transaction-manager</code>
+attribute explicitly, as in the preceding example.</p>
+</td></tr></table></div>
+
+<p>The <code class="literal">&lt;aop:config/&gt;</code> definition ensures that the transactional advice defined by the
+<code class="literal">txAdvice</code> bean executes at the appropriate points in the program. First you define a
+pointcut that matches the execution of any operation defined in the <code class="literal">FooService</code>
+interface ( <code class="literal">fooServiceOperation</code>). Then you associate the pointcut with the <code class="literal">txAdvice</code>
+using an advisor. The result indicates that at the execution of a <code class="literal">fooServiceOperation</code>,
+the advice defined by <code class="literal">txAdvice</code> will be run.</p>
+<p>The expression defined within the <code class="literal">&lt;aop:pointcut/&gt;</code> element is an AspectJ pointcut
+expression; see <a class="xref" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">Chapter&nbsp;9, <i>Aspect Oriented Programming with Spring</i></a> for more details on pointcut expressions in Spring.</p>
+<p>A common requirement is to make an entire service layer transactional. The best way to
+do this is simply to change the pointcut expression to match any operation in your
+service layer. For example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;aop:config&gt;</span>
+    <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooServiceMethods"</span> <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y.service.*.*(..))"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"fooServiceMethods"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/aop:config&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p><span class="emphasis"><em>In this example it is assumed that all your service interfaces are defined in the
+<code class="literal">x.y.service</code> package; see <a class="xref" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">Chapter&nbsp;9, <i>Aspect Oriented Programming with Spring</i></a> for more details.</em></span></p>
+</td></tr></table></div>
+
+<p>Now that we&#8217;ve analyzed the configuration, you may be asking yourself, "<span class="emphasis"><em>Okay&#8230; but
+what does all this configuration actually do?</em></span>".</p>
+<p>The above configuration will be used to create a transactional proxy around the object
+that is created from the <code class="literal">fooService</code> bean definition. The proxy will be configured with
+the transactional advice, so that when an appropriate method is invoked <span class="emphasis"><em>on the
+proxy</em></span>, a transaction is started, suspended, marked as read-only, and so on, depending
+on the transaction configuration associated with that method. Consider the following
+program that test drives the above configuration:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">final</span> <span class="hl-keyword">class</span> Boot {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">void</span> main(<span class="hl-keyword">final</span> String[] args) <span class="hl-keyword">throws</span> Exception {
+        ApplicationContext ctx = <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-string">"context.xml"</span>, Boot.<span class="hl-keyword">class</span>);
+        FooService fooService = (FooService) ctx.getBean(<span class="hl-string">"fooService"</span>);
+        fooService.insertFoo (<span class="hl-keyword">new</span> Foo());
+    }
+}</pre>
+
+<p>The output from running the preceding program will resemble the following. (The Log4J
+output and the stack trace from the UnsupportedOperationException thrown by the
+insertFoo(..) method of the DefaultFooService class have been truncated for clarity.)</p>
+<pre class="programlisting"><span class="hl-comment">&lt;!-- the Spring container is starting up... --&gt;</span>
+[AspectJInvocationContextExposingAdvisorAutoProxyCreator] - Creating implicit proxy for bean <span class="emphasis"><em>fooService</em></span> with 0 common interceptors and 1 specific interceptors
+
+<span class="hl-comment">&lt;!-- the DefaultFooService is actually proxied --&gt;</span>
+[JdkDynamicAopProxy] - Creating JDK dynamic proxy for [x.y.service.DefaultFooService]
+
+<span class="hl-comment">&lt;!-- ... the insertFoo(..) method is now being invoked on the proxy --&gt;</span>
+[TransactionInterceptor] - Getting transaction for x.y.service.FooService.insertFoo
+
+<span class="hl-comment">&lt;!-- the transactional advice kicks in here... --&gt;</span>
+[DataSourceTransactionManager] - Creating new transaction with name [x.y.service.FooService.insertFoo]
+[DataSourceTransactionManager] - Acquired Connection [org.apache.commons.dbcp.PoolableConnection@a53de4] for JDBC transaction
+
+<span class="hl-comment">&lt;!-- the insertFoo(..) method from DefaultFooService throws an exception... --&gt;</span>
+[RuleBasedTransactionAttribute] - Applying rules to determine whether transaction should rollback on java.lang.UnsupportedOperationException
+[TransactionInterceptor] - Invoking rollback for transaction on x.y.service.FooService.insertFoo due to throwable [java.lang.UnsupportedOperationException]
+
+<span class="hl-comment">&lt;!-- and the transaction is rolled back (by default, RuntimeException instances cause rollback) --&gt;</span>
+[DataSourceTransactionManager] - Rolling back JDBC transaction on Connection [org.apache.commons.dbcp.PoolableConnection@a53de4]
+[DataSourceTransactionManager] - Releasing JDBC Connection after transaction
+[DataSourceUtils] - Returning JDBC Connection to DataSource
+
+Exception in thread "main" java.lang.UnsupportedOperationException at x.y.service.DefaultFooService.insertFoo(DefaultFooService.java:14)
+<span class="hl-comment">&lt;!-- AOP infrastructure stack trace elements removed for clarity --&gt;</span>
+at $Proxy0.insertFoo(Unknown Source)
+at Boot.main(Boot.java:11)</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-rolling-back" href="#transaction-declarative-rolling-back"></a>12.5.3&nbsp;Rolling back a declarative transaction</h3></div></div></div>
+
+<p>The previous section outlined the basics of how to specify transactional settings for
+classes, typically service layer classes, declaratively in your application. This
+section describes how you can control the rollback of transactions in a simple
+declarative fashion.</p>
+<p>The recommended way to indicate to the Spring Framework&#8217;s transaction infrastructure
+that a transaction&#8217;s work is to be rolled back is to throw an <code class="literal">Exception</code> from code that
+is currently executing in the context of a transaction. The Spring Framework&#8217;s
+transaction infrastructure code will catch any unhandled <code class="literal">Exception</code> as it bubbles up
+the call stack, and make a determination whether to mark the transaction for rollback.</p>
+<p>In its default configuration, the Spring Framework&#8217;s transaction infrastructure code
+<span class="emphasis"><em>only</em></span> marks a transaction for rollback in the case of runtime, unchecked exceptions;
+that is, when the thrown exception is an instance or subclass of <code class="literal">RuntimeException</code>. (
+<code class="literal">Error</code>s will also - by default - result in a rollback). Checked exceptions that are
+thrown from a transactional method do <span class="emphasis"><em>not</em></span> result in rollback in the default
+configuration.</p>
+<p>You can configure exactly which <code class="literal">Exception</code> types mark a transaction for rollback,
+including checked exceptions. The following XML snippet demonstrates how you configure
+rollback for a checked, application-specific <code class="literal">Exception</code> type.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">transaction-manager</span>=<span class="hl-value">"txManager"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"get*"</span> <span class="hl-attribute">read-only</span>=<span class="hl-value">"true"</span> <span class="hl-attribute">rollback-for</span>=<span class="hl-value">"NoProductInStockException"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+<span class="hl-tag">&lt;/tx:advice&gt;</span></pre>
+
+<p>You can also specify <span class="emphasis"><em>no rollback rules</em></span>, if you do <span class="emphasis"><em>not</em></span> want a transaction rolled
+back when an exception is thrown. The following example tells the Spring Framework&#8217;s
+transaction infrastructure to commit the attendant transaction even in the face of an
+unhandled <code class="literal">InstrumentNotFoundException</code>.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"updateStock"</span> <span class="hl-attribute">no-rollback-for</span>=<span class="hl-value">"InstrumentNotFoundException"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+<span class="hl-tag">&lt;/tx:advice&gt;</span></pre>
+
+<p>When the Spring Framework&#8217;s transaction infrastructure catches an exception and is
+consults configured rollback rules to determine whether to mark the transaction for
+rollback, the <span class="emphasis"><em>strongest</em></span> matching rule wins. So in the case of the following
+configuration, any exception other than an <code class="literal">InstrumentNotFoundException</code> results in a
+rollback of the attendant transaction.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span> <span class="hl-attribute">rollback-for</span>=<span class="hl-value">"Throwable"</span> <span class="hl-attribute">no-rollback-for</span>=<span class="hl-value">"InstrumentNotFoundException"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+<span class="hl-tag">&lt;/tx:advice&gt;</span></pre>
+
+<p>You can also indicate a required rollback <span class="emphasis"><em>programmatically</em></span>. Although very simple,
+this process is quite invasive, and tightly couples your code to the Spring Framework&#8217;s
+transaction infrastructure:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">void</span> resolvePosition() {
+    <span class="hl-keyword">try</span> {
+        <span class="hl-comment">// some business logic...</span>
+    } <span class="hl-keyword">catch</span> (NoProductInStockException ex) {
+        <span class="hl-comment">// trigger rollback programmatically</span>
+        TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
+    }
+}</pre>
+
+<p>You are strongly encouraged to use the declarative approach to rollback if at all
+possible. Programmatic rollback is available should you absolutely need it, but its
+usage flies in the face of achieving a clean POJO-based architecture.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-diff-tx" href="#transaction-declarative-diff-tx"></a>12.5.4&nbsp;Configuring different transactional semantics for different beans</h3></div></div></div>
+
+<p>Consider the scenario where you have a number of service layer objects, and you want to
+apply a <span class="emphasis"><em>totally different</em></span> transactional configuration to each of them. You do this
+by defining distinct <code class="literal">&lt;aop:advisor/&gt;</code> elements with differing <code class="literal">pointcut</code> and
+<code class="literal">advice-ref</code> attribute values.</p>
+<p>As a point of comparison, first assume that all of your service layer classes are
+defined in a root <code class="literal">x.y.service</code> package. To make all beans that are instances of classes
+defined in that package (or in subpackages) and that have names ending in <code class="literal">Service</code> have
+the default transactional configuration, you would write the following:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;aop:config&gt;</span>
+
+        <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serviceOperation"</span>
+                <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y.service..*Service.*(..))"</span><span class="hl-tag">/&gt;</span>
+
+        <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"serviceOperation"</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"txAdvice"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;/aop:config&gt;</span>
+
+    <span class="hl-comment">&lt;!-- these two beans will be transactional... --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"barService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.extras.SimpleBarService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- ... and these two beans won't --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"anotherService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.xyz.SomeService"</span><span class="hl-tag">/&gt;</span> <span class="hl-comment">&lt;!-- (not in the right package) --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"barManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.SimpleBarManager"</span><span class="hl-tag">/&gt;</span> <span class="hl-comment">&lt;!-- (doesn't end in 'Service') --&gt;</span>
+
+    <span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;tx:attributes&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"get*"</span> <span class="hl-attribute">read-only</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;/tx:advice&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other transaction infrastructure beans such as a PlatformTransactionManager omitted... --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The following example shows how to configure two distinct beans with totally different
+transactional settings.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;aop:config&gt;</span>
+
+        <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"defaultServiceOperation"</span>
+                <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y.service.*Service.*(..))"</span><span class="hl-tag">/&gt;</span>
+
+        <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"noTxServiceOperation"</span>
+                <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y.service.ddl.DefaultDdlManager.*(..))"</span><span class="hl-tag">/&gt;</span>
+
+        <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"defaultServiceOperation"</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"defaultTxAdvice"</span><span class="hl-tag">/&gt;</span>
+
+        <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"noTxServiceOperation"</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"noTxAdvice"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;/aop:config&gt;</span>
+
+    <span class="hl-comment">&lt;!-- this bean will be transactional (see the 'defaultServiceOperation' pointcut) --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- this bean will also be transactional, but with totally different transactional settings --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"anotherFooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.ddl.DefaultDdlManager"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"defaultTxAdvice"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;tx:attributes&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"get*"</span> <span class="hl-attribute">read-only</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;/tx:advice&gt;</span>
+
+    <span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"noTxAdvice"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;tx:attributes&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span> <span class="hl-attribute">propagation</span>=<span class="hl-value">"NEVER"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;/tx:advice&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other transaction infrastructure beans such as a PlatformTransactionManager omitted... --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-txadvice-settings" href="#transaction-declarative-txadvice-settings"></a>12.5.5&nbsp;&lt;tx:advice/&gt; settings</h3></div></div></div>
+
+<p>This section summarizes the various transactional settings that can be specified using
+the <code class="literal">&lt;tx:advice/&gt;</code> tag. The default <code class="literal">&lt;tx:advice/&gt;</code> settings are:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="transaction.html#tx-propagation" title="12.5.7&nbsp;Transaction propagation">Propagation setting</a> is <code class="literal">REQUIRED.</code>
+</li><li class="listitem">
+Isolation level is <code class="literal">DEFAULT.</code>
+</li><li class="listitem">
+Transaction is read/write.
+</li><li class="listitem">
+Transaction timeout defaults to the default timeout of the underlying transaction
+system, or none if timeouts are not supported.
+</li><li class="listitem">
+Any <code class="literal">RuntimeException</code> triggers rollback, and any checked <code class="literal">Exception</code> does not.
+</li></ul></div>
+
+<p>You can change these default settings; the various attributes of the <code class="literal">&lt;tx:method/&gt;</code> tags
+that are nested within <code class="literal">&lt;tx:advice/&gt;</code> and <code class="literal">&lt;tx:attributes/&gt;</code> tags are summarized below:</p>
+<div class="table"><a name="tx-method-settings" href="#tx-method-settings"></a><p class="title"><b>Table&nbsp;12.1.&nbsp;&lt;tx:method/&gt; settings</b></p><div class="table-contents">
+
+  <table summary="<tx:method/&gt; settings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"><col class="col_4"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Required?</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Default</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">name</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Yes</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Method name(s) with which the transaction attributes are to be associated. The
+  wildcard (*) character can be used to associate the same transaction attribute
+  settings with a number of methods; for example, <code class="literal">get*</code>, <code class="literal">handle*</code>, <code class="literal">on*Event</code>, and so
+  forth.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">propagation</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>REQUIRED</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Transaction propagation behavior.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">isolation</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>DEFAULT</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Transaction isolation level.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">timeout</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>-1</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Transaction timeout value (in seconds).</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">read-only</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>false</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Is this transaction read-only?</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">rollback-for</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">Exception(s)</code> that trigger rollback; comma-delimited. For example,
+  <code class="literal">com.foo.MyBusinessException,ServletException.</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">no-rollback-for</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>No</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="" align="left" valign="top"><p><code class="literal">Exception(s)</code> that do <span class="emphasis"><em>not</em></span> trigger rollback; comma-delimited. For example,
+  <code class="literal">com.foo.MyBusinessException,ServletException.</code></p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-annotations" href="#transaction-declarative-annotations"></a>12.5.6&nbsp;Using @Transactional</h3></div></div></div>
+
+<p>In addition to the XML-based declarative approach to transaction configuration, you can
+use an annotation-based approach. Declaring transaction semantics directly in the Java
+source code puts the declarations much closer to the affected code. There is not much
+danger of undue coupling, because code that is meant to be used transactionally is
+almost always deployed that way anyway.</p>
+<p>The ease-of-use afforded by the use of the <code class="literal">@Transactional</code> annotation is best
+illustrated with an example, which is explained in the text that follows. Consider the
+following class definition:</p>
+<pre class="programlisting"><span class="hl-comment">// the service class that we want to make transactional</span>
+<span class="strong"><strong>@Transactional</strong></span>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> DefaultFooService <span class="hl-keyword">implements</span> FooService {
+
+    Foo getFoo(String fooName);
+
+    Foo getFoo(String fooName, String barName);
+
+    <span class="hl-keyword">void</span> insertFoo(Foo foo);
+
+    <span class="hl-keyword">void</span> updateFoo(Foo foo);
+}</pre>
+
+<p>When the above POJO is defined as a bean in a Spring IoC container, the bean instance
+can be made transactional by adding merely <span class="emphasis"><em>one</em></span> line of XML configuration:</p>
+<pre class="programlisting"><span class="hl-comment">&lt;!-- from the file </span><span class="emphasis"><em>context.xml</em></span> --&gt;
+<span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-comment">&lt;!-- this is the service object that we want to make transactional --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- enable the configuration of transactional behavior based on annotations --&gt;</span>
+    <span class="emphasis"><em>&lt;tx:annotation-driven transaction-manager="txManager"/&gt;</em></span><span class="hl-comment">&lt;!-- a PlatformTransactionManager is still required --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- (this dependency is defined somewhere else) --&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other &lt;bean/&gt; definitions here --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>You can omit the <code class="literal">transaction-manager</code> attribute in the <code class="literal">&lt;tx:annotation-driven/&gt;</code> tag if
+the bean name of the <code class="literal">PlatformTransactionManager</code> that you want to wire in has the name
+<code class="literal">transactionManager</code>. If the <code class="literal">PlatformTransactionManager</code> bean that you want to
+dependency-inject has any other name, then you have to use the <code class="literal">transaction-manager</code>
+attribute explicitly, as in the preceding example.</p>
+</td></tr></table></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The <code class="literal">@EnableTransactionManagement</code> annotation provides equivalent support if you are
+using Java based configuration. Simply add the annotation to a <code class="literal">@Configuration</code> class.
+See the javadocs for full details.</p>
+</td></tr></table></div>
+
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Method visibility and @Transactional</b></p></div></div></div>
+
+<p>When using proxies, you should apply the <code class="literal">@Transactional</code> annotation only to methods
+with <span class="emphasis"><em>public</em></span> visibility. If you do annotate protected, private or package-visible
+methods with the <code class="literal">@Transactional</code> annotation, no error is raised, but the annotated
+method does not exhibit the configured transactional settings. Consider the use of
+AspectJ (see below) if you need to annotate non-public methods.</p>
+</div>
+
+<p>You can place the <code class="literal">@Transactional</code> annotation before an interface definition, a method
+on an interface, a class definition, or a <span class="emphasis"><em>public</em></span> method on a class. However, the
+mere presence of the <code class="literal">@Transactional</code> annotation is not enough to activate the
+transactional behavior. The <code class="literal">@Transactional</code> annotation is simply metadata that can be
+consumed by some runtime infrastructure that is <code class="literal">@Transactional</code>-aware and that can use
+the metadata to configure the appropriate beans with transactional behavior. In the
+preceding example, the <code class="literal">&lt;tx:annotation-driven/&gt;</code> element <span class="emphasis"><em>switches on</em></span> the
+transactional behavior.</p>
+<div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
+<p>Spring recommends that you only annotate concrete classes (and methods of concrete
+classes) with the <code class="literal">@Transactional</code> annotation, as opposed to annotating interfaces. You
+certainly can place the <code class="literal">@Transactional</code> annotation on an interface (or an interface
+method), but this works only as you would expect it to if you are using interface-based
+proxies. The fact that Java annotations are <span class="emphasis"><em>not inherited from interfaces</em></span> means that
+if you are using class-based proxies ( <code class="literal">proxy-target-class="true"</code>) or the weaving-based
+aspect ( <code class="literal">mode="aspectj"</code>), then the transaction settings are not recognized by the
+proxying and weaving infrastructure, and the object will not be wrapped in a
+transactional proxy, which would be decidedly <span class="emphasis"><em>bad</em></span>.</p>
+</td></tr></table></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>In proxy mode (which is the default), only external method calls coming in through the
+proxy are intercepted. This means that self-invocation, in effect, a method within the
+target object calling another method of the target object, will not lead to an actual
+transaction at runtime even if the invoked method is marked with <code class="literal">@Transactional</code>.</p>
+</td></tr></table></div>
+
+<p>Consider the use of AspectJ mode (see mode attribute in table below) if you expect
+self-invocations to be wrapped with transactions as well. In this case, there will not
+be a proxy in the first place; instead, the target class will be weaved (that is, its
+byte code will be modified) in order to turn <code class="literal">@Transactional</code> into runtime behavior on
+any kind of method.</p>
+<div class="table"><a name="tx-annotation-driven-settings" href="#tx-annotation-driven-settings"></a><p class="title"><b>Table&nbsp;12.2.&nbsp;Annotation driven transaction settings</b></p><div class="table-contents">
+
+  <table summary="Annotation driven transaction settings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"><col class="col_4"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">XML Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Default</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">transaction-manager</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>N/A (See <code class="literal">TransactionManagementConfigurer</code> javadocs)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>transactionManager</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of transaction manager to use. Only required if the name of the transaction
+  manager is not <code class="literal">transactionManager</code>, as in the example above.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">mode</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">mode</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>proxy</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The default mode "proxy" processes annotated beans to be proxied using Spring&#8217;s AOP
+  framework (following proxy semantics, as discussed above, applying to method calls
+  coming in through the proxy only). The alternative mode "aspectj" instead weaves the
+  affected classes with Spring&#8217;s AspectJ transaction aspect, modifying the target class
+  byte code to apply to any kind of method call. AspectJ weaving requires
+  spring-aspects.jar in the classpath as well as load-time weaving (or compile-time
+  weaving) enabled. (See <a class="xref" href="aop.html#aop-aj-ltw-spring" title="Spring configuration">the section called &#8220;Spring configuration&#8221;</a> for details on how to set up load-time
+  weaving.)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">proxy-target-class</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">proxyTargetClass</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>false</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Applies to proxy mode only. Controls what type of transactional proxies are created
+  for classes annotated with the <code class="literal">@Transactional</code> annotation. If the
+  <code class="literal">proxy-target-class</code> attribute is set to <code class="literal">true</code>, then class-based proxies are created.
+  If <code class="literal">proxy-target-class</code> is <code class="literal">false</code> or if the attribute is omitted, then standard JDK
+  interface-based proxies are created. (See <a class="xref" href="aop.html#aop-proxying" title="9.6&nbsp;Proxying mechanisms">Section&nbsp;9.6, &#8220;Proxying mechanisms&#8221;</a> for a detailed examination
+  of the different proxy types.)</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">order</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">order</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Ordered.LOWEST_PRECEDENCE</p></td><td style="" align="left" valign="top"><p>Defines the order of the transaction advice that is applied to beans annotated with
+  <code class="literal">@Transactional</code>. (For more information about the rules related to ordering of AOP
+  advice, see <a class="xref" href="aop.html#aop-ataspectj-advice-ordering" title="Advice ordering">the section called &#8220;Advice ordering&#8221;</a>.) No specified ordering means that the
+  AOP subsystem determines the order of the advice.</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The <code class="literal">proxy-target-class</code> attribute controls what type of transactional proxies are
+created for classes annotated with the <code class="literal">@Transactional</code> annotation. If
+<code class="literal">proxy-target-class</code> is set to <code class="literal">true</code>, class-based proxies are created. If
+<code class="literal">proxy-target-class</code> is <code class="literal">false</code> or if the attribute is omitted, standard JDK
+interface-based proxies are created. (See <a class="xref" href="aop.html#aop-proxying" title="9.6&nbsp;Proxying mechanisms">Section&nbsp;9.6, &#8220;Proxying mechanisms&#8221;</a> for a discussion of the
+different proxy types.)</p>
+</td></tr></table></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p><code class="literal">@EnableTransactionManagement</code> and <code class="literal">&lt;tx:annotation-driven/&gt;</code> only looks for
+<code class="literal">@Transactional</code> on beans in the same application context they are defined in. This
+means that, if you put annotation driven configuration in a <code class="literal">WebApplicationContext</code> for
+a <code class="literal">DispatcherServlet</code>, it only checks for <code class="literal">@Transactional</code> beans in your controllers,
+and not your services. See <a class="xref" href="mvc.html#mvc-servlet" title="17.2&nbsp;The DispatcherServlet">Section&nbsp;17.2, &#8220;The DispatcherServlet&#8221;</a> for more information.</p>
+</td></tr></table></div>
+
+<p>The most derived location takes precedence when evaluating the transactional settings
+for a method. In the case of the following example, the <code class="literal">DefaultFooService</code> class is
+annotated at the class level with the settings for a read-only transaction, but the
+<code class="literal">@Transactional</code> annotation on the <code class="literal">updateFoo(Foo)</code> method in the same class takes
+precedence over the transactional settings defined at the class level.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Transactional(readOnly = true)</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> DefaultFooService <span class="hl-keyword">implements</span> FooService {
+
+    <span class="hl-keyword">public</span> Foo getFoo(String fooName) {
+        <span class="hl-comment">// do something</span>
+    }
+
+    <span class="hl-comment">// these settings have precedence for this method</span>
+    <em><span class="hl-annotation" style="color: gray">@Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> updateFoo(Foo foo) {
+        <span class="hl-comment">// do something</span>
+    }
+}</pre>
+
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="transaction-declarative-attransactional-settings" href="#transaction-declarative-attransactional-settings"></a>@Transactional settings</h4></div></div></div>
+
+<p>The <code class="literal">@Transactional</code> annotation is metadata that specifies that an interface, class, or
+method must have transactional semantics; for example, "<span class="emphasis"><em>start a brand new read-only
+transaction when this method is invoked, suspending any existing transaction</em></span>". The
+default <code class="literal">@Transactional</code> settings are as follows:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Propagation setting is <code class="literal">PROPAGATION_REQUIRED.</code>
+</li><li class="listitem">
+Isolation level is <code class="literal">ISOLATION_DEFAULT.</code>
+</li><li class="listitem">
+Transaction is read/write.
+</li><li class="listitem">
+Transaction timeout defaults to the default timeout of the underlying transaction
+system, or to none if timeouts are not supported.
+</li><li class="listitem">
+Any <code class="literal">RuntimeException</code> triggers rollback, and any checked <code class="literal">Exception</code> does not.
+</li></ul></div>
+
+<p>These default settings can be changed; the various properties of the <code class="literal">@Transactional</code>
+annotation are summarized in the following table:</p>
+<div class="table"><a name="tx-attransactional-properties" href="#tx-attransactional-properties"></a><p class="title"><b>Table&nbsp;12.3.&nbsp;@</b></p><div class="table-contents">
+
+  <table summary="@" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Property</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Type</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="transaction.html#tx-multiple-tx-mgrs-with-attransactional" title="Multiple Transaction Managers with @Transactional">value</a></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>String</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional qualifier specifying the transaction manager to be used.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="transaction.html#tx-propagation" title="12.5.7&nbsp;Transaction propagation">propagation</a></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>enum: <code class="literal">Propagation</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional propagation setting.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">isolation</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>enum: <code class="literal">Isolation</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional isolation level.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">readOnly</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>boolean</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Read/write vs. read-only transaction</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">timeout</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>int (in seconds granularity)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Transaction timeout.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">rollbackFor</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Array of <code class="literal">Class</code> objects, which must be derived from <code class="literal">Throwable.</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional array of exception classes that <span class="emphasis"><em>must</em></span> cause rollback.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">rollbackForClassName</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Array of class names. Classes must be derived from <code class="literal">Throwable.</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional array of names of exception classes that <span class="emphasis"><em>must</em></span> cause rollback.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">noRollbackFor</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Array of <code class="literal">Class</code> objects, which must be derived from <code class="literal">Throwable.</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Optional array of exception classes that <span class="emphasis"><em>must not</em></span> cause rollback.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">noRollbackForClassName</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Array of <code class="literal">String</code> class names, which must be derived from <code class="literal">Throwable.</code></p></td><td style="" align="left" valign="top"><p>Optional array of names of exception classes that <span class="emphasis"><em>must not</em></span> cause rollback.</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>Currently you cannot have explicit control over the name of a transaction, where <span class="emphasis"><em>name</em></span>
+means the transaction name that will be shown in a transaction monitor, if applicable
+(for example, WebLogic&#8217;s transaction monitor), and in logging output. For declarative
+transactions, the transaction name is always the fully-qualified class name + "."
++ method name of the transactionally-advised class. For example, if the
+<code class="literal">handlePayment(..)</code> method of the <code class="literal">BusinessService</code> class started a transaction, the
+name of the transaction would be: <code class="literal">com.foo.BusinessService.handlePayment</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-multiple-tx-mgrs-with-attransactional" href="#tx-multiple-tx-mgrs-with-attransactional"></a>Multiple Transaction Managers with @Transactional</h4></div></div></div>
+
+<p>Most Spring applications only need a single transaction manager, but there may be
+situations where you want multiple independent transaction managers in a single
+application. The value attribute of the <code class="literal">@Transactional</code> annotation can be used to
+optionally specify the identity of the <code class="literal">PlatformTransactionManager</code> to be used. This can
+either be the bean name or the qualifier value of the transaction manager bean. For
+example, using the qualifier notation, the following Java code</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TransactionalService {
+
+    <em><span class="hl-annotation" style="color: gray">@Transactional("order")</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setSomething(String name) { ... }
+
+    <em><span class="hl-annotation" style="color: gray">@Transactional("account")</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() { ... }
+}</pre>
+
+<p>could be combined with the following transaction manager bean declarations in the
+application context.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;tx:annotation-driven/&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"transactionManager1"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+        ...
+        <span class="hl-tag">&lt;qualifier</span> <span class="hl-attribute">value</span>=<span class="hl-value">"order"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"transactionManager2"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+        ...
+        <span class="hl-tag">&lt;qualifier</span> <span class="hl-attribute">value</span>=<span class="hl-value">"account"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>In this case, the two methods on <code class="literal">TransactionalService</code> will run under separate
+transaction managers, differentiated by the "order" and "account" qualifiers. The
+default <code class="literal">&lt;tx:annotation-driven&gt;</code> target bean name <code class="literal">transactionManager</code> will still be
+used if no specifically qualified PlatformTransactionManager bean is found.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-custom-attributes" href="#tx-custom-attributes"></a>Custom shortcut annotations</h4></div></div></div>
+
+<p>If you find you are repeatedly using the same attributes with <code class="literal">@Transactional</code> on many
+different methods, then <a class="link" href="beans.html#beans-meta-annotations" title="5.10.2&nbsp;Meta-annotations">Spring&#8217;s meta-annotation support</a> allows
+you to define custom shortcut annotations for your specific use cases. For example,
+defining the following annotations</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Target({ElementType.METHOD, ElementType.TYPE})</span></em>
+<em><span class="hl-annotation" style="color: gray">@Retention(RetentionPolicy.RUNTIME)</span></em>
+<em><span class="hl-annotation" style="color: gray">@Transactional("order")</span></em>
+<span class="hl-keyword">public</span> <em><span class="hl-annotation" style="color: gray">@interface</span></em> OrderTx {
+}
+
+<em><span class="hl-annotation" style="color: gray">@Target({ElementType.METHOD, ElementType.TYPE})</span></em>
+<em><span class="hl-annotation" style="color: gray">@Retention(RetentionPolicy.RUNTIME)</span></em>
+<em><span class="hl-annotation" style="color: gray">@Transactional("account")</span></em>
+<span class="hl-keyword">public</span> <em><span class="hl-annotation" style="color: gray">@interface</span></em> AccountTx {
+}</pre>
+
+<p>allows us to write the example from the previous section as</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TransactionalService {
+
+    <em><span class="hl-annotation" style="color: gray">@OrderTx</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setSomething(String name) { ... }
+
+    <em><span class="hl-annotation" style="color: gray">@AccountTx</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doSomething() { ... }
+}</pre>
+
+<p>Here we have used the syntax to define the transaction manager qualifier, but could also
+have included propagation behavior, rollback rules, timeouts etc.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-propagation" href="#tx-propagation"></a>12.5.7&nbsp;Transaction propagation</h3></div></div></div>
+
+<p>This section describes some semantics of transaction propagation in Spring. Please note
+that this section is not an introduction to transaction propagation proper; rather it
+details some of the semantics regarding transaction propagation in Spring.</p>
+<p>In Spring-managed transactions, be aware of the difference between <span class="emphasis"><em>physical</em></span> and
+<span class="emphasis"><em>logical</em></span> transactions, and how the propagation setting applies to this difference.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-propagation-required" href="#tx-propagation-required"></a>Required</h4></div></div></div>
+
+<div class="figure"><a name="d5e11621" href="#d5e11621"></a><p class="title"><b>Figure&nbsp;12.2.&nbsp;</b></p><div class="figure-contents">
+  <div class="mediaobject"><img src="images/tx_prop_required.png" alt="tx prop required"></div>
+</div></div><br class="figure-break">
+
+<p>PROPAGATION_REQUIRED</p>
+<p>When the propagation setting is <code class="literal">PROPAGATION_REQUIRED</code>, a <span class="emphasis"><em>logical</em></span> transaction scope
+is created for each method upon which the setting is applied. Each such logical
+transaction scope can determine rollback-only status individually, with an outer
+transaction scope being logically independent from the inner transaction scope. Of
+course, in case of standard <code class="literal">PROPAGATION_REQUIRED</code> behavior, all these scopes will be
+mapped to the same physical transaction. So a rollback-only marker set in the inner
+transaction scope does affect the outer transaction&#8217;s chance to actually commit (as you
+would expect it to).</p>
+<p>However, in the case where an inner transaction scope sets the rollback-only marker, the
+outer transaction has not decided on the rollback itself, and so the rollback (silently
+triggered by the inner transaction scope) is unexpected. A corresponding
+<code class="literal">UnexpectedRollbackException</code> is thrown at that point. This is <span class="emphasis"><em>expected behavior</em></span> so
+that the caller of a transaction can never be misled to assume that a commit was
+performed when it really was not. So if an inner transaction (of which the outer caller
+is not aware) silently marks a transaction as rollback-only, the outer caller still
+calls commit. The outer caller needs to receive an <code class="literal">UnexpectedRollbackException</code> to
+indicate clearly that a rollback was performed instead.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-propagation-requires_new" href="#tx-propagation-requires_new"></a>RequiresNew</h4></div></div></div>
+
+<div class="figure"><a name="d5e11638" href="#d5e11638"></a><p class="title"><b>Figure&nbsp;12.3.&nbsp;</b></p><div class="figure-contents">
+  <div class="mediaobject"><img src="images/tx_prop_requires_new.png" alt="tx prop requires new"></div>
+</div></div><br class="figure-break">
+
+<p>PROPAGATION_REQUIRES_NEW</p>
+<p><code class="literal">PROPAGATION_REQUIRES_NEW</code>, in contrast to <code class="literal">PROPAGATION_REQUIRED</code>, uses a <span class="emphasis"><em>completely</em></span>
+independent transaction for each affected transaction scope. In that case, the
+underlying physical transactions are different and hence can commit or roll back
+independently, with an outer transaction not affected by an inner transaction&#8217;s rollback
+status.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-propagation-nested" href="#tx-propagation-nested"></a>Nested</h4></div></div></div>
+
+<p><code class="literal">PROPAGATION_NESTED</code> uses a <span class="emphasis"><em>single</em></span> physical transaction with multiple savepoints
+that it can roll back to. Such partial rollbacks allow an inner transaction scope to
+trigger a rollback <span class="emphasis"><em>for its scope</em></span>, with the outer transaction being able to continue
+the physical transaction despite some operations having been rolled back. This setting
+is typically mapped onto JDBC savepoints, so will only work with JDBC resource
+transactions. See Spring&#8217;s <code class="literal">DataSourceTransactionManager</code>.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-applying-more-than-just-tx-advice" href="#transaction-declarative-applying-more-than-just-tx-advice"></a>12.5.8&nbsp;Advising transactional operations</h3></div></div></div>
+
+<p>Suppose you want to execute <span class="emphasis"><em>both</em></span> transactional <span class="emphasis"><em>and</em></span> some basic profiling advice.
+How do you effect this in the context of <code class="literal">&lt;tx:annotation-driven/&gt;</code>?</p>
+<p>When you invoke the <code class="literal">updateFoo(Foo)</code> method, you want to see the following actions:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Configured profiling aspect starts up.
+</li><li class="listitem">
+Transactional advice executes.
+</li><li class="listitem">
+Method on the advised object executes.
+</li><li class="listitem">
+Transaction commits.
+</li><li class="listitem">
+Profiling aspect reports exact duration of the whole transactional method invocation.
+</li></ul></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>This chapter is not concerned with explaining AOP in any great detail (except as it
+applies to transactions). See <a class="xref" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">Chapter&nbsp;9, <i>Aspect Oriented Programming with Spring</i></a> for detailed coverage of the following AOP
+configuration and AOP in general.</p>
+</td></tr></table></div>
+
+<p>Here is the code for a simple profiling aspect discussed above. The ordering of advice
+is controlled through the <code class="literal">Ordered</code> interface. For full details on advice ordering, see
+<a class="xref" href="aop.html#aop-ataspectj-advice-ordering" title="Advice ordering">the section called &#8220;Advice ordering&#8221;</a>.
+.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> x.y;
+
+<span class="hl-keyword">import</span> org.aspectj.lang.ProceedingJoinPoint;
+<span class="hl-keyword">import</span> org.springframework.util.StopWatch;
+<span class="hl-keyword">import</span> org.springframework.core.Ordered;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleProfiler <span class="hl-keyword">implements</span> Ordered {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> order;
+
+    <span class="hl-comment">// allows us to control the ordering of advice</span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getOrder() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.order;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setOrder(<span class="hl-keyword">int</span> order) {
+        <span class="hl-keyword">this</span>.order = order;
+    }
+
+    <span class="hl-comment">// this method </span><span class="strong"><strong>is</strong></span> the around advice
+    <span class="hl-keyword">public</span> Object profile(ProceedingJoinPoint call) <span class="hl-keyword">throws</span> Throwable {
+        Object returnValue;
+        StopWatch clock = <span class="hl-keyword">new</span> StopWatch(getClass().getName());
+        <span class="hl-keyword">try</span> {
+            clock.start(call.toShortString());
+            returnValue = call.proceed();
+        } <span class="hl-keyword">finally</span> {
+            clock.stop();
+            System.out.println(clock.prettyPrint());
+        }
+        <span class="hl-keyword">return</span> returnValue;
+    }
+}</pre>
+
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- this is the aspect --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"profiler"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.SimpleProfiler"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- execute before the transactional advice (hence the lower order number) --&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"order"</span> <span class="hl-attribute">__value</span>=<span class="hl-value">"1"</span><span class="hl-attribute">__/&gt;</span>
+    <span class="hl-attribute">&lt;/bean&gt;</span>
+
+    <span class="hl-attribute">&lt;tx:annotation-driven</span> <span class="hl-attribute">transaction-manager</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">__order</span>=<span class="hl-value">"200"</span><span class="hl-attribute">__/&gt;</span>
+
+    <span class="hl-attribute">&lt;aop:config&gt;</span>
+            <span class="hl-attribute">&lt;!--</span> <span class="hl-attribute">this</span> <span class="hl-attribute">advice</span> <span class="hl-attribute">will</span> <span class="hl-attribute">execute</span> <span class="hl-attribute">around</span> <span class="hl-attribute">the</span> <span class="hl-attribute">transactional</span> <span class="hl-attribute">advice</span> <span class="hl-attribute">--&gt;</span>
+            <span class="hl-attribute">&lt;aop:aspect</span> <span class="hl-attribute">id</span>=<span class="hl-value">"profilingAspect"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"profiler"</span><span class="hl-tag">&gt;</span>
+                <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serviceMethodWithReturnValue"</span>
+                        <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(!void x.y..*Service.*(..))"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;aop:around</span> <span class="hl-attribute">method</span>=<span class="hl-value">"profile"</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"serviceMethodWithReturnValue"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/aop:aspect&gt;</span>
+    <span class="hl-tag">&lt;/aop:config&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"driverClassName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"oracle.jdbc.driver.OracleDriver"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"url"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"jdbc:oracle:thin:@rj-t42:1521:elvis"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"username"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"scott"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"password"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"tiger"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txManager"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jdbc.datasource.DataSourceTransactionManager"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The result of the above configuration is a <code class="literal">fooService</code> bean that has profiling and
+transactional aspects applied to it <span class="emphasis"><em>in the desired order</em></span>. You configure any number
+of additional aspects in similar fashion.</p>
+<p>The following example effects the same setup as above, but uses the purely XML
+declarative approach.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:aop</span>=<span class="hl-value">"http://www.springframework.org/schema/aop"</span>
+    <span class="hl-attribute">xmlns:tx</span>=<span class="hl-value">"http://www.springframework.org/schema/tx"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/tx
+        http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"fooService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultFooService"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- the profiling advice --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"profiler"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.SimpleProfiler"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- execute before the transactional advice (hence the lower order number) --&gt;</span>
+        __<span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"order"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"1__"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;aop:config&gt;</span>
+        <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"entryPointMethod"</span> <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(* x.y..*Service.*(..))"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-comment">&lt;!-- will execute after the profiling advice (c.f. the order attribute) --&gt;</span>
+
+        <span class="hl-tag">&lt;aop:advisor</span> <span class="hl-attribute">advice-ref</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"entryPointMethod"</span> <span class="hl-attribute">__order</span>=<span class="hl-value">"2__"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-comment">&lt;!-- order value is higher than the profiling aspect --&gt;</span>
+
+        <span class="hl-tag">&lt;aop:aspect</span> <span class="hl-attribute">id</span>=<span class="hl-value">"profilingAspect"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"profiler"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;aop:pointcut</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serviceMethodWithReturnValue"</span>
+                    <span class="hl-attribute">expression</span>=<span class="hl-value">"execution(!void x.y..*Service.*(..))"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;aop:around</span> <span class="hl-attribute">method</span>=<span class="hl-value">"profile"</span> <span class="hl-attribute">pointcut-ref</span>=<span class="hl-value">"serviceMethodWithReturnValue"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/aop:aspect&gt;</span>
+
+    <span class="hl-tag">&lt;/aop:config&gt;</span>
+
+    <span class="hl-tag">&lt;tx:advice</span> <span class="hl-attribute">id</span>=<span class="hl-value">"txAdvice"</span> <span class="hl-attribute">transaction-manager</span>=<span class="hl-value">"txManager"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;tx:attributes&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"get*"</span> <span class="hl-attribute">read-only</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;tx:method</span> <span class="hl-attribute">name</span>=<span class="hl-value">"*"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/tx:attributes&gt;</span>
+    <span class="hl-tag">&lt;/tx:advice&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other &lt;bean/&gt; definitions such as a DataSource and a PlatformTransactionManager here --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The result of the above configuration will be a <code class="literal">fooService</code> bean that has profiling and
+transactional aspects applied to it <span class="emphasis"><em>in that order</em></span>. If you want the profiling advice
+to execute <span class="emphasis"><em>after</em></span> the transactional advice on the way in, and <span class="emphasis"><em>before</em></span> the
+transactional advice on the way out, then you simply swap the value of the profiling
+aspect bean&#8217;s <code class="literal">order</code> property so that it is higher than the transactional advice&#8217;s
+order value.</p>
+<p>You configure additional aspects in similar fashion.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-declarative-aspectj" href="#transaction-declarative-aspectj"></a>12.5.9&nbsp;Using @Transactional with AspectJ</h3></div></div></div>
+
+<p>It is also possible to use the Spring Framework&#8217;s <code class="literal">@Transactional</code> support outside of a
+Spring container by means of an AspectJ aspect. To do so, you first annotate your
+classes (and optionally your classes' methods) with the <code class="literal">@Transactional</code> annotation, and
+then you link (weave) your application with the
+<code class="literal">org.springframework.transaction.aspectj.AnnotationTransactionAspect</code> defined in the
+<code class="literal">spring-aspects.jar</code> file. The aspect must also be configured with a transaction
+manager. You can of course use the Spring Framework&#8217;s IoC container to take care of
+dependency-injecting the aspect. The simplest way to configure the transaction
+management aspect is to use the <code class="literal">&lt;tx:annotation-driven/&gt;</code> element and specify the <code class="literal">mode</code>
+attribute to <code class="literal">aspectj</code> as described in <a class="xref" href="transaction.html#transaction-declarative-annotations" title="12.5.6&nbsp;Using @Transactional">Section&nbsp;12.5.6, &#8220;Using @Transactional&#8221;</a>. Because
+we&#8217;re focusing here on applications running outside of a Spring container, we&#8217;ll show
+you how to do it programmatically.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Prior to continuing, you may want to read <a class="xref" href="transaction.html#transaction-declarative-annotations" title="12.5.6&nbsp;Using @Transactional">Section&nbsp;12.5.6, &#8220;Using @Transactional&#8221;</a> and
+<a class="xref" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring">Chapter&nbsp;9, <i>Aspect Oriented Programming with Spring</i></a> respectively.</p>
+</td></tr></table></div>
+
+<pre class="programlisting"><span class="hl-comment">// construct an appropriate transaction manager</span>
+DataSourceTransactionManager txManager = <span class="hl-keyword">new</span> DataSourceTransactionManager(getDataSource());
+
+<span class="hl-comment">// configure the AnnotationTransactionAspect to use it; this must be done before executing any transactional methods</span>
+AnnotationTransactionAspect.aspectOf().setTransactionManager(txManager);</pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>When using this aspect, you must annotate the <span class="emphasis"><em>implementation</em></span> class (and/or methods
+within that class), <span class="emphasis"><em>not</em></span> the interface (if any) that the class implements. AspectJ
+follows Java&#8217;s rule that annotations on interfaces are <span class="emphasis"><em>not inherited</em></span>.</p>
+</td></tr></table></div>
+
+<p>The <code class="literal">@Transactional</code> annotation on a class specifies the default transaction semantics
+for the execution of any method in the class.</p>
+<p>The <code class="literal">@Transactional</code> annotation on a method within the class overrides the default
+transaction semantics given by the class annotation (if present). Any method may be
+annotated, regardless of visibility.</p>
+<p>To weave your applications with the <code class="literal">AnnotationTransactionAspect</code> you must either build
+your application with AspectJ (see the
+<a class="ulink" href="http://www.eclipse.org/aspectj/doc/released/devguide/index.html" target="_top">AspectJ Development
+Guide</a>) or use load-time weaving. See <a class="xref" href="aop.html#aop-aj-ltw" title="9.8.4&nbsp;Load-time weaving with AspectJ in the Spring Framework">Section&nbsp;9.8.4, &#8220;Load-time weaving with AspectJ in the Spring Framework&#8221;</a> for a discussion of load-time
+weaving with AspectJ.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-programmatic" href="#transaction-programmatic"></a>12.6&nbsp;Programmatic transaction management</h2></div></div></div>
+
+<p>The Spring Framework provides two means of programmatic transaction management:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Using the <code class="literal">TransactionTemplate</code>.
+</li><li class="listitem">
+Using a <code class="literal">PlatformTransactionManager</code> implementation directly.
+</li></ul></div>
+
+<p>The Spring team generally recommends the <code class="literal">TransactionTemplate</code> for programmatic
+transaction management. The second approach is similar to using the JTA
+<code class="literal">UserTransaction</code> API, although exception handling is less cumbersome.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="tx-prog-template" href="#tx-prog-template"></a>12.6.1&nbsp;Using the TransactionTemplate</h3></div></div></div>
+
+<p>The <code class="literal">TransactionTemplate</code> adopts the same approach as other Spring <span class="emphasis"><em>templates</em></span> such as
+the <code class="literal">JdbcTemplate</code>. It uses a callback approach, to free application code from having to
+do the boilerplate acquisition and release of transactional resources, and results in
+code that is intention driven, in that the code that is written focuses solely on what
+the developer wants to do.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>As you will see in the examples that follow, using the <code class="literal">TransactionTemplate</code> absolutely
+couples you to Spring&#8217;s transaction infrastructure and APIs. Whether or not programmatic
+transaction management is suitable for your development needs is a decision that you
+will have to make yourself.</p>
+</td></tr></table></div>
+
+<p>Application code that must execute in a transactional context, and that will use the
+<code class="literal">TransactionTemplate</code> explicitly, looks like the following. You, as an application
+developer, write a <code class="literal">TransactionCallback</code> implementation (typically expressed as an
+anonymous inner class) that contains the code that you need to execute in the context of
+a transaction. You then pass an instance of your custom <code class="literal">TransactionCallback</code> to the
+<code class="literal">execute(..)</code> method exposed on the <code class="literal">TransactionTemplate</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleService <span class="hl-keyword">implements</span> Service {
+
+    <span class="hl-comment">// single TransactionTemplate shared amongst all methods in this instance</span>
+    <span class="hl-keyword">private</span> <span class="hl-keyword">final</span> TransactionTemplate transactionTemplate;
+
+    <span class="hl-comment">// use constructor-injection to supply the PlatformTransactionManager</span>
+    <span class="hl-keyword">public</span> SimpleService(PlatformTransactionManager transactionManager) {
+        Assert.notNull(transactionManager, <span class="hl-string">"The </span><span class="emphasis"><em>'transactionManager</em></span><span class="hl-string">' argument must not be null.");
+</span>        <span class="hl-keyword">this</span>.transactionTemplate = <span class="hl-keyword">new</span> TransactionTemplate(transactionManager);
+    }
+
+    <span class="hl-keyword">public</span> Object someServiceMethod() {
+        <span class="hl-keyword">return</span> transactionTemplate.execute(<span class="hl-keyword">new</span> TransactionCallback() {
+            <span class="hl-comment">// the code in this method executes in a transactional context</span>
+            <span class="hl-keyword">public</span> Object doInTransaction(TransactionStatus status) {
+                updateOperation1();
+                <span class="hl-keyword">return</span> resultOfUpdateOperation2();
+            }
+        });
+    }
+}</pre>
+
+<p>If there is no return value, use the convenient <code class="literal">TransactionCallbackWithoutResult</code> class
+with an anonymous class as follows:</p>
+<pre class="programlisting">transactionTemplate.execute(<span class="hl-keyword">new</span> <span class="strong"><strong>TransactionCallbackWithoutResult</strong></span>() {
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> doInTransactionWithoutResult(TransactionStatus status) {
+        updateOperation1();
+        updateOperation2();
+    }
+});</pre>
+
+<p>Code within the callback can roll the transaction back by calling the
+<code class="literal">setRollbackOnly()</code> method on the supplied <code class="literal">TransactionStatus</code> object:</p>
+<pre class="programlisting">transactionTemplate.execute(<span class="hl-keyword">new</span> TransactionCallbackWithoutResult() {
+
+    <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> doInTransactionWithoutResult(TransactionStatus status) {
+        <span class="hl-keyword">try</span> {
+            updateOperation1();
+            updateOperation2();
+        } <span class="hl-keyword">catch</span> (SomeBusinessExeption ex) {
+            <span class="strong"><strong>status.setRollbackOnly();</strong></span>
+        }
+    }
+});</pre>
+
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-prog-template-settings" href="#tx-prog-template-settings"></a>Specifying transaction settings</h4></div></div></div>
+
+<p>You can specify transaction settings such as the propagation mode, the isolation level,
+the timeout, and so forth on the <code class="literal">TransactionTemplate</code> either programmatically or in
+configuration. <code class="literal">TransactionTemplate</code> instances by default have the
+<a class="link" href="transaction.html#transaction-declarative-txadvice-settings" title="12.5.5&nbsp;<tx:advice/&gt; settings">default transactional settings</a>. The
+following example shows the programmatic customization of the transactional settings for
+a specific <code class="literal">TransactionTemplate:</code></p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleService <span class="hl-keyword">implements</span> Service {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">final</span> TransactionTemplate transactionTemplate;
+
+    <span class="hl-keyword">public</span> SimpleService(PlatformTransactionManager transactionManager) {
+        Assert.notNull(transactionManager, <span class="hl-string">"The </span><span class="emphasis"><em>'transactionManager</em></span><span class="hl-string">' argument must not be null.");
+</span>        <span class="hl-keyword">this</span>.transactionTemplate = <span class="hl-keyword">new</span> TransactionTemplate(transactionManager);
+
+        <span class="hl-comment">// the transaction settings can be set here explicitly if so desired</span>
+        <span class="hl-keyword">this</span>.transactionTemplate.setIsolationLevel(TransactionDefinition.ISOLATION_READ_UNCOMMITTED);
+        <span class="hl-keyword">this</span>.transactionTemplate.setTimeout(<span class="hl-number">30</span>); <span class="hl-comment">// 30 seconds</span>
+        <span class="hl-comment">// and so forth...</span>
+    }
+}</pre>
+
+<p>The following example defines a <code class="literal">TransactionTemplate</code> with some custom transactional
+settings, using Spring XML configuration. The <code class="literal">sharedTransactionTemplate</code> can then be
+injected into as many services as are required.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"sharedTransactionTemplate"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.transaction.support.TransactionTemplate"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"isolationLevelName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"ISOLATION_READ_UNCOMMITTED"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"timeout"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"30"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>"</pre>
+
+<p>Finally, instances of the <code class="literal">TransactionTemplate</code> class are threadsafe, in that instances
+do not maintain any conversational state. <code class="literal">TransactionTemplate</code> instances <span class="emphasis"><em>do</em></span> however
+maintain configuration state, so while a number of classes may share a single instance
+of a <code class="literal">TransactionTemplate</code>, if a class needs to use a <code class="literal">TransactionTemplate</code> with
+different settings (for example, a different isolation level), then you need to create
+two distinct <code class="literal">TransactionTemplate</code> instances.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-programmatic-ptm" href="#transaction-programmatic-ptm"></a>12.6.2&nbsp;Using the PlatformTransactionManager</h3></div></div></div>
+
+<p>You can also use the <code class="literal">org.springframework.transaction.PlatformTransactionManager</code>
+directly to manage your transaction. Simply pass the implementation of the
+<code class="literal">PlatformTransactionManager</code> you are using to your bean through a bean reference. Then,
+using the <code class="literal">TransactionDefinition</code> and <code class="literal">TransactionStatus</code> objects you can initiate
+transactions, roll back, and commit.</p>
+<pre class="programlisting">DefaultTransactionDefinition def = <span class="hl-keyword">new</span> DefaultTransactionDefinition();
+<span class="hl-comment">// explicitly setting the transaction name is something that can only be done programmatically</span>
+def.setName(<span class="hl-string">"SomeTxName"</span>);
+def.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+
+TransactionStatus status = txManager.getTransaction(def);
+<span class="hl-keyword">try</span> {
+    <span class="hl-comment">// execute your business logic here</span>
+}
+<span class="hl-keyword">catch</span> (MyException ex) {
+    txManager.rollback(status);
+    <span class="hl-keyword">throw</span> ex;
+}
+txManager.commit(status);</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tx-decl-vs-prog" href="#tx-decl-vs-prog"></a>12.7&nbsp;Choosing between programmatic and declarative transaction management</h2></div></div></div>
+
+<p>Programmatic transaction management is usually a good idea only if you have a small
+number of transactional operations. For example, if you have a web application that
+require transactions only for certain update operations, you may not want to set up
+transactional proxies using Spring or any other technology. In this case, using the
+<code class="literal">TransactionTemplate</code> <span class="emphasis"><em>may</em></span> be a good approach. Being able to set the transaction name
+explicitly is also something that can only be done using the programmatic approach to
+transaction management.</p>
+<p>On the other hand, if your application has numerous transactional operations,
+declarative transaction management is usually worthwhile. It keeps transaction
+management out of business logic, and is not difficult to configure. When using the
+Spring Framework, rather than EJB CMT, the configuration cost of declarative transaction
+management is greatly reduced.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-application-server-integration" href="#transaction-application-server-integration"></a>12.8&nbsp;Application server-specific integration</h2></div></div></div>
+
+<p>Spring&#8217;s transaction abstraction generally is application server agnostic. Additionally,
+Spring&#8217;s <code class="literal">JtaTransactionManager</code> class, which can optionally perform a JNDI lookup for
+the JTA <code class="literal">UserTransaction</code> and <code class="literal">TransactionManager</code> objects, autodetects the location for
+the latter object, which varies by application server. Having access to the JTA
+<code class="literal">TransactionManager</code> allows for enhanced transaction semantics, in particular supporting
+transaction suspension. See the <code class="literal">JtaTransactionManager</code> javadocs for details.</p>
+<p>Spring&#8217;s <code class="literal">JtaTransactionManager</code> is the standard choice to run on Java EE application
+servers, and is known to work on all common servers. Advanced functionality such as
+transaction suspension works on many servers as well&#8201;&#8212;&#8201;including GlassFish, JBoss and
+Geronimo&#8201;&#8212;&#8201;without any special configuration required. However, for fully supported
+transaction suspension and further advanced integration, Spring ships special adapters
+for WebLogic Server and WebSphere. These adapters are discussed in the following
+sections.</p>
+<p><span class="emphasis"><em>For standard scenarios, including WebLogic Server and WebSphere, consider using the
+convenient <code class="literal">&lt;tx:jta-transaction-manager/&gt;</code> configuration element.</em></span> When configured,
+this element automatically detects the underlying server and chooses the best
+transaction manager available for the platform. This means that you won&#8217;t have to
+configure server-specific adapter classes (as discussed in the following sections)
+explicitly; rather, they are chosen automatically, with the standard
+<code class="literal">JtaTransactionManager</code> as default fallback.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-application-server-integration-websphere" href="#transaction-application-server-integration-websphere"></a>12.8.1&nbsp;IBM WebSphere</h3></div></div></div>
+
+<p>On WebSphere 6.1.0.9 and above, the recommended Spring JTA transaction manager to use is
+<code class="literal">WebSphereUowTransactionManager</code>. This special adapter leverages IBM&#8217;s <code class="literal">UOWManager</code> API,
+which is available in WebSphere Application Server 6.0.2.19 and later and 6.1.0.9 and
+later. With this adapter, Spring-driven transaction suspension (suspend/resume as
+initiated by <code class="literal">PROPAGATION_REQUIRES_NEW</code>) is officially supported by IBM!</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-application-server-integration-weblogic" href="#transaction-application-server-integration-weblogic"></a>12.8.2&nbsp;Oracle WebLogic Server</h3></div></div></div>
+
+<p>On WebLogic Server 9.0 or above, you typically would use the
+<code class="literal">WebLogicJtaTransactionManager</code> instead of the stock <code class="literal">JtaTransactionManager</code> class. This
+special WebLogic-specific subclass of the normal <code class="literal">JtaTransactionManager</code> supports the
+full power of Spring&#8217;s transaction definitions in a WebLogic-managed transaction
+environment, beyond standard JTA semantics: Features include transaction names,
+per-transaction isolation levels, and proper resuming of transactions in all cases.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-solutions-to-common-problems" href="#transaction-solutions-to-common-problems"></a>12.9&nbsp;Solutions to common problems</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-solutions-to-common-problems-wrong-ptm" href="#transaction-solutions-to-common-problems-wrong-ptm"></a>12.9.1&nbsp;Use of the wrong transaction manager for a specific DataSource</h3></div></div></div>
+
+<p>Use the <span class="emphasis"><em>correct</em></span> <code class="literal">PlatformTransactionManager</code> implementation based on your choice of
+transactional technologies and requirements. Used properly, the Spring Framework merely
+provides a straightforward and portable abstraction. If you are using global
+transactions, you <span class="emphasis"><em>must</em></span> use the
+<code class="literal">org.springframework.transaction.jta.JtaTransactionManager</code> class (or an
+<a class="link" href="transaction.html#transaction-application-server-integration" title="12.8&nbsp;Application server-specific integration">application server-specific subclass</a> of
+it) for all your transactional operations. Otherwise the transaction infrastructure
+attempts to perform local transactions on resources such as container <code class="literal">DataSource</code>
+instances. Such local transactions do not make sense, and a good application server
+treats them as errors.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-resources" href="#transaction-resources"></a>12.10&nbsp;Further Resources</h2></div></div></div>
+
+<p>For more information about the Spring Framework&#8217;s transaction support:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="ulink" href="http://www.javaworld.com/javaworld/jw-01-2009/jw-01-spring-transactions.html" target="_top">Distributed
+transactions in Spring, with and without XA</a> is a JavaWorld presentation in which
+Spring&#8217;s David Syer guides you through seven patterns for distributed
+transactions in Spring applications, three of them with XA and four without.
+</li><li class="listitem">
+<a class="ulink" href="http://www.infoq.com/minibooks/JTDS" target="_top">Java Transaction Design Strategies</a> is a book
+available from <a class="ulink" href="http://www.infoq.com/" target="_top">InfoQ</a> that provides a well-paced introduction
+to transactions in Java. It also includes side-by-side examples of how to configure
+and use transactions with both the Spring Framework and EJB3.
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;IV.&nbsp;Data Access&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;13.&nbsp;DAO support</td></tr></table></div></body></html>

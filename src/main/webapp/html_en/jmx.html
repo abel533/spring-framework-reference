@@ -1,0 +1,1095 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>25.&nbsp;JMX</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="jms.html" title="24.&nbsp;JMS (Java Message Service)"><link rel="next" href="cci.html" title="26.&nbsp;JCA CCI"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.&nbsp;JMX</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jmx" href="#jmx"></a>25.&nbsp;JMX</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-introduction" href="#jmx-introduction"></a>25.1&nbsp;Introduction</h2></div></div></div>
+
+<p>The JMX support in Spring provides you with the features to easily and transparently
+integrate your Spring application into a JMX infrastructure.</p>
+<div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>JMX?</b></p></div></div></div>
+
+<p>This chapter is not an introduction to JMX&#8230; it doesn&#8217;t try to explain the motivations
+of why one might want to use JMX (or indeed what the letters JMX actually stand for). If
+you are new to JMX, check out <a class="xref" href="jmx.html#jmx-resources" title="25.8&nbsp;Further Resources">Section&nbsp;25.8, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
+</div>
+
+<p>Specifically, Spring&#8217;s JMX support provides four core features:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The automatic registration of <span class="emphasis"><em>any</em></span> Spring bean as a JMX MBean
+</li><li class="listitem">
+A flexible mechanism for controlling the management interface of your beans
+</li><li class="listitem">
+The declarative exposure of MBeans over remote, JSR-160 connectors
+</li><li class="listitem">
+The simple proxying of both local and remote MBean resources
+</li></ul></div>
+
+<p>These features are designed to work without coupling your application components to
+either Spring or JMX interfaces and classes. Indeed, for the most part your application
+classes need not be aware of either Spring or JMX in order to take advantage of the
+Spring JMX features.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-exporting" href="#jmx-exporting"></a>25.2&nbsp;Exporting your beans to JMX</h2></div></div></div>
+
+<p>The core class in Spring&#8217;s JMX framework is the <code class="literal">MBeanExporter</code>. This class is
+responsible for taking your Spring beans and registering them with a JMX <code class="literal">MBeanServer</code>.
+For example, consider the following class:</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.jmx;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JmxTestBean <span class="hl-keyword">implements</span> IJmxTestBean {
+
+    <span class="hl-keyword">private</span> String name;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> age;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">boolean</span> isSuperman;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getAge() {
+        <span class="hl-keyword">return</span> age;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setAge(<span class="hl-keyword">int</span> age) {
+        <span class="hl-keyword">this</span>.age = age;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(String name) {
+        <span class="hl-keyword">this</span>.name = name;
+    }
+
+    <span class="hl-keyword">public</span> String getName() {
+        <span class="hl-keyword">return</span> name;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> add(<span class="hl-keyword">int</span> x, <span class="hl-keyword">int</span> y) {
+        <span class="hl-keyword">return</span> x + y;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> dontExposeMe() {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> RuntimeException();
+    }
+}</pre>
+
+<p>To expose the properties and methods of this bean as attributes and operations of an
+MBean you simply configure an instance of the <code class="literal">MBeanExporter</code> class in your
+configuration file and pass in the bean as shown below:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-comment">&lt;!-- this bean must not be lazily initialized if the exporting is to happen --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span> <span class="hl-attribute">lazy-init</span>=<span class="hl-value">"false"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The pertinent bean definition from the above configuration snippet is the <code class="literal">exporter</code>
+bean. The <code class="literal">beans</code> property tells the <code class="literal">MBeanExporter</code> exactly which of your beans must be
+exported to the JMX <code class="literal">MBeanServer</code>. In the default configuration, the key of each entry
+in the <code class="literal">beans</code> <code class="literal">Map</code> is used as the <code class="literal">ObjectName</code> for the bean referenced by the
+corresponding entry value. This behavior can be changed as described in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+<p>With this configuration the <code class="literal">testBean</code> bean is exposed as an MBean under the
+<code class="literal">ObjectName</code> <code class="literal">bean:name=testBean1</code>. By default, all <span class="emphasis"><em>public</em></span> properties of the bean
+are exposed as attributes and all <span class="emphasis"><em>public</em></span> methods (bar those inherited from the
+<code class="literal">Object</code> class) are exposed as operations.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p><code class="literal">MBeanExporter</code> is a <code class="literal">Lifecycle</code> bean (see <a class="xref" href="beans.html#beans-factory-lifecycle-processor" title="Startup and shutdown callbacks">the section called &#8220;Startup and shutdown callbacks&#8221;</a>)
+and MBeans are exported as late as possible during the application lifecycle by default. It
+is possible to configure the <code class="literal">phase</code> at which the export happens or disable automatic
+registration by setting the <code class="literal">autoStartup</code> flag.</p>
+</td></tr></table></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-mbeanserver" href="#jmx-exporting-mbeanserver"></a>25.2.1&nbsp;Creating an MBeanServer</h3></div></div></div>
+
+<p>The above configuration assumes that the application is running in an environment that
+has one (and only one) <code class="literal">MBeanServer</code> already running. In this case, Spring will attempt
+to locate the running <code class="literal">MBeanServer</code> and register your beans with that server (if any).
+This behavior is useful when your application is running inside a container such as
+Tomcat or IBM WebSphere that has its own <code class="literal">MBeanServer</code>.</p>
+<p>However, this approach is of no use in a standalone environment, or when running inside
+a container that does not provide an <code class="literal">MBeanServer</code>. To address this you can create an
+<code class="literal">MBeanServer</code> instance declaratively by adding an instance of the
+<code class="literal">org.springframework.jmx.support.MBeanServerFactoryBean</code> class to your configuration.
+You can also ensure that a specific <code class="literal">MBeanServer</code> is used by setting the value of the
+<code class="literal">MBeanExporter</code>'s <code class="literal">server</code> property to the <code class="literal">MBeanServer</code> value returned by an
+<code class="literal">MBeanServerFactoryBean</code>; for example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"mbeanServer"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.MBeanServerFactoryBean"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!--
+    this bean needs to be eagerly pre-instantiated in order for the exporting to occur;
+    this means that it must not be marked as lazily initialized
+    --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"server"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"mbeanServer"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Here an instance of <code class="literal">MBeanServer</code> is created by the <code class="literal">MBeanServerFactoryBean</code> and is
+supplied to the <code class="literal">MBeanExporter</code> via the server property. When you supply your own
+<code class="literal">MBeanServer</code> instance, the <code class="literal">MBeanExporter</code> will not attempt to locate a running
+<code class="literal">MBeanServer</code> and will use the supplied <code class="literal">MBeanServer</code> instance. For this to work
+correctly, you must (of course) have a JMX implementation on your classpath.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-mbean-server" href="#jmx-mbean-server"></a>25.2.2&nbsp;Reusing an existing MBeanServer</h3></div></div></div>
+
+<p>If no server is specified, the <code class="literal">MBeanExporter</code> tries to automatically detect a running
+<code class="literal">MBeanServer</code>. This works in most environment where only one <code class="literal">MBeanServer</code> instance is
+used, however when multiple instances exist, the exporter might pick the wrong server.
+In such cases, one should use the <code class="literal">MBeanServer</code> <code class="literal">agentId</code> to indicate which instance to
+be used:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"mbeanServer"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.MBeanServerFactoryBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- indicate to first look for a server --&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"locateExistingServerIfPossible"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-comment">&lt;!-- search for the MBeanServer instance with the given agentId --&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"agentId"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"MBeanServer_instance_agentId&gt;"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"server"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"mbeanServer"</span><span class="hl-tag">/&gt;</span>
+        ...
+    <span class="hl-tag">&lt;/bean&gt;</span>
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>For platforms/cases where the existing <code class="literal">MBeanServer</code> has a dynamic (or unknown)
+<code class="literal">agentId</code> which is retrieved through lookup methods, one should use
+<a class="link" href="beans.html#beans-factory-class-static-factory-method" title="Instantiation with a static factory method">factory-method</a>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"server"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-comment">&lt;!-- Custom MBeanServerLocator --&gt;</span>
+            <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"platform.package.MBeanServerLocator"</span> <span class="hl-attribute">factory-method</span>=<span class="hl-value">"locateMBeanServer"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- other beans here --&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-lazy" href="#jmx-exporting-lazy"></a>25.2.3&nbsp;Lazy-initialized MBeans</h3></div></div></div>
+
+<p>If you configure a bean with the <code class="literal">MBeanExporter</code> that is also configured for lazy
+initialization, then the <code class="literal">MBeanExporter</code> will <span class="emphasis"><em>not</em></span> break this contract and will avoid
+instantiating the bean. Instead, it will register a proxy with the <code class="literal">MBeanServer</code> and
+will defer obtaining the bean from the container until the first invocation on the proxy
+occurs.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-auto" href="#jmx-exporting-auto"></a>25.2.4&nbsp;Automatic registration of MBeans</h3></div></div></div>
+
+<p>Any beans that are exported through the <code class="literal">MBeanExporter</code> and are already valid MBeans are
+registered as-is with the <code class="literal">MBeanServer</code> without further intervention from Spring. MBeans
+can be automatically detected by the <code class="literal">MBeanExporter</code> by setting the <code class="literal">autodetect</code>
+property to <code class="literal">true</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"autodetect"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"spring:mbean=true"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.TestDynamicMBean"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Here, the bean called <code class="literal">spring:mbean=true</code> is already a valid JMX MBean and will be
+automatically registered by Spring. By default, beans that are autodetected for JMX
+registration have their bean name used as the <code class="literal">ObjectName</code>. This behavior can be
+overridden as detailed in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-registration-behavior" href="#jmx-exporting-registration-behavior"></a>25.2.5&nbsp;Controlling the registration behavior</h3></div></div></div>
+
+<p>Consider the scenario where a Spring <code class="literal">MBeanExporter</code> attempts to register an <code class="literal">MBean</code>
+with an <code class="literal">MBeanServer</code> using the <code class="literal">ObjectName</code> <code class="literal">'bean:name=testBean1'</code>. If an <code class="literal">MBean</code>
+instance has already been registered under that same <code class="literal">ObjectName</code>, the default behavior
+is to fail (and throw an <code class="literal">InstanceAlreadyExistsException</code>).</p>
+<p>It is possible to control the behavior of exactly what happens when an <code class="literal">MBean</code> is
+registered with an <code class="literal">MBeanServer</code>. Spring&#8217;s JMX support allows for three different
+registration behaviors to control the registration behavior when the registration
+process finds that an <code class="literal">MBean</code> has already been registered under the same <code class="literal">ObjectName</code>;
+these registration behaviors are summarized on the following table:</p>
+<div class="table"><a name="jmx-registration-behaviors" href="#jmx-registration-behaviors"></a><p class="title"><b>Table&nbsp;25.1.&nbsp;Registration Behaviors</b></p><div class="table-contents">
+
+  <table summary="Registration Behaviors" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Registration behavior</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">REGISTRATION_FAIL_ON_EXISTING</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>This is the default registration behavior. If an <code class="literal">MBean</code> instance has already been
+  registered under the same <code class="literal">ObjectName</code>, the <code class="literal">MBean</code> that is being registered will not
+  be registered and an <code class="literal">InstanceAlreadyExistsException</code> will be thrown. The existing
+  <code class="literal">MBean</code> is unaffected.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">REGISTRATION_IGNORE_EXISTING</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>If an <code class="literal">MBean</code> instance has already been registered under the same <code class="literal">ObjectName</code>, the
+  <code class="literal">MBean</code> that is being registered will <span class="emphasis"><em>not</em></span> be registered. The existing <code class="literal">MBean</code> is
+  unaffected, and no <code class="literal">Exception</code> will be thrown. This is useful in settings where
+  multiple applications want to share a common <code class="literal">MBean</code> in a shared <code class="literal">MBeanServer</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">REGISTRATION_REPLACE_EXISTING</code></p></td><td style="" align="left" valign="top"><p>If an <code class="literal">MBean</code> instance has already been registered under the same <code class="literal">ObjectName</code>, the
+  existing <code class="literal">MBean</code> that was previously registered will be unregistered and the new
+  <code class="literal">MBean</code> will be registered in its place (the new <code class="literal">MBean</code> effectively replaces the
+  previous instance).</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>The above values are defined as constants on the <code class="literal">MBeanRegistrationSupport</code> class (the
+<code class="literal">MBeanExporter</code> class derives from this superclass). If you want to change the default
+registration behavior, you simply need to set the value of the
+<code class="literal">registrationBehaviorName</code> property on your <code class="literal">MBeanExporter</code> definition to one of those
+values.</p>
+<p>The following example illustrates how to effect a change from the default registration
+behavior to the <code class="literal">REGISTRATION_REPLACE_EXISTING</code> behavior:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"registrationBehaviorName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"REGISTRATION_REPLACE_EXISTING"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-interface" href="#jmx-interface"></a>25.3&nbsp;Controlling the management interface of your beans</h2></div></div></div>
+
+<p>In the previous example, you had little control over the management interface of your
+bean; <span class="emphasis"><em>all</em></span> of the <span class="emphasis"><em>public</em></span> properties and methods of each exported bean was exposed
+as JMX attributes and operations respectively. To exercise finer-grained control over
+exactly which properties and methods of your exported beans are actually exposed as JMX
+attributes and operations, Spring JMX provides a comprehensive and extensible mechanism
+for controlling the management interfaces of your beans.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-assembler" href="#jmx-interface-assembler"></a>25.3.1&nbsp;the MBeanInfoAssembler Interface</h3></div></div></div>
+
+<p>Behind the scenes, the <code class="literal">MBeanExporter</code> delegates to an implementation of the
+<code class="literal">org.springframework.jmx.export.assembler.MBeanInfoAssembler</code> interface which is
+responsible for defining the management interface of each bean that is being exposed.
+The default implementation,
+<code class="literal">org.springframework.jmx.export.assembler.SimpleReflectiveMBeanInfoAssembler</code>, simply
+defines a management interface that exposes all public properties and methods (as you
+saw in the previous examples). Spring provides two additional implementations of the
+<code class="literal">MBeanInfoAssembler</code> interface that allow you to control the generated management
+interface using either source-level metadata or any arbitrary interface.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata" href="#jmx-interface-metadata"></a>25.3.2&nbsp;Using Source-Level Metadata (Java annotations)</h3></div></div></div>
+
+<p>Using the <code class="literal">MetadataMBeanInfoAssembler</code> you can define the management interfaces for your
+beans using source level metadata. The reading of metadata is encapsulated by the
+<code class="literal">org.springframework.jmx.export.metadata.JmxAttributeSource</code> interface. Spring JMX
+provides a default implementation which uses Java annotations, namely
+<code class="literal">org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource</code>. The
+<code class="literal">MetadataMBeanInfoAssembler</code> <span class="emphasis"><em>must</em></span> be configured with an implementation instance of
+the <code class="literal">JmxAttributeSource</code> interface for it to function correctly (there is <span class="emphasis"><em>no</em></span>
+default).</p>
+<p>To mark a bean for export to JMX, you should annotate the bean class with the
+<code class="literal">ManagedResource</code> annotation. Each method you wish to expose as an operation must be
+marked with the <code class="literal">ManagedOperation</code> annotation and each property you wish to expose must
+be marked with the <code class="literal">ManagedAttribute</code> annotation. When marking properties you can omit
+either the annotation of the getter or the setter to create a write-only or read-only
+attribute respectively.</p>
+<p>The example below shows the annotated version of the <code class="literal">JmxTestBean</code> class that you saw
+earlier:</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.jmx;
+
+<span class="hl-keyword">import</span> org.springframework.jmx.export.annotation.ManagedResource;
+<span class="hl-keyword">import</span> org.springframework.jmx.export.annotation.ManagedOperation;
+<span class="hl-keyword">import</span> org.springframework.jmx.export.annotation.ManagedAttribute;
+
+<em><span class="hl-annotation" style="color: gray">@ManagedResource(
+        objectName="bean:name=testBean4",
+        description="My Managed Bean",
+        log=true,
+        logFile="jmx.log",
+        currencyTimeLimit=15,
+        persistPolicy="OnUpdate",
+        persistPeriod=200,
+        persistLocation="foo",
+        persistName="bar")</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AnnotationTestBean <span class="hl-keyword">implements</span> IJmxTestBean {
+
+    <span class="hl-keyword">private</span> String name;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> age;
+
+    <em><span class="hl-annotation" style="color: gray">@ManagedAttribute(description="The Age Attribute", currencyTimeLimit=15)</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getAge() {
+        <span class="hl-keyword">return</span> age;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setAge(<span class="hl-keyword">int</span> age) {
+        <span class="hl-keyword">this</span>.age = age;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@ManagedAttribute(description="The Name Attribute",
+            currencyTimeLimit=20,
+            defaultValue="bar",
+            persistPolicy="OnUpdate")</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(String name) {
+        <span class="hl-keyword">this</span>.name = name;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@ManagedAttribute(defaultValue="foo", persistPeriod=300)</span></em>
+    <span class="hl-keyword">public</span> String getName() {
+        <span class="hl-keyword">return</span> name;
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@ManagedOperation(description="Add two numbers")</span></em>
+    <em><span class="hl-annotation" style="color: gray">@ManagedOperationParameters({
+        @ManagedOperationParameter(name = "x", description = "The first number"),
+        @ManagedOperationParameter(name = "y", description = "The second number")})</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> add(<span class="hl-keyword">int</span> x, <span class="hl-keyword">int</span> y) {
+        <span class="hl-keyword">return</span> x + y;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> dontExposeMe() {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> RuntimeException();
+    }
+
+}</pre>
+
+<p>Here you can see that the <code class="literal">JmxTestBean</code> class is marked with the <code class="literal">ManagedResource</code>
+annotation and that this <code class="literal">ManagedResource</code> annotation is configured with a set of
+properties. These properties can be used to configure various aspects of the MBean that
+is generated by the <code class="literal">MBeanExporter</code>, and are explained in greater detail later in
+section entitled <a class="xref" href="jmx.html#jmx-interface-metadata-types" title="25.3.3&nbsp;Source-Level Metadata Types">Section&nbsp;25.3.3, &#8220;Source-Level Metadata Types&#8221;</a>.</p>
+<p>You will also notice that both the <code class="literal">age</code> and <code class="literal">name</code> properties are annotated with the
+<code class="literal">ManagedAttribute</code> annotation, but in the case of the <code class="literal">age</code> property, only the getter is
+marked. This will cause both of these properties to be included in the management
+interface as attributes, but the <code class="literal">age</code> attribute will be read-only.</p>
+<p>Finally, you will notice that the <code class="literal">add(int, int)</code> method is marked with the
+<code class="literal">ManagedOperation</code> attribute whereas the <code class="literal">dontExposeMe()</code> method is not. This will cause
+the management interface to contain only one operation, <code class="literal">add(int, int)</code>, when using the
+<code class="literal">MetadataMBeanInfoAssembler</code>.</p>
+<p>The configuration below shows how you configure the <code class="literal">MBeanExporter</code> to use the
+<code class="literal">MetadataMBeanInfoAssembler</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"assembler"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"assembler"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"namingStrategy"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"namingStrategy"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"autodetect"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jmxAttributeSource"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-comment">&lt;!-- will create management interface using annotation metadata --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"assembler"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"attributeSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"jmxAttributeSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- will pick up the ObjectName from the annotation --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"namingStrategy"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.naming.MetadataNamingStrategy"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"attributeSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"jmxAttributeSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.AnnotationTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Here you can see that an <code class="literal">MetadataMBeanInfoAssembler</code> bean has been configured with an
+instance of the <code class="literal">AnnotationJmxAttributeSource</code> class and passed to the <code class="literal">MBeanExporter</code>
+through the assembler property. This is all that is required to take advantage of
+metadata-driven management interfaces for your Spring-exposed MBeans.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata-types" href="#jmx-interface-metadata-types"></a>25.3.3&nbsp;Source-Level Metadata Types</h3></div></div></div>
+
+<p>The following source level metadata types are available for use in Spring JMX:</p>
+<div class="table"><a name="jmx-metadata-types" href="#jmx-metadata-types"></a><p class="title"><b>Table&nbsp;25.2.&nbsp;Source-Level Metadata Types</b></p><div class="table-contents">
+
+  <table summary="Source-Level Metadata Types" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Purpose</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation Type</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark all instances of a <code class="literal">Class</code> as JMX managed resources</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedResource</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Class</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark a method as a JMX operation</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedOperation</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Method</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark a getter or setter as one half of a JMX attribute</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedAttribute</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Method (only getters and setters)</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Define descriptions for operation parameters</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedOperationParameter</code> and <code class="literal">@ManagedOperationParameters</code></p></td><td style="" align="left" valign="top"><p>Method</p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>The following configuration parameters are available for use on these source-level
+metadata types:</p>
+<div class="table"><a name="jmx-metadata-parameters" href="#jmx-metadata-parameters"></a><p class="title"><b>Table&nbsp;25.3.&nbsp;Source-Level Metadata Parameters</b></p><div class="table-contents">
+
+  <table summary="Source-Level Metadata Parameters" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Applies to</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ObjectName</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Used by <code class="literal">MetadataNamingStrategy</code> to determine the <code class="literal">ObjectName</code> of a managed resource</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">description</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the friendly description of the resource, attribute or operation</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code>, <code class="literal">ManagedAttribute</code>, <code class="literal">ManagedOperation</code>, <code class="literal">ManagedOperationParameter</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">currencyTimeLimit</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">currencyTimeLimit</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code>, <code class="literal">ManagedAttribute</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">defaultValue</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">defaultValue</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedAttribute</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">log</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">log</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">logFile</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">logFile</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistPolicy</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistPolicy</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistPeriod</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistPeriod</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistLocation</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistLocation</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistName</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistName</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">name</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the display name of an operation parameter</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedOperationParameter</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">index</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Sets the index of an operation parameter</p></td><td style="" align="left" valign="top"><p><code class="literal">ManagedOperationParameter</code></p></td></tr></tbody></table>
+</div></div><br class="table-break">
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-autodetect" href="#jmx-interface-autodetect"></a>25.3.4&nbsp;the AutodetectCapableMBeanInfoAssembler interface</h3></div></div></div>
+
+<p>To simplify configuration even further, Spring introduces the
+<code class="literal">AutodetectCapableMBeanInfoAssembler</code> interface which extends the <code class="literal">MBeanInfoAssembler</code>
+interface to add support for autodetection of MBean resources. If you configure the
+<code class="literal">MBeanExporter</code> with an instance of <code class="literal">AutodetectCapableMBeanInfoAssembler</code> then it is
+allowed to "vote" on the inclusion of beans for exposure to JMX.</p>
+<p>Out of the box, the only implementation of the <code class="literal">AutodetectCapableMBeanInfo</code> interface is
+the <code class="literal">MetadataMBeanInfoAssembler</code> which will vote to include any bean which is marked
+with the <code class="literal">ManagedResource</code> attribute. The default approach in this case is to use the
+bean name as the <code class="literal">ObjectName</code> which results in a configuration like this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-comment">&lt;!-- notice how no </span><span class="emphasis"><em>beans</em></span> are explicitly configured here --&gt;
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"autodetect"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"assembler"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"assembler"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"assembler"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"attributeSource"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Notice that in this configuration no beans are passed to the <code class="literal">MBeanExporter</code>; however,
+the <code class="literal">JmxTestBean</code> will still be registered since it is marked with the <code class="literal">ManagedResource</code>
+attribute and the <code class="literal">MetadataMBeanInfoAssembler</code> detects this and votes to include it. The
+only problem with this approach is that the name of the <code class="literal">JmxTestBean</code> now has business
+meaning. You can address this issue by changing the default behavior for <code class="literal">ObjectName</code>
+creation as defined in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-java" href="#jmx-interface-java"></a>25.3.5&nbsp;Defining management interfaces using Java interfaces</h3></div></div></div>
+
+<p>In addition to the <code class="literal">MetadataMBeanInfoAssembler</code>, Spring also includes the
+<code class="literal">InterfaceBasedMBeanInfoAssembler</code> which allows you to constrain the methods and
+properties that are exposed based on the set of methods defined in a collection of
+interfaces.</p>
+<p>Although the standard mechanism for exposing MBeans is to use interfaces and a simple
+naming scheme, the <code class="literal">InterfaceBasedMBeanInfoAssembler</code> extends this functionality by
+removing the need for naming conventions, allowing you to use more than one interface
+and removing the need for your beans to implement the MBean interfaces.</p>
+<p>Consider this interface that is used to define a management interface for the
+<code class="literal">JmxTestBean</code> class that you saw earlier:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> IJmxTestBean {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> add(<span class="hl-keyword">int</span> x, <span class="hl-keyword">int</span> y);
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">long</span> myOperation();
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getAge();
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setAge(<span class="hl-keyword">int</span> age);
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(String name);
+
+    <span class="hl-keyword">public</span> String getName();
+
+}</pre>
+
+<p>This interface defines the methods and properties that will be exposed as operations and
+attributes on the JMX MBean. The code below shows how to configure Spring JMX to use
+this interface as the definition for the management interface:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean5"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"assembler"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.assembler.InterfaceBasedMBeanInfoAssembler"</span><span class="hl-tag">&gt;</span>
+                <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"managedInterfaces"</span><span class="hl-tag">&gt;</span>
+                    <span class="hl-tag">&lt;value&gt;</span>org.springframework.jmx.IJmxTestBean<span class="hl-tag">&lt;/value&gt;</span>
+                <span class="hl-tag">&lt;/property&gt;</span>
+            <span class="hl-tag">&lt;/bean&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+      <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Here you can see that the <code class="literal">InterfaceBasedMBeanInfoAssembler</code> is configured to use the
+<code class="literal">IJmxTestBean</code> interface when constructing the management interface for any bean. It is
+important to understand that beans processed by the <code class="literal">InterfaceBasedMBeanInfoAssembler</code>
+are <span class="emphasis"><em>not</em></span> required to implement the interface used to generate the JMX management
+interface.</p>
+<p>In the case above, the <code class="literal">IJmxTestBean</code> interface is used to construct all management
+interfaces for all beans. In many cases this is not the desired behavior and you may
+want to use different interfaces for different beans. In this case, you can pass
+<code class="literal">InterfaceBasedMBeanInfoAssembler</code> a <code class="literal">Properties</code> instance via the <code class="literal">interfaceMappings</code>
+property, where the key of each entry is the bean name and the value of each entry is a
+comma-separated list of interface names to use for that bean.</p>
+<p>If no management interface is specified through either the <code class="literal">managedInterfaces</code> or
+<code class="literal">interfaceMappings</code> properties, then the <code class="literal">InterfaceBasedMBeanInfoAssembler</code> will reflect
+on the bean and use all of the interfaces implemented by that bean to create the
+management interface.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-methodnames" href="#jmx-interface-methodnames"></a>25.3.6&nbsp;Using MethodNameBasedMBeanInfoAssembler</h3></div></div></div>
+
+<p>The <code class="literal">MethodNameBasedMBeanInfoAssembler</code> allows you to specify a list of method names
+that will be exposed to JMX as attributes and operations. The code below shows a sample
+configuration for this:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean5"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"assembler"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.assembler.MethodNameBasedMBeanInfoAssembler"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"managedMethods"</span><span class="hl-tag">&gt;</span>
+                <span class="hl-tag">&lt;value&gt;</span>add,myOperation,getName,setName,getAge<span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Here you can see that the methods <code class="literal">add</code> and <code class="literal">myOperation</code> will be exposed as JMX
+operations and <code class="literal">getName()</code>, <code class="literal">setName(String)</code> and <code class="literal">getAge()</code> will be exposed as the
+appropriate half of a JMX attribute. In the code above, the method mappings apply to
+beans that are exposed to JMX. To control method exposure on a bean-by-bean basis, use
+the <code class="literal">methodMappings</code> property of <code class="literal">MethodNameMBeanInfoAssembler</code> to map bean names to
+lists of method names.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-naming" href="#jmx-naming"></a>25.4&nbsp;Controlling the ObjectNames for your beans</h2></div></div></div>
+
+<p>Behind the scenes, the <code class="literal">MBeanExporter</code> delegates to an implementation of the
+<code class="literal">ObjectNamingStrategy</code> to obtain <code class="literal">ObjectName</code>s for each of the beans it is registering.
+The default implementation, <code class="literal">KeyNamingStrategy</code>, will, by default, use the key of the
+<code class="literal">beans</code> <code class="literal">Map</code> as the <code class="literal">ObjectName</code>. In addition, the <code class="literal">KeyNamingStrategy</code> can map the key
+of the <code class="literal">beans</code> <code class="literal">Map</code> to an entry in a <code class="literal">Properties</code> file (or files) to resolve the
+<code class="literal">ObjectName</code>. In addition to the <code class="literal">KeyNamingStrategy</code>, Spring provides two additional
+<code class="literal">ObjectNamingStrategy</code> implementations: the <code class="literal">IdentityNamingStrategy</code> that builds an
+<code class="literal">ObjectName</code> based on the JVM identity of the bean and the <code class="literal">MetadataNamingStrategy</code> that
+uses source level metadata to obtain the <code class="literal">ObjectName</code>.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-properties" href="#jmx-naming-properties"></a>25.4.1&nbsp;Reading ObjectNames from Properties</h3></div></div></div>
+
+<p>You can configure your own <code class="literal">KeyNamingStrategy</code> instance and configure it to read
+<code class="literal">ObjectName</code>s from a <code class="literal">Properties</code> instance rather than use bean key. The
+<code class="literal">KeyNamingStrategy</code> will attempt to locate an entry in the <code class="literal">Properties</code> with a key
+corresponding to the bean key. If no entry is found or if the <code class="literal">Properties</code> instance is
+<code class="literal">null</code> then the bean key itself is used.</p>
+<p>The code below shows a sample configuration for the <code class="literal">KeyNamingStrategy</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"namingStrategy"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"namingStrategy"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"namingStrategy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.naming.KeyNamingStrategy"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappings"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;props&gt;</span>
+                <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">&gt;</span>bean:name=testBean1<span class="hl-tag">&lt;/prop&gt;</span>
+            <span class="hl-tag">&lt;/props&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappingLocations"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;value&gt;</span>names1.properties,names2.properties<span class="hl-tag">&lt;/value&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>Here an instance of <code class="literal">KeyNamingStrategy</code> is configured with a <code class="literal">Properties</code> instance that
+is merged from the <code class="literal">Properties</code> instance defined by the mapping property and the
+properties files located in the paths defined by the mappings property. In this
+configuration, the <code class="literal">testBean</code> bean will be given the <code class="literal">ObjectName</code> <code class="literal">bean:name=testBean1</code>
+since this is the entry in the <code class="literal">Properties</code> instance that has a key corresponding to the
+bean key.</p>
+<p>If no entry in the <code class="literal">Properties</code> instance can be found then the bean key name is used as
+the <code class="literal">ObjectName</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-metadata" href="#jmx-naming-metadata"></a>25.4.2&nbsp;Using the MetadataNamingStrategy</h3></div></div></div>
+
+<p>The <code class="literal">MetadataNamingStrategy</code> uses the <code class="literal">objectName</code> property of the <code class="literal">ManagedResource</code>
+attribute on each bean to create the <code class="literal">ObjectName</code>. The code below shows the
+configuration for the <code class="literal">MetadataNamingStrategy</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"namingStrategy"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"namingStrategy"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"namingStrategy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.naming.MetadataNamingStrategy"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"attributeSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"attributeSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"attributeSource"</span>
+            <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>If no <code class="literal">objectName</code> has been provided for the <code class="literal">ManagedResource</code> attribute, then an
+<code class="literal">ObjectName</code> will be created with the following
+format:<span class="emphasis"><em>[fully-qualified-package-name]:type=[short-classname],name=[bean-name]</em></span>. For
+example, the generated <code class="literal">ObjectName</code> for the following bean would be:
+<span class="emphasis"><em>com.foo:type=MyClass,name=myBean</em></span>.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.MyClass"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-context-mbeanexport" href="#jmx-context-mbeanexport"></a>25.4.3&nbsp;Configuring annotation based MBean export</h3></div></div></div>
+
+<p>If you prefer using <a class="link" href="jmx.html#jmx-interface-metadata" title="25.3.2&nbsp;Using Source-Level Metadata (Java annotations)">the annotation based approach</a> to define
+your management interfaces, then a convenience subclass of <code class="literal">MBeanExporter</code> is available:
+<code class="literal">AnnotationMBeanExporter</code>. When defining an instance of this subclass, the
+<code class="literal">namingStrategy</code>, <code class="literal">assembler</code>, and <code class="literal">attributeSource</code> configuration is no longer needed,
+since it will always use standard Java annotation-based metadata (autodetection is
+always enabled as well). In fact, rather than defining an <code class="literal">MBeanExporter</code> bean, an even
+simpler syntax is supported by the <code class="literal">@EnableMBeanExport</code> <code class="literal">@Configuration</code> annotation.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
+<em><span class="hl-annotation" style="color: gray">@EnableMBeanExport</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AppConfig {
+
+}</pre>
+
+<p>If you prefer XML based configuration the <code class="literal">'context:mbean-export'</code> element serves the
+same purpose.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;context:mbean-export/&gt;</span></pre>
+
+<p>You can provide a reference to a particular MBean <code class="literal">server</code> if necessary, and the
+<code class="literal">defaultDomain</code> attribute (a property of <code class="literal">AnnotationMBeanExporter</code>) accepts an alternate
+value for the generated MBean <code class="literal">ObjectNames</code>' domains. This would be used in place of the
+fully qualified package name as described in the previous section on
+<a class="link" href="jmx.html#jmx-naming-metadata" title="25.4.2&nbsp;Using the MetadataNamingStrategy"><code class="literal">MetadataNamingStrategy</code></a>.</p>
+<pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@EnableMBeanExport(server="myMBeanServer", defaultDomain="myDomain")</span></em>
+<em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
+ContextConfiguration {
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-tag">&lt;context:mbean-export</span> <span class="hl-attribute">server</span>=<span class="hl-value">"myMBeanServer"</span> <span class="hl-attribute">default-domain</span>=<span class="hl-value">"myDomain"</span><span class="hl-tag">/&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Do not use interface-based AOP proxies in combination with autodetection of JMX
+annotations in your bean classes. Interface-based proxies <span class="emphasis"><em>hide</em></span> the target class, which
+also hides the JMX managed resource annotations. Hence, use target-class proxies in that
+case: through setting the <span class="emphasis"><em>proxy-target-class</em></span> flag on <code class="literal">&lt;aop:config/&gt;</code>,
+<code class="literal">&lt;tx:annotation-driven/&gt;</code>, etc. Otherwise, your JMX beans might be silently ignored at
+startup&#8230;</p>
+</td></tr></table></div>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-jsr160" href="#jmx-jsr160"></a>25.5&nbsp;JSR-160 Connectors</h2></div></div></div>
+
+<p>For remote access, Spring JMX module offers two <code class="literal">FactoryBean</code> implementations inside the
+<code class="literal">org.springframework.jmx.support</code> package for creating both server- and client-side
+connectors.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-server" href="#jmx-jsr160-server"></a>25.5.1&nbsp;Server-side Connectors</h3></div></div></div>
+
+<p>To have Spring JMX create, start and expose a JSR-160 <code class="literal">JMXConnectorServer</code> use the
+following configuration:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serverConnector"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.ConnectorServerFactoryBean"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>By default <code class="literal">ConnectorServerFactoryBean</code> creates a <code class="literal">JMXConnectorServer</code> bound to
+<code class="literal">"service:jmx:jmxmp://localhost:9875"</code>. The <code class="literal">serverConnector</code> bean thus exposes the
+local <code class="literal">MBeanServer</code> to clients through the JMXMP protocol on localhost, port 9875. Note
+that the JMXMP protocol is marked as optional by the JSR 160 specification: currently,
+the main open-source JMX implementation, MX4J, and the one provided with the JDK
+do <span class="emphasis"><em>not</em></span> support JMXMP.</p>
+<p>To specify another URL and register the <code class="literal">JMXConnectorServer</code> itself with the
+<code class="literal">MBeanServer</code> use the <code class="literal">serviceUrl</code> and <code class="literal">ObjectName</code> properties respectively:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serverConnector"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.ConnectorServerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"objectName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"connector:name=rmi"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span>
+            <span class="hl-attribute">value</span>=<span class="hl-value">"service:jmx:rmi://localhost/jndi/rmi://localhost:1099/myconnector"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>If the <code class="literal">ObjectName</code> property is set Spring will automatically register your connector
+with the <code class="literal">MBeanServer</code> under that <code class="literal">ObjectName</code>. The example below shows the full set of
+parameters which you can pass to the <code class="literal">ConnectorServerFactoryBean</code> when creating a
+JMXConnector:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serverConnector"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.ConnectorServerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"objectName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"connector:name=iiop"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span>
+        <span class="hl-attribute">value</span>=<span class="hl-value">"service:jmx:iiop://localhost/jndi/iiop://localhost:900/myconnector"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"threaded"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"daemon"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"true"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"environment"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;map&gt;</span>
+            <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"someKey"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"someValue"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/map&gt;</span>
+    <span class="hl-tag">&lt;/property&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Note that when using a RMI-based connector you need the lookup service (tnameserv or
+rmiregistry) to be started in order for the name registration to complete. If you are
+using Spring to export remote services for you via RMI, then Spring will already have
+constructed an RMI registry. If not, you can easily start a registry using the following
+snippet of configuration:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"registry"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.remoting.rmi.RmiRegistryFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"port"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"1099"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-client" href="#jmx-jsr160-client"></a>25.5.2&nbsp;Client-side Connectors</h3></div></div></div>
+
+<p>To create an <code class="literal">MBeanServerConnection</code> to a remote JSR-160 enabled <code class="literal">MBeanServer</code> use the
+<code class="literal">MBeanServerConnectionFactoryBean</code> as shown below:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"clientConnector"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.MBeanServerConnectionFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"service:jmx:rmi://localhost/jndi/rmi://localhost:1099/jmxrmi"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-protocols" href="#jmx-jsr160-protocols"></a>25.5.3&nbsp;JMX over Burlap/Hessian/SOAP</h3></div></div></div>
+
+<p>JSR-160 permits extensions to the way in which communication is done between the client
+and the server. The examples above are using the mandatory RMI-based implementation
+required by the JSR-160 specification (IIOP and JRMP) and the (optional) JMXMP. By using
+other providers or JMX implementations (such as <a class="ulink" href="http://mx4j.sourceforge.net" target="_top">MX4J</a>) you
+can take advantage of protocols like SOAP, Hessian, Burlap over simple HTTP or SSL and
+others:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"serverConnector"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.ConnectorServerFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"objectName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"connector:name=burlap"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"service:jmx:burlap://localhost:9874"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>In the case of the above example, MX4J 3.0.0 was used; see the official MX4J
+documentation for more information.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-proxy" href="#jmx-proxy"></a>25.6&nbsp;Accessing MBeans via Proxies</h2></div></div></div>
+
+<p>Spring JMX allows you to create proxies that re-route calls to MBeans registered in a
+local or remote <code class="literal">MBeanServer</code>. These proxies provide you with a standard Java interface
+through which you can interact with your MBeans. The code below shows how to configure a
+proxy for an MBean running in a local <code class="literal">MBeanServer</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"proxy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.access.MBeanProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"objectName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"bean:name=testBean"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"proxyInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"org.springframework.jmx.IJmxTestBean"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Here you can see that a proxy is created for the MBean registered under the
+<code class="literal">ObjectName</code>: <code class="literal">bean:name=testBean</code>. The set of interfaces that the proxy will implement
+is controlled by the <code class="literal">proxyInterfaces</code> property and the rules for mapping methods and
+properties on these interfaces to operations and attributes on the MBean are the same
+rules used by the <code class="literal">InterfaceBasedMBeanInfoAssembler</code>.</p>
+<p>The <code class="literal">MBeanProxyFactoryBean</code> can create a proxy to any MBean that is accessible via an
+<code class="literal">MBeanServerConnection</code>. By default, the local <code class="literal">MBeanServer</code> is located and used, but
+you can override this and provide an <code class="literal">MBeanServerConnection</code> pointing to a remote
+<code class="literal">MBeanServer</code> to cater for proxies pointing to remote MBeans:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"clientConnector"</span>
+        <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.support.MBeanServerConnectionFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"serviceUrl"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"service:jmx:rmi://remotehost:9875"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"proxy"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.access.MBeanProxyFactoryBean"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"objectName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"bean:name=testBean"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"proxyInterface"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"org.springframework.jmx.IJmxTestBean"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"server"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"clientConnector"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>Here you can see that we create an <code class="literal">MBeanServerConnection</code> pointing to a remote machine
+using the <code class="literal">MBeanServerConnectionFactoryBean</code>. This <code class="literal">MBeanServerConnection</code> is then
+passed to the <code class="literal">MBeanProxyFactoryBean</code> via the <code class="literal">server</code> property. The proxy that is
+created will forward all invocations to the <code class="literal">MBeanServer</code> via this
+<code class="literal">MBeanServerConnection</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-notifications" href="#jmx-notifications"></a>25.7&nbsp;Notifications</h2></div></div></div>
+
+<p>Spring&#8217;s JMX offering includes comprehensive support for JMX notifications.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-listeners" href="#jmx-notifications-listeners"></a>25.7.1&nbsp;Registering Listeners for Notifications</h3></div></div></div>
+
+<p>Spring&#8217;s JMX support makes it very easy to register any number of
+<code class="literal">NotificationListeners</code> with any number of MBeans (this includes MBeans exported by
+Spring&#8217;s <code class="literal">MBeanExporter</code> and MBeans registered via some other mechanism). By way of an
+example, consider the scenario where one would like to be informed (via a
+<code class="literal">Notification</code>) each and every time an attribute of a target MBean changes.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> com.example;
+
+<span class="hl-keyword">import</span> javax.management.AttributeChangeNotification;
+<span class="hl-keyword">import</span> javax.management.Notification;
+<span class="hl-keyword">import</span> javax.management.NotificationFilter;
+<span class="hl-keyword">import</span> javax.management.NotificationListener;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ConsoleLoggingNotificationListener
+        <span class="hl-keyword">implements</span> NotificationListener, NotificationFilter {
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> handleNotification(Notification notification, Object handback) {
+        System.out.println(notification);
+        System.out.println(handback);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">boolean</span> isNotificationEnabled(Notification notification) {
+        <span class="hl-keyword">return</span> AttributeChangeNotification.<span class="hl-keyword">class</span>.isAssignableFrom(notification.getClass());
+    }
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationListenerMappings"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span><span class="hl-tag">&gt;</span>
+                    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.ConsoleLoggingNotificationListener"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/entry&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>With the above configuration in place, every time a JMX <code class="literal">Notification</code> is broadcast from
+the target MBean ( <code class="literal">bean:name=testBean1</code>), the <code class="literal">ConsoleLoggingNotificationListener</code> bean
+that was registered as a listener via the <code class="literal">notificationListenerMappings</code> property will
+be notified. The <code class="literal">ConsoleLoggingNotificationListener</code> bean can then take whatever action
+it deems appropriate in response to the <code class="literal">Notification</code>.</p>
+<p>You can also use straight bean names as the link between exported beans and listeners:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationListenerMappings"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"</span><span class="emphasis"><em>testBean</em></span>"&gt;
+                    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.ConsoleLoggingNotificationListener"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/entry&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"</span><span class="emphasis"><em>testBean</em></span>" class="org.springframework.jmx.JmxTestBean"&gt;
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>If one wants to register a single <code class="literal">NotificationListener</code> instance for all of the beans
+that the enclosing <code class="literal">MBeanExporter</code> is exporting, one can use the special wildcard <code class="literal">'*'</code>
+(sans quotes) as the key for an entry in the <code class="literal">notificationListenerMappings</code> property
+map; for example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationListenerMappings"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;map&gt;</span>
+        <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"*"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.ConsoleLoggingNotificationListener"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;/entry&gt;</span>
+    <span class="hl-tag">&lt;/map&gt;</span>
+<span class="hl-tag">&lt;/property&gt;</span></pre>
+
+<p>If one needs to do the inverse (that is, register a number of distinct listeners against
+an MBean), then one has to use the <code class="literal">notificationListeners</code> list property instead (and in
+preference to the <code class="literal">notificationListenerMappings</code> property). This time, instead of
+configuring simply a <code class="literal">NotificationListener</code> for a single MBean, one configures
+<code class="literal">NotificationListenerBean</code> instances&#8230; a <code class="literal">NotificationListenerBean</code> encapsulates a
+<code class="literal">NotificationListener</code> and the <code class="literal">ObjectName</code> (or <code class="literal">ObjectNames</code>) that it is to be
+registered against in an <code class="literal">MBeanServer</code>. The <code class="literal">NotificationListenerBean</code> also encapsulates
+a number of other properties such as a <code class="literal">NotificationFilter</code> and an arbitrary handback
+object that can be used in advanced JMX notification scenarios.</p>
+<p>The configuration when using <code class="literal">NotificationListenerBean</code> instances is not wildly
+different to what was presented previously:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationListeners"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;list&gt;</span>
+                <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.NotificationListenerBean"</span><span class="hl-tag">&gt;</span>
+                    <span class="hl-tag">&lt;constructor-arg&gt;</span>
+                        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.ConsoleLoggingNotificationListener"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;/constructor-arg&gt;</span>
+                    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappedObjectNames"</span><span class="hl-tag">&gt;</span>
+                        <span class="hl-tag">&lt;list&gt;</span>
+                            <span class="hl-tag">&lt;value&gt;</span>bean:name=testBean1<span class="hl-tag">&lt;/value&gt;</span>
+                        <span class="hl-tag">&lt;/list&gt;</span>
+                    <span class="hl-tag">&lt;/property&gt;</span>
+                <span class="hl-tag">&lt;/bean&gt;</span>
+            <span class="hl-tag">&lt;/list&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>The above example is equivalent to the first notification example. Lets assume then that
+we want to be given a handback object every time a <code class="literal">Notification</code> is raised, and that
+additionally we want to filter out extraneous <code class="literal">Notifications</code> by supplying a
+<code class="literal">NotificationFilter</code>. (For a full discussion of just what a handback object is, and
+indeed what a <code class="literal">NotificationFilter</code> is, please do consult that section of the JMX
+specification (1.2) entitled <span class="emphasis"><em>The JMX Notification Model</em></span>.)</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"exporter"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.MBeanExporter"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"beans"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;map&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean1"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean1"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;entry</span> <span class="hl-attribute">key</span>=<span class="hl-value">"bean:name=testBean2"</span> <span class="hl-attribute">value-ref</span>=<span class="hl-value">"testBean2"</span><span class="hl-tag">/&gt;</span>
+            <span class="hl-tag">&lt;/map&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationListeners"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;list&gt;</span>
+                <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.export.NotificationListenerBean"</span><span class="hl-tag">&gt;</span>
+                    <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"customerNotificationListener"</span><span class="hl-tag">/&gt;</span>
+                    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappedObjectNames"</span><span class="hl-tag">&gt;</span>
+                        <span class="hl-tag">&lt;list&gt;</span>
+                            <span class="hl-comment">&lt;!-- handles notifications from two distinct MBeans --&gt;</span>
+                            <span class="hl-tag">&lt;value&gt;</span>bean:name=testBean1<span class="hl-tag">&lt;/value&gt;</span>
+                            <span class="hl-tag">&lt;value&gt;</span>bean:name=testBean2<span class="hl-tag">&lt;/value&gt;</span>
+                        <span class="hl-tag">&lt;/list&gt;</span>
+                    <span class="hl-tag">&lt;/property&gt;</span>
+                    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"handback"</span><span class="hl-tag">&gt;</span>
+                        <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"java.lang.String"</span><span class="hl-tag">&gt;</span>
+                            <span class="hl-tag">&lt;constructor-arg</span> <span class="hl-attribute">value</span>=<span class="hl-value">"This could be anything..."</span><span class="hl-tag">/&gt;</span>
+                        <span class="hl-tag">&lt;/bean&gt;</span>
+                    <span class="hl-tag">&lt;/property&gt;</span>
+                    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"notificationFilter"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"customerNotificationListener"</span><span class="hl-tag">/&gt;</span>
+                <span class="hl-tag">&lt;/bean&gt;</span>
+            <span class="hl-tag">&lt;/list&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-comment">&lt;!-- implements both the NotificationListener and NotificationFilter interfaces --&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"customerNotificationListener"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.ConsoleLoggingNotificationListener"</span><span class="hl-tag">/&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean1"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"100"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"testBean2"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.jmx.JmxTestBean"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"name"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"ANOTHER TEST"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"age"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"200"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-publishing" href="#jmx-notifications-publishing"></a>25.7.2&nbsp;Publishing Notifications</h3></div></div></div>
+
+<p>Spring provides support not just for registering to receive <code class="literal">Notifications</code>, but also
+for publishing <code class="literal">Notifications</code>.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Please note that this section is really only relevant to Spring managed beans that have
+been exposed as MBeans via an <code class="literal">MBeanExporter</code>; any existing, user-defined MBeans should
+use the standard JMX APIs for notification publication.</p>
+</td></tr></table></div>
+
+<p>The key interface in Spring&#8217;s JMX notification publication support is the
+<code class="literal">NotificationPublisher</code> interface (defined in the
+<code class="literal">org.springframework.jmx.export.notification</code> package). Any bean that is going to be
+exported as an MBean via an <code class="literal">MBeanExporter</code> instance can implement the related
+<code class="literal">NotificationPublisherAware</code> interface to gain access to a <code class="literal">NotificationPublisher</code>
+instance. The <code class="literal">NotificationPublisherAware</code> interface simply supplies an instance of a
+<code class="literal">NotificationPublisher</code> to the implementing bean via a simple setter method, which the
+bean can then use to publish <code class="literal">Notifications</code>.</p>
+<p>As stated in the javadocs of the <code class="literal">NotificationPublisher</code> class, managed beans that are
+publishing events via the <code class="literal">NotificationPublisher</code> mechanism are <span class="emphasis"><em>not</em></span> responsible for
+the state management of any notification listeners and the like &#8230; Spring&#8217;s JMX support
+will take care of handling all the JMX infrastructure issues. All one need do as an
+application developer is implement the <code class="literal">NotificationPublisherAware</code> interface and start
+publishing events using the supplied <code class="literal">NotificationPublisher</code> instance. Note that the
+<code class="literal">NotificationPublisher</code> will be set <span class="emphasis"><em>after</em></span> the managed bean has been registered with
+an <code class="literal">MBeanServer</code>.</p>
+<p>Using a <code class="literal">NotificationPublisher</code> instance is quite straightforward&#8230; one simply creates
+a JMX <code class="literal">Notification</code> instance (or an instance of an appropriate <code class="literal">Notification</code>
+subclass), populates the notification with the data pertinent to the event that is to be
+published, and one then invokes the <code class="literal">sendNotification(Notification)</code> on the
+<code class="literal">NotificationPublisher</code> instance, passing in the <code class="literal">Notification</code>.</p>
+<p>Find below a simple example&#8230; in this scenario, exported instances of the <code class="literal">JmxTestBean</code>
+are going to publish a <code class="literal">NotificationEvent</code> every time the <code class="literal">add(int, int)</code> operation is
+invoked.</p>
+<pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.jmx;
+
+<span class="hl-keyword">import</span> org.springframework.jmx.export.notification.NotificationPublisherAware;
+<span class="hl-keyword">import</span> org.springframework.jmx.export.notification.NotificationPublisher;
+<span class="hl-keyword">import</span> javax.management.Notification;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JmxTestBean <span class="hl-keyword">implements</span> IJmxTestBean, NotificationPublisherAware {
+
+    <span class="hl-keyword">private</span> String name;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">int</span> age;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">boolean</span> isSuperman;
+    <span class="hl-keyword">private</span> NotificationPublisher publisher;
+
+    <span class="hl-comment">// other getters and setters omitted for clarity</span>
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> add(<span class="hl-keyword">int</span> x, <span class="hl-keyword">int</span> y) {
+        <span class="hl-keyword">int</span> answer = x + y;
+        <span class="hl-keyword">this</span>.publisher.sendNotification(<span class="hl-keyword">new</span> Notification(<span class="hl-string">"add"</span>, <span class="hl-keyword">this</span>, <span class="hl-number">0</span>));
+        <span class="hl-keyword">return</span> answer;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> dontExposeMe() {
+        <span class="hl-keyword">throw</span> <span class="hl-keyword">new</span> RuntimeException();
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setNotificationPublisher(NotificationPublisher notificationPublisher) {
+        <span class="hl-keyword">this</span>.publisher = notificationPublisher;
+    }
+
+}</pre>
+
+<p>The <code class="literal">NotificationPublisher</code> interface and the machinery to get it all working is one of
+the nicer features of Spring&#8217;s JMX support. It does however come with the price tag of
+coupling your classes to both Spring and JMX; as always, the advice here is to be
+pragmatic&#8230; if you need the functionality offered by the <code class="literal">NotificationPublisher</code> and
+you can accept the coupling to both Spring and JMX, then do so.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-resources" href="#jmx-resources"></a>25.8&nbsp;Further Resources</h2></div></div></div>
+
+<p>This section contains links to further resources about JMX.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+The <a class="ulink" href="http://www.oracle.com/technetwork/java/javase/tech/javamanagement-140525.html" target="_top">JMX
+homepage</a> at Oracle
+</li><li class="listitem">
+The <a class="ulink" href="http://jcp.org/aboutJava/communityprocess/final/jsr003/index3.html" target="_top">JMX
+specification</a> (JSR-000003)
+</li><li class="listitem">
+The <a class="ulink" href="http://jcp.org/aboutJava/communityprocess/final/jsr160/index.html" target="_top">JMX Remote API
+specification</a> (JSR-000160)
+</li><li class="listitem">
+The <a class="ulink" href="http://mx4j.sourceforge.net/" target="_top">MX4J homepage</a> (an Open Source implementation of
+various JMX specs)
+</li></ul></div>
+
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">24.&nbsp;JMS (Java Message Service)&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;26.&nbsp;JCA CCI</td></tr></table></div></body></html>

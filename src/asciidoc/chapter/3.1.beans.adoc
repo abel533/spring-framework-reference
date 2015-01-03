@@ -1,0 +1,268 @@
+[[beans]]
+== IoC 容器
+
+
+
+
+[[beans-introduction]]
+=== Spring IoC容器和Bean概述
+本章介绍了Spring框架实现控制反转（IoC） footnote:[See pass:specialcharacters,macros[<<background-ioc>>] ] 的原理。IoC也被称作 __依赖注入__ (DI)。它是一个处理对象依赖项的过程，也就是说，和他们一起工作的其他的对象，只有通过构造参数、工厂方法参数或者（属性注入）通过构造参数实例化或通过工厂方法返回对象后再设置属性。当创建bean后，IoC容器再将这些依赖项注入进去。这个过程基本上是反转的，因此得名 __控制反转__ （IoC），
+This process is fundamentally
+the inverse, hence the name __Inversion of Control__ (IoC), of the bean itself
+controlling the instantiation or location of its dependencies by using direct
+construction of classes, or a mechanism such as the __Service Locator__ pattern.
+
+`org.springframework.beans`和`org.springframework.context`包是Spring框架IoC容器的基础。
+{javadoc-baseurl}/org/springframework/beans/factory/BeanFactory.html[`BeanFactory`]接口提供了一个先进的配置机制能够管理任何类型的对象。
+{javadoc-baseurl}/org/springframework/context/ApplicationContext.html[`ApplicationContext`(应用上下文)] 是`BeanFactory`的一个子接口。它增加了更方便的集成Spring的AOP功能、消息资源处理（使用国际化）、事件发布和特定的应用层，如在web应用层中使用的`WebApplicationContext`。
+
+总之，`BeanFactory`提供了配置框架和基本功能，`ApplicationContext`则添加了更多的企业特定的功能。`ApplicationContext`是`BeanFactory`的一个完整的超集，并且在本章专门用于指代Spring容器。关于更多使用`BeanFactory`替代`ApplicationContext`的信息，参考<<beans-beanfactory>>。
+
+在Spring中，被Spring IoC __容器__ 管理的这些来自于应用主干的这些对象称作 __beans__ 。bean是一个由Spring IoC容器进行实例化、装配和管理的对象。此外，bean只是你应用中许多对象中的一个。Beans以及他们之间的 __依赖关系__ 是通过容器使用 __配置元数据__ 反应出来。
+
+
+
+
+[[beans-basics]]
+=== 容器概述
+`org.springframework.context.ApplicationContext`接口代表了Spring
+IoC容器，并且负责上面提到的Beans的实例化、配置和装配。容器通过读取配置元数据获取对象如何实例化、配置和装配的指示。配置元数据可以用XML、Java注解或Java代码来描述。它允许你表示组成你应用的对象，以及对象间丰富的依赖关系。
+
+Spring提供了几个开箱即用的`ApplicationContext`接口的实现。在独立的应用程序中，通常创建
+{javadoc-baseurl}/org/springframework/context/support/ClassPathXmlApplicationContext.html[`ClassPathXmlApplicationContext`]
+或
+{javadoc-baseurl}/org/springframework/context/support/FileSystemXmlApplicationContext{javadoc-baseurl}/org/springframework/context/support/FileSystemXmlApplicationContext.html[`FileSystemXmlApplicationContext`]的实例。
+虽然XML是定义配置元数据的传统格式，但是你可以指示容器使用Java注解或者代码作为元数据格式，你需要通过提供少量XML配置声明支持这些额外的元数据格式。
+
+在大多数的应用场景，不需要显式的代码来实例化一个或多个Spring IoC容器。例子，在wei应用中，在应用的`web.xml`文件中，简单的8行样板式的xml配置文件就足够了。如果你使用 https://spring.io/tools/sts[Spring Tool Suite] 的Eclipse开发环境，你只需要点几下鼠标或者键盘就可以轻松的创建这个配置。
+
+下面的图表是一个Spring工作的高级别视图。你的应用程序类都通过配置元数据进行关联，所以在`ApplicationContext`创建和初始化后，你就有了一个完全配置和可执行的系统或应用程序。
+
+.Spring IoC容器
+image::images/container-magic.png[width=250]
+
+
+
+[[beans-factory-metadata]]
+==== 配置元数据
+如上图所示，Spring IoC容器使用了一种 __配置元数据__ 的形式，这些配置元数据代表了你作为一个应用开发者告诉Spring容器如何去实例化、配置和装备你应用中的对象。
+
+配置元数据通常使用一个简单和直观的XML格式，本章大部分都使用这种格式来表达Spring IoC容器概念和特性。
+
+[NOTE]
+====
+基于XML配置的元数据 __不是__ 唯一允许用来配置元数据的一种形式。Spring IoC容器本身是 __完全__ 和元数据配置书写的形式解耦的。这些天，许多开发者在他们的Spring应用中选择使用<<beans-java,基于Java的配置>>的元数据形式。
+====
+
+更多有关在Spring容器中使用其他形式的元数据的内容，请查阅：
+
+* <<beans-annotation-config,基于注解的配置>>: Spring 2.5引入基于注解的配置元数据。
+* <<beans-java,基于Java的配置>>: 从Spring 3.0开始，由Spring
+JavaConfig提供的许多功能已经成为Spring框架的一部分。因此，你可以通过Java而不是XML文件来定义外部应用程序的bean类。使用这些新的功能，请看`@Configuration`、`@Bean`、`@Import`和`@DependsOn` 注解。
+
+Spring配置包括至少一个且通常多个由容器管理的bean定义。在基于XML配置的元数据中，这些beans配置成一个`<bean/>`元素，这些`<bean/>`元素定义在顶级元素`<beans/>`的里面。在Java配置中通常在一个`@Configuration`注解的类中，在方法上使用`@Bean`注解。
+
+这些bean定义对应的实际对象组成了你的应用。通常你会定义服务层对象、数据访问层对象（DAO），展现层对象如Struts的`Action`实例，底层对象如Hibernate的`SessionFactories`，JMS的`Queues`等等。一般很少会在容器中配置细粒度的领域对象，因为通常这都是DAO和业务逻辑负责创建和加载领域对象。
+These bean definitions correspond to the actual objects that make up your application.
+Typically you define service layer objects, data access objects (DAOs), presentation
+objects such as Struts `Action` instances, infrastructure objects such as Hibernate
+`SessionFactories`, JMS `Queues`, and so forth. Typically one does not configure
+fine-grained domain objects in the container, because it is usually the responsibility
+of DAOs and business logic to create and load domain objects. However, you can use
+Spring's integration with AspectJ to configure objects that have been created outside
+the control of an IoC container. See <<aop-atconfigurable,Using AspectJ to
+dependency-inject domain objects with Spring>>.
+
+The following example shows the basic structure of XML-based configuration metadata:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+		<bean id="..." class="...">
+			<!-- collaborators and configuration for this bean go here -->
+		</bean>
+
+		<bean id="..." class="...">
+			<!-- collaborators and configuration for this bean go here -->
+		</bean>
+
+		<!-- more bean definitions go here -->
+
+	</beans>
+----
+
+The `id` attribute is a string that you use to identify the individual bean definition.
+The `class` attribute defines the type of the bean and uses the fully qualified
+classname. The value of the id attribute refers to collaborating objects. The XML for
+referring to collaborating objects is not shown in this example; see
+<<beans-dependencies,Dependencies>> for more information.
+
+
+
+[[beans-factory-instantiation]]
+==== Instantiating a container
+Instantiating a Spring IoC container is straightforward. The location path or paths
+supplied to an `ApplicationContext` constructor are actually resource strings that allow
+the container to load configuration metadata from a variety of external resources such
+as the local file system, from the Java `CLASSPATH`, and so on.
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	ApplicationContext context =
+		new ClassPathXmlApplicationContext(new String[] {"services.xml", "daos.xml"});
+----
+
+[NOTE]
+====
+After you learn about Spring's IoC container, you may want to know more about Spring's
+`Resource` abstraction, as described in <<resources>>, which provides a convenient
+mechanism for reading an InputStream from locations defined in a URI syntax. In
+particular, `Resource` paths are used to construct applications contexts as described in
+<<resources-app-ctx>>.
+====
+
+The following example shows the service layer objects `(services.xml)` configuration file:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+		<!-- services -->
+
+		<bean id="petStore" class="org.springframework.samples.jpetstore.services.PetStoreServiceImpl">
+			<property name="accountDao" ref="accountDao"/>
+			<property name="itemDao" ref="itemDao"/>
+			<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+
+		<!-- more bean definitions for services go here -->
+
+	</beans>
+----
+
+The following example shows the data access objects `daos.xml` file:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<?xml version="1.0" encoding="UTF-8"?>
+	<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+		<bean id="accountDao"
+			class="org.springframework.samples.jpetstore.dao.jpa.JpaAccountDao">
+			<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+
+		<bean id="itemDao" class="org.springframework.samples.jpetstore.dao.jpa.JpaItemDao">
+			<!-- additional collaborators and configuration for this bean go here -->
+		</bean>
+
+		<!-- more bean definitions for data access objects go here -->
+
+	</beans>
+----
+
+In the preceding example, the service layer consists of the class `PetStoreServiceImpl`,
+and two data access objects of the type `JpaAccountDao` and `JpaItemDao` (based
+on the JPA Object/Relational mapping standard). The `property name` element refers to the
+name of the JavaBean property, and the `ref` element refers to the name of another bean
+definition. This linkage between `id` and `ref` elements expresses the dependency between
+collaborating objects. For details of configuring an object's dependencies, see
+<<beans-dependencies,Dependencies>>.
+
+
+[[beans-factory-xml-import]]
+===== Composing XML-based configuration metadata
+It can be useful to have bean definitions span multiple XML files. Often each individual
+XML configuration file represents a logical layer or module in your architecture.
+
+You can use the application context constructor to load bean definitions from all these
+XML fragments. This constructor takes multiple `Resource` locations, as was shown in the
+previous section. Alternatively, use one or more occurrences of the `<import/>` element
+to load bean definitions from another file or files. For example:
+
+[source,xml,indent=0]
+[subs="verbatim,quotes"]
+----
+	<beans>
+		<import resource="services.xml"/>
+		<import resource="resources/messageSource.xml"/>
+		<import resource="/resources/themeSource.xml"/>
+
+		<bean id="bean1" class="..."/>
+		<bean id="bean2" class="..."/>
+	</beans>
+----
+
+In the preceding example, external bean definitions are loaded from three files:
+`services.xml`, `messageSource.xml`, and `themeSource.xml`. All location paths are
+relative to the definition file doing the importing, so `services.xml` must be in the
+same directory or classpath location as the file doing the importing, while
+`messageSource.xml` and `themeSource.xml` must be in a `resources` location below the
+location of the importing file. As you can see, a leading slash is ignored, but given
+that these paths are relative, it is better form not to use the slash at all. The
+contents of the files being imported, including the top level `<beans/>` element, must
+be valid XML bean definitions according to the Spring Schema.
+
+[NOTE]
+====
+It is possible, but not recommended, to reference files in parent directories using a
+relative "../" path. Doing so creates a dependency on a file that is outside the current
+application. In particular, this reference is not recommended for "classpath:" URLs (for
+example, "classpath:../services.xml"), where the runtime resolution process chooses the
+"nearest" classpath root and then looks into its parent directory. Classpath
+configuration changes may lead to the choice of a different, incorrect directory.
+
+You can always use fully qualified resource locations instead of relative paths: for
+example, "file:C:/config/services.xml" or "classpath:/config/services.xml". However, be
+aware that you are coupling your application's configuration to specific absolute
+locations. It is generally preferable to keep an indirection for such absolute
+locations, for example, through "${...}" placeholders that are resolved against JVM
+system properties at runtime.
+====
+
+
+
+[[beans-factory-client]]
+==== Using the container
+The `ApplicationContext` is the interface for an advanced factory capable of maintaining
+a registry of different beans and their dependencies. Using the method `T getBean(String
+name, Class<T> requiredType)` you can retrieve instances of your beans.
+
+The `ApplicationContext` enables you to read bean definitions and access them as follows:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	// create and configure beans
+	ApplicationContext context =
+		new ClassPathXmlApplicationContext(new String[] {"services.xml", "daos.xml"});
+
+	// retrieve configured instance
+	PetStoreService service = context.getBean("petStore", PetStoreService.class);
+
+	// use configured instance
+	List<String> userList = service.getUsernameList();
+----
+
+You use `getBean()` to retrieve instances of your beans. The `ApplicationContext`
+interface has a few other methods for retrieving beans, but ideally your application
+code should never use them. Indeed, your application code should have no calls to the
+`getBean()` method at all, and thus no dependency on Spring APIs at all. For example,
+Spring's integration with web frameworks provides for dependency injection for various
+web framework classes such as controllers and JSF-managed beans.

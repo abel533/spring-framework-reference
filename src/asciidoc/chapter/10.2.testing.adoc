@@ -1,0 +1,29 @@
+[[integration-testing-support-jdbc]]
+==== JDBC Testing Support
+The `org.springframework.test.jdbc` package contains `JdbcTestUtils`, which is a
+collection of JDBC related utility functions intended to simplify standard database
+testing scenarios. Specifically, `JdbcTestUtils` provides the following static utility
+methods.
+
+* `countRowsInTable(..)`: counts the number of rows in the given table
+* `countRowsInTableWhere(..)`: counts the number of rows in the given table, using
+the provided `WHERE` clause
+* `deleteFromTables(..)`: deletes all rows from the specified tables
+* `deleteFromTableWhere(..)`: deletes rows from the given table, using the provided
+`WHERE` clause
+* `dropTables(..)`: drops the specified tables
+
+__Note that <<testcontext-support-classes-junit4,
+`AbstractTransactionalJUnit4SpringContextTests`>> and
+<<testcontext-support-classes-testng, `AbstractTransactionalTestNGSpringContextTests`>>
+provide convenience methods which delegate to the aforementioned methods in
+`JdbcTestUtils`.__
+
+The `spring-jdbc` module provides support for configuring and launching an embedded
+database which can be used in integration tests that interact with a database. For
+details, see <<jdbc-embedded-database-support>> and
+<<jdbc-embedded-database-dao-testing>>.
+
+
+
+

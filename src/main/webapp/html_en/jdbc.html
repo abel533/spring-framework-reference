@@ -1,0 +1,2112 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>14.&nbsp;Data access with JDBC</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="dao.html" title="13.&nbsp;DAO support"><link rel="next" href="orm.html" title="15.&nbsp;Object Relational Mapping (ORM) Data Access"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.&nbsp;Data access with JDBC</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jdbc" href="#jdbc"></a>14.&nbsp;Data access with JDBC</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-introduction" href="#jdbc-introduction"></a>14.1&nbsp;Introduction to Spring Framework JDBC</h2></div></div></div>
+
+<p>The value-add provided by the Spring Framework JDBC abstraction is perhaps best shown by
+the sequence of actions outlined in the table below. The table shows what actions Spring
+will take care of and which actions are the responsibility of you, the application
+developer.</p>
+<div class="table"><a name="jdbc-who-does-what" href="#jdbc-who-does-what"></a><p class="title"><b>Table&nbsp;14.1.&nbsp;Spring JDBC - who does what?</b></p><div class="table-contents">
+
+  <table summary="Spring JDBC - who does what?" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Action</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Spring</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">You</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Define connection parameters.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Open the connection.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Specify the SQL statement.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Declare parameters and provide parameter values</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Prepare and execute the statement.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Set up the loop to iterate through the results (if any).</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Do the work for each iteration.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Process any exception.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Handle transactions.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Close the connection, statement and resultset.</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="" align="left" valign="top">&nbsp;</td></tr></tbody></table>
+</div></div><br class="table-break">
+
+<p>The Spring Framework takes care of all the low-level details that can make JDBC such a
+tedious API to develop with.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-choose-style" href="#jdbc-choose-style"></a>14.1.1&nbsp;Choosing an approach for JDBC database access</h3></div></div></div>
+
+<p>You can choose among several approaches to form the basis for your JDBC database access.
+In addition to three flavors of the JdbcTemplate, a new SimpleJdbcInsert and
+SimplejdbcCall approach optimizes database metadata, and the RDBMS Object style takes a
+more object-oriented approach similar to that of JDO Query design. Once you start using
+one of these approaches, you can still mix and match to include a feature from a
+different approach. All approaches require a JDBC 2.0-compliant driver, and some
+advanced features require a JDBC 3.0 driver.</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<span class="emphasis"><em>JdbcTemplate</em></span> is the classic Spring JDBC approach and the most popular. This
+"lowest level" approach and all others use a JdbcTemplate under the covers.
+</li><li class="listitem">
+<span class="emphasis"><em>NamedParameterJdbcTemplate</em></span> wraps a <code class="literal">JdbcTemplate</code> to provide named parameters
+instead of the traditional JDBC "?" placeholders. This approach provides better
+documentation and ease of use when you have multiple parameters for an SQL statement.
+</li><li class="listitem">
+<span class="emphasis"><em>SimpleJdbcInsert and SimpleJdbcCall</em></span> optimize database metadata to limit the amount
+of necessary configuration. This approach simplifies coding so that you only need to
+provide the name of the table or procedure and provide a map of parameters matching
+the column names. This only works if the database provides adequate metadata. If the
+database doesn&#8217;t provide this metadata, you will have to provide explicit
+configuration of the parameters.
+</li><li class="listitem">
+<span class="emphasis"><em>RDBMS Objects including MappingSqlQuery, SqlUpdate and StoredProcedure</em></span> requires
+you to create reusable and thread-safe objects during initialization of your data
+access layer. This approach is modeled after JDO Query wherein you define your query
+string, declare parameters, and compile the query. Once you do that, execute methods
+can be called multiple times with various parameter values passed in.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-packages" href="#jdbc-packages"></a>14.1.2&nbsp;Package hierarchy</h3></div></div></div>
+
+<p>The Spring Framework&#8217;s JDBC abstraction framework consists of four different packages,
+namely <code class="literal">core</code>, <code class="literal">datasource</code>, <code class="literal">object</code>, and <code class="literal">support</code>.</p>
+<p>The <code class="literal">org.springframework.jdbc.core</code> package contains the <code class="literal">JdbcTemplate</code> class and its
+various callback interfaces, plus a variety of related classes. A subpackage named
+<code class="literal">org.springframework.jdbc.core.simple</code> contains the <code class="literal">SimpleJdbcInsert</code> and
+<code class="literal">SimpleJdbcCall</code> classes. Another subpackage named
+<code class="literal">org.springframework.jdbc.core.namedparam</code> contains the <code class="literal">NamedParameterJdbcTemplate</code>
+class and the related support classes. See <a class="xref" href="jdbc.html#jdbc-core" title="14.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling">Section&nbsp;14.2, &#8220;Using the JDBC core classes to control basic JDBC processing and error handling&#8221;</a>, <a class="xref" href="jdbc.html#jdbc-advanced-jdbc" title="14.4&nbsp;JDBC batch operations">Section&nbsp;14.4, &#8220;JDBC batch operations&#8221;</a>, and
+<a class="xref" href="jdbc.html#jdbc-simple-jdbc" title="14.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes">Section&nbsp;14.5, &#8220;Simplifying JDBC operations with the SimpleJdbc classes&#8221;</a></p>
+<p>The <code class="literal">org.springframework.jdbc.datasource</code> package contains a utility class for easy
+<code class="literal">DataSource</code> access, and various simple <code class="literal">DataSource</code> implementations that can be used
+for testing and running unmodified JDBC code outside of a Java EE container. A
+subpackage named <code class="literal">org.springfamework.jdbc.datasource.embedded</code> provides support for
+creating in-memory database instances using Java database engines such as HSQL and H2.
+See <a class="xref" href="jdbc.html#jdbc-connections" title="14.3&nbsp;Controlling database connections">Section&nbsp;14.3, &#8220;Controlling database connections&#8221;</a> and <a class="xref" href="jdbc.html#jdbc-embedded-database-support" title="14.8&nbsp;Embedded database support">Section&nbsp;14.8, &#8220;Embedded database support&#8221;</a></p>
+<p>The <code class="literal">org.springframework.jdbc.object</code> package contains classes that represent RDBMS
+queries, updates, and stored procedures as thread safe, reusable objects. See
+<a class="xref" href="jdbc.html#jdbc-object" title="14.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;14.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>.This approach is modeled by JDO, although of course objects returned by
+queries are "disconnected" from the database. This higher level of JDBC abstraction
+depends on the lower-level abstraction in the <code class="literal">org.springframework.jdbc.core</code> package.</p>
+<p>The <code class="literal">org.springframework.jdbc.support</code> package provides <code class="literal">SQLException</code> translation
+functionality and some utility classes. Exceptions thrown during JDBC processing are
+translated to exceptions defined in the <code class="literal">org.springframework.dao</code> package. This means
+that code using the Spring JDBC abstraction layer does not need to implement JDBC or
+RDBMS-specific error handling. All translated exceptions are unchecked, which gives you
+the option of catching the exceptions from which you can recover while allowing other
+exceptions to be propagated to the caller. See <a class="xref" href="jdbc.html#jdbc-SQLExceptionTranslator" title="14.2.3&nbsp;SQLExceptionTranslator">Section&nbsp;14.2.3, &#8220;SQLExceptionTranslator&#8221;</a>.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-core" href="#jdbc-core"></a>14.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-JdbcTemplate" href="#jdbc-JdbcTemplate"></a>14.2.1&nbsp;JdbcTemplate</h3></div></div></div>
+
+<p>The <code class="literal">JdbcTemplate</code> class is the central class in the JDBC core package. It handles the
+creation and release of resources, which helps you avoid common errors such as
+forgetting to close the connection. It performs the basic tasks of the core JDBC
+workflow such as statement creation and execution, leaving application code to provide
+SQL and extract results. The <code class="literal">JdbcTemplate</code> class executes SQL queries, update
+statements and stored procedure calls, performs iteration over <code class="literal">ResultSet</code>s and
+extraction of returned parameter values. It also catches JDBC exceptions and translates
+them to the generic, more informative, exception hierarchy defined in the
+<code class="literal">org.springframework.dao</code> package.</p>
+<p>When you use the <code class="literal">JdbcTemplate</code> for your code, you only need to implement callback
+interfaces, giving them a clearly defined contract. The <code class="literal">PreparedStatementCreator</code>
+callback interface creates a prepared statement given a <code class="literal">Connection</code> provided by this
+class, providing SQL and any necessary parameters. The same is true for the
+<code class="literal">CallableStatementCreator</code> interface, which creates callable statements. The
+<code class="literal">RowCallbackHandler</code> interface extracts values from each row of a <code class="literal">ResultSet</code>.</p>
+<p>The <code class="literal">JdbcTemplate</code> can be used within a DAO implementation through direct instantiation
+with a <code class="literal">DataSource</code> reference, or be configured in a Spring IoC container and given to
+DAOs as a bean reference.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The <code class="literal">DataSource</code> should always be configured as a bean in the Spring IoC container. In
+the first case the bean is given to the service directly; in the second case it is given
+to the prepared template.</p>
+</td></tr></table></div>
+
+<p>All SQL issued by this class is logged at the <code class="literal">DEBUG</code> level under the category
+corresponding to the fully qualified class name of the template instance (typically
+<code class="literal">JdbcTemplate</code>, but it may be different if you are using a custom subclass of the
+<code class="literal">JdbcTemplate</code> class).</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="jdbc-JdbcTemplate-examples" href="#jdbc-JdbcTemplate-examples"></a>Examples of JdbcTemplate class usage</h4></div></div></div>
+
+<p>This section provides some examples of <code class="literal">JdbcTemplate</code> class usage. These examples are
+not an exhaustive list of all of the functionality exposed by the <code class="literal">JdbcTemplate</code>; see
+the attendant javadocs for that.</p>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="jdbc-JdbcTemplate-examples-query" href="#jdbc-JdbcTemplate-examples-query"></a>Querying (SELECT)</h5></div></div></div>
+
+<p>Here is a simple query for getting the number of rows in a relation:</p>
+<pre class="programlisting"><span class="hl-keyword">int</span> rowCount = <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(<span class="hl-string">"select count(*) from t_actor"</span>, Integer.<span class="hl-keyword">class</span>);</pre>
+
+<p>A simple query using a bind variable:</p>
+<pre class="programlisting"><span class="hl-keyword">int</span> countOfActorsNamedJoe = <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(
+        <span class="hl-string">"select count(*) from t_actor where first_name = ?"</span>, Integer.<span class="hl-keyword">class</span>, <span class="hl-string">"Joe"</span>);</pre>
+
+<p>Querying for a <code class="literal">String</code>:</p>
+<pre class="programlisting">String lastName = <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(
+        <span class="hl-string">"select last_name from t_actor where id = ?"</span>,
+        <span class="hl-keyword">new</span> Object[]{<span class="hl-number">1212L</span>}, String.<span class="hl-keyword">class</span>);</pre>
+
+<p>Querying and populating a <span class="emphasis"><em>single</em></span> domain object:</p>
+<pre class="programlisting">Actor actor = <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(
+        <span class="hl-string">"select first_name, last_name from t_actor where id = ?"</span>,
+        <span class="hl-keyword">new</span> Object[]{<span class="hl-number">1212L</span>},
+        <span class="hl-keyword">new</span> RowMapper&lt;Actor&gt;() {
+            <span class="hl-keyword">public</span> Actor mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNum) <span class="hl-keyword">throws</span> SQLException {
+                Actor actor = <span class="hl-keyword">new</span> Actor();
+                actor.setFirstName(rs.getString(<span class="hl-string">"first_name"</span>));
+                actor.setLastName(rs.getString(<span class="hl-string">"last_name"</span>));
+                <span class="hl-keyword">return</span> actor;
+            }
+        });</pre>
+
+<p>Querying and populating a number of domain objects:</p>
+<pre class="programlisting">List&lt;Actor&gt; actors = <span class="hl-keyword">this</span>.jdbcTemplate.query(
+        <span class="hl-string">"select first_name, last_name from t_actor"</span>,
+        <span class="hl-keyword">new</span> RowMapper&lt;Actor&gt;() {
+            <span class="hl-keyword">public</span> Actor mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNum) <span class="hl-keyword">throws</span> SQLException {
+                Actor actor = <span class="hl-keyword">new</span> Actor();
+                actor.setFirstName(rs.getString(<span class="hl-string">"first_name"</span>));
+                actor.setLastName(rs.getString(<span class="hl-string">"last_name"</span>));
+                <span class="hl-keyword">return</span> actor;
+            }
+        });</pre>
+
+<p>If the last two snippets of code actually existed in the same application, it would make
+sense to remove the duplication present in the two <code class="literal">RowMapper</code> anonymous inner classes,
+and extract them out into a single class (typically a <code class="literal">static</code> inner class) that can
+then be referenced by DAO methods as needed. For example, it may be better to write the
+last code snippet as follows:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> List&lt;Actor&gt; findAllActors() {
+    <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.jdbcTemplate.query( <span class="hl-string">"select first_name, last_name from t_actor"</span>, <span class="hl-keyword">new</span> ActorMapper());
+}
+
+<span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> <span class="hl-keyword">class</span> ActorMapper <span class="hl-keyword">implements</span> RowMapper&lt;Actor&gt; {
+
+    <span class="hl-keyword">public</span> Actor mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNum) <span class="hl-keyword">throws</span> SQLException {
+        Actor actor = <span class="hl-keyword">new</span> Actor();
+        actor.setFirstName(rs.getString(<span class="hl-string">"first_name"</span>));
+        actor.setLastName(rs.getString(<span class="hl-string">"last_name"</span>));
+        <span class="hl-keyword">return</span> actor;
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="jdbc-JdbcTemplate-examples-update" href="#jdbc-JdbcTemplate-examples-update"></a>Updating (INSERT/UPDATE/DELETE) with jdbcTemplate</h5></div></div></div>
+
+<p>You use the <code class="literal">update(..)</code> method to perform insert, update and delete operations.
+Parameter values are usually provided as var args or alternatively as an object array.</p>
+<pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.update(
+        <span class="hl-string">"insert into t_actor (first_name, last_name) values (?, ?)"</span>,
+        <span class="hl-string">"Leonor"</span>, <span class="hl-string">"Watling"</span>);</pre>
+
+<pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.update(
+        <span class="hl-string">"update t_actor set last_name = ? where id = ?"</span>,
+        <span class="hl-string">"Banjo"</span>, <span class="hl-number">5276L</span>);</pre>
+
+<pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.update(
+        <span class="hl-string">"delete from actor where id = ?"</span>,
+        Long.valueOf(actorId));</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="jdbc-JdbcTemplate-examples-other" href="#jdbc-JdbcTemplate-examples-other"></a>Other jdbcTemplate operations</h5></div></div></div>
+
+<p>You can use the <code class="literal">execute(..)</code> method to execute any arbitrary SQL, and as such the
+method is often used for DDL statements. It is heavily overloaded with variants taking
+callback interfaces, binding variable arrays, and so on.</p>
+<pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.execute(<span class="hl-string">"create table mytable (id integer, name varchar(100))"</span>);</pre>
+
+<p>The following example invokes a simple stored procedure. More sophisticated stored
+procedure support is <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="14.6.4&nbsp;StoredProcedure">covered later</a>.</p>
+<pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.update(
+        <span class="hl-string">"call SUPPORT.REFRESH_ACTORS_SUMMARY(?)"</span>,
+        Long.valueOf(unionId));</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="jdbc-JdbcTemplate-idioms" href="#jdbc-JdbcTemplate-idioms"></a>JdbcTemplate best practices</h4></div></div></div>
+
+<p>Instances of the <code class="literal">JdbcTemplate</code> class are <span class="emphasis"><em>threadsafe once configured</em></span>. This is
+important because it means that you can configure a single instance of a <code class="literal">JdbcTemplate</code>
+and then safely inject this <span class="emphasis"><em>shared</em></span> reference into multiple DAOs (or repositories).
+The <code class="literal">JdbcTemplate</code> is stateful, in that it maintains a reference to a <code class="literal">DataSource</code>, but
+this state is <span class="emphasis"><em>not</em></span> conversational state.</p>
+<p>A common practice when using the <code class="literal">JdbcTemplate</code> class (and the associated
+<a class="link" href="jdbc.html#jdbc-NamedParameterJdbcTemplate" title="14.2.2&nbsp;NamedParameterJdbcTemplate"><code class="literal">NamedParameterJdbcTemplate</code></a> classes) is to
+configure a <code class="literal">DataSource</code> in your Spring configuration file, and then dependency-inject
+that shared <code class="literal">DataSource</code> bean into your DAO classes; the <code class="literal">JdbcTemplate</code> is created in
+the setter for the <code class="literal">DataSource</code>. This leads to DAOs that look in part like the following:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcCorporateEventDao <span class="hl-keyword">implements</span> CorporateEventDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="strong"><strong>this.jdbcTemplate = new JdbcTemplate(dataSource);</strong></span>
+    }
+
+    <span class="hl-comment">// JDBC-backed implementations of the methods on the CorporateEventDao follow...</span>
+}</pre>
+
+<p>The corresponding configuration might look like this.</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:context</span>=<span class="hl-value">"http://www.springframework.org/schema/context"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"corporateEventDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.example.JdbcCorporateEventDao"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"driverClassName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.driverClassName}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"url"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.url}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"username"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.username}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"password"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.password}"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;context:property-placeholder</span> <span class="hl-attribute">location</span>=<span class="hl-value">"jdbc.properties"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>An alternative to explicit configuration is to use component-scanning and annotation
+support for dependency injection. In this case you annotate the class with <code class="literal">@Repository</code>
+(which makes it a candidate for component-scanning) and annotate the <code class="literal">DataSource</code> setter
+method with <code class="literal">@Autowired</code>.</p>
+<pre class="programlisting"><span class="strong"><strong>@Repository</strong></span>
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcCorporateEventDao <span class="hl-keyword">implements</span> CorporateEventDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="strong"><strong>@Autowired</strong></span>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="strong"><strong>this.jdbcTemplate = new JdbcTemplate(dataSource);</strong></span>
+    }
+
+    <span class="hl-comment">// JDBC-backed implementations of the methods on the CorporateEventDao follow...</span>
+}</pre>
+
+<p>The corresponding XML configuration file would look like the following:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="hl-attribute">xmlns:context</span>=<span class="hl-value">"http://www.springframework.org/schema/context"</span>
+    <span class="hl-attribute">xsi:schemaLocation</span>=<span class="hl-value">"
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd"</span><span class="hl-tag">&gt;</span>
+
+    <span class="hl-comment">&lt;!-- Scans within the base package of the application for @Component classes to configure as beans --&gt;</span>
+    <span class="hl-tag">&lt;context:component-scan</span> <span class="hl-attribute">base-package</span>=<span class="hl-value">"org.springframework.docs.test"</span><span class="hl-tag"> /&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.apache.commons.dbcp.BasicDataSource"</span> <span class="hl-attribute">destroy-method</span>=<span class="hl-value">"close"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"driverClassName"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.driverClassName}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"url"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.url}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"username"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.username}"</span><span class="hl-tag">/&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"password"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"${jdbc.password}"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    <span class="hl-tag">&lt;context:property-placeholder</span> <span class="hl-attribute">location</span>=<span class="hl-value">"jdbc.properties"</span><span class="hl-tag">/&gt;</span>
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>If you are using Spring&#8217;s <code class="literal">JdbcDaoSupport</code> class, and your various JDBC-backed DAO classes
+extend from it, then your sub-class inherits a <code class="literal">setDataSource(..)</code> method from the
+<code class="literal">JdbcDaoSupport</code> class. You can choose whether to inherit from this class. The
+<code class="literal">JdbcDaoSupport</code> class is provided as a convenience only.</p>
+<p>Regardless of which of the above template initialization styles you choose to use (or
+not), it is seldom necessary to create a new instance of a <code class="literal">JdbcTemplate</code> class each
+time you want to execute SQL. Once configured, a <code class="literal">JdbcTemplate</code> instance is threadsafe.
+You may want multiple <code class="literal">JdbcTemplate</code> instances if your application accesses multiple
+databases, which requires multiple <code class="literal">DataSources</code>, and subsequently multiple differently
+configured <code class="literal">JdbcTemplates</code>.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NamedParameterJdbcTemplate" href="#jdbc-NamedParameterJdbcTemplate"></a>14.2.2&nbsp;NamedParameterJdbcTemplate</h3></div></div></div>
+
+<p>The <code class="literal">NamedParameterJdbcTemplate</code> class adds support for programming JDBC statements
+using named parameters, as opposed to programming JDBC statements using only classic
+placeholder ( <code class="literal">'?'</code>) arguments. The <code class="literal">NamedParameterJdbcTemplate</code> class wraps a
+<code class="literal">JdbcTemplate</code>, and delegates to the wrapped <code class="literal">JdbcTemplate</code> to do much of its work. This
+section describes only those areas of the <code class="literal">NamedParameterJdbcTemplate</code> class that differ
+from the <code class="literal">JdbcTemplate</code> itself; namely, programming JDBC statements using named
+parameters.</p>
+<pre class="programlisting"><span class="hl-comment">// some JDBC-backed DAO class...</span>
+<span class="hl-keyword">private</span> NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+    <span class="hl-keyword">this</span>.namedParameterJdbcTemplate = <span class="hl-keyword">new</span> NamedParameterJdbcTemplate(dataSource);
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">int</span> countOfActorsByFirstName(String firstName) {
+
+    String sql = <span class="hl-string">"select count(*) from T_ACTOR where first_name = :first_name"</span>;
+
+    SqlParameterSource namedParameters = <span class="hl-keyword">new</span> MapSqlParameterSource(<span class="hl-string">"first_name"</span>, firstName);
+
+    <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Integer.<span class="hl-keyword">class</span>);
+}</pre>
+
+<p>Notice the use of the named parameter notation in the value assigned to the <code class="literal">sql</code>
+variable, and the corresponding value that is plugged into the <code class="literal">namedParameters</code>
+variable (of type <code class="literal">MapSqlParameterSource</code>).</p>
+<p>Alternatively, you can pass along named parameters and their corresponding values to a
+<code class="literal">NamedParameterJdbcTemplate</code> instance by using the <code class="literal">Map</code>-based style.The remaining
+methods exposed by the <code class="literal">NamedParameterJdbcOperations</code> and implemented by the
+<code class="literal">NamedParameterJdbcTemplate</code> class follow a similar pattern and are not covered here.</p>
+<p>The following example shows the use of the <code class="literal">Map</code>-based style.</p>
+<pre class="programlisting"><span class="hl-comment">// some JDBC-backed DAO class...</span>
+<span class="hl-keyword">private</span> NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+    <span class="hl-keyword">this</span>.namedParameterJdbcTemplate = <span class="hl-keyword">new</span> NamedParameterJdbcTemplate(dataSource);
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">int</span> countOfActorsByFirstName(String firstName) {
+
+    String sql = <span class="hl-string">"select count(*) from T_ACTOR where first_name = :first_name"</span>;
+
+    Map&lt;String, String&gt; namedParameters = Collections.singletonMap(<span class="hl-string">"first_name"</span>, firstName);
+
+    <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.namedParameterJdbcTemplate.queryForObject(sql, namedParameters,  Integer.<span class="hl-keyword">class</span>);
+}</pre>
+
+<p>One nice feature related to the <code class="literal">NamedParameterJdbcTemplate</code> (and existing in the same
+Java package) is the <code class="literal">SqlParameterSource</code> interface. You have already seen an example of
+an implementation of this interface in one of the previous code snippet (the
+<code class="literal">MapSqlParameterSource</code> class). An <code class="literal">SqlParameterSource</code> is a source of named parameter
+values to a <code class="literal">NamedParameterJdbcTemplate</code>. The <code class="literal">MapSqlParameterSource</code> class is a very
+simple implementation that is simply an adapter around a <code class="literal">java.util.Map</code>, where the keys
+are the parameter names and the values are the parameter values.</p>
+<p>Another <code class="literal">SqlParameterSource</code> implementation is the <code class="literal">BeanPropertySqlParameterSource</code>
+class. This class wraps an arbitrary JavaBean (that is, an instance of a class that
+adheres to <a class="ulink" href="http://www.oracle.com/technetwork/java/javase/documentation/spec-136004.html" target="_top">the
+JavaBean conventions</a>), and uses the properties of the wrapped JavaBean as the source
+of named parameter values.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Actor {
+
+    <span class="hl-keyword">private</span> Long id;
+    <span class="hl-keyword">private</span> String firstName;
+    <span class="hl-keyword">private</span> String lastName;
+
+    <span class="hl-keyword">public</span> String getFirstName() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.firstName;
+    }
+
+    <span class="hl-keyword">public</span> String getLastName() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.lastName;
+    }
+
+    <span class="hl-keyword">public</span> Long getId() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.id;
+    }
+
+    <span class="hl-comment">// setters omitted...</span>
+
+}</pre>
+
+<pre class="programlisting"><span class="hl-comment">// some JDBC-backed DAO class...</span>
+<span class="hl-keyword">private</span> NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+    <span class="hl-keyword">this</span>.namedParameterJdbcTemplate = <span class="hl-keyword">new</span> NamedParameterJdbcTemplate(dataSource);
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">int</span> countOfActors(Actor exampleActor) {
+
+    <span class="hl-comment">// notice how the named parameters match the properties of the above </span><span class="emphasis"><em>Actor</em></span> <span class="hl-keyword">class</span>
+    String sql = <span class="hl-string">"select count(*) from T_ACTOR where first_name = :firstName and last_name = :lastName"</span>;
+
+    SqlParameterSource namedParameters = <span class="hl-keyword">new</span> BeanPropertySqlParameterSource(exampleActor);
+
+    <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.namedParameterJdbcTemplate.queryForObject(sql, namedParameters, Integer.<span class="hl-keyword">class</span>);
+}</pre>
+
+<p>Remember that the <code class="literal">NamedParameterJdbcTemplate</code> class <span class="emphasis"><em>wraps</em></span> a classic <code class="literal">JdbcTemplate</code>
+template; if you need access to the wrapped <code class="literal">JdbcTemplate</code> instance to access
+functionality only present in the <code class="literal">JdbcTemplate</code> class, you can use the
+<code class="literal">getJdbcOperations()</code> method to access the wrapped <code class="literal">JdbcTemplate</code> through the
+<code class="literal">JdbcOperations</code> interface.</p>
+<p>See also <a class="xref" href="jdbc.html#jdbc-JdbcTemplate-idioms" title="JdbcTemplate best practices">the section called &#8220;JdbcTemplate best practices&#8221;</a> for guidelines on using the
+<code class="literal">NamedParameterJdbcTemplate</code> class in the context of an application.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SQLExceptionTranslator" href="#jdbc-SQLExceptionTranslator"></a>14.2.3&nbsp;SQLExceptionTranslator</h3></div></div></div>
+
+<p><code class="literal">SQLExceptionTranslator</code> is an interface to be implemented by classes that can translate
+between <code class="literal">SQLExceptions</code> and Spring&#8217;s own <code class="literal">org.springframework.dao.DataAccessException</code>,
+which is agnostic in regard to data access strategy. Implementations can be generic (for
+example, using SQLState codes for JDBC) or proprietary (for example, using Oracle error
+codes) for greater precision.</p>
+<p><code class="literal">SQLErrorCodeSQLExceptionTranslator</code> is the implementation of <code class="literal">SQLExceptionTranslator</code>
+that is used by default. This implementation uses specific vendor codes. It is more
+precise than the <code class="literal">SQLState</code> implementation. The error code translations are based on
+codes held in a JavaBean type class called <code class="literal">SQLErrorCodes</code>. This class is created and
+populated by an <code class="literal">SQLErrorCodesFactory</code> which as the name suggests is a factory for
+creating <code class="literal">SQLErrorCodes</code> based on the contents of a configuration file named
+<code class="literal">sql-error-codes.xml</code>. This file is populated with vendor codes and based on the
+<code class="literal">DatabaseProductName</code> taken from the <code class="literal">DatabaseMetaData</code>. The codes for the actual
+database you are using are used.</p>
+<p>The <code class="literal">SQLErrorCodeSQLExceptionTranslator</code> applies matching rules in the following sequence:</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>The <code class="literal">SQLErrorCodesFactory</code> is used by default to define Error codes and custom exception
+translations. They are looked up in a file named <code class="literal">sql-error-codes.xml</code> from the
+classpath and the matching <code class="literal">SQLErrorCodes</code> instance is located based on the database
+name from the database metadata of the database in use.</p>
+</td></tr></table></div>
+
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Any custom translation implemented by a subclass. Normally the provided concrete
+<code class="literal">SQLErrorCodeSQLExceptionTranslator</code> is used so this rule does not apply. It only
+applies if you have actually provided a subclass implementation.
+</li><li class="listitem">
+Any custom implementation of the <code class="literal">SQLExceptionTranslator</code> interface that is provided
+as the <code class="literal">customSqlExceptionTranslator</code> property of the <code class="literal">SQLErrorCodes</code> class.
+</li><li class="listitem">
+The list of instances of the <code class="literal">CustomSQLErrorCodesTranslation</code> class, provided for the
+<code class="literal">customTranslations</code> property of the <code class="literal">SQLErrorCodes</code> class, are searched for a match.
+</li><li class="listitem">
+Error code matching is applied.
+</li><li class="listitem">
+Use the fallback translator. <code class="literal">SQLExceptionSubclassTranslator</code> is the default fallback
+translator. If this translation is not available then the next fallback translator is
+the <code class="literal">SQLStateSQLExceptionTranslator</code>.
+</li></ul></div>
+
+<p>You can extend <code class="literal">SQLErrorCodeSQLExceptionTranslator:</code></p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> CustomSQLErrorCodesTranslator <span class="hl-keyword">extends</span> SQLErrorCodeSQLExceptionTranslator {
+
+    <span class="hl-keyword">protected</span> DataAccessException customTranslate(String task, String sql, SQLException sqlex) {
+        <span class="hl-keyword">if</span> (sqlex.getErrorCode() == -<span class="hl-number">12345</span>) {
+            <span class="hl-keyword">return</span> <span class="hl-keyword">new</span> DeadlockLoserDataAccessException(task, sqlex);
+        }
+        <span class="hl-keyword">return</span> null;
+    }
+}</pre>
+
+<p>In this example, the specific error code <code class="literal">-12345</code> is translated and other errors are
+left to be translated by the default translator implementation. To use this custom
+translator, it is necessary to pass it to the <code class="literal">JdbcTemplate</code> through the method
+<code class="literal">setExceptionTranslator</code> and to use this <code class="literal">JdbcTemplate</code> for all of the data access
+processing where this translator is needed. Here is an example of how this custom
+translator can be used:</p>
+<pre class="programlisting"><span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+
+    <span class="hl-comment">// create a JdbcTemplate and set data source</span>
+    <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate();
+    <span class="hl-keyword">this</span>.jdbcTemplate.setDataSource(dataSource);
+
+    <span class="hl-comment">// create a custom translator and set the DataSource for the default translation lookup</span>
+    CustomSQLErrorCodesTranslator tr = <span class="hl-keyword">new</span> CustomSQLErrorCodesTranslator();
+    tr.setDataSource(dataSource);
+    <span class="hl-keyword">this</span>.jdbcTemplate.setExceptionTranslator(tr);
+
+}
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> updateShippingCharge(<span class="hl-keyword">long</span> orderId, <span class="hl-keyword">long</span> pct) {
+    <span class="hl-comment">// use the prepared JdbcTemplate for this update</span>
+    <span class="hl-keyword">this</span>.jdbcTemplate.update(<span class="hl-string">"update orders"</span> +
+        <span class="hl-string">" set shipping_charge = shipping_charge * ? / 100"</span> +
+        <span class="hl-string">" where id = ?"</span>, pct, orderId);
+}</pre>
+
+<p>The custom translator is passed a data source in order to look up the error codes in
+<code class="literal">sql-error-codes.xml</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-executing" href="#jdbc-statements-executing"></a>14.2.4&nbsp;Executing statements</h3></div></div></div>
+
+<p>Executing an SQL statement requires very little code. You need a <code class="literal">DataSource</code> and a
+<code class="literal">JdbcTemplate</code>, including the convenience methods that are provided with the
+<code class="literal">JdbcTemplate</code>. The following example shows what you need to include for a minimal but
+fully functional class that creates a new table:</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> javax.sql.DataSource;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.JdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ExecuteAStatement {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> doExecute() {
+        <span class="hl-keyword">this</span>.jdbcTemplate.execute(<span class="hl-string">"create table mytable (id integer, name varchar(100))"</span>);
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-querying" href="#jdbc-statements-querying"></a>14.2.5&nbsp;Running queries</h3></div></div></div>
+
+<p>Some query methods return a single value. To retrieve a count or a specific value from
+one row, use <code class="literal">queryForObject(..)</code>. The latter converts the returned JDBC <code class="literal">Type</code> to the
+Java class that is passed in as an argument. If the type conversion is invalid, then an
+<code class="literal">InvalidDataAccessApiUsageException</code> is thrown. Here is an example that contains two
+query methods, one for an <code class="literal">int</code> and one that queries for a <code class="literal">String</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> javax.sql.DataSource;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.JdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> RunAQuery {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getCount() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(<span class="hl-string">"select count(*) from mytable"</span>, Integer.<span class="hl-keyword">class</span>);
+    }
+
+    <span class="hl-keyword">public</span> String getName() {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.jdbcTemplate.queryForObject(<span class="hl-string">"select name from mytable"</span>, String.<span class="hl-keyword">class</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.dataSource = dataSource;
+    }
+}</pre>
+
+<p>In addition to the single result query methods, several methods return a list with an
+entry for each row that the query returned. The most generic method is
+<code class="literal">queryForList(..)</code> which returns a <code class="literal">List</code> where each entry is a <code class="literal">Map</code> with each entry in
+the map representing the column value for that row. If you add a method to the above
+example to retrieve a list of all the rows, it would look like this:</p>
+<pre class="programlisting"><span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+    <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+}
+
+<span class="hl-keyword">public</span> List&lt;Map&lt;String, Object&gt;&gt; getList() {
+    <span class="hl-keyword">return</span> <span class="hl-keyword">this</span>.jdbcTemplate.queryForList(<span class="hl-string">"select * from mytable"</span>);
+}</pre>
+
+<p>The list returned would look something like this:</p>
+
+<pre class="literallayout">[{name=Bob, id=1}, {name=Mary, id=2}]</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-updates" href="#jdbc-updates"></a>14.2.6&nbsp;Updating the database</h3></div></div></div>
+
+<p>The following example shows a column updated for a certain primary key. In this example,
+an SQL statement has placeholders for row parameters. The parameter values can be passed
+in as varargs or alternatively as an array of objects. Thus primitives should be wrapped
+in the primitive wrapper classes explicitly or using auto-boxing.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> javax.sql.DataSource;
+
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.JdbcTemplate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ExecuteAnUpdate {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setName(<span class="hl-keyword">int</span> id, String name) {
+        <span class="hl-keyword">this</span>.jdbcTemplate.update(<span class="hl-string">"update mytable set name = ? where id = ?"</span>, name, id);
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-auto-genereted-keys" href="#jdbc-auto-genereted-keys"></a>14.2.7&nbsp;Retrieving auto-generated keys</h3></div></div></div>
+
+<p>An <code class="literal">update()</code> convenience method supports the retrieval of primary keys generated by the
+database. This support is part of the JDBC 3.0 standard; see Chapter 13.6 of the
+specification for details. The method takes a <code class="literal">PreparedStatementCreator</code> as its first
+argument, and this is the way the required insert statement is specified. The other
+argument is a <code class="literal">KeyHolder</code>, which contains the generated key on successful return from
+the update. There is not a standard single way to create an appropriate
+<code class="literal">PreparedStatement</code> (which explains why the method signature is the way it is). The
+following example works on Oracle but may not work on other platforms:</p>
+<pre class="programlisting"><span class="hl-keyword">final</span> String INSERT_SQL = <span class="hl-string">"insert into my_test (name) values(?)"</span>;
+<span class="hl-keyword">final</span> String name = <span class="hl-string">"Rob"</span>;
+
+KeyHolder keyHolder = <span class="hl-keyword">new</span> GeneratedKeyHolder();
+jdbcTemplate.update(
+    <span class="hl-keyword">new</span> PreparedStatementCreator() {
+        <span class="hl-keyword">public</span> PreparedStatement createPreparedStatement(Connection connection) <span class="hl-keyword">throws</span> SQLException {
+            PreparedStatement ps = connection.prepareStatement(INSERT_SQL, <span class="hl-keyword">new</span> String[] {<span class="hl-string">"id"</span>});
+            ps.setString(<span class="hl-number">1</span>, name);
+            <span class="hl-keyword">return</span> ps;
+        }
+    },
+    keyHolder);
+
+<span class="hl-comment">// keyHolder.getKey() now contains the generated key</span></pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-connections" href="#jdbc-connections"></a>14.3&nbsp;Controlling database connections</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-datasource" href="#jdbc-datasource"></a>14.3.1&nbsp;DataSource</h3></div></div></div>
+
+<p>Spring obtains a connection to the database through a <code class="literal">DataSource</code>. A <code class="literal">DataSource</code> is
+part of the JDBC specification and is a generalized connection factory. It allows a
+container or a framework to hide connection pooling and transaction management issues
+from the application code. As a developer, you need not know details about how to
+connect to the database; that is the responsibility of the administrator that sets up
+the datasource. You most likely fill both roles as you develop and test code, but you do
+not necessarily have to know how the production data source is configured.</p>
+<p>When using Spring&#8217;s JDBC layer, you obtain a data source from JNDI or you configure your
+own with a connection pool implementation provided by a third party. Popular
+implementations are Apache Jakarta Commons DBCP and C3P0. Implementations in the Spring
+distribution are meant only for testing purposes and do not provide pooling.</p>
+<p>This section uses Spring&#8217;s <code class="literal">DriverManagerDataSource</code> implementation, and several
+additional implementations are covered later.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Only use the <code class="literal">DriverManagerDataSource</code> class should only be used for testing purposes
+since it does not provide pooling and will perform poorly when multiple requests for a
+connection are made.</p>
+</td></tr></table></div>
+
+<p>You obtain a connection with <code class="literal">DriverManagerDataSource</code> as you typically obtain a JDBC
+connection. Specify the fully qualified classname of the JDBC driver so that the
+<code class="literal">DriverManager</code> can load the driver class. Next, provide a URL that varies between JDBC
+drivers. (Consult the documentation for your driver for the correct value.) Then provide
+a username and a password to connect to the database. Here is an example of how to
+configure a <code class="literal">DriverManagerDataSource</code> in Java code:</p>
+<pre class="programlisting">DriverManagerDataSource dataSource = <span class="hl-keyword">new</span> DriverManagerDataSource();
+dataSource.setDriverClassName(<span class="hl-string">"org.hsqldb.jdbcDriver"</span>);
+dataSource.setUrl(<span class="hl-string">"jdbc:hsqldb:hsql://localhost:"</span>);
+dataSource.setUsername(<span class="hl-string">"sa"</span>);
+dataSource.setPassword(<span class="hl-string">""</span>);</pre>
+
+<p>Here is the corresponding XML configuration:</p>
+<pre class="programlisting">&lt;bean id=<span class="hl-string">"dataSource"</span> <span class="hl-keyword">class</span>=<span class="hl-string">"org.springframework.jdbc.datasource.DriverManagerDataSource"</span>&gt;
+    &lt;property name=<span class="hl-string">"driverClassName"</span> value=<span class="hl-string">"${jdbc.driverClassName}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"url"</span> value=<span class="hl-string">"${jdbc.url}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"username"</span> value=<span class="hl-string">"${jdbc.username}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"password"</span> value=<span class="hl-string">"${jdbc.password}"</span>/&gt;
+&lt;/bean&gt;
+
+&lt;context:property-placeholder location=<span class="hl-string">"jdbc.properties"</span>/&gt;</pre>
+
+<p>The following examples show the basic connectivity and configuration for DBCP and C3P0.
+To learn about more options that help control the pooling features, see the product
+documentation for the respective connection pooling implementations.</p>
+<p>DBCP configuration:</p>
+<pre class="programlisting">&lt;bean id=<span class="hl-string">"dataSource"</span> <span class="hl-keyword">class</span>=<span class="hl-string">"org.apache.commons.dbcp.BasicDataSource"</span> destroy-method=<span class="hl-string">"close"</span>&gt;
+    &lt;property name=<span class="hl-string">"driverClassName"</span> value=<span class="hl-string">"${jdbc.driverClassName}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"url"</span> value=<span class="hl-string">"${jdbc.url}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"username"</span> value=<span class="hl-string">"${jdbc.username}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"password"</span> value=<span class="hl-string">"${jdbc.password}"</span>/&gt;
+&lt;/bean&gt;
+
+&lt;context:property-placeholder location=<span class="hl-string">"jdbc.properties"</span>/&gt;</pre>
+
+<p>C3P0 configuration:</p>
+<pre class="programlisting">&lt;bean id=<span class="hl-string">"dataSource"</span> <span class="hl-keyword">class</span>=<span class="hl-string">"com.mchange.v2.c3p0.ComboPooledDataSource"</span> destroy-method=<span class="hl-string">"close"</span>&gt;
+    &lt;property name=<span class="hl-string">"driverClass"</span> value=<span class="hl-string">"${jdbc.driverClassName}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"jdbcUrl"</span> value=<span class="hl-string">"${jdbc.url}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"user"</span> value=<span class="hl-string">"${jdbc.username}"</span>/&gt;
+    &lt;property name=<span class="hl-string">"password"</span> value=<span class="hl-string">"${jdbc.password}"</span>/&gt;
+&lt;/bean&gt;
+
+&lt;context:property-placeholder location=<span class="hl-string">"jdbc.properties"</span>/&gt;</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceUtils" href="#jdbc-DataSourceUtils"></a>14.3.2&nbsp;DataSourceUtils</h3></div></div></div>
+
+<p>The <code class="literal">DataSourceUtils</code> class is a convenient and powerful helper class that provides
+<code class="literal">static</code> methods to obtain connections from JNDI and close connections if necessary. It
+supports thread-bound connections with, for example, <code class="literal">DataSourceTransactionManager</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SmartDataSource" href="#jdbc-SmartDataSource"></a>14.3.3&nbsp;SmartDataSource</h3></div></div></div>
+
+<p>The <code class="literal">SmartDataSource</code> interface should be implemented by classes that can provide a
+connection to a relational database. It extends the <code class="literal">DataSource</code> interface to allow
+classes using it to query whether the connection should be closed after a given
+operation. This usage is efficient when you know that you will reuse a connection.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-AbstractDataSource" href="#jdbc-AbstractDataSource"></a>14.3.4&nbsp;AbstractDataSource</h3></div></div></div>
+
+<p><code class="literal">AbstractDataSource</code> is an <code class="literal">abstract</code> base class for Spring&#8217;s <code class="literal">DataSource</code>
+implementations that implements code that is common to all <code class="literal">DataSource</code> implementations.
+You extend the <code class="literal">AbstractDataSource</code> class if you are writing your own <code class="literal">DataSource</code>
+implementation.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SingleConnectionDataSource" href="#jdbc-SingleConnectionDataSource"></a>14.3.5&nbsp;SingleConnectionDataSource</h3></div></div></div>
+
+<p>The <code class="literal">SingleConnectionDataSource</code> class is an implementation of the <code class="literal">SmartDataSource</code>
+interface that wraps a <span class="emphasis"><em>single</em></span> <code class="literal">Connection</code> that is <span class="emphasis"><em>not</em></span> closed after each use.
+Obviously, this is not multi-threading capable.</p>
+<p>If any client code calls <code class="literal">close</code> in the assumption of a pooled connection, as when using
+persistence tools, set the <code class="literal">suppressClose</code> property to <code class="literal">true</code>. This setting returns a
+close-suppressing proxy wrapping the physical connection. Be aware that you will not be
+able to cast this to a native Oracle <code class="literal">Connection</code> or the like anymore.</p>
+<p>This is primarily a test class. For example, it enables easy testing of code outside an
+application server, in conjunction with a simple JNDI environment. In contrast to
+<code class="literal">DriverManagerDataSource</code>, it reuses the same connection all the time, avoiding
+excessive creation of physical connections.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DriverManagerDataSource" href="#jdbc-DriverManagerDataSource"></a>14.3.6&nbsp;DriverManagerDataSource</h3></div></div></div>
+
+<p>The <code class="literal">DriverManagerDataSource</code> class is an implementation of the standard <code class="literal">DataSource</code>
+interface that configures a plain JDBC driver through bean properties, and returns a new
+<code class="literal">Connection</code> every time.</p>
+<p>This implementation is useful for test and stand-alone environments outside of a Java EE
+container, either as a <code class="literal">DataSource</code> bean in a Spring IoC container, or in conjunction
+with a simple JNDI environment. Pool-assuming <code class="literal">Connection.close()</code> calls will simply
+close the connection, so any <code class="literal">DataSource</code>-aware persistence code should work. However,
+using JavaBean-style connection pools such as <code class="literal">commons-dbcp</code> is so easy, even in a test
+environment, that it is almost always preferable to use such a connection pool over
+<code class="literal">DriverManagerDataSource</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-TransactionAwareDataSourceProxy" href="#jdbc-TransactionAwareDataSourceProxy"></a>14.3.7&nbsp;TransactionAwareDataSourceProxy</h3></div></div></div>
+
+<p><code class="literal">TransactionAwareDataSourceProxy</code> is a proxy for a target <code class="literal">DataSource</code>, which wraps that
+target <code class="literal">DataSource</code> to add awareness of Spring-managed transactions. In this respect, it
+is similar to a transactional JNDI <code class="literal">DataSource</code> as provided by a Java EE server.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>It is rarely desirable to use this class, except when already existing code that must be
+called and passed a standard JDBC <code class="literal">DataSource</code> interface implementation. In this case,
+it&#8217;s possible to still have this code be usable, and at the same time have this code
+participating in Spring managed transactions. It is generally preferable to write your
+own new code using the higher level abstractions for resource management, such as
+<code class="literal">JdbcTemplate</code> or <code class="literal">DataSourceUtils</code>.</p>
+</td></tr></table></div>
+
+<p><span class="emphasis"><em>(See the <code class="literal">TransactionAwareDataSourceProxy</code> javadocs for more details.)</em></span></p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceTransactionManager" href="#jdbc-DataSourceTransactionManager"></a>14.3.8&nbsp;DataSourceTransactionManager</h3></div></div></div>
+
+<p>The <code class="literal">DataSourceTransactionManager</code> class is a <code class="literal">PlatformTransactionManager</code>
+implementation for single JDBC datasources. It binds a JDBC connection from the
+specified data source to the currently executing thread, potentially allowing for one
+thread connection per data source.</p>
+<p>Application code is required to retrieve the JDBC connection through
+<code class="literal">DataSourceUtils.getConnection(DataSource)</code> instead of Java EE&#8217;s standard
+<code class="literal">DataSource.getConnection</code>. It throws unchecked <code class="literal">org.springframework.dao</code> exceptions
+instead of checked <code class="literal">SQLExceptions</code>. All framework classes like <code class="literal">JdbcTemplate</code> use this
+strategy implicitly. If not used with this transaction manager, the lookup strategy
+behaves exactly like the common one - it can thus be used in any case.</p>
+<p>The <code class="literal">DataSourceTransactionManager</code> class supports custom isolation levels, and timeouts
+that get applied as appropriate JDBC statement query timeouts. To support the latter,
+application code must either use <code class="literal">JdbcTemplate</code> or call the
+<code class="literal">DataSourceUtils.applyTransactionTimeout(..)</code> method for each created statement.</p>
+<p>This implementation can be used instead of <code class="literal">JtaTransactionManager</code> in the single
+resource case, as it does not require the container to support JTA. Switching between
+both is just a matter of configuration, if you stick to the required connection lookup
+pattern. JTA does not support custom isolation levels!</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NativeJdbcExtractor" href="#jdbc-NativeJdbcExtractor"></a>14.3.9&nbsp;NativeJdbcExtractor</h3></div></div></div>
+
+<p>Sometimes you need to access vendor specific JDBC methods that differ from the standard
+JDBC API. This can be problematic if you are running in an application server or with a
+<code class="literal">DataSource</code> that wraps the <code class="literal">Connection</code>, <code class="literal">Statement</code> and <code class="literal">ResultSet</code> objects with its
+own wrapper objects. To gain access to the native objects you can configure your
+<code class="literal">JdbcTemplate</code> or <code class="literal">OracleLobHandler</code> with a <code class="literal">NativeJdbcExtractor</code>.</p>
+<p>The <code class="literal">NativeJdbcExtractor</code> comes in a variety of flavors to match your execution
+environment:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+SimpleNativeJdbcExtractor
+</li><li class="listitem">
+C3P0NativeJdbcExtractor
+</li><li class="listitem">
+CommonsDbcpNativeJdbcExtractor
+</li><li class="listitem">
+JBossNativeJdbcExtractor
+</li><li class="listitem">
+WebLogicNativeJdbcExtractor
+</li><li class="listitem">
+WebSphereNativeJdbcExtractor
+</li><li class="listitem">
+XAPoolNativeJdbcExtractor
+</li></ul></div>
+
+<p>Usually the <code class="literal">SimpleNativeJdbcExtractor</code> is sufficient for unwrapping a <code class="literal">Connection</code>
+object in most environments. See the javadocs for more details.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-advanced-jdbc" href="#jdbc-advanced-jdbc"></a>14.4&nbsp;JDBC batch operations</h2></div></div></div>
+
+<p>Most JDBC drivers provide improved performance if you batch multiple calls to the same
+prepared statement. By grouping updates into batches you limit the number of round trips
+to the database.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-classic" href="#jdbc-batch-classic"></a>14.4.1&nbsp;Basic batch operations with the JdbcTemplate</h3></div></div></div>
+
+<p>You accomplish <code class="literal">JdbcTemplate</code> batch processing by implementing two methods of a special
+interface, <code class="literal">BatchPreparedStatementSetter</code>, and passing that in as the second parameter
+in your <code class="literal">batchUpdate</code> method call. Use the <code class="literal">getBatchSize</code> method to provide the size of
+the current batch. Use the <code class="literal">setValues</code> method to set the values for the parameters of
+the prepared statement. This method will be called the number of times that you
+specified in the <code class="literal">getBatchSize</code> call. The following example updates the actor table
+based on entries in a list. The entire list is used as the batch in this example:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span>[] batchUpdate(<span class="hl-keyword">final</span> List&lt;Actor&gt; actors) {
+        <span class="hl-keyword">int</span>[] updateCounts = jdbcTemplate.batchUpdate(<span class="hl-string">"update t_actor set first_name = ?, "</span> +
+                <span class="hl-string">"last_name = ? where id = ?"</span>,
+            <span class="hl-keyword">new</span> BatchPreparedStatementSetter() {
+                <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setValues(PreparedStatement ps, <span class="hl-keyword">int</span> i) <span class="hl-keyword">throws</span> SQLException {
+                        ps.setString(<span class="hl-number">1</span>, actors.get(i).getFirstName());
+                        ps.setString(<span class="hl-number">2</span>, actors.get(i).getLastName());
+                        ps.setLong(<span class="hl-number">3</span>, actors.get(i).getId().longValue());
+                    }
+
+                    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> getBatchSize() {
+                        <span class="hl-keyword">return</span> actors.size();
+                    }
+                });
+        <span class="hl-keyword">return</span> updateCounts;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+}</pre>
+
+<p>If you are processing a stream of updates or reading from a file, then you might have a
+preferred batch size, but the last batch might not have that number of entries. In this
+case you can use the <code class="literal">InterruptibleBatchPreparedStatementSetter</code> interface, which allows
+you to interrupt a batch once the input source is exhausted. The <code class="literal">isBatchExhausted</code> method
+allows you to signal the end of the batch.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-list" href="#jdbc-batch-list"></a>14.4.2&nbsp;Batch operations with a List of objects</h3></div></div></div>
+
+<p>Both the <code class="literal">JdbcTemplate</code> and the <code class="literal">NamedParameterJdbcTemplate</code> provides an alternate way
+of providing the batch update. Instead of implementing a special batch interface, you
+provide all parameter values in the call as a list. The framework loops over these
+values and uses an internal prepared statement setter. The API varies depending on
+whether you use named parameters. For the named parameters you provide an array of
+<code class="literal">SqlParameterSource</code>, one entry for each member of the batch. You can use the
+<code class="literal">SqlParameterSource.createBatch</code> method to create this array, passing in either an array
+of JavaBeans or an array of Maps containing the parameter values.</p>
+<p>This example shows a batch update using named parameters:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+    <span class="hl-keyword">private</span> NamedParameterTemplate namedParameterJdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.namedParameterJdbcTemplate = <span class="hl-keyword">new</span> NamedParameterJdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span>[] batchUpdate(<span class="hl-keyword">final</span> List&lt;Actor&gt; actors) {
+        SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(actors.toArray());
+        <span class="hl-keyword">int</span>[] updateCounts = namedParameterJdbcTemplate.batchUpdate(
+                <span class="hl-string">"update t_actor set first_name = :firstName, last_name = :lastName where id = :id"</span>,
+                batch);
+        <span class="hl-keyword">return</span> updateCounts;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+}</pre>
+
+<p>For an SQL statement using the classic "?" placeholders, you pass in a list containing an
+object array with the update values. This object array must have one entry for each
+placeholder in the SQL statement, and they must be in the same order as they are defined
+in the SQL statement.</p>
+<p>The same example using classic JDBC "?" placeholders:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span>[] batchUpdate(<span class="hl-keyword">final</span> List&lt;Actor&gt; actors) {
+        List&lt;Object[]&gt; batch = <span class="hl-keyword">new</span> ArrayList&lt;Object[]&gt;();
+        <span class="hl-keyword">for</span> (Actor actor : actors) {
+            Object[] values = <span class="hl-keyword">new</span> Object[] {
+                    actor.getFirstName(),
+                    actor.getLastName(),
+                    actor.getId()};
+            batch.add(values);
+        }
+        <span class="hl-keyword">int</span>[] updateCounts = jdbcTemplate.batchUpdate(
+                <span class="hl-string">"update t_actor set first_name = ?, last_name = ? where id = ?"</span>,
+                batch);
+        <span class="hl-keyword">return</span> updateCounts;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>All of the above batch update methods return an int array containing the number of
+affected rows for each batch entry. This count is reported by the JDBC driver. If the
+count is not available, the JDBC driver returns a -2 value.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-multi" href="#jdbc-batch-multi"></a>14.4.3&nbsp;Batch operations with multiple batches</h3></div></div></div>
+
+<p>The last example of a batch update deals with batches that are so large that you want to
+break them up into several smaller batches. You can of course do this with the methods
+mentioned above by making multiple calls to the <code class="literal">batchUpdate</code> method, but there is now a
+more convenient method. This method takes, in addition to the SQL statement, a
+Collection of objects containing the parameters, the number of updates to make for each
+batch and a <code class="literal">ParameterizedPreparedStatementSetter</code> to set the values for the parameters
+of the prepared statement. The framework loops over the provided values and breaks the
+update calls into batches of the size specified.</p>
+<p>This example shows a batch update using a batch size of 100:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span>[][] batchUpdate(<span class="hl-keyword">final</span> Collection&lt;Actor&gt; actors) {
+        <span class="hl-keyword">int</span>[][] updateCounts = jdbcTemplate.batchUpdate(
+                <span class="hl-string">"update t_actor set first_name = ?, last_name = ? where id = ?"</span>,
+                actors,
+                <span class="hl-number">100</span>,
+                <span class="hl-keyword">new</span> ParameterizedPreparedStatementSetter&lt;Actor&gt;() {
+                    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setValues(PreparedStatement ps, Actor argument) <span class="hl-keyword">throws</span> SQLException {
+                        ps.setString(<span class="hl-number">1</span>, argument.getFirstName());
+                        ps.setString(<span class="hl-number">2</span>, argument.getLastName());
+                        ps.setLong(<span class="hl-number">3</span>, argument.getId().longValue());
+                    }
+                });
+        <span class="hl-keyword">return</span> updateCounts;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>The batch update methods for this call returns an array of int arrays containing an array
+entry for each batch with an array of the number of affected rows for each update. The top
+level array&#8217;s length indicates the number of batches executed and the second level array&#8217;s
+length indicates the number of updates in that batch. The number of updates in each batch
+should be the the batch size provided for all batches except for the last one that might
+be less, depending on the total number of update objects provided. The update count for
+each update statement is the one reported by the JDBC driver. If the count is not
+available, the JDBC driver returns a -2 value.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-simple-jdbc" href="#jdbc-simple-jdbc"></a>14.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes</h2></div></div></div>
+
+<p>The <code class="literal">SimpleJdbcInsert</code> and <code class="literal">SimpleJdbcCall</code> classes provide a simplified configuration
+by taking advantage of database metadata that can be retrieved through the JDBC driver.
+This means there is less to configure up front, although you can override or turn off
+the metadata processing if you prefer to provide all the details in your code.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-1" href="#jdbc-simple-jdbc-insert-1"></a>14.5.1&nbsp;Inserting data using SimpleJdbcInsert</h3></div></div></div>
+
+<p>Let&#8217;s start by looking at the <code class="literal">SimpleJdbcInsert</code> class with the minimal amount of
+configuration options. You should instantiate the <code class="literal">SimpleJdbcInsert</code> in the data access
+layer&#8217;s initialization method. For this example, the initializing method is the
+<code class="literal">setDataSource</code> method. You do not need to subclass the <code class="literal">SimpleJdbcInsert</code> class; simply
+create a new instance and set the table name using the <code class="literal">withTableName</code> method.
+Configuration methods for this class follow the "fluid" style that returns the instance
+of the <code class="literal">SimpleJdbcInsert</code>, which allows you to chain all configuration methods. This
+example uses only one configuration method; you will see examples of multiple ones later.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcInsert insertActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.insertActor = <span class="hl-keyword">new</span> SimpleJdbcInsert(dataSource).withTableName(<span class="hl-string">"t_actor"</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> add(Actor actor) {
+        Map&lt;String, Object&gt; parameters = <span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;(<span class="hl-number">3</span>);
+        parameters.put(<span class="hl-string">"id"</span>, actor.getId());
+        parameters.put(<span class="hl-string">"first_name"</span>, actor.getFirstName());
+        parameters.put(<span class="hl-string">"last_name"</span>, actor.getLastName());
+        insertActor.execute(parameters);
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+}</pre>
+
+<p>The execute method used here takes a plain <code class="literal">java.utils.Map</code> as its only parameter. The
+important thing to note here is that the keys used for the Map must match the column
+names of the table as defined in the database. This is because we read the metadata in
+order to construct the actual insert statement.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-2" href="#jdbc-simple-jdbc-insert-2"></a>14.5.2&nbsp;Retrieving auto-generated keys using SimpleJdbcInsert</h3></div></div></div>
+
+<p>This example uses the same insert as the preceding, but instead of passing in the id it
+retrieves the auto-generated key and sets it on the new Actor object. When you create
+the <code class="literal">SimpleJdbcInsert</code>, in addition to specifying the table name, you specify the name
+of the generated key column with the <code class="literal">usingGeneratedKeyColumns</code> method.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcInsert insertActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.insertActor = <span class="hl-keyword">new</span> SimpleJdbcInsert(dataSource)
+                .withTableName(<span class="hl-string">"t_actor"</span>)
+                .usingGeneratedKeyColumns(<span class="hl-string">"id"</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> add(Actor actor) {
+        Map&lt;String, Object&gt; parameters = <span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;(<span class="hl-number">2</span>);
+        parameters.put(<span class="hl-string">"first_name"</span>, actor.getFirstName());
+        parameters.put(<span class="hl-string">"last_name"</span>, actor.getLastName());
+        Number newId = insertActor.executeAndReturnKey(parameters);
+        actor.setId(newId.longValue());
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+}</pre>
+
+<p>The main difference when executing the insert by this second approach is that you do not
+add the id to the Map and you call the <code class="literal">executeReturningKey</code> method. This returns a
+<code class="literal">java.lang.Number</code> object with which you can create an instance of the numerical type that
+is used in our domain class. You cannot rely on all databases to return a specific Java
+class here; <code class="literal">java.lang.Number</code> is the base class that you can rely on. If you have
+multiple auto-generated columns, or the generated values are non-numeric, then you can
+use a <code class="literal">KeyHolder</code> that is returned from the <code class="literal">executeReturningKeyHolder</code> method.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-3" href="#jdbc-simple-jdbc-insert-3"></a>14.5.3&nbsp;Specifying columns for a SimpleJdbcInsert</h3></div></div></div>
+
+<p>You can limit the columns for an insert by specifying a list of column names with the
+<code class="literal">usingColumns</code> method:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcInsert insertActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.insertActor = <span class="hl-keyword">new</span> SimpleJdbcInsert(dataSource)
+                .withTableName(<span class="hl-string">"t_actor"</span>)
+                .usingColumns(<span class="hl-string">"first_name"</span>, <span class="hl-string">"last_name"</span>)
+                .usingGeneratedKeyColumns(<span class="hl-string">"id"</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> add(Actor actor) {
+        Map&lt;String, Object&gt; parameters = <span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;(<span class="hl-number">2</span>);
+        parameters.put(<span class="hl-string">"first_name"</span>, actor.getFirstName());
+        parameters.put(<span class="hl-string">"last_name"</span>, actor.getLastName());
+        Number newId = insertActor.executeAndReturnKey(parameters);
+        actor.setId(newId.longValue());
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>The execution of the insert is the same as if you had relied on the metadata to determine
+which columns to use.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-parameters" href="#jdbc-simple-jdbc-parameters"></a>14.5.4&nbsp;Using SqlParameterSource to provide parameter values</h3></div></div></div>
+
+<p>Using a <code class="literal">Map</code> to provide parameter values works fine, but it&#8217;s not the most convenient
+class to use. Spring provides a couple of implementations of the <code class="literal">SqlParameterSource</code>
+interface that can be used instead.The first one is <code class="literal">BeanPropertySqlParameterSource</code>,
+which is a very convenient class if you have a JavaBean-compliant class that contains
+your values. It will use the corresponding getter method to extract the parameter
+values. Here is an example:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcInsert insertActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.insertActor = <span class="hl-keyword">new</span> SimpleJdbcInsert(dataSource)
+                .withTableName(<span class="hl-string">"t_actor"</span>)
+                .usingGeneratedKeyColumns(<span class="hl-string">"id"</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> add(Actor actor) {
+        SqlParameterSource parameters = <span class="hl-keyword">new</span> BeanPropertySqlParameterSource(actor);
+        Number newId = insertActor.executeAndReturnKey(parameters);
+        actor.setId(newId.longValue());
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>Another option is the <code class="literal">MapSqlParameterSource</code> that resembles a Map but provides a more
+convenient <code class="literal">addValue</code> method that can be chained.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcInsert insertActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.insertActor = <span class="hl-keyword">new</span> SimpleJdbcInsert(dataSource)
+                .withTableName(<span class="hl-string">"t_actor"</span>)
+                .usingGeneratedKeyColumns(<span class="hl-string">"id"</span>);
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> add(Actor actor) {
+        SqlParameterSource parameters = <span class="hl-keyword">new</span> MapSqlParameterSource()
+                .addValue(<span class="hl-string">"first_name"</span>, actor.getFirstName())
+                .addValue(<span class="hl-string">"last_name"</span>, actor.getLastName());
+        Number newId = insertActor.executeAndReturnKey(parameters);
+        actor.setId(newId.longValue());
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>As you can see, the configuration is the same; only the executing code has to change to
+use these alternative input classes.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-1" href="#jdbc-simple-jdbc-call-1"></a>14.5.5&nbsp;Calling a stored procedure with SimpleJdbcCall</h3></div></div></div>
+
+<p>The <code class="literal">SimpleJdbcCall</code> class leverages metadata in the database to look up names of <code class="literal">in</code>
+and <code class="literal">out</code> parameters, so that you do not have to declare them explicitly. You can
+declare parameters if you prefer to do that, or if you have parameters such as <code class="literal">ARRAY</code>
+or <code class="literal">STRUCT</code> that do not have an automatic mapping to a Java class. The first example
+shows a simple procedure that returns only scalar values in <code class="literal">VARCHAR</code> and <code class="literal">DATE</code> format
+from a MySQL database. The example procedure reads a specified actor entry and returns
+<code class="literal">first_name</code>, <code class="literal">last_name</code>, and <code class="literal">birth_date</code> columns in the form of <code class="literal">out</code> parameters.</p>
+<pre class="programlisting"><span class="hl-keyword">CREATE</span> <span class="hl-keyword">PROCEDURE</span> read_actor (
+    <span class="hl-keyword">IN</span> in_id <span class="hl-keyword">INTEGER</span>,
+    <span class="hl-keyword">OUT</span> out_first_name <span class="hl-keyword">VARCHAR</span>(<span class="hl-number">100</span>),
+    <span class="hl-keyword">OUT</span> out_last_name <span class="hl-keyword">VARCHAR</span>(<span class="hl-number">100</span>),
+    <span class="hl-keyword">OUT</span> out_birth_date <span class="hl-keyword">DATE</span>)
+<span class="hl-keyword">BEGIN</span>
+    <span class="hl-keyword">SELECT</span> first_name, last_name, birth_date
+    <span class="hl-keyword">INTO</span> out_first_name, out_last_name, out_birth_date
+    <span class="hl-keyword">FROM</span> t_actor <span class="hl-keyword">where</span> id = in_id;
+<span class="hl-keyword">END</span>;</pre>
+
+<p>The <code class="literal">in_id</code> parameter contains the <code class="literal">id</code> of the actor you are looking up. The <code class="literal">out</code>
+parameters return the data read from the table.</p>
+<p>The <code class="literal">SimpleJdbcCall</code> is declared in a similar manner to the <code class="literal">SimpleJdbcInsert</code>. You
+should instantiate and configure the class in the initialization method of your data
+access layer. Compared to the StoredProcedure class, you don&#8217;t have to create a subclass
+and you don&#8217;t have to declare parameters that can be looked up in the database metadata.
+Following is an example of a SimpleJdbcCall configuration using the above stored
+procedure. The only configuration option, in addition to the <code class="literal">DataSource</code>, is the name
+of the stored procedure.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcCall procReadActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        <span class="hl-keyword">this</span>.procReadActor = <span class="hl-keyword">new</span> SimpleJdbcCall(dataSource)
+                .withProcedureName(<span class="hl-string">"read_actor"</span>);
+    }
+
+    <span class="hl-keyword">public</span> Actor readActor(Long id) {
+        SqlParameterSource in = <span class="hl-keyword">new</span> MapSqlParameterSource()
+                .addValue(<span class="hl-string">"in_id"</span>, id);
+        Map out = procReadActor.execute(in);
+        Actor actor = <span class="hl-keyword">new</span> Actor();
+        actor.setId(id);
+        actor.setFirstName((String) out.get(<span class="hl-string">"out_first_name"</span>));
+        actor.setLastName((String) out.get(<span class="hl-string">"out_last_name"</span>));
+        actor.setBirthDate((Date) out.get(<span class="hl-string">"out_birth_date"</span>));
+        <span class="hl-keyword">return</span> actor;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>The code you write for the execution of the call involves creating an <code class="literal">SqlParameterSource</code>
+containing the IN parameter. It&#8217;s important to match the name provided for the input value
+with that of the parameter name declared in the stored procedure. The case does not have
+to match because you use metadata to determine how database objects should be referred to
+in a stored procedure. What is specified in the source for the stored procedure is not
+necessarily the way it is stored in the database. Some databases transform names to all
+upper case while others use lower case or use the case as specified.</p>
+<p>The <code class="literal">execute</code> method takes the IN parameters and returns a Map containing any <code class="literal">out</code>
+parameters keyed by the name as specified in the stored procedure. In this case they are
+<code class="literal">out_first_name, out_last_name</code> and <code class="literal">out_birth_date</code>.</p>
+<p>The last part of the <code class="literal">execute</code> method creates an Actor instance to use to return the
+data retrieved. Again, it is important to use the names of the <code class="literal">out</code> parameters as they
+are declared in the stored procedure. Also, the case in the names of the <code class="literal">out</code>
+parameters stored in the results map matches that of the <code class="literal">out</code> parameter names in the
+database, which could vary between databases. To make your code more portable you should
+do a case-insensitive lookup or instruct Spring to use a <code class="literal">CaseInsensitiveMap</code> from the
+Jakarta Commons project. To do the latter, you create your own <code class="literal">JdbcTemplate</code> and set
+the <code class="literal">setResultsMapCaseInsensitive</code> property to <code class="literal">true</code>. Then you pass this customized
+<code class="literal">JdbcTemplate</code> instance into the constructor of your <code class="literal">SimpleJdbcCall</code>. You must include
+the <code class="literal">commons-collections.jar</code> in your classpath for this to work. Here is an example of
+this configuration:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> SimpleJdbcCall procReadActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        JdbcTemplate jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        jdbcTemplate.setResultsMapCaseInsensitive(true);
+        <span class="hl-keyword">this</span>.procReadActor = <span class="hl-keyword">new</span> SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName(<span class="hl-string">"read_actor"</span>);
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>By taking this action, you avoid conflicts in the case used for the names of your
+returned <code class="literal">out</code> parameters.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-2" href="#jdbc-simple-jdbc-call-2"></a>14.5.6&nbsp;Explicitly declaring parameters to use for a SimpleJdbcCall</h3></div></div></div>
+
+<p>You have seen how the parameters are deduced based on metadata, but you can declare then
+explicitly if you wish. You do this by creating and configuring <code class="literal">SimpleJdbcCall</code> with
+the <code class="literal">declareParameters</code> method, which takes a variable number of <code class="literal">SqlParameter</code> objects
+as input. See the next section for details on how to define an <code class="literal">SqlParameter</code>.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Explicit declarations are necessary if the database you use is not a Spring-supported
+database. Currently Spring supports metadata lookup of stored procedure calls for the
+following databases: Apache Derby, DB2, MySQL, Microsoft SQL Server, Oracle, and Sybase.
+We also support metadata lookup of stored functions for: MySQL, Microsoft SQL Server,
+and Oracle.</p>
+</td></tr></table></div>
+
+<p>You can opt to declare one, some, or all the parameters explicitly. The parameter
+metadata is still used where you do not declare parameters explicitly. To bypass all
+processing of metadata lookups for potential parameters and only use the declared
+parameters, you call the method <code class="literal">withoutProcedureColumnMetaDataAccess</code> as part of the
+declaration. Suppose that you have two or more different call signatures declared for a
+database function. In this case you call the <code class="literal">useInParameterNames</code> to specify the list
+of IN parameter names to include for a given signature.</p>
+<p>The following example shows a fully declared procedure call, using the information from
+the preceding example.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> SimpleJdbcCall procReadActor;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        JdbcTemplate jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        jdbcTemplate.setResultsMapCaseInsensitive(true);
+        <span class="hl-keyword">this</span>.procReadActor = <span class="hl-keyword">new</span> SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName(<span class="hl-string">"read_actor"</span>)
+                .withoutProcedureColumnMetaDataAccess()
+                .useInParameterNames(<span class="hl-string">"in_id"</span>)
+                .declareParameters(
+                        <span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"in_id"</span>, Types.NUMERIC),
+                        <span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"out_first_name"</span>, Types.VARCHAR),
+                        <span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"out_last_name"</span>, Types.VARCHAR),
+                        <span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"out_birth_date"</span>, Types.DATE)
+                );
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+}</pre>
+
+<p>The execution and end results of the two examples are the same; this one specifies all
+details explicitly rather than relying on metadata.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-params" href="#jdbc-params"></a>14.5.7&nbsp;How to define SqlParameters</h3></div></div></div>
+
+<p>To define a parameter for the SimpleJdbc classes and also for the RDBMS operations
+classes, covered in <a class="xref" href="jdbc.html#jdbc-object" title="14.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;14.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>, you use an <code class="literal">SqlParameter</code> or one of its subclasses.
+You typically specify the parameter name and SQL type in the constructor. The SQL type
+is specified using the <code class="literal">java.sql.Types</code> constants. We have already seen declarations
+like:</p>
+<pre class="programlisting"><span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"in_id"</span>, Types.NUMERIC),
+    <span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"out_first_name"</span>, Types.VARCHAR),</pre>
+
+<p>The first line with the <code class="literal">SqlParameter</code> declares an IN parameter. IN parameters can be
+used for both stored procedure calls and for queries using the <code class="literal">SqlQuery</code> and its
+subclasses covered in the following section.</p>
+<p>The second line with the <code class="literal">SqlOutParameter</code> declares an <code class="literal">out</code> parameter to be used in a
+stored procedure call. There is also an <code class="literal">SqlInOutParameter</code> for <code class="literal">InOut</code> parameters,
+parameters that provide an <code class="literal">IN</code> value to the procedure and that also return a value.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Only parameters declared as <code class="literal">SqlParameter</code> and <code class="literal">SqlInOutParameter</code> will be used to
+provide input values. This is different from the <code class="literal">StoredProcedure</code> class, which for
+backwards compatibility reasons allows input values to be provided for parameters
+declared as <code class="literal">SqlOutParameter</code>.</p>
+</td></tr></table></div>
+
+<p>For IN parameters, in addition to the name and the SQL type, you can specify a scale for
+numeric data or a type name for custom database types. For <code class="literal">out</code> parameters, you can
+provide a <code class="literal">RowMapper</code> to handle mapping of rows returned from a <code class="literal">REF</code> cursor. Another
+option is to specify an <code class="literal">SqlReturnType</code> that provides an opportunity to define
+customized handling of the return values.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-3" href="#jdbc-simple-jdbc-call-3"></a>14.5.8&nbsp;Calling a stored function using SimpleJdbcCall</h3></div></div></div>
+
+<p>You call a stored function in almost the same way as you call a stored procedure, except
+that you provide a function name rather than a procedure name. You use the
+<code class="literal">withFunctionName</code> method as part of the configuration to indicate that we want to make
+a call to a function, and the corresponding string for a function call is generated. A
+specialized execute call, <code class="literal">executeFunction,</code> is used to execute the function and it
+returns the function return value as an object of a specified type, which means you do
+not have to retrieve the return value from the results map. A similar convenience method
+named <code class="literal">executeObject</code> is also available for stored procedures that only have one <code class="literal">out</code>
+parameter. The following example is based on a stored function named <code class="literal">get_actor_name</code>
+that returns an actor&#8217;s full name. Here is the MySQL source for this function:</p>
+<pre class="programlisting"><span class="hl-keyword">CREATE</span> <span class="hl-keyword">FUNCTION</span> get_actor_name (in_id <span class="hl-keyword">INTEGER</span>)
+<span class="hl-keyword">RETURNS</span> <span class="hl-keyword">VARCHAR</span>(<span class="hl-number">200</span>) <span class="hl-keyword">READS</span> <span class="hl-keyword">SQL</span> <span class="hl-keyword">DATA</span>
+<span class="hl-keyword">BEGIN</span>
+    <span class="hl-keyword">DECLARE</span> out_name <span class="hl-keyword">VARCHAR</span>(<span class="hl-number">200</span>);
+    <span class="hl-keyword">SELECT</span> concat(first_name, <span class="hl-string">' '</span>, last_name)
+        <span class="hl-keyword">INTO</span> out_name
+        <span class="hl-keyword">FROM</span> t_actor <span class="hl-keyword">where</span> id = in_id;
+    <span class="hl-keyword">RETURN</span> out_name;
+<span class="hl-keyword">END</span>;</pre>
+
+<p>To call this function we again create a <code class="literal">SimpleJdbcCall</code> in the initialization method.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> JdbcTemplate jdbcTemplate;
+    <span class="hl-keyword">private</span> SimpleJdbcCall funcGetActorName;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        jdbcTemplate.setResultsMapCaseInsensitive(true);
+        <span class="hl-keyword">this</span>.funcGetActorName = <span class="hl-keyword">new</span> SimpleJdbcCall(jdbcTemplate)
+                .withFunctionName(<span class="hl-string">"get_actor_name"</span>);
+    }
+
+    <span class="hl-keyword">public</span> String getActorName(Long id) {
+        SqlParameterSource in = <span class="hl-keyword">new</span> MapSqlParameterSource()
+                .addValue(<span class="hl-string">"in_id"</span>, id);
+        String name = funcGetActorName.executeFunction(String.<span class="hl-keyword">class</span>, in);
+        <span class="hl-keyword">return</span> name;
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>The execute method used returns a <code class="literal">String</code> containing the return value from the function
+call.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-4" href="#jdbc-simple-jdbc-call-4"></a>14.5.9&nbsp;Returning ResultSet/REF Cursor from a SimpleJdbcCall</h3></div></div></div>
+
+<p>Calling a stored procedure or function that returns a result set is a bit tricky. Some
+databases return result sets during the JDBC results processing while others require an
+explicitly registered <code class="literal">out</code> parameter of a specific type. Both approaches need
+additional processing to loop over the result set and process the returned rows. With
+the <code class="literal">SimpleJdbcCall</code> you use the <code class="literal">returningResultSet</code> method and declare a <code class="literal">RowMapper</code>
+implementation to be used for a specific parameter. In the case where the result set is
+returned during the results processing, there are no names defined, so the returned
+results will have to match the order in which you declare the <code class="literal">RowMapper</code>
+implementations. The name specified is still used to store the processed list of results
+in the results map that is returned from the execute statement.</p>
+<p>The next example uses a stored procedure that takes no IN parameters and returns all
+rows from the t_actor table. Here is the MySQL source for this procedure:</p>
+<pre class="programlisting"><span class="hl-keyword">CREATE</span> <span class="hl-keyword">PROCEDURE</span> read_all_actors()
+<span class="hl-keyword">BEGIN</span>
+ <span class="hl-keyword">SELECT</span> <span class="hl-keyword">a</span>.id, <span class="hl-keyword">a</span>.first_name, <span class="hl-keyword">a</span>.last_name, <span class="hl-keyword">a</span>.birth_date <span class="hl-keyword">FROM</span> t_actor <span class="hl-keyword">a</span>;
+<span class="hl-keyword">END</span>;</pre>
+
+<p>To call this procedure you declare the <code class="literal">RowMapper</code>. Because the class you want to map to
+follows the JavaBean rules, you can use a <code class="literal">ParameterizedBeanPropertyRowMapper</code> that is
+created by passing in the required class to map to in the <code class="literal">newInstance</code> method.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JdbcActorDao <span class="hl-keyword">implements</span> ActorDao {
+
+    <span class="hl-keyword">private</span> SimpleJdbcCall procReadAllActors;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+        JdbcTemplate jdbcTemplate = <span class="hl-keyword">new</span> JdbcTemplate(dataSource);
+        jdbcTemplate.setResultsMapCaseInsensitive(true);
+        <span class="hl-keyword">this</span>.procReadAllActors = <span class="hl-keyword">new</span> SimpleJdbcCall(jdbcTemplate)
+                .withProcedureName(<span class="hl-string">"read_all_actors"</span>)
+                .returningResultSet(<span class="hl-string">"actors"</span>,
+                ParameterizedBeanPropertyRowMapper.newInstance(Actor.<span class="hl-keyword">class</span>));
+    }
+
+    <span class="hl-keyword">public</span> List getActorsList() {
+        Map m = procReadAllActors.execute(<span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;(<span class="hl-number">0</span>));
+        <span class="hl-keyword">return</span> (List) m.get(<span class="hl-string">"actors"</span>);
+    }
+
+    <span class="hl-comment">// ... additional methods</span>
+
+}</pre>
+
+<p>The execute call passes in an empty Map because this call does not take any parameters.
+The list of Actors is then retrieved from the results map and returned to the caller.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-object" href="#jdbc-object"></a>14.6&nbsp;Modeling JDBC operations as Java objects</h2></div></div></div>
+
+<p>The <code class="literal">org.springframework.jdbc.object</code> package contains classes that allow you to access
+the database in a more object-oriented manner. As an example, you can execute queries
+and get the results back as a list containing business objects with the relational
+column data mapped to the properties of the business object. You can also execute stored
+procedures and run update, delete, and insert statements.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Many Spring developers believe that the various RDBMS operation classes described below
+(with the exception of the <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="14.6.4&nbsp;StoredProcedure"><code class="literal">StoredProcedure</code></a> class) can often
+be replaced with straight <code class="literal">JdbcTemplate</code> calls. Often it is simpler to write a DAO
+method that simply calls a method on a <code class="literal">JdbcTemplate</code> directly (as opposed to
+encapsulating a query as a full-blown class).</p>
+<p>However, if you are getting measurable value from using the RDBMS operation classes,
+continue using these classes.</p>
+</td></tr></table></div>
+
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlQuery" href="#jdbc-SqlQuery"></a>14.6.1&nbsp;SqlQuery</h3></div></div></div>
+
+<p><code class="literal">SqlQuery</code> is a reusable, threadsafe class that encapsulates an SQL query. Subclasses
+must implement the <code class="literal">newRowMapper(..)</code> method to provide a <code class="literal">RowMapper</code> instance that can
+create one object per row obtained from iterating over the <code class="literal">ResultSet</code> that is created
+during the execution of the query. The <code class="literal">SqlQuery</code> class is rarely used directly because
+the <code class="literal">MappingSqlQuery</code> subclass provides a much more convenient implementation for
+mapping rows to Java classes. Other implementations that extend <code class="literal">SqlQuery</code> are
+<code class="literal">MappingSqlQueryWithParameters</code> and <code class="literal">UpdatableSqlQuery</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-MappingSqlQuery" href="#jdbc-MappingSqlQuery"></a>14.6.2&nbsp;MappingSqlQuery</h3></div></div></div>
+
+<p><code class="literal">MappingSqlQuery</code> is a reusable query in which concrete subclasses must implement the
+abstract <code class="literal">mapRow(..)</code> method to convert each row of the supplied <code class="literal">ResultSet</code> into an
+object of the type specified. The following example shows a custom query that maps the
+data from the <code class="literal">t_actor</code> relation to an instance of the <code class="literal">Actor</code> class.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ActorMappingQuery <span class="hl-keyword">extends</span> MappingSqlQuery&lt;Actor&gt; {
+
+    <span class="hl-keyword">public</span> ActorMappingQuery(DataSource ds) {
+        <span class="hl-keyword">super</span>(ds, <span class="hl-string">"select id, first_name, last_name from t_actor where id = ?"</span>);
+        <span class="hl-keyword">super</span>.declareParameter(<span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"id"</span>, Types.INTEGER));
+        compile();
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@Override</span></em>
+    <span class="hl-keyword">protected</span> Actor mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNumber) <span class="hl-keyword">throws</span> SQLException {
+        Actor actor = <span class="hl-keyword">new</span> Actor();
+        actor.setId(rs.getLong(<span class="hl-string">"id"</span>));
+        actor.setFirstName(rs.getString(<span class="hl-string">"first_name"</span>));
+        actor.setLastName(rs.getString(<span class="hl-string">"last_name"</span>));
+        <span class="hl-keyword">return</span> actor;
+    }
+
+}</pre>
+
+<p>The class extends <code class="literal">MappingSqlQuery</code> parameterized with the <code class="literal">Actor</code> type. The constructor
+for this customer query takes the <code class="literal">DataSource</code> as the only parameter. In this
+constructor you call the constructor on the superclass with the <code class="literal">DataSource</code> and the SQL
+that should be executed to retrieve the rows for this query. This SQL will be used to
+create a <code class="literal">PreparedStatement</code> so it may contain place holders for any parameters to be
+passed in during execution.You must declare each parameter using the <code class="literal">declareParameter</code>
+method passing in an <code class="literal">SqlParameter</code>. The <code class="literal">SqlParameter</code> takes a name and the JDBC type
+as defined in <code class="literal">java.sql.Types</code>. After you define all parameters, you call the
+<code class="literal">compile()</code> method so the statement can be prepared and later executed. This class is
+thread-safe after it is compiled, so as long as these instances are created when the DAO
+is initialized they can be kept as instance variables and be reused.</p>
+<pre class="programlisting"><span class="hl-keyword">private</span> ActorMappingQuery actorMappingQuery;
+
+<em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+<span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setDataSource(DataSource dataSource) {
+    <span class="hl-keyword">this</span>.actorMappingQuery = <span class="hl-keyword">new</span> ActorMappingQuery(dataSource);
+}
+
+<span class="hl-keyword">public</span> Customer getCustomer(Long id) {
+    <span class="hl-keyword">return</span> actorMappingQuery.findObject(id);
+}</pre>
+
+<p>The method in this example retrieves the customer with the id that is passed in as the
+only parameter. Since we only want one object returned we simply call the convenience
+method <code class="literal">findObject</code> with the id as parameter. If we had instead a query that returned a
+list of objects and took additional parameters then we would use one of the execute
+methods that takes an array of parameter values passed in as varargs.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> List&lt;Actor&gt; searchForActors(<span class="hl-keyword">int</span> age, String namePattern) {
+    List&lt;Actor&gt; actors = actorSearchMappingQuery.execute(age, namePattern);
+    <span class="hl-keyword">return</span> actors;
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlUpdate" href="#jdbc-SqlUpdate"></a>14.6.3&nbsp;SqlUpdate</h3></div></div></div>
+
+<p>The <code class="literal">SqlUpdate</code> class encapsulates an SQL update. Like a query, an update object is
+reusable, and like all <code class="literal">RdbmsOperation</code> classes, an update can have parameters and is
+defined in SQL. This class provides a number of <code class="literal">update(..)</code> methods analogous to the
+<code class="literal">execute(..)</code> methods of query objects. The <code class="literal">SQLUpdate</code> class is concrete. It can be
+subclassed, for example, to add a custom update method, as in the following snippet
+where it&#8217;s simply called <code class="literal">execute</code>. However, you don&#8217;t have to subclass the <code class="literal">SqlUpdate</code>
+class since it can easily be parameterized by setting SQL and declaring parameters.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> java.sql.Types;
+
+<span class="hl-keyword">import</span> javax.sql.DataSource;
+
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.SqlParameter;
+<span class="hl-keyword">import</span> org.springframework.jdbc.object.SqlUpdate;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> UpdateCreditRating <span class="hl-keyword">extends</span> SqlUpdate {
+
+    <span class="hl-keyword">public</span> UpdateCreditRating(DataSource ds) {
+        setDataSource(ds);
+        setSql(<span class="hl-string">"update customer set credit_rating = ? where id = ?"</span>);
+        declareParameter(<span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"creditRating"</span>, Types.NUMERIC));
+        declareParameter(<span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"id"</span>, Types.NUMERIC));
+        compile();
+    }
+
+    <strong class="hl-tag" style="color: blue">/**
+     * @param id for the Customer to be updated
+     * @param rating the new value for credit rating
+     * @return number of rows updated
+     */</strong>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">int</span> execute(<span class="hl-keyword">int</span> id, <span class="hl-keyword">int</span> rating) {
+        <span class="hl-keyword">return</span> update(rating, id);
+    }
+}</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-StoredProcedure" href="#jdbc-StoredProcedure"></a>14.6.4&nbsp;StoredProcedure</h3></div></div></div>
+
+<p>The <code class="literal">StoredProcedure</code> class is a superclass for object abstractions of RDBMS stored
+procedures. This class is <code class="literal">abstract</code>, and its various <code class="literal">execute(..)</code> methods have
+<code class="literal">protected</code> access, preventing use other than through a subclass that offers tighter
+typing.</p>
+<p>The inherited <code class="literal">sql</code> property will be the name of the stored procedure in the RDBMS.</p>
+<p>To define a parameter for the <code class="literal">StoredProcedure</code> class, you use an <code class="literal">SqlParameter</code> or one
+of its subclasses. You must specify the parameter name and SQL type in the constructor
+like in the following code snippet. The SQL type is specified using the <code class="literal">java.sql.Types</code>
+constants.</p>
+<pre class="programlisting"><span class="hl-keyword">new</span> SqlParameter(<span class="hl-string">"in_id"</span>, Types.NUMERIC),
+    <span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"out_first_name"</span>, Types.VARCHAR),</pre>
+
+<p>The first line with the <code class="literal">SqlParameter</code> declares an IN parameter. IN parameters can be
+used for both stored procedure calls and for queries using the <code class="literal">SqlQuery</code> and its
+subclasses covered in the following section.</p>
+<p>The second line with the <code class="literal">SqlOutParameter</code> declares an <code class="literal">out</code> parameter to be used in the
+stored procedure call. There is also an <code class="literal">SqlInOutParameter</code> for <code class="literal">I</code> <code class="literal">nOut</code> parameters,
+parameters that provide an <code class="literal">in</code> value to the procedure and that also return a value.</p>
+<p>For <code class="literal">i</code> <code class="literal">n</code> parameters, in addition to the name and the SQL type, you can specify a
+scale for numeric data or a type name for custom database types. For <code class="literal">out</code> parameters
+you can provide a <code class="literal">RowMapper</code> to handle mapping of rows returned from a REF cursor.
+Another option is to specify an <code class="literal">SqlReturnType</code> that enables you to define customized
+handling of the return values.</p>
+<p>Here is an example of a simple DAO that uses a <code class="literal">StoredProcedure</code> to call a function,
+<code class="literal">sysdate()</code>,which comes with any Oracle database. To use the stored procedure
+functionality you have to create a class that extends <code class="literal">StoredProcedure</code>. In this
+example, the <code class="literal">StoredProcedure</code> class is an inner class, but if you need to reuse the
+<code class="literal">StoredProcedure</code> you declare it as a top-level class. This example has no input
+parameters, but an output parameter is declared as a date type using the class
+<code class="literal">SqlOutParameter</code>. The <code class="literal">execute()</code> method executes the procedure and extracts the
+returned date from the results <code class="literal">Map</code>. The results <code class="literal">Map</code> has an entry for each declared
+output parameter, in this case only one, using the parameter name as the key.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> java.sql.Types;
+<span class="hl-keyword">import</span> java.util.Date;
+<span class="hl-keyword">import</span> java.util.HashMap;
+<span class="hl-keyword">import</span> java.util.Map;
+
+<span class="hl-keyword">import</span> javax.sql.DataSource;
+
+<span class="hl-keyword">import</span> org.springframework.beans.factory.annotation.Autowired;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.SqlOutParameter;
+<span class="hl-keyword">import</span> org.springframework.jdbc.object.StoredProcedure;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> StoredProcedureDao {
+
+    <span class="hl-keyword">private</span> GetSysdateProcedure getSysdate;
+
+    <em><span class="hl-annotation" style="color: gray">@Autowired</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> init(DataSource dataSource) {
+        <span class="hl-keyword">this</span>.getSysdate = <span class="hl-keyword">new</span> GetSysdateProcedure(dataSource);
+    }
+
+    <span class="hl-keyword">public</span> Date getSysdate() {
+        <span class="hl-keyword">return</span> getSysdate.execute();
+    }
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">class</span> GetSysdateProcedure <span class="hl-keyword">extends</span> StoredProcedure {
+
+        <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String SQL = <span class="hl-string">"sysdate"</span>;
+
+        <span class="hl-keyword">public</span> GetSysdateProcedure(DataSource dataSource) {
+            setDataSource(dataSource);
+            setFunction(true);
+            setSql(SQL);
+            declareParameter(<span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"date"</span>, Types.DATE));
+            compile();
+        }
+
+        <span class="hl-keyword">public</span> Date execute() {
+            <span class="hl-comment">// the </span><span class="emphasis"><em>sysdate</em></span> sproc has no input parameters, so an empty Map is supplied...
+            Map&lt;String, Object&gt; results = execute(<span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;());
+            Date sysdate = (Date) results.get(<span class="hl-string">"date"</span>);
+            <span class="hl-keyword">return</span> sysdate;
+        }
+    }
+
+}</pre>
+
+<p>The following example of a <code class="literal">StoredProcedure</code> has two output parameters (in this case,
+Oracle REF cursors).</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> oracle.jdbc.OracleTypes;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.SqlOutParameter;
+<span class="hl-keyword">import</span> org.springframework.jdbc.object.StoredProcedure;
+
+<span class="hl-keyword">import</span> javax.sql.DataSource;
+<span class="hl-keyword">import</span> java.util.HashMap;
+<span class="hl-keyword">import</span> java.util.Map;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TitlesAndGenresStoredProcedure <span class="hl-keyword">extends</span> StoredProcedure {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String SPROC_NAME = <span class="hl-string">"AllTitlesAndGenres"</span>;
+
+    <span class="hl-keyword">public</span> TitlesAndGenresStoredProcedure(DataSource dataSource) {
+        <span class="hl-keyword">super</span>(dataSource, SPROC_NAME);
+        declareParameter(<span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"titles"</span>, OracleTypes.CURSOR, <span class="hl-keyword">new</span> TitleMapper()));
+        declareParameter(<span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"genres"</span>, OracleTypes.CURSOR, <span class="hl-keyword">new</span> GenreMapper()));
+        compile();
+    }
+
+    <span class="hl-keyword">public</span> Map&lt;String, Object&gt; execute() {
+        <span class="hl-comment">// again, this sproc has no input parameters, so an empty Map is supplied</span>
+        <span class="hl-keyword">return</span> <span class="hl-keyword">super</span>.execute(<span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;());
+    }
+}</pre>
+
+<p>Notice how the overloaded variants of the <code class="literal">declareParameter(..)</code> method that have been
+used in the <code class="literal">TitlesAndGenresStoredProcedure</code> constructor are passed <code class="literal">RowMapper</code>
+implementation instances; this is a very convenient and powerful way to reuse existing
+functionality. The code for the two <code class="literal">RowMapper</code> implementations is provided below.</p>
+<p>The <code class="literal">TitleMapper</code> class maps a <code class="literal">ResultSet</code> to a <code class="literal">Title</code> domain object for each row in
+the supplied <code class="literal">ResultSet</code>:</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> org.springframework.jdbc.core.RowMapper;
+
+<span class="hl-keyword">import</span> java.sql.ResultSet;
+<span class="hl-keyword">import</span> java.sql.SQLException;
+
+<span class="hl-keyword">import</span> com.foo.domain.Title;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">final</span> <span class="hl-keyword">class</span> TitleMapper <span class="hl-keyword">implements</span> RowMapper&lt;Title&gt; {
+
+    <span class="hl-keyword">public</span> Title mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNum) <span class="hl-keyword">throws</span> SQLException {
+        Title title = <span class="hl-keyword">new</span> Title();
+        title.setId(rs.getLong(<span class="hl-string">"id"</span>));
+        title.setName(rs.getString(<span class="hl-string">"name"</span>));
+        <span class="hl-keyword">return</span> title;
+    }
+}</pre>
+
+<p>The <code class="literal">GenreMapper</code> class maps a <code class="literal">ResultSet</code> to a <code class="literal">Genre</code> domain object for each row in
+the supplied <code class="literal">ResultSet</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> org.springframework.jdbc.core.RowMapper;
+
+<span class="hl-keyword">import</span> java.sql.ResultSet;
+<span class="hl-keyword">import</span> java.sql.SQLException;
+
+<span class="hl-keyword">import</span> com.foo.domain.Genre;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">final</span> <span class="hl-keyword">class</span> GenreMapper <span class="hl-keyword">implements</span> RowMapper&lt;Genre&gt; {
+
+    <span class="hl-keyword">public</span> Genre mapRow(ResultSet rs, <span class="hl-keyword">int</span> rowNum) <span class="hl-keyword">throws</span> SQLException {
+        <span class="hl-keyword">return</span> <span class="hl-keyword">new</span> Genre(rs.getString(<span class="hl-string">"name"</span>));
+    }
+}</pre>
+
+<p>To pass parameters to a stored procedure that has one or more input parameters in its
+definition in the RDBMS, you can code a strongly typed <code class="literal">execute(..)</code> method that would
+delegate to the superclass' untyped <code class="literal">execute(Map parameters)</code> method (which has
+<code class="literal">protected</code> access); for example:</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> oracle.jdbc.OracleTypes;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.SqlOutParameter;
+<span class="hl-keyword">import</span> org.springframework.jdbc.core.SqlParameter;
+<span class="hl-keyword">import</span> org.springframework.jdbc.object.StoredProcedure;
+
+<span class="hl-keyword">import</span> javax.sql.DataSource;
+
+<span class="hl-keyword">import</span> java.sql.Types;
+<span class="hl-keyword">import</span> java.util.Date;
+<span class="hl-keyword">import</span> java.util.HashMap;
+<span class="hl-keyword">import</span> java.util.Map;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TitlesAfterDateStoredProcedure <span class="hl-keyword">extends</span> StoredProcedure {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String SPROC_NAME = <span class="hl-string">"TitlesAfterDate"</span>;
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String CUTOFF_DATE_PARAM = <span class="hl-string">"cutoffDate"</span>;
+
+    <span class="hl-keyword">public</span> TitlesAfterDateStoredProcedure(DataSource dataSource) {
+        <span class="hl-keyword">super</span>(dataSource, SPROC_NAME);
+        declareParameter(<span class="hl-keyword">new</span> SqlParameter(CUTOFF_DATE_PARAM, Types.DATE);
+        declareParameter(<span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"titles"</span>, OracleTypes.CURSOR, <span class="hl-keyword">new</span> TitleMapper()));
+        compile();
+    }
+
+    <span class="hl-keyword">public</span> Map&lt;String, Object&gt; execute(Date cutoffDate) {
+        Map&lt;String, Object&gt; inputs = <span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;();
+        inputs.put(CUTOFF_DATE_PARAM, cutoffDate);
+        <span class="hl-keyword">return</span> <span class="hl-keyword">super</span>.execute(inputs);
+    }
+}</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-parameter-handling" href="#jdbc-parameter-handling"></a>14.7&nbsp;Common problems with parameter and data value handling</h2></div></div></div>
+
+<p>Common problems with parameters and data values exist in the different approaches
+provided by the Spring Framework JDBC.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-type-information" href="#jdbc-type-information"></a>14.7.1&nbsp;Providing SQL type information for parameters</h3></div></div></div>
+
+<p>Usually Spring determines the SQL type of the parameters based on the type of parameter
+passed in. It is possible to explicitly provide the SQL type to be used when setting
+parameter values. This is sometimes necessary to correctly set NULL values.</p>
+<p>You can provide SQL type information in several ways:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Many update and query methods of the <code class="literal">JdbcTemplate</code> take an additional parameter in
+the form of an <code class="literal">int</code> array. This array is used to indicate the SQL type of the
+corresponding parameter using constant values from the <code class="literal">java.sql.Types</code> class. Provide
+one entry for each parameter.
+</li><li class="listitem">
+You can use the <code class="literal">SqlParameterValue</code> class to wrap the parameter value that needs this
+additional information.Create a new instance for each value and pass in the SQL type
+and parameter value in the constructor. You can also provide an optional scale
+parameter for numeric values.
+</li><li class="listitem">
+For methods working with named parameters, use the <code class="literal">SqlParameterSource</code> classes
+<code class="literal">BeanPropertySqlParameterSource</code> or <code class="literal">MapSqlParameterSource</code>. They both have methods
+for registering the SQL type for any of the named parameter values.
+</li></ul></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-lob" href="#jdbc-lob"></a>14.7.2&nbsp;Handling BLOB and CLOB objects</h3></div></div></div>
+
+<p>You can store images, other binary objects, and large chunks of text. These large object
+are called BLOB for binary data and CLOB for character data. In Spring you can handle
+these large objects by using the JdbcTemplate directly and also when using the higher
+abstractions provided by RDBMS Objects and the <code class="literal">SimpleJdbc</code> classes. All of these
+approaches use an implementation of the <code class="literal">LobHandler</code> interface for the actual management
+of the LOB data. The <code class="literal">LobHandler</code> provides access to a <code class="literal">LobCreator</code> class, through the
+<code class="literal">getLobCreator</code> method, used for creating new LOB objects to be inserted.</p>
+<p>The <code class="literal">LobCreator/LobHandler</code> provides the following support for LOB input and output:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+BLOB
+</li><li class="listitem">
+byte[]&#8201;&#8212;&#8201;getBlobAsBytes and setBlobAsBytes
+</li><li class="listitem">
+InputStream&#8201;&#8212;&#8201;getBlobAsBinaryStream and setBlobAsBinaryStream
+</li><li class="listitem">
+CLOB
+</li><li class="listitem">
+String&#8201;&#8212;&#8201;getClobAsString and setClobAsString
+</li><li class="listitem">
+InputStream&#8201;&#8212;&#8201;getClobAsAsciiStream and setClobAsAsciiStream
+</li><li class="listitem">
+Reader&#8201;&#8212;&#8201;getClobAsCharacterStream and setClobAsCharacterStream
+</li></ul></div>
+
+<p>The next example shows how to create and insert a BLOB. Later you will see how to read
+it back from the database.</p>
+<p>This example uses a <code class="literal">JdbcTemplate</code> and an implementation of the
+<code class="literal">AbstractLobCreatingPreparedStatementCallbac</code> <code class="literal">k</code>. It implements one method,
+<code class="literal">setValues</code>. This method provides a <code class="literal">LobCreator</code> that you use to set the values for the
+LOB columns in your SQL insert statement.</p>
+<p>For this example we assume that there is a variable, <code class="literal">lobHandle</code> <code class="literal">r</code>, that already is
+set to an instance of a <code class="literal">DefaultLobHandler</code>. You typically set this value through
+dependency injection.</p>
+<pre class="programlisting"><span class="hl-keyword">final</span> File blobIn = <span class="hl-keyword">new</span> File(<span class="hl-string">"spring2004.jpg"</span>);
+<span class="hl-keyword">final</span> InputStream blobIs = <span class="hl-keyword">new</span> FileInputStream(blobIn);
+<span class="hl-keyword">final</span> File clobIn = <span class="hl-keyword">new</span> File(<span class="hl-string">"large.txt"</span>);
+<span class="hl-keyword">final</span> InputStream clobIs = <span class="hl-keyword">new</span> FileInputStream(clobIn);
+<span class="hl-keyword">final</span> InputStreamReader clobReader = <span class="hl-keyword">new</span> InputStreamReader(clobIs);
+jdbcTemplate.execute(
+    <span class="hl-string">"INSERT INTO lob_table (id, a_clob, a_blob) VALUES (?, ?, ?)"</span>,
+    <span class="hl-keyword">new</span> AbstractLobCreatingPreparedStatementCallback(lobHandler) { <a name="CO1-1" href="#CO1-1"></a><span><img src="images/callouts/1.png" alt="1" border="0"></span>
+        <span class="hl-keyword">protected</span> <span class="hl-keyword">void</span> setValues(PreparedStatement ps, LobCreator lobCreator) <span class="hl-keyword">throws</span> SQLException {
+            ps.setLong(<span class="hl-number">1</span>, <span class="hl-number">1L</span>);
+            lobCreator.setClobAsCharacterStream(ps, <span class="hl-number">2</span>, clobReader, (<span class="hl-keyword">int</span>)clobIn.length()); <a name="CO1-2" href="#CO1-2"></a><span><img src="images/callouts/2.png" alt="2" border="0"></span>
+            lobCreator.setBlobAsBinaryStream(ps, <span class="hl-number">3</span>, blobIs, (<span class="hl-keyword">int</span>)blobIn.length()); <a name="CO1-3" href="#CO1-3"></a><span><img src="images/callouts/3.png" alt="3" border="0"></span>
+        }
+    }
+);
+blobIs.close();
+clobReader.close();</pre>
+
+<div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-1"><span><img src="images/callouts/1.png" alt="1" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>Pass in the lobHandler that in this example is a plain <code class="literal">DefaultLobHandler</code></p>
+  </td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-2"><span><img src="images/callouts/2.png" alt="2" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>Using the method <code class="literal">setClobAsCharacterStream</code>, pass in the contents of the CLOB.</p>
+  </td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO1-3"><span><img src="images/callouts/3.png" alt="3" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>Using the method <code class="literal">setBlobAsBinaryStream</code>, pass in the contents of the BLOB.</p>
+  </td></tr></table></div>
+
+<p>Now it&#8217;s time to read the LOB data from the database. Again, you use a <code class="literal">JdbcTemplate</code>
+with the same instance variable <code class="literal">l</code> <code class="literal">obHandler</code> and a reference to a <code class="literal">DefaultLobHandler</code>.</p>
+<pre class="programlisting">List&lt;Map&lt;String, Object&gt;&gt; l = jdbcTemplate.query(<span class="hl-string">"select id, a_clob, a_blob from lob_table"</span>,
+    <span class="hl-keyword">new</span> RowMapper&lt;Map&lt;String, Object&gt;&gt;() {
+        <span class="hl-keyword">public</span> Map&lt;String, Object&gt; mapRow(ResultSet rs, <span class="hl-keyword">int</span> i) <span class="hl-keyword">throws</span> SQLException {
+            Map&lt;String, Object&gt; results = <span class="hl-keyword">new</span> HashMap&lt;String, Object&gt;();
+            String clobText = lobHandler.getClobAsString(rs, <span class="hl-string">"a_clob"</span>); <a name="CO2-1" href="#CO2-1"></a><span><img src="images/callouts/1.png" alt="1" border="0"></span>
+results.put(<span class="hl-string">"CLOB"</span>, clobText); <span class="hl-keyword">byte</span>[] blobBytes = lobHandler.getBlobAsBytes(rs, <span class="hl-string">"a_blob"</span>); <a name="CO2-2" href="#CO2-2"></a><span><img src="images/callouts/2.png" alt="2" border="0"></span>
+results.put(<span class="hl-string">"BLOB"</span>, blobBytes); <span class="hl-keyword">return</span> results; } });</pre>
+
+<div class="calloutlist"><table border="0" summary="Callout list"><tr><td width="5%" valign="top" align="left"><p><a href="#CO2-1"><span><img src="images/callouts/1.png" alt="1" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>Using the method <code class="literal">getClobAsString</code>, retrieve the contents of the CLOB.</p>
+  </td></tr><tr><td width="5%" valign="top" align="left"><p><a href="#CO2-2"><span><img src="images/callouts/2.png" alt="2" border="0"></span></a> </p></td><td valign="top" align="left">
+    <p>Using the method <code class="literal">getBlobAsBytes</code>, retrieve the contents of the BLOB.</p>
+  </td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-in-clause" href="#jdbc-in-clause"></a>14.7.3&nbsp;Passing in lists of values for IN clause</h3></div></div></div>
+
+<p>The SQL standard allows for selecting rows based on an expression that includes a
+variable list of values. A typical example would be <code class="literal">select * from T_ACTOR where id in
+(1, 2, 3)</code>. This variable list is not directly supported for prepared statements by the
+JDBC standard; you cannot declare a variable number of placeholders. You need a number
+of variations with the desired number of placeholders prepared, or you need to generate
+the SQL string dynamically once you know how many placeholders are required. The named
+parameter support provided in the <code class="literal">NamedParameterJdbcTemplate</code> and <code class="literal">JdbcTemplate</code> takes
+the latter approach. Pass in the values as a <code class="literal">java.util.List</code> of primitive objects. This
+list will be used to insert the required placeholders and pass in the values during the
+statement execution.</p>
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Be careful when passing in many values. The JDBC standard does not guarantee that you
+can use more than 100 values for an <code class="literal">in</code> expression list. Various databases exceed this
+number, but they usually have a hard limit for how many values are allowed. Oracle&#8217;s
+limit is 1000.</p>
+</td></tr></table></div>
+
+<p>In addition to the primitive values in the value list, you can create a <code class="literal">java.util.List</code>
+of object arrays. This list would support multiple expressions defined for the <code class="literal">in</code>
+clause such as <code class="literal">select * from T_ACTOR where (id, last_name) in ((1, 'Johnson'), (2,
+'Harrop'))</code>. This of course requires that your database supports this syntax.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-complex-types" href="#jdbc-complex-types"></a>14.7.4&nbsp;Handling complex types for stored procedure calls</h3></div></div></div>
+
+<p>When you call stored procedures you can sometimes use complex types specific to the
+database. To accommodate these types, Spring provides a <code class="literal">SqlReturnType</code> for handling
+them when they are returned from the stored procedure call and <code class="literal">SqlTypeValue</code> when they
+are passed in as a parameter to the stored procedure.</p>
+<p>Here is an example of returning the value of an Oracle <code class="literal">STRUCT</code> object of the user
+declared type <code class="literal">ITEM_TYPE</code>. The <code class="literal">SqlReturnType</code> interface has a single method named
+<code class="literal">getTypeValue</code> that must be implemented. This interface is used as part of the
+declaration of an <code class="literal">SqlOutParameter</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">final</span> TestItem = <span class="hl-keyword">new</span> TestItem(<span class="hl-number">123L</span>, <span class="hl-string">"A test item"</span>,
+        <span class="hl-keyword">new</span> SimpleDateFormat(<span class="hl-string">"yyyy-M-d"</span>).parse(<span class="hl-string">"2010-12-31"</span>));
+
+declareParameter(<span class="hl-keyword">new</span> SqlOutParameter(<span class="hl-string">"item"</span>, OracleTypes.STRUCT, <span class="hl-string">"ITEM_TYPE"</span>,
+    <span class="hl-keyword">new</span> SqlReturnType() {
+        <span class="hl-keyword">public</span> Object getTypeValue(CallableStatement cs, <span class="hl-keyword">int</span> colIndx, <span class="hl-keyword">int</span> sqlType, String typeName) <span class="hl-keyword">throws</span> SQLException {
+            STRUCT struct = (STRUCT) cs.getObject(colIndx);
+            Object[] attr = struct.getAttributes();
+            TestItem item = <span class="hl-keyword">new</span> TestItem();
+            item.setId(((Number) attr[<span class="hl-number">0</span>]).longValue());
+            item.setDescription((String) attr[<span class="hl-number">1</span>]);
+            item.setExpirationDate((java.util.Date) attr[<span class="hl-number">2</span>]);
+            <span class="hl-keyword">return</span> item;
+        }
+    }));</pre>
+
+<p>You use the <code class="literal">SqlTypeValue</code> to pass in the value of a Java object like <code class="literal">TestItem</code> into a
+stored procedure. The <code class="literal">SqlTypeValue</code> interface has a single method named
+<code class="literal">createTypeValue</code> that you must implement. The active connection is passed in, and you
+can use it to create database-specific objects such as <code class="literal">StructDescriptor</code>s, as shown in
+the following example, or <code class="literal">ArrayDescriptor</code>s.</p>
+<pre class="programlisting"><span class="hl-keyword">final</span> TestItem = <span class="hl-keyword">new</span> TestItem(<span class="hl-number">123L</span>, <span class="hl-string">"A test item"</span>,
+        <span class="hl-keyword">new</span> SimpleDateFormat(<span class="hl-string">"yyyy-M-d"</span>).parse(<span class="hl-string">"2010-12-31"</span>));
+
+SqlTypeValue value = <span class="hl-keyword">new</span> AbstractSqlTypeValue() {
+    <span class="hl-keyword">protected</span> Object createTypeValue(Connection conn, <span class="hl-keyword">int</span> sqlType, String typeName) <span class="hl-keyword">throws</span> SQLException {
+        StructDescriptor itemDescriptor = <span class="hl-keyword">new</span> StructDescriptor(typeName, conn);
+        Struct item = <span class="hl-keyword">new</span> STRUCT(itemDescriptor, conn,
+        <span class="hl-keyword">new</span> Object[] {
+            testItem.getId(),
+            testItem.getDescription(),
+            <span class="hl-keyword">new</span> java.sql.Date(testItem.getExpirationDate().getTime())
+        });
+        <span class="hl-keyword">return</span> item;
+    }
+};</pre>
+
+<p>This <code class="literal">SqlTypeValue</code> can now be added to the Map containing the input parameters for the
+execute call of the stored procedure.</p>
+<p>Another use for the <code class="literal">SqlTypeValue</code> is passing in an array of values to an Oracle stored
+procedure. Oracle has its own internal <code class="literal">ARRAY</code> class that must be used in this case, and
+you can use the <code class="literal">SqlTypeValue</code> to create an instance of the Oracle <code class="literal">ARRAY</code> and populate
+it with values from the Java <code class="literal">ARRAY</code>.</p>
+<pre class="programlisting"><span class="hl-keyword">final</span> Long[] ids = <span class="hl-keyword">new</span> Long[] {<span class="hl-number">1L</span>, <span class="hl-number">2L</span>};
+
+SqlTypeValue value = <span class="hl-keyword">new</span> AbstractSqlTypeValue() {
+    <span class="hl-keyword">protected</span> Object createTypeValue(Connection conn, <span class="hl-keyword">int</span> sqlType, String typeName) <span class="hl-keyword">throws</span> SQLException {
+        ArrayDescriptor arrayDescriptor = <span class="hl-keyword">new</span> ArrayDescriptor(typeName, conn);
+        ARRAY idArray = <span class="hl-keyword">new</span> ARRAY(arrayDescriptor, conn, ids);
+        <span class="hl-keyword">return</span> idArray;
+    }
+};</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-embedded-database-support" href="#jdbc-embedded-database-support"></a>14.8&nbsp;Embedded database support</h2></div></div></div>
+
+<p>The <code class="literal">org.springframework.jdbc.datasource.embedded</code> package provides support for embedded
+Java database engines. Support for <a class="ulink" href="http://www.hsqldb.org" target="_top">HSQL</a>,
+<a class="ulink" href="http://www.h2database.com" target="_top">H2</a>, and <a class="ulink" href="http://db.apache.org/derby" target="_top">Derby</a> is provided
+natively. You can also use an extensible API to plug in new embedded database types and
+<code class="literal">DataSource</code> implementations.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-why-embedded-database" href="#jdbc-why-embedded-database"></a>14.8.1&nbsp;Why use an embedded database?</h3></div></div></div>
+
+<p>An embedded database is useful during the development phase of a project because of its
+lightweight nature. Benefits include ease of configuration, quick startup time,
+testability, and the ability to rapidly evolve SQL during development.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-xml" href="#jdbc-embedded-database-xml"></a>14.8.2&nbsp;Creating an embedded database instance using Spring XML</h3></div></div></div>
+
+<p>If you want to expose an embedded database instance as a bean in a Spring
+ApplicationContext, use the embedded-database tag in the spring-jdbc namespace:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;jdbc:embedded-database</span> <span class="hl-attribute">id</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"classpath:schema.sql"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"classpath:test-data.sql"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/jdbc:embedded-database&gt;</span></pre>
+
+<p>The preceding configuration creates an embedded HSQL database populated with SQL from
+schema.sql and testdata.sql resources in the classpath. The database instance is made
+available to the Spring container as a bean of type <code class="literal">javax.sql.DataSource</code>. This bean
+can then be injected into data access objects as needed.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-java" href="#jdbc-embedded-database-java"></a>14.8.3&nbsp;Creating an embedded database instance programmatically</h3></div></div></div>
+
+<p>The <code class="literal">EmbeddedDatabaseBuilder</code> class provides a fluent API for constructing an embedded
+database programmatically. Use this when you need to create an embedded database
+instance in a standalone environment, such as a data access object unit test:</p>
+<pre class="programlisting">EmbeddedDatabaseBuilder builder = <span class="hl-keyword">new</span> EmbeddedDatabaseBuilder();
+EmbeddedDatabase db = builder.setType(H2).addScript(<span class="hl-string">"my-schema.sql"</span>).addScript(<span class="hl-string">"my-test-data.sql"</span>).build();
+<span class="hl-comment">// do stuff against the db (EmbeddedDatabase extends javax.sql.DataSource)</span>
+db.shutdown()</pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-extension" href="#jdbc-embedded-database-extension"></a>14.8.4&nbsp;Extending the embedded database support</h3></div></div></div>
+
+<p>Spring JDBC embedded database support can be extended in two ways:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Implement <code class="literal">EmbeddedDatabaseConfigurer</code> to support a new embedded database type, such
+as Apache Derby.
+</li><li class="listitem">
+Implement <code class="literal">DataSourceFactory</code> to support a new DataSource implementation, such as a
+connection pool, to manage embedded database connections.
+</li></ul></div>
+
+<p>You are encouraged to contribute back extensions to the Spring community at
+<a class="ulink" href="https://jira.spring.io/browse/SPR" target="_top">jira.spring.io</a>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-HSQL" href="#jdbc-embedded-database-using-HSQL"></a>14.8.5&nbsp;Using HSQL</h3></div></div></div>
+
+<p>Spring supports HSQL 1.8.0 and above. HSQL is the default embedded database if no type
+is specified explicitly. To specify HSQL explicitly, set the <code class="literal">type</code> attribute of the
+<code class="literal">embedded-database</code> tag to <code class="literal">HSQL</code>. If you are using the builder API, call the
+<code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.HSQL</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-H2" href="#jdbc-embedded-database-using-H2"></a>14.8.6&nbsp;Using H2</h3></div></div></div>
+
+<p>Spring supports the H2 database as well. To enable H2, set the <code class="literal">type</code> attribute of the
+<code class="literal">embedded-database</code> tag to <code class="literal">H2</code>. If you are using the builder API, call the
+<code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.H2</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-Derby" href="#jdbc-embedded-database-using-Derby"></a>14.8.7&nbsp;Using Derby</h3></div></div></div>
+
+<p>Spring also supports Apache Derby 10.5 and above. To enable Derby, set the <code class="literal">type</code>
+attribute of the <code class="literal">embedded-database</code> tag to <code class="literal">Derby</code>. If using the builder API, call the
+<code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.Derby</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-dao-testing" href="#jdbc-embedded-database-dao-testing"></a>14.8.8&nbsp;Testing data access logic with an embedded database</h3></div></div></div>
+
+<p>Embedded databases provide a lightweight way to test data access code. The following is
+a data access unit test template that uses an embedded database:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> DataAccessUnitTestTemplate {
+
+    <span class="hl-keyword">private</span> EmbeddedDatabase db;
+
+    <em><span class="hl-annotation" style="color: gray">@Before</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setUp() {
+        <span class="hl-comment">// creates an HSQL in-memory database populated from default scripts</span>
+        <span class="hl-comment">// classpath:schema.sql and classpath:data.sql</span>
+        db = <span class="hl-keyword">new</span> EmbeddedDatabaseBuilder().addDefaultScripts().build();
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@Test</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> testDataAccess() {
+        JdbcTemplate template = <span class="hl-keyword">new</span> JdbcTemplate(db);
+        template.query(...);
+    }
+
+    <em><span class="hl-annotation" style="color: gray">@After</span></em>
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> tearDown() {
+        db.shutdown();
+    }
+
+}</pre>
+
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-intializing-datasource" href="#jdbc-intializing-datasource"></a>14.9&nbsp;Initializing a DataSource</h2></div></div></div>
+
+<p>The <code class="literal">org.springframework.jdbc.datasource.init</code> package provides support for initializing
+an existing <code class="literal">DataSource</code>. The embedded database support provides one option for creating
+and initializing a <code class="literal">DataSource</code> for an application, but sometimes you need to initialize
+an instance running on a server somewhere.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-initializing-datasource-xml" href="#jdbc-initializing-datasource-xml"></a>14.9.1&nbsp;Initializing a database instance using Spring XML</h3></div></div></div>
+
+<p>If you want to initialize a database and you can provide a reference to a DataSource
+bean, use the <code class="literal">initialize-database</code> tag in the <code class="literal">spring-jdbc</code> namespace:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;jdbc:initialize-database</span> <span class="hl-attribute">data-source</span>=<span class="hl-value">"dataSource"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"classpath:com/foo/sql/db-schema.sql"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"classpath:com/foo/sql/db-test-data.sql"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/jdbc:initialize-database&gt;</span></pre>
+
+<p>The example above runs the two scripts specified against the database: the first script
+is a schema creation, and the second is a test data set insert. The script locations can
+also be patterns with wildcards in the usual ant style used for resources in Spring
+(e.g. <code class="literal">classpath*:/com/foo/**/sql/*-data.sql</code>). If a pattern is used the scripts are
+executed in lexical order of their URL or filename.</p>
+<p>The default behavior of the database initializer is to unconditionally execute the
+scripts provided. This will not always be what you want, for instance if running against
+an existing database that already has test data in it. The likelihood of accidentally
+deleting data is reduced by the commonest pattern (as shown above) that creates the
+tables first and then inserts the data - the first step will fail if the tables already
+exist.</p>
+<p>However, to get more control over the creation and deletion of existing data, the XML
+namespace provides a couple more options. The first is flag to switch the initialization
+on and off. This can be set according to the environment (e.g. to pull a boolean value
+from system properties or an environment bean), e.g.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;jdbc:initialize-database</span> <span class="hl-attribute">data-source</span>=<span class="hl-value">"dataSource"</span>
+    <span class="strong"><strong>enabled="#{systemProperties.INITIALIZE_DATABASE}"</strong></span>&gt;
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"..."</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/jdbc:initialize-database&gt;</span></pre>
+
+<p>The second option to control what happens with existing data is to be more tolerant of
+failures. To this end you can control the ability of the initializer to ignore certain
+errors in the SQL it executes from the scripts, e.g.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;jdbc:initialize-database</span> <span class="hl-attribute">data-source</span>=<span class="hl-value">"dataSource"</span> <span class="strong"><strong>ignore-failures="DROPS"</strong></span>&gt;
+    <span class="hl-tag">&lt;jdbc:script</span> <span class="hl-attribute">location</span>=<span class="hl-value">"..."</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/jdbc:initialize-database&gt;</span></pre>
+
+<p>In this example we are saying we expect that sometimes the scripts will be run against
+an empty database and there are some DROP statements in the scripts which would
+therefore fail. So failed SQL <code class="literal">DROP</code> statements will be ignored, but other failures will
+cause an exception. This is useful if your SQL dialect doesn&#8217;t support <code class="literal">DROP ... IF
+EXISTS</code> (or similar) but you want to unconditionally remove all test data before
+re-creating it. In that case the first script is usually a set of drops, followed by a
+set of <code class="literal">CREATE</code> statements.</p>
+<p>The <code class="literal">ignore-failures</code> option can be set to <code class="literal">NONE</code> (the default), <code class="literal">DROPS</code> (ignore failed
+drops) or <code class="literal">ALL</code> (ignore all failures).</p>
+<p>If you need more control than you get from the XML namespace, you can simply use the
+<code class="literal">DataSourceInitializer</code> directly, and define it as a component in your application.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="jdbc-client-component-initialization" href="#jdbc-client-component-initialization"></a>Initialization of Other Components that Depend on the Database</h4></div></div></div>
+
+<p>A large class of applications can just use the database initializer with no further
+complications: those that do not use the database until after the Spring context has
+started. If your application is <span class="emphasis"><em>not</em></span> one of those then you might need to read the
+rest of this section.</p>
+<p>The database initializer depends on a data source instance and runs the scripts provided
+in its initialization callback (c.f. <code class="literal">init-method</code> in an XML bean definition or
+<code class="literal">InitializingBean</code>). If other beans depend on the same data source and also use the data
+source in an initialization callback then there might be a problem because the data has
+not yet been initialized. A common example of this is a cache that initializes eagerly
+and loads up data from the database on application startup.</p>
+<p>To get round this issue you two options: change your cache initialization strategy to a
+later phase, or ensure that the database initializer is initialized first.</p>
+<p>The first option might be easy if the application is in your control, and not otherwise.
+Some suggestions for how to implement this are</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Make the cache initialize lazily on first usage, which improves application startup time
+</li><li class="listitem">
+Have your cache or a separate component that initializes the cache implement
+<code class="literal">Lifecycle</code> or <code class="literal">SmartLifecycle</code>. When the application context starts up a
+<code class="literal">SmartLifecycle</code> can be automatically started if its <code class="literal">autoStartup</code> flag is set, and a
+<code class="literal">Lifecycle</code> can be started manually by calling
+<code class="literal">ConfigurableApplicationContext.start()</code> on the enclosing context.
+</li><li class="listitem">
+Use a Spring <code class="literal">ApplicationEvent</code> or similar custom observer mechanism to trigger the
+cache initialization. <code class="literal">ContextRefreshedEvent</code> is always published by the context when
+it is ready for use (after all beans have been initialized), so that is often a useful
+hook (this is how the <code class="literal">SmartLifecycle</code> works by default).
+</li></ul></div>
+
+<p>The second option can also be easy. Some suggestions on how to implement this are</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+Rely on Spring BeanFactory default behavior, which is that beans are initialized in
+registration order. You can easily arrange that by adopting the common practice of a
+set of &lt;import/&gt; elements that order your application modules, and ensure that the
+database and database initialization are listed first
+</li><li class="listitem">
+Separate the datasource and the business components that use it and control their
+startup order by putting them in separate ApplicationContext instances (e.g. parent
+has the datasource and child has the business components). This structure is common in
+Spring web applications, but can be more generally applied.
+</li></ul></div>
+
+</div>
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">13.&nbsp;DAO support&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;15.&nbsp;Object Relational Mapping (ORM) Data Access</td></tr></table></div></body></html>

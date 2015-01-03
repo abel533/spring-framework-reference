@@ -1,138 +1,111 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>8.&nbsp;Spring Expression Language (SpEL)</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-core.html" title="Part&nbsp;III.&nbsp;Core Technologies"><link rel="prev" href="validation.html" title="7.&nbsp;&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;"><link rel="next" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.&nbsp;Spring Expression Language (SpEL)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="validation.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;III.&nbsp;Core Technologies</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="aop.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="expressions" href="#expressions"></a>8.&nbsp;Spring Expression Language (SpEL)</h2></div></div></div>
+   <title>8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-core.html" title="Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;"><link rel="prev" href="validation.html" title="7.&nbsp;&#25968;&#25454;&#26657;&#39564;&#12289;&#25968;&#25454;&#32465;&#23450;&#21644;&#31867;&#22411;&#36716;&#25442;"><link rel="next" href="aop.html" title="9.&nbsp;Aspect Oriented Programming with Spring"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="validation.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="aop.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="expressions" href="#expressions"></a>8.&nbsp;Spring &#34920;&#36798;&#24335;&#35821;&#35328; (SpEL)</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-intro" href="#expressions-intro"></a>8.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-intro" href="#expressions-intro"></a>8.1&nbsp;&#20171;&#32461;</h2></div></div></div>
 
-<p>The Spring Expression Language (SpEL for short) is a powerful expression language that
-supports querying and manipulating an object graph at runtime. The language syntax is
-similar to Unified EL but offers additional features, most notably method invocation and
-basic string templating functionality.</p>
-<p>While there are several other Java expression languages available, OGNL, MVEL, and JBoss
-EL, to name a few, the Spring Expression Language was created to provide the Spring
-community with a single well supported expression language that can be used across all
-the products in the Spring portfolio. Its language features are driven by the
-requirements of the projects in the Spring portfolio, including tooling requirements for
-code completion support within the eclipse based Spring Tool Suite. That said,
-SpEL is based on a technology agnostic API allowing other expression language
-implementations to be integrated should the need arise.</p>
-<p>While SpEL serves as the foundation for expression evaluation within the Spring
-portfolio, it is not directly tied to Spring and can be used independently. In order to
-be self contained, many of the examples in this chapter use SpEL as if it were an
-independent expression language. This requires creating a few bootstrapping
-infrastructure classes such as the parser. Most Spring users will not need to deal with
-this infrastructure and will instead only author expression strings for evaluation. An
-example of this typical use is the integration of SpEL into creating XML or annotated
-based bean definitions as shown in the section <a class="link" href="expressions.html#expressions-beandef" title="8.4&nbsp;Expression support for defining bean definitions">Expression support
-for defining bean definitions.</a></p>
-<p>This chapter covers the features of the expression language, its API, and its language
-syntax. In several places an Inventor and Inventor&#8217;s Society class are used as the
-target objects for expression evaluation. These class declarations and the data used to
-populate them are listed at the end of the chapter.</p>
+<p>Spring&#34920;&#36798;&#24335;&#35821;&#35328;&#65288;&#31616;&#31216;SpEl&#65289;&#26159;&#19968;&#20010;&#25903;&#25345;&#26597;&#35810;&#21644;&#25805;&#20316;&#36816;&#34892;&#26102;&#23545;&#35937;&#22270;&#21151;&#33021;&#30340;&#24378;&#22823;&#30340;&#34920;&#36798;&#24335;&#35821;&#35328;.
+&#23427;&#30340;&#35821;&#27861;&#31867;&#20284;&#20110;&#20256;&#32479;EL&#65292;&#20294;&#25552;&#20379;&#39069;&#22806;&#30340;&#21151;&#33021;&#65292;most notably method invocation&#21644;
+&#22522;&#30784;&#23383;&#31526;&#20018;&#25805;&#20316;&#30340;&#27169;&#29256;&#12290;</p>
+<p>&#24403;&#28982;&#36824;&#26377;&#20854;&#20182;&#19968;&#20123;&#21487;&#29992;Java&#34920;&#36798;&#24335;&#35821;&#35328;&#65292;OGNL&#65292;MVEL&#21644;JBoss EL&#65292;Spring&#34920;&#36798;&#35821;&#35328;&#30340;&#21019;&#24314;&#25552;&#20379;Spring&#31038;&#21306;&#29992;&#20110;&#36143;&#31359;&#25972;&#20010;Spring&#20135;&#21697;&#32447;&#30340;&#33391;&#22909;&#30340;&#21333;&#19968;&#34920;&#36798;&#24335;&#35821;&#35328;&#25903;&#25345;&#23427;&#30340;&#35821;&#35328;&#29305;&#24615;&#26159;&#30001;Spring&#32452;&#21512;&#39033;&#30446;&#30340;&#38656;&#27714;&#39537;&#21160;&#30340;&#65292;&#21253;&#25324;&#23545;&#22522;&#20110;eclipse&#30340;STS IDE&#30340;&#20195;&#30721;&#33258;&#21160;&#34917;&#20840;&#30340;&#21152;&#24037;&#25903;&#25345;&#20063;&#23601;&#26159;&#35828;,SpEL&#22522;&#20110;&#19968;&#20010;&#20801;&#35768;&#21478;&#19968;&#31181;&#34920;&#36798;&#24335;&#35821;&#35328;&#23454;&#29616;&#30340;&#19982;&#25216;&#26415;&#26080;&#20851;&#30340;API&#12290;</p>
+<p>&#34429;&#28982;SpEL&#24341;&#25806;&#20316;&#20026;Spring &#32452;&#21512;&#37324;&#30340;&#34920;&#36798;&#24335;&#35299;&#26512;&#30340;&#22522;&#30784;
+&#65292;&#20294;&#23427;&#19981;&#30452;&#25509;&#20381;&#36182;&#20110;Spring,&#21487;&#29420;&#31435;&#20351;&#29992;&#12290;&#20026;&#20102;&#25972;&#21512;&#65292;&#35768;&#22810;&#22312;&#26412;&#31456;&#20351;&#29992;SpEL&#20363;&#23376;&#23601;&#22909;&#20687;&#23427;&#26159;&#19968;&#20010;&#29420;&#31435;&#30340;&#34920;&#36798;&#24335;&#35821;&#35328;&#12290;&#36825;&#23601;&#38656;&#35201;&#21019;&#24314;&#19968;&#20123;&#24341;&#23548;
+&#22914;&#35299;&#26512;&#22120;&#36825;&#26679;&#30340;&#22522;&#30784;&#26500;&#36896;&#31867;&#12290;&#22823;&#22810;&#25968;Spring&#29992;&#25143;&#23558;&#19981;&#20877;&#38656;&#35201;&#22788;&#29702;&#36825;&#20123;&#22522;&#30784;&#26500;&#24314;&#65292;&#32780;&#26159;&#20165;&#23558;&#20316;&#32773;&#34920;&#36798;&#30340;&#23383;&#31526;&#20018;&#36827;&#34892;&#35299;&#26512;&#12290;&#19968;&#20010;&#20256;&#32479;&#30340;&#20351;&#29992;&#20363;&#23376;&#26159;&#38598;&#25104;SpEL&#21435;&#21019;&#24314;XML&#25110;&#32773;&#23450;&#20041;Bean&#30340;&#27880;&#35299;,&#21487;&#20197;&#36873;&#25321;&#36825;&#37324;&#30475;&#21040; <a class="link" href="expressions.html#expressions-beandef" title="8.4&nbsp;&#23450;&#20041;bean&#30340;beandef&#34920;&#36798;&#25903;&#25345;">&#34920;&#36798;&#24335;&#25903;&#25345;&#23450;&#20041;bean.</a></p>
+<p>&#26412;&#31456;&#35762;&#20171;&#32461;SpEL&#30340;API&#65292;&#20854;&#35821;&#35328;&#35821;&#27861;&#30340;&#29305;&#28857;&#12290;&#22312;&#20960;&#20010;&#22320;&#26041;&#65292;Inventor&#21644;Inventor&#8217;s Society &#31867;&#34987;&#29992;&#20570;&#34920;&#36798;&#24335;&#35299;&#26512;&#30340;&#30446;&#26631;&#23545;&#35937; &#12290;
+&#36825;&#20123;&#31867;&#22768;&#26126;&#21644;&#20351;&#29992;&#25968;&#25454;&#19968;&#30452;&#36143;&#31359;&#26412;&#31456;&#32467;&#23614;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-features" href="#expressions-features"></a>8.2&nbsp;Feature Overview</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-features" href="#expressions-features"></a>8.2&nbsp;&#21151;&#33021;&#27010;&#36848;</h2></div></div></div>
 
-<p>The expression language supports the following functionality</p>
+<p>&#34920;&#36798;&#24335;&#35821;&#35328;&#25903;&#25345;&#20197;&#19979;&#21151;&#33021;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Literal expressions
+&#25991;&#23383;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-Boolean and relational operators
+&#24067;&#23572;&#21644;&#20851;&#31995;&#36816;&#31639;&#31526;
 </li><li class="listitem">
-Regular expressions
+&#27491;&#21017;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-Class expressions
+&#31867;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-Accessing properties, arrays, lists, maps
+&#35775;&#38382; properties, arrays, lists, maps
 </li><li class="listitem">
-Method invocation
+&#26041;&#27861;&#35843;&#29992;
 </li><li class="listitem">
-Relational operators
+&#20851;&#31995;&#36816;&#31639;&#31526;
 </li><li class="listitem">
-Assignment
+&#21442;&#25968;
 </li><li class="listitem">
-Calling constructors
+&#35843;&#29992;&#26500;&#36896;&#20989;&#25968;
 </li><li class="listitem">
-Bean references
+Bean&#24341;&#29992;
 </li><li class="listitem">
-Array construction
+&#26500;&#36896;Array
 </li><li class="listitem">
-Inline lists
+&#20869;&#23884;lists
 </li><li class="listitem">
-Inline maps
+&#20869;&#23884;maps
 </li><li class="listitem">
-Ternary operator
+&#19977;&#20803;&#36816;&#31639;&#31526;
 </li><li class="listitem">
-Variables
+&#21464;&#37327;
 </li><li class="listitem">
-User defined functions
+&#29992;&#25143;&#23450;&#20041;&#30340;&#20989;&#25968;
 </li><li class="listitem">
-Collection projection
+&#38598;&#21512;&#25237;&#24433;
 </li><li class="listitem">
-Collection selection
+&#38598;&#21512;&#31579;&#36873;
 </li><li class="listitem">
-Templated expressions
+&#27169;&#26495;&#34920;&#36798;&#24335;
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-evaluation" href="#expressions-evaluation"></a>8.3&nbsp;Expression Evaluation using Spring&#8217;s Expression Interface</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-evaluation" href="#expressions-evaluation"></a>8.3&nbsp;&#20351;&#29992;Spring&#30340;&#34920;&#36798;&#25509;&#21475; &#34920;&#36798;&#24335;&#27714;&#20540;</h2></div></div></div>
 
-<p>This section introduces the simple use of SpEL interfaces and its expression language.
-The complete language reference can be found in the section
-<a class="link" href="expressions.html#expressions-language-ref" title="8.5&nbsp;Language Reference">Language Reference</a>.</p>
-<p>The following code introduces the SpEL API to evaluate the literal string expression
+<p>&#26412;&#33410;&#20171;&#32461;&#20102;&#31616;&#21333;&#30340;&#20351;&#29992;SpEL&#34920;&#36798;&#35821;&#35328;&#12290;
+&#23436;&#25972;&#30340;&#35821;&#35328;&#21442;&#32771;&#21487;&#20197;&#22312;<a class="link" href="expressions.html#expressions-language-ref" title="8.5&nbsp;&#35821;&#35328;&#21442;&#32771;">&#35821;&#35328;&#21442;&#32771;</a>&#19968;&#33410;&#20013;&#25214;&#21040;</p>
+<p>&#19979;&#38754;&#30340;&#20195;&#30721;&#20351;&#29992;SpEL API&#26469;&#35299;&#26512;&#25991;&#26412;&#23383;&#31526;&#20018;&#34920;&#36798;&#24335;
 <span class="emphasis"><em>Hello World</em></span>.</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong><span class="emphasis"><em>'Hello World</em></span>'</strong></span><span class="hl-string">");
 </span>String message = (String) exp.getValue();</pre>
 
-<p>The value of the message variable is simply <span class="emphasis"><em>Hello World</em></span>.</p>
-<p>The SpEL classes and interfaces you are most likely to use are located in the packages
-<code class="literal">org.springframework.expression</code> and its sub packages and <code class="literal">spel.support</code>.</p>
-<p>The interface <code class="literal">ExpressionParser</code> is responsible for parsing an expression string. In
-this example the expression string is a string literal denoted by the surrounding single
-quotes. The interface <code class="literal">Expression</code> is responsible for evaluating the previously defined
-expression string. There are two exceptions that can be thrown, <code class="literal">ParseException</code> and
-<code class="literal">EvaluationException</code> when calling <span class="emphasis"><em><code class="literal">parser.parseExpression</code></em></span> and <span class="emphasis"><em><code class="literal">exp.getValue</code></em></span>
-respectively.</p>
-<p>SpEL supports a wide range of features, such as calling methods, accessing properties,
-and calling constructors.</p>
-<p>As an example of method invocation, we call the <span class="emphasis"><em>concat</em></span> method on the string literal.</p>
+<p>&#28040;&#24687;&#21464;&#37327;&#30340;&#20540;&#26159;&#31616;&#21333;&#30340;&#8220;hello world&#8221;&#12290;</p>
+<p>&#35813;SpEL&#31867;&#21644;&#25509;&#21475;&#65292;&#20320;&#26368;&#26377;&#21487;&#33021;&#20351;&#29992;&#30340;&#26159;<code class="literal">org.springframework.expression</code>&#20197;&#21450;&#23427;&#30340;&#23376;&#21253;&#21644; <code class="literal">spel.support</code>&#12290;</p>
+<p>&#25509;&#21475;<code class="literal">ExpressionParser</code>&#36127;&#36131;&#35299;&#26512;&#34920;&#36798;&#24335;&#23383;&#31526;&#20018;&#12290;&#36825;&#20010;&#27491;&#21017;&#23383;&#31526;&#20018;&#20363;&#23376;&#26159;&#36890;&#36807;&#21333;&#24341;&#21495;&#25193;&#36215;&#26469;&#30340;&#19968;&#20010;&#23383;&#31526;&#20018;&#25490;&#29256;&#22768;&#26126;&#12290;&#25509;&#21475;<code class="literal">Expression</code>&#36127;&#36131;&#35299;&#26512;&#20043;&#21069;&#34987;&#23450;&#20041;&#30340;&#23383;&#31526;&#20018;&#34920;&#36798;&#24335;</p>
+<p>SpEL&#25903;&#25345;&#24456;&#22810;&#21151;&#33021;&#29305;&#24615;&#65292;&#22914;&#35843;&#29992;&#26041;&#27861;&#65292;&#35775;&#38382;&#23646;&#24615;&#65292;&#35843;&#29992;&#26500;&#36896;&#20989;&#25968;&#12290;</p>
+<p>&#20316;&#20026;&#26041;&#27861;&#35843;&#29992;&#30340;&#19968;&#20010;&#20363;&#23376;&#65292;&#25105;&#20204;&#35843;&#29992;&#23383;&#31526;&#20018;&#30340;&#8220;CONCAT&#8221;&#30340;&#26041;&#27861;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong><span class="emphasis"><em>'Hello World</em></span>'.concat(<span class="emphasis"><em>'!</em></span>')</strong></span><span class="hl-string">");
 </span>String message = (String) exp.getValue();</pre>
 
-<p>The value of message is now <span class="emphasis"><em>Hello World!</em></span>.</p>
-<p>As an example of calling a JavaBean property, the String property <span class="emphasis"><em>Bytes</em></span> can be called
-as shown below.</p>
+<p>&#32467;&#26524;&#23558;&#26159; <span class="emphasis"><em>Hello World!</em></span></p>
+<p>&#20316;&#20026;&#35843;&#29992;JavaBean&#23646;&#24615;&#30340;&#19968;&#20010;&#20363;&#23376;&#65292;String&#23646;&#24615;&#8220;Bytes&#8221;&#22312;&#19979;&#38754;&#34987;&#35843;&#29992;&#20102;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 <span class="hl-comment">// invokes </span><span class="emphasis"><em>getBytes()</em></span>
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong><span class="emphasis"><em>'Hello World</em></span>'.bytes</strong></span><span class="hl-string">");
 </span><span class="hl-keyword">byte</span>[] bytes = (<span class="hl-keyword">byte</span>[]) exp.getValue();</pre>
 
-<p>SpEL also supports nested properties using standard <span class="emphasis"><em>dot</em></span> notation, i.e.
-prop1.prop2.prop3 and the setting of property values</p>
-<p>Public fields may also be accessed.</p>
+<p>SpEL&#36824;&#25903;&#25345;&#20351;&#29992;&#26631;&#20934;&#30340;&#8220;.&#8221;&#31526;&#21495;&#65292;&#21363;&#23884;&#22871;&#23646;&#24615;prop1.prop2.prop3&#21644;&#23646;&#24615;&#20540;&#30340;&#35774;&#32622;</p>
+<p>&#20844;&#20849;&#23383;&#27573;&#20063;&#21487;&#34987;&#35775;&#38382;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 <span class="hl-comment">// invokes </span><span class="emphasis"><em>getBytes().length</em></span>
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong><span class="emphasis"><em>'Hello World</em></span>'.bytes.length</strong></span><span class="hl-string">");
 </span><span class="hl-keyword">int</span> length = (Integer) exp.getValue();</pre>
 
-<p>The String&#8217;s constructor can be called instead of using a string literal.</p>
+<p>&#23383;&#31526;&#20018;&#30340;&#26500;&#36896;&#20989;&#25968;&#30340;&#35843;&#29992;&#34987;&#19968;&#20010;&#24039;&#22937;&#30340;&#23383;&#31526;&#20195;&#26367;&#20102;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong>new String(<span class="emphasis"><em>'hello world</em></span>').toUpperCase()</strong></span><span class="hl-string">");
 </span>String message = exp.getValue(String.<span class="hl-keyword">class</span>);</pre>
 
-<p>Note the use of the generic method <code class="literal">public &lt;T&gt; T getValue(Class&lt;T&gt; desiredResultType)</code>.
-Using this method removes the need to cast the value of the expression to the desired
-result type. An <code class="literal">EvaluationException</code> will be thrown if the value cannot be cast to the
-type <code class="literal">T</code> or converted using the registered type converter.</p>
-<p>The more common usage of SpEL is to provide an expression string that is evaluated
-against a specific object instance (called the root object). There are two options here
-and which to choose depends on whether the object against which the expression is being
-evaluated will be changing with each call to evaluate the expression. In the following
-example we retrieve the <code class="literal">name</code> property from an instance of the Inventor class.</p>
+<p>&#27880;&#24847;&#36825;&#37324;&#29992;&#21040;&#19968;&#33324;&#26041;&#27861; <code class="literal">public &lt;T&gt; T getValue(Class&lt;T&gt; desiredResultType)</code>.
+&#20351;&#29992;&#36825;&#31181;&#26041;&#27861;&#27809;&#24517;&#35201;&#23454;&#20363;&#21270;&#34920;&#36798;&#24335;&#30340;&#20540;&#30340;&#32467;&#26524;&#31867;&#22411;.
+&#22914;&#26524;&#35813;&#20540;&#19981;&#33021;&#34987;&#36716;&#25442;&#20026;
+&#31867;&#22411;<code class="literal">T</code>&#25110;&#20351;&#29992;&#24050;&#27880;&#20876;&#30340;&#31867;&#22411;&#36716;&#25442;&#22120;&#36716;&#25442;,&#37027;&#20040;&#19968;&#20010;<code class="literal">EvaluationException</code>&#20250;&#25243;&#20986;&#12290;</p>
+<p>SpEL&#27604;&#36739;&#24120;&#35265;&#30340;&#29992;&#36884;&#26159;&#38024;&#23545;&#19968;&#20010;&#29305;&#23450;&#30340;&#23545;&#35937;&#23454;&#20363;&#65288;&#31216;&#20026;root object&#65289;&#25552;&#20379;&#34987;&#35299;&#26512;&#30340;&#34920;&#36798;&#24335;&#23383;&#31526;&#20018;.
+&#36825;&#37324;&#26377;&#20004;&#31181;&#36873;&#25321;and which to choose depends on whether the object against which the expression is being
+evaluated will be changing with each call to evaluate the expression. &#22312;&#19979;&#38754;&#30340;&#20363;&#23376;&#20013;,
+&#25105;&#20204;&#26816;&#32034;&#19968;&#20010;Inventor&#31867;&#30340;&#23454;&#20363;&#30340;<code class="literal">name</code>&#30340;&#23646;&#24615;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// Create and set a calendar</span>
 GregorianCalendar c = <span class="hl-keyword">new</span> GregorianCalendar();
 c.set(<span class="hl-number">1856</span>, <span class="hl-number">7</span>, <span class="hl-number">9</span>);
@@ -146,12 +119,12 @@ Expression exp = parser.parseExpression(<span class="hl-string">"</span><span cl
 EvaluationContext context = <span class="hl-keyword">new</span> StandardEvaluationContext(tesla);
 String name = (String) exp.getValue(context);</pre>
 
-<p>In the last line, the value of the string variable <span class="emphasis"><em>name</em></span> will be set to "Nikola Tesla".
-The class StandardEvaluationContext is where you can specify which object the "name"
-property will be evaluated against. This is the mechanism to use if the root object is
-unlikely to change, it can simply be set once in the evaluation context. If the root
-object is likely to change repeatedly, it can be supplied on each call to <code class="literal">getValue</code>, as
-this next example shows:</p>
+<p>&#22312;&#26368;&#21518;&#19968;&#34892;&#65292;&#35813;&#23383;&#31526;&#20018;&#21464;&#37327;<span class="emphasis"><em>name</em></span>&#30340;&#20540;&#23558;&#34987;&#35774;&#23450;&#20026;&#8220;Nikola Tesla&#8221;&#12290;
+&#31867;StandardEvaluationContext&#26159;&#21487;&#20197;&#25351;&#23450;&#21738;&#20123;&#23545;&#35937;&#30340;&#8220;name&#8221;
+&#23646;&#24615;&#23558;&#34987;&#35299;&#26512;&#12290;&#22914;&#26524;root object&#19981;&#22826;&#21487;&#33021;&#25913;&#21464;.
+&#65292;&#23601;&#21487;&#20197;&#31616;&#21333;&#22320;&#22312;&#35780;&#20272;&#19978;&#19979;&#25991;&#20013;&#35774;&#32622;&#19968;&#27425;&#12290;&#22914;&#26524;root object&#21453;&#22797;&#21464;&#21270;
+&#65292;&#23427;&#21487;&#20197;&#22312;&#27599;&#27425;&#35843;&#29992;<code class="literal">getValue</code>&#65292;&#22914;
+&#25509;&#19979;&#26469;&#30340;&#20363;&#23376;&#35828;&#26126;&#65306;</p>
 <pre class="programlisting">/ Create and set a calendar
 GregorianCalendar c = <span class="hl-keyword">new</span> GregorianCalendar();
 c.set(<span class="hl-number">1856</span>, <span class="hl-number">7</span>, <span class="hl-number">9</span>);
@@ -163,60 +136,60 @@ ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionPars
 Expression exp = parser.parseExpression(<span class="hl-string">"</span><span class="strong"><strong>name</strong></span><span class="hl-string">");
 </span>String name = (String) exp.getValue(tesla);</pre>
 
-<p>In this case the inventor <code class="literal">tesla</code> has been supplied directly to <code class="literal">getValue</code> and the
-expression evaluation infrastructure creates and manages a default evaluation context
-internally - it did not require one to be supplied.</p>
-<p>The StandardEvaluationContext is relatively expensive to construct and during repeated
-usage it builds up cached state that enables subsequent expression evaluations to be
-performed more quickly. For this reason it is better to cache and reuse them where
-possible, rather than construct a new one for each expression evaluation.</p>
-<p>In some cases it can be desirable to use a configured evaluation context and yet still
-supply a different root object on each call to <code class="literal">getValue</code>. <code class="literal">getValue</code> allows both to be
-specified on the same call. In these situations the root object passed on the call is
-considered to override any (which maybe null) specified on the evaluation context.</p>
-<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>In standalone usage of SpEL there is a need to create the parser, parse expressions and
-perhaps provide evaluation contexts and a root context object. However, more common
-usage is to provide only the SpEL expression string as part of a configuration file, for
-example for Spring bean or Spring Web Flow definitions. In this case, the parser,
-evaluation context, root object and any predefined variables are all set up implicitly,
-requiring the user to specify nothing other than the expressions.</p>
-</td></tr></table></div>
+<p>&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;inventor <code class="literal">tesla</code>&#24050;&#30452;&#25509;&#24212;&#29992;&#21040;<code class="literal">getValue</code>&#21644;
+&#34920;&#36798;&#24335;&#35745;&#31639;&#22522;&#30784;&#26550;&#26500;&#21019;&#24314;&#21644;&#31649;&#29702;&#19968;&#20010;&#40664;&#35748;&#30340;&#35299;&#26512;&#29615;&#22659;
+&#22312;&#20869;&#37096; - &#23427;&#19981;&#35201;&#27714;&#20877;&#27425;&#35299;&#26512;&#12290;</p>
+<p>StandardEvaluationContext&#26159;&#30456;&#23545;&#26114;&#36149;&#30340;&#26500;&#36896;&#21644;&#22312;&#37325;&#22797;
+&#20351;&#29992;&#23427;&#24314;&#31435;&#32531;&#23384;&#30340;&#29366;&#24577;&#65292;&#20351;&#24471;&#21518;&#32493;&#30340;&#35299;&#26512;&#23558;&#20250;&#21464;&#24471;&#26356;&#24555;.
+&#20986;&#20110;&#36825;&#20010;&#21407;&#22240;&#65292;&#23427;&#23558;&#23613;&#21487;&#33021;&#30340;&#26356;&#22909;&#30340;&#32531;&#23384;&#21644;&#37325;&#29992;&#36825;&#20123;&#23545;&#35937;,
+&#32780;&#19981;&#26159;&#24314;&#31435;&#19968;&#20010;&#26032;&#30340;&#27599;&#20010;&#34920;&#36798;&#24335;&#27714;&#20540;&#12290;</p>
+<p>&#22312;&#26576;&#20123;&#24773;&#20917;&#19979;&#65292;&#23427;&#21487;&#20197;&#26159;&#29702;&#24819;&#30340;&#20351;&#29992;&#37197;&#32622;&#35299;&#26512;&#19978;&#19979;&#25991;&#65292;&#20294;&#20173;&#28982;
+&#22312;&#27599;&#27425;&#35843;&#29992;<code class="literal">getValue</code>&#25552;&#20379;&#19981;&#21516;&#30340;root object&#12290; <code class="literal">getValue</code>&#20801;&#35768;&#26082;&#35201;
+&#22312;&#21516;&#19968;&#20010;&#35843;&#29992;&#20013;&#25351;&#23450;&#12290;&#22312;&#36825;&#20123;&#24773;&#20917;&#19979;&#23545;root object&#36890;&#36807;&#35843;&#29992;&#35201;&#32771;&#34385;
+&#21040;&#35206;&#30422;&#20219;&#20309;&#65288;&#36825;&#21487;&#33021;&#20026;&#31354;&#65289;&#22312;&#35299;&#26512;&#33539;&#22260;&#20869;&#30340;&#25351;&#23450;&#12290;</p>
+<p>[&#27880;&#24847;]</p>
+<div class="informalexample">
+<p>&#22312;SpEL&#30340;&#29420;&#31435;&#20351;&#29992;&#30340;&#26102;&#20505;&#65292;&#38656;&#35201;&#21019;&#24314;parser,parse expressions,
+&#21516;&#26102;&#21487;&#33021;&#38656;&#35201;&#25552;&#20379;&#35299;&#26512;&#30340;context&#21644;root context object&#12290;&#28982;&#32780;&#65292;&#26356;&#24120;&#35265;&#30340;
+&#29992;&#27861;&#26159;&#21482;&#25552;&#20379;&#19968;&#20010;SpEL&#34920;&#36798;&#24335;&#23383;&#31526;&#20018;&#20316;&#20026;&#37197;&#32622;&#25991;&#20214;&#30340;&#19968;&#37096;&#20998;&#65292;
+&#20363;&#22914;&#65292;&#23545;&#20110;Spring&#30340;bean&#25110;Spring Web Flow&#30340;&#23450;&#20041;&#12290;&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#35299;&#26512;&#22120;
+&#27714;&#20540;&#30340;context&#65292;root object&#21644;&#25152;&#26377;&#39044;&#23450;&#20041;&#21464;&#37327;&#37117;&#35774;&#32622;&#20102;&#38544;&#24335;&#65292;
+&#27809;&#26377;&#20160;&#20040;&#35201;&#29992;&#25143;&#21435;&#25351;&#23450;&#20102;,&#38500;&#20102;&#22768;&#26126;&#34920;&#36798;&#24335;.</p>
+</div>
 
-<p>As a final introductory example, the use of a boolean operator is shown using the
-Inventor object in the previous example.</p>
+<p>&#20316;&#20026;&#26368;&#21518;&#19968;&#20010;&#20363;&#23376;&#65292;&#20351;&#29992;&#20102;&#19968;&#20010;boolean&#36816;&#31639;&#31526;&#21435;&#35843;&#29992;
+inventor object &#22312;&#21069;&#38754;&#30340;&#20363;&#23376;&#20013;&#12290;</p>
 <pre class="programlisting">Expression exp = parser.parseExpression(<span class="hl-string">"name == </span><span class="emphasis"><em>'Nikola Tesla</em></span><span class="hl-string">'");
 </span><span class="hl-keyword">boolean</span> result = exp.getValue(context, Boolean.<span class="hl-keyword">class</span>); <span class="hl-comment">// evaluates to true</span></pre>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-evaluation-context" href="#expressions-evaluation-context"></a>8.3.1&nbsp;The EvaluationContext interface</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-evaluation-context" href="#expressions-evaluation-context"></a>8.3.1&nbsp;EvaluationContext &#25509;&#21475;</h3></div></div></div>
 
-<p>The interface <code class="literal">EvaluationContext</code> is used when evaluating an expression to resolve
-properties, methods, fields, and to help perform type conversion. The out-of-the-box
-implementation, <code class="literal">StandardEvaluationContext</code>, uses reflection to manipulate the object,
-caching <code class="literal">java.lang.reflect</code>'s <code class="literal">Method</code>, <code class="literal">Field</code>, and <code class="literal">Constructor</code> instances for
-increased performance.</p>
-<p>The <code class="literal">StandardEvaluationContext</code> is where you may specify the root object to evaluate
-against via the method <code class="literal">setRootObject()</code> or passing the root object into the
-constructor. You can also specify variables and functions that will be used in the
-expression using the methods <code class="literal">setVariable()</code> and <code class="literal">registerFunction()</code>. The use of
-variables and functions are described in the language reference sections
-<a class="link" href="expressions.html#expressions-ref-variables" title="8.5.11&nbsp;Variables">Variables</a> and <a class="link" href="expressions.html#expressions-ref-functions" title="8.5.12&nbsp;Functions">Functions</a>. The
-<code class="literal">StandardEvaluationContext</code> is also where you can register custom
+<p>&#24403;&#35745;&#31639;&#34920;&#36798;&#24335;&#35299;&#26512;properties, methods, fields&#65292;&#24182;&#24110;&#21161;&#25191;&#34892;&#31867;&#22411;&#36716;&#25442;, &#20351;&#29992;&#25509;&#21475;<code class="literal">EvaluationContext</code>
+&#36825;&#26159;&#19968;&#20010;&#24320;&#31665;&#21363;&#29992;&#30340;&#23454;&#29616;,
+<code class="literal">StandardEvaluationContext</code>&#65292;&#20351;&#29992;&#21453;&#23556;&#26469;&#25805;&#32437;&#23545;&#35937;&#65292;
+&#32531;&#23384;<code class="literal">java.lang.reflect</code>&#30340;<code class="literal">Method</code>&#65292;<code class="literal">Field</code>&#65292;&#21644;<code class="literal">Constructor</code>&#23454;&#20363;
+&#25552;&#39640;&#24615;&#33021;&#12290;</p>
+<p>&#35813;<code class="literal">StandardEvaluationContext</code>&#26159;&#20320;&#21487;&#20197;&#25351;&#23450;root object&#36890;&#36807;&#20351;&#29992;
+<code class="literal">setRootObject&#65288;&#65289;</code>&#25110;&#20256;&#36882;root object&#21040;&#26500;&#36896;&#20989;&#25968;.
+&#20320;&#20063;&#21487;&#20197;&#25351;&#23450;&#21464;&#37327;&#21644;&#20989;&#25968;
+&#20351;&#29992;&#26041;&#27861;'&#30340;setVariable&#65288;&#65289;<code class="literal">&#21644;`registerFunction&#65288;&#65289;</code>&#30340;&#34920;&#36798;&#24335;&#12290;
+&#21464;&#37327;&#21644;&#20989;&#25968;&#30340;&#20351;&#29992;&#23558;&#22312;<a class="link" href="expressions.html#expressions-ref-variables" title="8.5.11&nbsp;&#21464;&#37327;">&#21464;&#37327;</a>&#20013;&#20171;&#32461;
+&#65292;&#21516;&#26102; <a class="link" href="expressions.html#expressions-ref-functions" title="8.5.12&nbsp;&#20989;&#25968;">&#20989;&#25968;</a>.
+<code class="literal">StandardEvaluationContext</code>&#20063;&#26159;&#22312;&#37027;&#37324;&#20320;&#21487;&#20197;&#33258;&#23450;&#20041;&#30340;&#27880;&#20876;
 <code class="literal">ConstructorResolver</code>s, <code class="literal">MethodResolver</code>s, and <code class="literal">PropertyAccessor</code>s to extend how SpEL
-evaluates expressions. Please refer to the JavaDoc of these classes for more details.</p>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-type-conversion" href="#expressions-type-conversion"></a>Type Conversion</h4></div></div></div>
+evaluates expressions. &#35831;&#21442;&#35265;&#36825;&#20123;&#31867;&#30340;Javadoc&#33719;&#24471;&#26356;&#22810;&#20449;&#24687;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-type-conversion" href="#expressions-type-conversion"></a>&#31867;&#22411;&#36716;&#25442;</h4></div></div></div>
 
-<p>By default SpEL uses the conversion service available in Spring core (
-<code class="literal">org.springframework.core.convert.ConversionService</code>). This conversion service comes
-with many converters built in for common conversions but is also fully extensible so
-custom conversions between types can be added. Additionally it has the key capability
-that it is generics aware. This means that when working with generic types in
-expressions, SpEL will attempt conversions to maintain type correctness for any objects
-it encounters.</p>
-<p>What does this mean in practice? Suppose assignment, using <code class="literal">setValue()</code>, is being used
-to set a <code class="literal">List</code> property. The type of the property is actually <code class="literal">List&lt;Boolean&gt;</code>. SpEL
-will recognize that the elements of the list need to be converted to <code class="literal">Boolean</code> before
-being placed in it. A simple example:</p>
+<p>&#40664;&#35748;&#24773;&#20917;&#19979;&#65292;SpEL&#20351;&#29992;Spring-core&#30340;&#36716;&#25442;&#26381;&#21153;&#65288;
+<code class="literal">org.springframework.core.convert&#12290;ConversionService</code>&#65289;&#12290;&#36825;&#31181;&#36716;&#25442;&#30340;&#26381;&#21153;
+&#35768;&#22810;&#36716;&#25442;&#22120;&#20869;&#32622;&#20102;&#24120;&#29992;&#30340;&#36716;&#25442;&#65292;&#20294;&#20063;&#23436;&#20840;&#21487;&#25193;&#23637;
+&#31867;&#22411;&#20043;&#38388;&#30340;&#23450;&#21046;&#30340;&#36716;&#25442;&#21487;&#20197;&#22686;&#21152;&#12290;&#27492;&#22806;&#65292;&#23427;&#25317;&#26377;&#30340;&#20851;&#38190;&#33021;&#21147;
+&#26159;&#27867;&#22411;&#24863;&#30693;&#12290;&#36825;&#24847;&#21619;&#30528;&#65292;&#24403;&#19982;&#36890;&#29992;&#31867;&#22411;&#30340;&#24037;&#20316;
+&#34920;&#36798;&#24335;&#65292;SpEL&#23558;&#23581;&#35797;&#36716;&#25442;&#20182;&#36935;&#21040;&#30340;&#32500;&#25345;&#23545;&#20219;&#20309;&#23545;&#35937;&#31867;&#22411;&#30340;&#27491;&#30830;&#24615;</p>
+<p>&#36825;&#20570;&#27861;&#26159;&#20160;&#20040;&#24847;&#24605;&#21602;&#65311;&#20551;&#35774;&#20998;&#37197;&#65292;&#20351;&#29992;<code class="literal">&#30340;setValue&#65288;&#65289;'&#65292;&#27491;&#22312;&#20351;&#29992;
+&#20197;&#35774;&#32622;&#19968;&#20010;`List</code>&#23646;&#24615;&#12290;&#35813;&#23646;&#24615;&#30340;&#31867;&#22411;&#23454;&#38469;&#19978;&#26159;<code class="literal">List&lt;Boolean&gt;</code>&#12290;SpEL
+&#23558;&#35748;&#35782;&#21040;&#65292;&#38656;&#35201;&#22312;&#21015;&#34920;&#20013;&#30340;&#20803;&#32032;&#20043;&#21069;&#65292;&#24517;&#39035;&#36716;&#25442;&#25104;<code class="literal">Boolean</code>
+&#19968;&#20010;&#31616;&#21333;&#30340;&#20363;&#23376;&#65306;</p>
 <pre class="programlisting"><span class="hl-keyword">class</span> Simple {
     <span class="hl-keyword">public</span> List&lt;Boolean&gt; booleanList = <span class="hl-keyword">new</span> ArrayList&lt;Boolean&gt;();
 }
@@ -236,16 +209,16 @@ Boolean b = simple.booleanList.get(<span class="hl-number">0</span>);</pre>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-parser-configuration" href="#expressions-parser-configuration"></a>8.3.2&nbsp;Parser configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-parser-configuration" href="#expressions-parser-configuration"></a>8.3.2&nbsp;&#35299;&#26512;&#22120;&#37197;&#32622;</h3></div></div></div>
 
-<p>It is possible to configure the SpEL expression parser using a parser configuration object
-(<code class="literal">org.springframework.expression.spel.SpelParserConfiguration</code>). The configuration
-object controls the behaviour of some of the expression components. For example, if
-indexing into an array or collection and the element at the specified index is <code class="literal">null</code>
-it is possible to automatically create the element. This is useful when using expressions made up of a
-chain of property references. If indexing into an array or list
-and specifying an index that is beyond the end of the current size of the array or
-list it is possible to automatically grow the array or list to accommodate that index.</p>
+<p>&#29992;&#19968;&#20010;parser configuration object&#21435;&#37197;&#32622;SpEL&#35299;&#26512;&#22120;&#26159;&#21487;&#33021;&#30340;,
+&#65288;<code class="literal">org.springframework.expression.spel.SpelParserConfiguration</code>&#65289;.&#37197;&#32622;
+&#23545;&#35937;&#25511;&#21046;&#30340;&#19968;&#20123;&#34920;&#36798;&#32452;&#20214;&#30340;&#34892;&#20026;&#12290;&#20363;&#22914;&#65292;&#22914;&#26524;&#25968;&#25454;&#20026;
+&#32034;&#24341;&#21040;&#25351;&#23450;&#32034;&#24341;&#22788;&#30340;&#25968;&#32452;&#25110;&#38598;&#21512;&#30340;&#20803;&#32032;&#26159;<code class="literal">null</code>
+&#23427;&#21487;&#20197;&#33258;&#21160;&#22320;&#21019;&#24314;&#30340;&#20803;&#32032;&#12290;&#24403;&#29992;&#34920;&#36798;&#24335;&#32452;&#21512;&#19968;&#20010;&#38142;&#24335;&#23646;&#24615;&#24341;&#29992;&#26102;&#36825;&#23558;&#38750;&#24120;&#26377;&#29992;.
+&#22914;&#26524;&#32034;&#24341;&#21040;&#19968;&#20010;&#25968;&#32452;&#25110;&#21015;&#34920;
+&#24182;&#25351;&#23450;&#19968;&#20010;&#32034;&#24341;&#36229;&#20986;&#25968;&#32452;&#30340;&#24403;&#21069;&#22823;&#23567;&#25110;
+&#33258;&#21160;&#22686;&#38271;&#30340;&#25968;&#32452;&#25110;&#38431;&#21015;&#21435;&#23481;&#32435;</p>
 <pre class="programlisting"><span class="hl-keyword">class</span> Demo {
     <span class="hl-keyword">public</span> List&lt;String&gt; list;
 }
@@ -266,63 +239,59 @@ Object o = expression.getValue(demo);
 <span class="hl-comment">// demo.list will now be a real collection of 4 entries</span>
 <span class="hl-comment">// Each entry is a new empty String</span></pre>
 
-<p>It is also possible to configure the behaviour of the SpEL expression compiler.</p>
+<p>&#21478;&#22806;&#65292;&#20063;&#21487;&#20197;&#37197;&#32622;&#19968;&#20010;SpEL&#34920;&#36798;&#24335;&#32534;&#35793;&#22120;&#30340;&#34892;&#20026;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-spel-compilation" href="#expressions-spel-compilation"></a>8.3.3&nbsp;SpEL compilation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-spel-compilation" href="#expressions-spel-compilation"></a>8.3.3&nbsp;SpEL &#32534;&#35793;</h3></div></div></div>
 
-<p>Spring Framework 4.1 includes a basic expression compiler. Expressions are usually
-interpreted which provides a lot of dynamic flexibility during evaluation but
-does not provide the optimum performance. For occasional expression usage
-this is fine, but when used by other components like Spring Integration,
-performance can be very important and there is no real need for the dynamism.</p>
-<p>The new SpEL compiler is intended to address this need. The
-compiler will generate a real Java class on the fly during evaluation that embodies the
-expression behaviour and use that to achieve much faster expression
-evaluation. Due to the lack of typing around expressions the compiler
-uses information gathered during the interpreted evaluations of an
-expression when performing compilation. For example, it does not know the type
-of a property reference purely from the expression but during the first
-interpreted evaluation it will find out what it is. Of course, basing the
-compilation on this information could cause trouble later if the types of
-the various expression elements change over time. For this reason compilation
-is best suited to expressions whose type information is not going to change
-on repeated evaluations.</p>
-<p>For a basic expression like this:</p>
-<p><code class="literal">someArray[0].someProperty.someOtherProperty &lt; 0.1</code></p>
-<p>which involves array access, some property derefencing and numeric operations, the performance
-gain can be very noticeable. In an example microbenchmark run of 50000 iterations, it was
-taking 75ms to evaluate using only the interpreter and just 3ms using the compiled version
-of the expression.</p>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-compiler-configuration" href="#expressions-compiler-configuration"></a>Compiler configuration</h4></div></div></div>
-
-<p>The compiler is not turned on by default, but there are two ways to turn
-it on. It can be turned on using the parser configuration process discussed earlier or
-via a system property when SpEL usage is embedded inside another component. This section
-discusses both of these options.</p>
-<p>Is is important to understand that there are a few modes the compiler can operate in, captured
-in an enum (<code class="literal">org.springframework.expression.spel.SpelCompilerMode</code>). The modes are as follows:</p>
+<p>Spring Framework 4.1 &#21253;&#21547;&#20102;&#19968;&#20010;&#22522;&#26412;&#30340;&#34920;&#36798;&#24335;&#32534;&#35793;&#22120;. &#34920;&#36798;&#24335;&#36890;&#24120;
+&#35299;&#37322;&#20854;&#25191;&#34892;&#36807;&#31243;&#20013;&#25552;&#20379;&#20102;&#22823;&#37327;&#30340;&#21160;&#24577;&#28789;&#27963;&#24615;&#65292;&#20294;
+&#19981;&#25552;&#20379;&#26368;&#20339;&#24615;&#33021;&#12290;&#23545;&#20110;&#20598;&#23572;&#20351;&#29992;&#30340;&#34920;&#36798;
+&#36825;&#26159;&#22909;&#30340;&#65292;&#32780;&#26159;&#30001;&#20854;&#20182;&#32452;&#20214;&#65292;&#22914;Spring&#38598;&#25104;&#20351;&#29992;&#26102;&#65292;
+&#24615;&#33021;&#26159;&#38750;&#24120;&#37325;&#35201;&#30340;&#65292;&#24182;&#27809;&#26377;&#20026;&#27963;&#21147;&#25552;&#20379;&#30495;&#27491;&#30340;&#38656;&#35201;&#12290;</p>
+<p>&#26032;&#20351;&#29992;SpEL&#32534;&#35793;&#26088;&#22312;&#35299;&#20915;&#36825;&#19968;&#38656;&#35201;&#12290;&#28982;&#21518;&#35813;
+&#32534;&#35793;&#22120;&#23558;&#25191;&#34892;&#36825;&#20307;&#29616;&#20102;&#20013;&#21160;&#24577;&#29983;&#25104;&#19968;&#20010;&#30495;&#27491;&#30340;Java&#31867;
+&#34920;&#36798;&#34892;&#20026;&#65292;&#24182;&#29992;&#23427;&#26469;&#23454;&#29616;&#26356;&#24555;&#30340;&#34920;&#36798;
+&#24335;&#25191;&#34892;&#12290;&#30001;&#20110;&#32570;&#20047;&#21508;&#31181;&#34920;&#36798;&#24335;&#32534;&#35793;&#22120;
+&#20351;&#29992;&#36807;&#31243;&#20013;&#30340;&#19968;&#20010;&#35780;&#20272;&#25910;&#38598;&#30340;&#35780;&#20215;&#30340;&#20449;&#24687;
+&#24403;&#25191;&#34892;&#32534;&#35793;&#30340;&#34920;&#36798;&#12290;&#20363;&#22914;&#65292;&#23427;&#19981;&#30693;&#36947;&#30340;&#31867;&#22411;
+&#21442;&#32771;&#34920;&#36798;&#65292;&#20294;&#22312;&#31532;&#19968;&#23646;&#24615;&#21442;&#32771;
+&#35299;&#37322;&#25191;&#34892;&#20250;&#21457;&#29616;&#23427;&#26159;&#20160;&#20040;&#12290;&#24403;&#28982;&#65292;&#22522;&#20110;&#35813;
+&#32534;&#35793;&#36825;&#20123;&#20449;&#24687;&#21487;&#33021;&#20250;&#36896;&#25104;&#30340;&#40635;&#28902;&#21518;&#65292;&#22914;&#26524;&#31867;&#22411;
+&#21508;&#31181;&#34920;&#36798;&#20803;&#20214;&#38543;&#30528;&#26102;&#38388;&#32780;&#25913;&#21464;&#12290;&#20986;&#20110;&#36825;&#20010;&#21407;&#22240;&#27719;&#32534;
+&#26159;&#26368;&#36866;&#21512;&#36820;&#22238;&#25191;&#34892;&#19981;&#20250;&#25913;&#21464;&#20854;&#34920;&#36798;&#24335;&#31867;&#22411;&#30340;&#20449;&#24687;&#12290;</p>
+<p>&#23545;&#20110;&#22522;&#26412;&#30340;&#34920;&#36798;&#26159;&#36825;&#26679;&#30340;&#65306;</p>
+<p><code class="literal">someArray [0] .someProperty.someOtherProperty &lt;0.1</code></p>
+<p>&#20854;&#20013;&#28041;&#21450;&#25968;&#32452;&#35775;&#38382;&#65292;&#37096;&#20998;&#23646;&#24615;&#24341;&#29992;&#21644;&#25968;&#23383;&#36816;&#31639;&#65292;&#24615;&#33021;
+&#22686;&#30410;&#21487;&#20197;&#24456;&#26126;&#26174;&#30340;&#12290;&#22312;50000&#36845;&#20195;&#19968;&#20010;&#20363;&#23376;&#24494;&#22522;&#20934;&#26469;&#30475;&#65292;&#23427;&#26159;
+&#20351;&#29992;&#20102;75ms&#29992;&#26469;&#25191;&#34892;&#32763;&#35793;&#65292;&#32780;&#20165;&#20165;3ms&#32534;&#35793;&#34920;&#36798;&#24335;&#30340;version&#12290;</p>
+<p><a name="expressions-compiler-configuration" href="#expressions-compiler-configuration"></a>=====&#32534;&#35793;&#22120;&#37197;&#32622;</p>
+<p>&#32534;&#35793;&#22120;&#40664;&#35748;&#26159;&#24182;&#26410;&#24320;&#21551;&#30340;&#65292;&#20294;&#26377;&#20004;&#31181;&#26041;&#24335;&#25171;&#24320;
+&#23427;&#12290;&#23427;&#34987;&#25171;&#24320;&#29992;parser configuration process &#25110;&#32773;
+&#36890;&#36807;&#31995;&#32479;&#23646;&#24615;&#23558;SpEL&#20351;&#29992;&#23884;&#20837;&#21478;&#19968;&#20010;&#32452;&#20214;&#20013;&#12290;&#26412;&#33410;
+&#35752;&#35770;&#36825;&#20004;&#20010;&#36873;&#39033;&#12290;</p>
+<p>&#37325;&#35201;&#30340;&#26159;&#35201;&#26126;&#30333;&#65292;&#32534;&#35793;&#22120;&#21487;&#24037;&#20316;&#22312;&#20960;&#20010;&#27169;&#24335;&#19979;&#65292;&#26597;&#30475;&#35814;&#32454;&#21487;&#20197;&#29992;&#36807;&#19968;&#20010;enum
+(<code class="literal">org.springframework.expression.spel.SpelCompilerMode</code>). &#27169;&#24335;&#22914;&#19979;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">OFF</code> - The compiler is switched off; this is the default.
+<code class="literal">OFF</code> - &#32534;&#35793;&#22120;&#34987;&#20851;&#38381;;&#36825;&#26159;&#40664;&#35748;&#30340;&#12290;
 </li><li class="listitem">
-<code class="literal">IMMEDIATE</code> - In immediate mode the expressions are compiled as soon as possible. This
-is typically after the first interpreted evaluation. If the compiled expression fails
-(typically due to a type changing, as described above) then the caller of the expression
-evaluation will receive an exception.
+<code class="literal">IMMEDIATE</code> - &#22312;&#30452;&#25509;&#27169;&#24335;&#19979;&#65292;&#34920;&#36798;&#24335;&#23613;&#24555;&#32534;&#21046;&#12290;
+&#36825;&#26159;&#19968;&#20010;&#20856;&#22411;&#30340;&#39318;&#20010;&#32534;&#35793;&#36873;&#39033;&#12290;&#22914;&#26524;&#32534;&#35793;&#38169;&#35823;&#30340;&#34920;&#36798;&#24335;
+&#65288;&#36890;&#24120;&#26159;&#30001;&#20110;&#19968;&#20010;&#31867;&#22411;&#21464;&#21270;&#65292;&#22914;&#19978;&#38754;&#25152;&#25551;&#36848;&#30340;&#65289;&#35843;&#29992;&#32773;&#23558;&#20250;&#24471;&#21040;&#19968;&#20010;&#24322;&#24120;&#12290;
 </li><li class="listitem">
-<code class="literal">MIXED</code> - In mixed mode the expressions silently switch between interpreted and compiled
-mode over time.  After some number of interpreted runs they will switch to compiled
-form and if something goes wrong with the compiled form (like a type changing, as
-described above) then the expression will automatically switch back to interpreted form
-again. Sometime later it may generate another compiled form and switch to it. Basically
-the exception that the user gets in <code class="literal">IMMEDIATE</code> mode is instead handled internally.
+<code class="literal">MIXED</code> - &#22312;&#28151;&#21512;&#27169;&#24335;&#19979;&#65292;&#38543;&#30528;&#26102;&#38388;&#30340;&#25512;&#31227;&#65292;&#34920;&#36798;&#24335;&#40664;&#40664;&#22320;&#35299;&#37322;&#21644;&#32534;&#35793;&#20043;&#38388;&#20999;&#25442;&#12290;
+&#32463;&#36807;&#35299;&#37322;&#36816;&#34892;&#30340;&#19968;&#20123;&#25968;&#23383;&#21518;&#65292;&#20182;&#20204;&#23601;&#20250;&#20999;&#25442;&#21435;&#32534;&#35793;&#28304;&#30721;
+&#65292;&#22914;&#26524;&#20986;&#29616;&#38382;&#39064;&#65292;&#32534;&#35793;&#24418;&#24335;&#65288;&#22914;&#19968;&#31181;&#21464;&#21270;&#65292;&#22914;
+&#22914;&#19978;&#25152;&#36848;&#65289;&#65292;&#37027;&#20040;&#34920;&#36798;&#24335;&#23558;&#33258;&#21160;&#20999;&#25442;&#22238;&#35299;&#37322;&#24418;&#24335;
+&#12290;&#19968;&#27573;&#26102;&#38388;&#21518;&#65292;&#21487;&#33021;&#20135;&#29983;&#21478;&#19968;&#31181;&#24418;&#24335;&#30340;&#32534;&#21046;&#65292;&#24182;&#20999;&#25442;&#21040;&#23427;&#12290;&#22522;&#26412;&#19978;
+&#30456;&#27604;&#29992;&#25143;<code class="literal">IMMEDIATE</code>&#27169;&#24335;&#65292;&#19981;&#21516;&#20043;&#22788;&#22312;&#20110;&#23545;&#20110;&#24322;&#24120;&#30340;&#22788;&#29702;&#65292;&#28151;&#21512;&#27169;&#24335;&#26159;&#38544;&#24335;&#30340;&#65288;&#21407;&#35805;&#26159;&#65306; Basically the exception that the user gets in <code class="literal">IMMEDIATE</code> mode is instead handled internally&#12290;&#65289;&#12290;
 </li></ul></div>
 
-<p><code class="literal">IMMEDIATE</code> mode exists because <code class="literal">MIXED</code> mode could cause issues for expressions that
-have side effects. If a compiled expression blows up after partially succeeding it
-may have already done something that has affected the state of the system. If this
-has happened the caller may not want it to silently re-run in interpreted mode
-since part of the expression may be running twice.</p>
-<p>After selecting a mode, use the <code class="literal">SpelParserConfiguration</code> to configure the parser:</p>
+<p><code class="literal">IMMEDIATE</code> &#27169;&#24335;&#30340;&#23384;&#22312;&#26159;&#22240;&#20026;<code class="literal">MIXED</code>&#27169;&#24335;&#21487;&#33021;&#20250;&#23548;&#33268;&#38382;&#39064;&#30340;&#34920;&#36798;&#24335;
+&#26377;&#21103;&#20316;&#29992;&#12290;&#22914;&#26524;&#22312;&#21518;&#38754;&#30340;&#37096;&#20998;&#26159;&#19968;&#20010;&#32534;&#35793;&#34920;&#36798;&#30340;&#25703;&#27585;
+&#21487;&#33021;&#24050;&#32463;&#20570;&#20102;&#19968;&#20123;&#36825;&#24050;&#32463;&#24433;&#21709;&#21040;&#20102;&#31995;&#32479;&#30340;&#29366;&#24577;&#12290;&#22914;&#26524;&#36825;
+&#24050;&#32463;&#21457;&#29983;&#30340;&#35843;&#29992;&#21487;&#33021;&#19981;&#24076;&#26395;&#23427;&#40664;&#40664;&#22320;&#37325;&#26032;&#36816;&#34892;&#22312;&#35299;&#37322;&#27169;&#24335;
+&#22240;&#20026;&#34920;&#36798;&#30340;&#19968;&#37096;&#20998;&#21487;&#33021;&#36816;&#34892;&#20004;&#27425;&#12290;</p>
+<p>&#36873;&#25321;&#27169;&#24335;&#21518;&#65292;&#20351;&#29992;<code class="literal">SpelParserConfiguration</code>&#37197;&#32622;&#35299;&#26512;&#22120;&#65306;</p>
 <pre class="programlisting">SpelParserConfiguration config = <span class="hl-keyword">new</span> SpelParserConfiguration(SpelCompilerMode.IMMEDIATE,
     <span class="hl-keyword">this</span>.getClass().getClassLoader());
 
@@ -334,62 +303,61 @@ MyMessage message = <span class="hl-keyword">new</span> MyMessage();
 
 Object payload = expr.getValue(message);</pre>
 
-<p>When specifying the compiler mode it is also possible to specify a classloader (passing null is allowed).
-Compiled expressions will be defined in a child classloader created under any that is supplied.
-It is important to ensure if a classloader is specified it can see all the types involved in
-the expression evaluation process.
-If none is specified then a default classloader will be used (typically the context classloader for
-the thread that is running during expression evaluation).</p>
-<p>The second way to configure the compiler is for use when SpEL is embedded inside some other
-component and it may not be possible to configure via a configuration object.
-In these cases it is possible to use a system property. The property
-<code class="literal">spring.expression.compiler.mode</code> can be set to one of the <code class="literal">SpelCompilerMode</code>
-enum values (<code class="literal">off</code>, <code class="literal">immediate</code> or <code class="literal">mixed</code>).</p>
-</div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-compiler-limitations" href="#expressions-compiler-limitations"></a>Compiler limitations</h4></div></div></div>
+<p>&#24403;&#25351;&#23450;&#32534;&#35793;&#22120;&#27169;&#24335;&#65292;&#20063;&#21487;&#20197;&#25351;&#23450;&#19968;&#20010;&#31867;&#21152;&#36733;&#22120;&#65288;&#20256;&#36882;null&#26159;&#20801;&#35768;&#30340;&#65289;&#12290;
+&#32534;&#35793;&#34920;&#36798;&#24335;&#23558;&#22312;&#26681;&#25454;&#20219;&#20309;&#34987;&#20379;&#24212;&#21019;&#24314;&#19968;&#20010;&#23376;&#31867;&#21152;&#36733;&#22120;&#26469;&#38480;&#23450;&#12290;
+&#30830;&#20445;&#22914;&#26524;&#25351;&#23450;&#19968;&#20010;&#31867;&#21152;&#36733;&#22120;&#23601;&#21487;&#20197;&#30475;&#21040;&#25152;&#26377;&#28041;&#21450;&#30340;&#31867;&#22411;&#26159;&#24456;&#37325;&#35201;&#30340;
+&#34920;&#36798;&#24335;&#27714;&#20540;&#30340;&#36807;&#31243;&#12290;
+&#22914;&#26524;&#27809;&#26377;&#25351;&#23450;&#65292;&#37027;&#20040;&#40664;&#35748;&#30340;&#31867;&#21152;&#36733;&#22120;&#23558;&#20351;&#29992;&#65288;&#19968;&#33324;&#20026;&#19978;&#19979;&#25991;&#31867;&#21152;&#36733;&#22120;
+&#36825;&#26159;&#22312;&#34920;&#36798;&#24335;&#27714;&#20540;&#36816;&#34892;&#30340;&#32447;&#31243;&#65289;&#12290;</p>
+<p>&#26469;&#37197;&#32622;&#32534;&#35793;&#22120;&#30340;&#31532;&#20108;&#31181;&#26041;&#27861;&#26159;&#29992;&#20110;&#24403;&#20351;&#29992;SpEL&#23884;&#20837;&#37324;&#38754;&#30340;&#19968;&#20123;&#20854;&#23427;
+&#32452;&#20214;&#21644;&#23427;&#21487;&#33021;&#26080;&#27861;&#36890;&#36807;&#37197;&#32622;&#23545;&#35937;&#26469;&#37197;&#32622;&#12290;
+&#22312;&#36825;&#20123;&#24773;&#20917;&#19979;&#65292;&#26377;&#21487;&#33021;&#20351;&#29992;&#19968;&#20010;&#31995;&#32479;&#23646;&#24615;&#12290;&#23646;&#24615;
+<code class="literal">spring.expression.compiler.mode</code>&#21487;&#35774;&#32622;&#21040;<code class="literal">SpelCompilerMode</code>
+&#26522;&#20030;&#20540;&#65288;<code class="literal">off</code>&#65292;<code class="literal">immediate</code>&#25110;<code class="literal">mixed</code>&#65289;&#20043;&#19968;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-compiler-limitations" href="#expressions-compiler-limitations"></a>&#32534;&#35793;&#22120;&#38480;&#21046;</h4></div></div></div>
 
-<p>With Spring Framework 4.1 the basic compilation framework is in place. However, the framework does not
-yet support compiling every kind of expression. The initial focus has been on the common expressions that are
-likely to be used in performance critical contexts.  These kinds of expression cannot be compiled
-at the moment:</p>
+<p>&#38543;&#30528;Spring&#26694;&#26550;4.1&#30340;&#22522;&#26412;&#32534;&#21046;&#26694;&#26550;&#21040;&#20301;&#12290;&#28982;&#32780;&#65292;&#35813;&#26694;&#26550;
+&#36824;&#27809;&#26377;&#25903;&#25345;&#32534;&#35793;&#27599;&#19968;&#31181;&#34920;&#24773;&#24335;&#12290;&#26368;&#21021;&#30340;&#37325;&#28857;&#19968;&#30452;&#26159;&#20849;&#21516;&#30340;&#34920;&#36798;
+&#26377;&#21487;&#33021;&#22312;&#24615;&#33021;&#20851;&#38190;&#19978;&#19979;&#25991;&#20013;&#20351;&#29992;&#12290;&#36825;&#20123;&#31181;&#31867;&#30340;&#34920;&#36798;&#19981;&#33021;&#34987;&#32534;&#35793;
+&#36825;&#20123;&#24773;&#20917;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-expressions involving assignment
+&#28041;&#21450;&#36171;&#20540;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-expressions relying on the conversion service
+&#20381;&#25176;&#36716;&#25442;&#26381;&#21153;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-expressions using custom resolvers or accessors
+&#20351;&#29992;&#33258;&#23450;&#20041;&#35299;&#26512;&#22120;&#25110;&#35775;&#38382;&#34920;&#36798;&#24335;
 </li><li class="listitem">
-expressions using selection or projection
+&#20351;&#29992;&#36873;&#25321;&#25110;&#25237;&#24433;&#34920;&#36798;&#24335;
 </li></ul></div>
 
-<p>More and more types of expression will be compilable in the future.</p>
+<p>&#26410;&#26469;&#23558;&#25903;&#25345;&#36234;&#26469;&#36234;&#22810;&#31867;&#22411;&#30340;&#34920;&#36798;&#24335;&#12290;</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-beandef" href="#expressions-beandef"></a>8.4&nbsp;Expression support for defining bean definitions</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-beandef" href="#expressions-beandef"></a>8.4&nbsp;&#23450;&#20041;bean&#30340;beandef&#34920;&#36798;&#25903;&#25345;</h2></div></div></div>
 
-<p>SpEL expressions can be used with XML or annotation-based configuration metadata for
-defining <code class="literal">BeanDefinition</code>s. In both cases the syntax to define the expression is of the
-form <code class="literal">#{ &lt;expression string&gt; }</code>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-beandef-xml-based" href="#expressions-beandef-xml-based"></a>8.4.1&nbsp;XML based configuration</h3></div></div></div>
+<p>SpEL&#34920;&#36798;&#24335;&#21487;&#20197;&#19982;XML&#25110;&#22522;&#20110;&#27880;&#37322;&#30340;&#37197;&#32622;&#20803;&#25968;&#25454;&#20351;&#29992;
+&#23450;&#20041;BeanDefinitions&#12290;&#22312;&#36825;&#20004;&#31181;&#24773;&#20917;&#19979;&#65292;&#20197;&#23450;&#20041;&#34920;&#36798;&#24335;&#35821;&#27861;&#30340;
+&#24418;&#24335;<code class="literal">&#65283;{&lt;&#34920;&#36798;&#24335;&#23383;&#31526;&#20018;&gt;}</code>&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-beandef-xml-based" href="#expressions-beandef-xml-based"></a>8.4.1&nbsp;&#22522;&#20110;XML&#30340;&#37197;&#32622;</h3></div></div></div>
 
-<p>A property or constructor-arg value can be set using expressions as shown below.</p>
+<p>&#19968;&#20010;&#23646;&#24615;&#25110;&#26500;&#36896;&#24102;&#21442;&#25968;&#30340;&#20540;&#21487;&#20197;&#20351;&#29992;&#34920;&#36798;&#24335;&#22914;&#19979;&#25152;&#31034;&#36827;&#34892;&#35774;&#32622;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"numberGuess"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.spring.samples.NumberGuess"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"randomNumber"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"#{ T(java.lang.Math).random() * 100.0 }"</span><span class="hl-tag">/&gt;</span>
 
     <span class="hl-comment">&lt;!-- other properties --&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>The variable <code class="literal">systemProperties</code> is predefined, so you can use it in your expressions as
-shown below. Note that you do not have to prefix the predefined variable with the <code class="literal">#</code>
-symbol in this context.</p>
+<p>&#21464;&#37327;<code class="literal">systemProperties</code>&#26159;&#39044;&#23450;&#20041;&#30340;&#65292;&#25152;&#20197;&#20320;&#21487;&#20197;&#22312;&#20320;&#30340;&#34920;&#36798;&#24335;&#20351;&#29992;
+&#22914;&#19979;&#25152;&#31034;&#12290;&#35831;&#27880;&#24847;&#65292;&#24744;&#19981;&#24517;&#29992;``&#65283;&#21069;&#32512;&#30340;&#39044;&#23450;&#20041;&#21464;&#37327;
+&#31526;&#21495;&#20110;&#35813;&#19978;&#19979;&#25991;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"taxCalculator"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.spring.samples.TaxCalculator"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"defaultLocale"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"#{ systemProperties[</span><span class="emphasis"><em>'user.region</em></span>'] }"/&gt;
 
     <span class="hl-comment">&lt;!-- other properties --&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>You can also refer to other bean properties by name, for example.</p>
+<p>&#36824;&#21487;&#20197;&#21442;&#32771;&#20854;&#20182;bean&#23646;&#24615;&#30340;&#21517;&#23383;&#65292;&#20363;&#22914;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"numberGuess"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.spring.samples.NumberGuess"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"randomNumber"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"{ T(java.lang.Math).random() * 100.0 }"</span><span class="hl-tag">/&gt;</span>
 
@@ -403,11 +371,11 @@ symbol in this context.</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-beandef-annotation-based" href="#expressions-beandef-annotation-based"></a>8.4.2&nbsp;Annotation-based configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-beandef-annotation-based" href="#expressions-beandef-annotation-based"></a>8.4.2&nbsp;&#22522;&#20110;&#27880;&#35299;&#30340;&#37197;&#32622;</h3></div></div></div>
 
-<p>The <code class="literal">@Value</code> annotation can be placed on fields, methods and method/constructor
-parameters to specify a default value.</p>
-<p>Here is an example to set the default value of a field variable.</p>
+<p><code class="literal">@ Value</code>&#27880;&#35299;&#21487;&#20197;&#25918;&#22312;&#23383;&#27573;&#65292;&#26041;&#27861;&#21644;&#26041;&#27861;/&#8203;&#8203;&#26500;&#36896;
+&#21442;&#25968;&#37324;&#65292;&#20197;&#25351;&#23450;&#40664;&#35748;&#20540;&#12290;</p>
+<p>&#36825;&#37324;&#26159;&#19968;&#20010;&#20363;&#23376;&#65292;&#35774;&#32622;&#19968;&#20010;&#23383;&#27573;&#21464;&#37327;&#30340;&#32570;&#30465;&#20540;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">class</span> FieldValueTestBean
 
     @Value(<span class="hl-string">"#{ systemProperties[</span><span class="emphasis"><em>'user.region</em></span><span class="hl-string">'] }")
@@ -423,7 +391,7 @@ parameters to specify a default value.</p>
 
 }</pre>
 
-<p>The equivalent but on a property setter method is shown below.</p>
+<p>&#31561;&#25928;&#30340;&#23646;&#24615;setter&#26041;&#27861;&#8203;&#8203;&#22914;&#19979;&#25152;&#31034;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">class</span> PropertyValueTestBean
 
     <span class="hl-keyword">private</span> String defaultLocale;
@@ -439,7 +407,7 @@ parameters to specify a default value.</p>
 
 }</pre>
 
-<p>Autowired methods and constructors can also use the <code class="literal">@Value</code> annotation.</p>
+<p>&#33258;&#21160;&#35013;&#37197;&#26041;&#27861;&#21644;&#26500;&#36896;&#20063;&#21487;&#20197;&#20351;&#29992;<code class="literal">@ Value</code>&#27880;&#35299;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleMovieLister {
 
     <span class="hl-keyword">private</span> MovieFinder movieFinder;
@@ -473,16 +441,16 @@ parameters to specify a default value.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-language-ref" href="#expressions-language-ref"></a>8.5&nbsp;Language Reference</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="expressions-language-ref" href="#expressions-language-ref"></a>8.5&nbsp;&#35821;&#35328;&#21442;&#32771;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-literal" href="#expressions-ref-literal"></a>8.5.1&nbsp;Literal expressions</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-literal" href="#expressions-ref-literal"></a>8.5.1&nbsp;&#25991;&#23383;&#34920;&#36798;&#24335;</h3></div></div></div>
 
-<p>The types of literal expressions supported are strings, dates, numeric values (int,
-real, and hex), boolean and null. Strings are delimited by single quotes. To put a
-single quote itself in a string use two single quote characters. The following listing
-shows simple usage of literals. Typically they would not be used in isolation like this,
-but as part of a more complex expression, for example using a literal on one side of a
-logical comparison operator.</p>
+<p>&#25903;&#25345;&#25991;&#23383;&#34920;&#36798;&#30340;&#31867;&#22411;&#26159;&#23383;&#31526;&#20018;&#65292;&#26085;&#26399;&#65292;&#25968;&#20540;&#65288;int&#65292;
+real&#65292;&#21313;&#20845;&#36827;&#21046;&#65289;&#65292;&#24067;&#23572;&#21644;&#31354;&#12290;&#23383;&#31526;&#20018;&#20351;&#29992;&#21333;&#24341;&#21495;&#20998;&#38548;&#12290;&#19968;&#20010;
+&#21333;&#24341;&#21495;&#26412;&#36523;&#22312;&#23383;&#31526;&#20018;&#20013;&#20351;&#29992;&#20004;&#20010;&#21333;&#24341;&#21495;&#23383;&#31526;&#34920;&#31034;&#12290;&#19979;&#38754;&#30340;&#21015;&#34920;
+&#26174;&#31034;&#25991;&#23383;&#30340;&#31616;&#21333;&#29992;&#27861;&#12290;&#36890;&#24120;&#65292;&#23427;&#20204;&#23558;&#19981;&#34987;&#20351;&#29992;&#22312;&#38548;&#31163;&#20687;&#36825;&#26679;&#65292;
+&#20294;&#20316;&#20026;&#19968;&#20010;&#26356;&#22797;&#26434;&#30340;&#34920;&#36798;&#24335;&#30340;&#19968;&#37096;&#20998;&#65292;&#20363;&#22914;&#65292;&#20351;&#29992;&#19968;&#20010;&#25991;&#23383;&#19978;&#30340;&#19968;&#20391;
+&#36923;&#36753;&#27604;&#36739;&#25805;&#20316;&#31526;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 <span class="hl-comment">// evals to "Hello World"</span>
@@ -497,23 +465,22 @@ String helloWorld = (String) parser.parseExpression(<span class="hl-string">"</s
 
 Object nullValue = parser.parseExpression(<span class="hl-string">"null"</span>).getValue();</pre>
 
-<p>Numbers support the use of the negative sign, exponential notation, and decimal points.
-By default real numbers are parsed using Double.parseDouble().</p>
+<p>&#25968;&#23383;&#25903;&#25345;&#20351;&#29992;&#36127;&#21495;&#65292;&#25351;&#25968;&#31526;&#21495;&#21644;&#23567;&#25968;&#28857;&#12290;
+&#40664;&#35748;&#24773;&#20917;&#19979;&#65292;&#23454;&#25968;&#20351;&#29992;Double.parseDouble()&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-properties-arrays" href="#expressions-properties-arrays"></a>8.5.2&nbsp;Properties, Arrays, Lists, Maps, Indexers</h3></div></div></div>
 
-<p>Navigating with property references is easy: just use a period to indicate a nested
-property value. The instances of the <code class="literal">Inventor</code> class, pupin, and tesla, were populated with
-data listed in the section <a class="link" href="expressions.html#expressions-example-classes" title="8.6&nbsp;Classes used in the examples">Classes used in the examples</a>.
-To navigate "down" and get Tesla&#8217;s year of birth and Pupin&#8217;s city of birth the following
-expressions are used.</p>
+<p>&#29992;&#23646;&#24615;&#24341;&#29992;&#24341;&#23548;&#24456;&#31616;&#21333;&#65306;&#21482;&#35201;&#29992;&#19968;&#20010;<code class="literal">.</code>&#34920;&#31034;&#23884;&#22871;
+&#23646;&#24615;&#20540;&#12290;&#23454;&#29616;Inventor&#31867;, pupin&#21644;tesla, &#34987;&#28155;&#21152;
+&#34987;&#28155;&#21152;&#12290;&#22312;&#31456;&#33410;<a class="link" href="expressions.html#expressions-example-classes" title="8.6&nbsp;Classes used in the examples">classes&#30340;&#20363;&#23376;</a>.
+&#20351;&#29992;&#34920;&#36798;&#24335;&#24341;&#23548; "down" &#21516;&#26102;&#33719;&#21462; Tesla&#8217;s &#20986;&#29983;&#24180; &#21644; Pupin&#8217;s &#20986;&#29983;&#22478;&#24066;</p>
 <pre class="programlisting"><span class="hl-comment">// evals to 1856</span>
 <span class="hl-keyword">int</span> year = (Integer) parser.parseExpression(<span class="hl-string">"Birthdate.Year + 1900"</span>).getValue(context);
 
 String city = (String) parser.parseExpression(<span class="hl-string">"placeOfBirth.City"</span>).getValue(context);</pre>
 
-<p>Case insensitivity is allowed for the first letter of property names. The contents of
-arrays and lists are obtained using square bracket notation.</p>
+<p>&#19981;&#21306;&#20998;&#22823;&#23567;&#20889;&#20801;&#35768;&#30340;&#23646;&#24615;&#21517;&#31216;&#30340;&#31532;&#19968;&#20010;&#23383;&#27597;&#12290;
+&#25968;&#32452;&#21644;&#21015;&#34920;&#20351;&#29992;&#26041;&#25324;&#21495;&#33719;&#24471;&#20869;&#23481;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 <span class="hl-comment">// Inventions Array</span>
@@ -535,9 +502,9 @@ String name = parser.parseExpression(<span class="hl-string">"Members[0].Name"</
 String invention = parser.parseExpression(<span class="hl-string">"Members[0].Inventions[6]"</span>).getValue(
         societyContext, String.<span class="hl-keyword">class</span>);</pre>
 
-<p>The contents of maps are obtained by specifying the literal key value within the
-brackets. In this case, because keys for the Officers map are strings, we can specify
-string literals.</p>
+<p>maps&#30340;&#20869;&#23481;&#30001;&#20869;&#25351;&#23450;&#30340;key&#20540;&#33719;&#24471;.
+&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#22240;&#20026;&#23545;&#20110;&#20154;&#21592;&#30340;&#38190;&#26144;&#23556;&#26159;&#23383;&#31526;&#20018;&#65292;&#25105;&#20204;&#21487;&#20197;&#25351;&#23450;
+&#23383;&#31526;&#20018;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// Officer's Dictionary</span>
 
 Inventor pupin = parser.parseExpression(<span class="hl-string">"Officers[</span><span class="emphasis"><em>'president</em></span><span class="hl-string">']").getValue(
@@ -552,35 +519,35 @@ parser.parseExpression(<span class="hl-string">"Officers[</span><span class="emp
 </span>        societyContext, <span class="hl-string">"Croatia"</span>);</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-inline-lists" href="#expressions-inline-lists"></a>8.5.3&nbsp;Inline lists</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-inline-lists" href="#expressions-inline-lists"></a>8.5.3&nbsp;&#20869;&#32852;&#21015;&#34920;</h3></div></div></div>
 
-<p>Lists can be expressed directly in an expression using <code class="literal">{}</code> notation.</p>
+<p>&#21015;&#34920;&#21487;&#20197;&#30452;&#25509;&#22312;&#34920;&#36798;&#24335;&#20013;&#20351;&#29992;<code class="literal">{}</code>&#31526;&#21495;&#26469;&#34920;&#31034;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// evaluates to a Java list containing the four numbers</span>
 List numbers = (List) parser.parseExpression(<span class="hl-string">"{1,2,3,4}"</span>).getValue(context);
 
 List listOfLists = (List) parser.parseExpression(<span class="hl-string">"{{</span><span class="emphasis"><em>'a</em></span><span class="hl-string">',</span><span class="emphasis"><em>'b</em></span><span class="hl-string">'},{</span><span class="emphasis"><em>'x</em></span><span class="hl-string">',</span><span class="emphasis"><em>'y</em></span><span class="hl-string">'}}").getValue(context);</span></pre>
 
-<p><code class="literal">{}</code> by itself means an empty list. For performance reasons, if the list is itself
-entirely composed of fixed literals then a constant list is created to represent the
-expression, rather than building a new list on each evaluation.</p>
+<p><code class="literal">{}</code>&#26412;&#36523;&#24847;&#21619;&#30528;&#31354;&#21015;&#34920;&#12290;&#20986;&#20110;&#24615;&#33021;&#30340;&#32771;&#34385;&#65292;&#22914;&#26524;&#21015;&#34920;&#26412;&#36523;
+&#23436;&#20840;&#30001;&#22266;&#23450;&#38754;&#20540;&#30340;&#21017;&#24658;&#23450;&#21015;&#34920;&#34987;&#21019;&#24314;&#20197;&#20195;&#34920;
+&#34920;&#36798;&#65292;&#32780;&#19981;&#26159;&#24314;&#31435;&#19968;&#20010;&#26032;&#30340;&#21015;&#34920;&#19978;&#30340;&#27599;&#20010;&#37117;&#25191;&#34892;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-inline-maps" href="#expressions-inline-maps"></a>8.5.4&nbsp;Inline Maps</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-inline-maps" href="#expressions-inline-maps"></a>8.5.4&nbsp;&#20869;&#32852;maps</h3></div></div></div>
 
-<p>Maps can also be expressed directly in an expression using <code class="literal">{key:value}</code> notation.</p>
+<p>{key:value}<code class="literal">&#35760;&#21495;&#30340;maps&#20063;&#21487;&#20197;&#20351;&#29992;</code>&#34920;&#36798;&#24335;&#30452;&#25509;&#34920;&#31034;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// evaluates to a Java map containing the two entries</span>
 Map inventorInfo = (Map) parser.parseExpression(<span class="hl-string">"{name:'</span><span class="emphasis"><em>Nikola</em></span><span class="hl-string">',dob:'</span><span class="emphasis"><em>10-July-1856</em></span><span class="hl-string">'}").getValue(context);
 </span>
 Map mapOfMaps = (Map) parser.parseExpression(<span class="hl-string">"{name:{first:'</span><span class="emphasis"><em>Nikola</em></span><span class="hl-string">',last:'</span><span class="emphasis"><em>Tesla</em></span><span class="hl-string">'},dob:{day:10,month:'</span><span class="emphasis"><em>July</em></span><span class="hl-string">',year:1856}}").getValue(context);</span></pre>
 
-<p><code class="literal">{:}</code> by itself means an empty map. For performance reasons, if the map is itself composed
-of fixed literals or other nested constant structures (lists or maps) then a constant map is created
-to represent the expression, rather than building a new map on each evaluation. Quoting of the map keys
-is optional, the examples above are not using quoted keys.</p>
+<p><code class="literal">{&#65306;}</code>&#26412;&#36523;&#24847;&#21619;&#30528;&#19968;&#20010;&#31354;&#26144;&#23556;&#12290;&#20986;&#20110;&#24615;&#33021;&#30340;&#32771;&#34385;&#65292;&#22914;&#26524;map&#26412;&#36523;&#26159;&#30001;
+&#22266;&#23450;&#30340;&#25991;&#23383;&#25110;&#20854;&#20182;&#23884;&#22871;&#32467;&#26500;&#19981;&#21464;&#30340;&#65288;list&#25110;&#32773;map&#65289;&#65292;&#37027;&#20040;&#19968;&#20010;&#24658;&#23450;&#30340;map&#21019;&#24314;
+&#20195;&#34920;&#34920;&#36798;&#65292;&#32780;&#19981;&#26159;&#24314;&#31435;&#26032;map&#27599;&#27425;&#21435;&#25191;&#34892;&#12290;&#20351;&#29992;.&#24341;&#29992;map&#30340;key
+&#26159;&#21487;&#36873;&#30340;&#65292;&#19978;&#38754;&#30340;&#20363;&#23376;&#24182;&#27809;&#26377;&#20351;&#29992;.&#24341;&#29992;key&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-array-construction" href="#expressions-array-construction"></a>8.5.5&nbsp;Array construction</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-array-construction" href="#expressions-array-construction"></a>8.5.5&nbsp;array&#26500;&#36896;</h3></div></div></div>
 
-<p>Arrays can be built using the familiar Java syntax, optionally supplying an initializer
-to have the array populated at construction time.</p>
+<p>array&#21487;&#20197;&#20351;&#29992;&#29087;&#24713;&#30340;Java&#35821;&#27861;&#65292;&#36873;&#25321;&#24615;&#22320;&#25552;&#20379;&#19968;&#20010;&#21021;&#22987;&#24314;&#31435;
+&#26377;&#22312;&#26500;&#36896;&#26102;&#30340;&#25968;&#32452;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">int</span>[] numbers1 = (<span class="hl-keyword">int</span>[]) parser.parseExpression(<span class="hl-string">"new int[4]"</span>).getValue(context);
 
 <span class="hl-comment">// Array with initializer</span>
@@ -589,13 +556,12 @@ to have the array populated at construction time.</p>
 <span class="hl-comment">// Multi dimensional array</span>
 <span class="hl-keyword">int</span>[][] numbers3 = (<span class="hl-keyword">int</span>[][]) parser.parseExpression(<span class="hl-string">"new int[4][5]"</span>).getValue(context);</pre>
 
-<p>It is not currently allowed to supply an initializer when constructing a
-multi-dimensional array.</p>
+<p>&#21363;&#26410;&#34987;&#21021;&#22987;&#21270;&#30340;&#22810;&#32500;&#25968;&#32452;&#20063;&#21487;&#20197;&#34987;&#26500;&#36896;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-methods" href="#expressions-methods"></a>8.5.6&nbsp;Methods</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-methods" href="#expressions-methods"></a>8.5.6&nbsp;&#26041;&#27861;</h3></div></div></div>
 
-<p>Methods are invoked using typical Java programming syntax. You may also invoke methods
-on literals. Varargs are also supported.</p>
+<p>&#26041;&#27861;&#34987;&#35843;&#29992;&#36890;&#36807;java&#20856;&#22411;&#30340;&#32534;&#31243;&#35821;&#27861;&#23454;&#29616;&#65292;&#24744;&#20063;&#21487;&#20197;&#35843;&#29992;&#26041;&#27861;
+&#22312;&#34920;&#31034;&#24335;&#24403;&#20013;&#12290;&#21487;&#21464;&#21442;&#25968;&#20063;&#25903;&#25345;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// string literal, evaluates to "bc"</span>
 String c = parser.parseExpression(<span class="hl-string">"</span><span class="emphasis"><em>'abc</em></span><span class="hl-string">'.substring(2, 3)").getValue(String.class);
 </span>
@@ -604,12 +570,12 @@ String c = parser.parseExpression(<span class="hl-string">"</span><span class="e
 </span>        societyContext, Boolean.<span class="hl-keyword">class</span>);</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operators" href="#expressions-operators"></a>8.5.7&nbsp;Operators</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operators" href="#expressions-operators"></a>8.5.7&nbsp;&#36816;&#31639;&#31526;</h3></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-relational" href="#expressions-operators-relational"></a>Relational operators</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-relational" href="#expressions-operators-relational"></a>&#20851;&#31995;&#36816;&#31639;&#31526;</h4></div></div></div>
 
-<p>The relational operators; equal, not equal, less than, less than or equal, greater than,
-and greater than or equal are supported using standard operator notation.</p>
+<p>&#20851;&#31995;&#36816;&#31639;&#31526;;&#31561;&#20110;&#65292;&#19981;&#31561;&#20110;&#65292;&#23567;&#20110;&#65292;&#23567;&#20110;&#25110;&#31561;&#20110;&#65292;&#22823;&#20110;&#65292;
+&#21644;&#22823;&#20110;&#25110;&#31561;&#20110;&#20351;&#29992;&#26631;&#20934;&#31639;&#23376;&#34920;&#31034;&#27861;&#30340;&#25903;&#25345;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// evaluates to true</span>
 <span class="hl-keyword">boolean</span> trueValue = parser.parseExpression(<span class="hl-string">"2 == 2"</span>).getValue(Boolean.<span class="hl-keyword">class</span>);
 
@@ -619,8 +585,8 @@ and greater than or equal are supported using standard operator notation.</p>
 <span class="hl-comment">// evaluates to true</span>
 <span class="hl-keyword">boolean</span> trueValue = parser.parseExpression(<span class="hl-string">"</span><span class="emphasis"><em>'black</em></span><span class="hl-string">' &lt; </span><span class="emphasis"><em>'block</em></span><span class="hl-string">'").getValue(Boolean.class);</span></pre>
 
-<p>In addition to standard relational operators SpEL supports the <code class="literal">instanceof</code> and regular
-expression based <code class="literal">matches</code> operator.</p>
+<p>&#38500;&#20102;&#26631;&#20934;&#30340;&#20851;&#31995;&#36816;&#31639;&#31526;SpEL&#25903;&#25345;<code class="literal">instanceof</code>&#21644;
+&#22686;&#21017;&#34920;&#36798;&#24335;&#30340;<code class="literal">matches</code>&#25805;&#20316;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// evaluates to false</span>
 <span class="hl-keyword">boolean</span> falseValue = parser.parseExpression(
         <span class="hl-string">"</span><span class="emphasis"><em>'xyz</em></span><span class="hl-string">' instanceof T(int)").getValue(Boolean.class);
@@ -633,16 +599,15 @@ expression based <code class="literal">matches</code> operator.</p>
 <span class="hl-keyword">boolean</span> falseValue = parser.parseExpression(
         <span class="hl-string">"</span><span class="emphasis"><em>'5.0067</em></span><span class="hl-string">' matches </span><span class="emphasis"><em>'\^-?\\d+(\\.\\d{2})?$</em></span><span class="hl-string">'").getValue(Boolean.class);</span></pre>
 
-<p>Each symbolic operator can also be specified as a purely alphabetic equivalent. This
-avoids problems where the symbols used have special meaning for the document type in
-which the expression is embedded (eg. an XML document). The textual equivalents are
-shown here: <code class="literal">lt</code> (<code class="literal">&lt;</code>), <code class="literal">gt</code> (<code class="literal">&gt;</code>), <code class="literal">le</code> (<code class="literal">&lt;=</code>), <code class="literal">ge</code> (<code class="literal">&gt;=</code>), <code class="literal">eq</code> (<code class="literal">==</code>),
-<code class="literal">ne</code> (<code class="literal">!=</code>), <code class="literal">div</code> (<code class="literal">/</code>), <code class="literal">mod</code> (<code class="literal">%</code>), <code class="literal">not</code> (<code class="literal">!</code>). These are case insensitive.</p>
+<p>&#27599;&#20010;&#31526;&#21495;&#25805;&#20316;&#32773;&#20063;&#21487;&#20197;&#34987;&#25351;&#23450;&#20026;&#19968;&#20010;&#32431;&#23383;&#27597;&#21464;&#37327;&#12290;&#36825;&#20010;
+&#36991;&#20813;&#20102;&#22312;&#20351;&#29992;&#30340;&#31526;&#21495;&#26377;&#29305;&#27530;&#21547;&#20041;&#30340;&#25991;&#26723;&#31867;&#22411;&#30340;&#38382;&#39064;
+&#20854;&#34920;&#36798;&#34987;&#23884;&#20837;&#65288;&#20363;&#22914;&#65292;XML&#25991;&#26723;&#65289;&#12290;&#25991;&#26412;&#26159;&#31561;&#20540;
+&#27604;&#22914;: <code class="literal">lt</code> (<code class="literal">&lt;</code>), <code class="literal">gt</code> (<code class="literal">&gt;</code>), <code class="literal">le</code> (<code class="literal">&lt;=</code>), <code class="literal">ge</code> (<code class="literal">&gt;=</code>), <code class="literal">eq</code> (<code class="literal">==</code>),
+<code class="literal">ne</code> (<code class="literal">!=</code>), <code class="literal">div</code> (<code class="literal">/</code>), <code class="literal">mod</code> (<code class="literal">%</code>), <code class="literal">not</code> (<code class="literal">!</code>). &#36825;&#20123;&#37117;&#26159;&#19981;&#21306;&#20998;&#22823;&#23567;&#20889;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-logical" href="#expressions-operators-logical"></a>Logical operators</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-logical" href="#expressions-operators-logical"></a>&#36923;&#36753;&#36816;&#31639;&#31526;</h4></div></div></div>
 
-<p>The logical operators that are supported are and, or, and not. Their use is demonstrated
-below.</p>
+<p>&#25152;&#20197;&#25903;&#25345;&#30340;&#36923;&#36753;&#36816;&#31639;&#31526; and, or, and not. &#19979;&#25991;&#23558;&#35777;&#26126;&#20182;&#20204;&#30340;&#20351;&#29992;</p>
 <pre class="programlisting"><span class="hl-comment">// -- AND --</span>
 
 <span class="hl-comment">// evaluates to false</span>
@@ -671,12 +636,12 @@ String expression = <span class="hl-string">"isMember(</span><span class="emphas
 </span><span class="hl-keyword">boolean</span> falseValue = parser.parseExpression(expression).getValue(societyContext, Boolean.<span class="hl-keyword">class</span>);</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-mathematical" href="#expressions-operators-mathematical"></a>Mathematical operators</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-operators-mathematical" href="#expressions-operators-mathematical"></a>&#25968;&#23398;&#36816;&#8203;&#8203;&#31639;&#31526;</h4></div></div></div>
 
-<p>The addition operator can be used on both numbers and strings. Subtraction, multiplication
-and division can be used only on numbers. Other mathematical operators supported are
-modulus (%) and exponential power (^). Standard operator precedence is enforced. These
-operators are demonstrated below.</p>
+<p>&#21152;&#27861;&#36816;&#31639;&#31526;&#21487;&#20197;&#29992;&#20110;&#25968;&#23383;&#21644;&#23383;&#31526;&#20018;&#12290;&#20943;&#27861;&#65292;&#20056;&#27861;
+&#21644;&#38500;&#27861;&#21482;&#33021;&#22312;&#25968;&#23383;&#34987;&#20351;&#29992;&#12290;&#25903;&#25345;&#20854;&#20182;&#25968;&#23398;&#36816;&#31639;&#31526;
+&#27169;&#37327;&#65288;&#65285;&#65289;&#21644;&#25351;&#25968;&#24130;&#65288;^&#65289;&#12290;&#26631;&#20934;&#30340;&#36816;&#31639;&#31526;&#20248;&#20808;&#32423;&#25191;&#34892;&#12290; &#36825;&#20123;
+&#36816;&#31639;&#31526;&#23637;&#31034;&#22312;&#19979;&#25991;&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// Addition</span>
 <span class="hl-keyword">int</span> two = parser.parseExpression(<span class="hl-string">"1 + 1"</span>).getValue(Integer.<span class="hl-keyword">class</span>); <span class="hl-comment">// 2</span>
 
@@ -708,10 +673,10 @@ String testString = parser.parseExpression(
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-assignment" href="#expressions-assignment"></a>8.5.8&nbsp;Assignment</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-assignment" href="#expressions-assignment"></a>8.5.8&nbsp;&#36171;&#20540;</h3></div></div></div>
 
-<p>Setting of a property is done by using the assignment operator. This would typically be
-done within a call to <code class="literal">setValue</code> but can also be done inside a call to <code class="literal">getValue</code>.</p>
+<p>&#35774;&#32622;&#19968;&#20010;&#23646;&#24615;&#26159;&#36890;&#36807;&#20351;&#29992;&#36171;&#20540;&#25805;&#20316;&#23436;&#25104;&#12290;&#36825;&#36890;&#24120;&#26159;
+&#35843;&#29992;<code class="literal">setValue</code>&#65292;&#20294;&#20063;&#21487;&#20197;&#22312;&#35843;&#29992;<code class="literal">getValue</code>&#20869;&#23436;&#25104;&#12290;</p>
 <pre class="programlisting">Inventor inventor = <span class="hl-keyword">new</span> Inventor();
 StandardEvaluationContext inventorContext = <span class="hl-keyword">new</span> StandardEvaluationContext(inventor);
 
@@ -723,14 +688,14 @@ String aleks = parser.parseExpression(
         <span class="hl-string">"Name = </span><span class="emphasis"><em>'Alexandar Seovic</em></span><span class="hl-string">'").getValue(inventorContext, String.class);</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-types" href="#expressions-types"></a>8.5.9&nbsp;Types</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-types" href="#expressions-types"></a>8.5.9&nbsp;&#31867;&#22411;</h3></div></div></div>
 
-<p>The special <code class="literal">T</code> operator can be used to specify an instance of java.lang.Class (the
-<span class="emphasis"><em>type</em></span>). Static methods are invoked using this operator as well. The
-<code class="literal">StandardEvaluationContext</code> uses a <code class="literal">TypeLocator</code> to find types and the
-<code class="literal">StandardTypeLocator</code> (which can be replaced) is built with an understanding of the
-java.lang package. This means T() references to types within java.lang do not need to be
-fully qualified, but all other type references must be.</p>
+<p><code class="literal">T</code>&#25805;&#20316;&#21487;&#20197;&#34987;&#29992;&#26469;&#25351;&#23450;&#23433;&#35013;&#19968;&#20010;java.lang.ClassClass (the
+<span class="emphasis"><em>type</em></span>). &#38745;&#24577;&#26041;&#27861;&#20063;&#21487;&#20197;&#20351;&#29992;&#35813;&#36816;&#31639;&#31526;&#35843;&#29992;&#12290;&#28982;&#21518;&#35813;
+<code class="literal">StandardEvaluationContext</code>&#20351;&#29992;<code class="literal">TypeLocator</code>&#25214;&#21040;&#31867;&#22411;&#21644;
+<code class="literal">StandardTypeLocator</code>&#65288;&#21487;&#26367;&#25442;&#65289;&#26159;&#24314;&#31435;&#19982;&#30340;&#29702;&#35299;
+java.lang package. &#36825;&#24847;&#21619;&#30528;T()&#24341;&#29992;&#20869;&#30340;java.lang&#31867;&#22411;&#19981;&#38656;&#35201;&#26159;
+&#23436;&#20840;&#38480;&#23450;&#65292;&#20294;&#25152;&#26377;&#20854;&#20182;&#31867;&#22411;&#30340;&#24341;&#29992;&#24517;&#39035;&#12290;</p>
 <pre class="programlisting">Class dateClass = parser.parseExpression(<span class="hl-string">"T(java.util.Date)"</span>).getValue(Class.<span class="hl-keyword">class</span>);
 
 Class stringClass = parser.parseExpression(<span class="hl-string">"T(String)"</span>).getValue(Class.<span class="hl-keyword">class</span>);
@@ -740,11 +705,11 @@ Class stringClass = parser.parseExpression(<span class="hl-string">"T(String)"</
         .getValue(Boolean.<span class="hl-keyword">class</span>);</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-constructors" href="#expressions-constructors"></a>8.5.10&nbsp;Constructors</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-constructors" href="#expressions-constructors"></a>8.5.10&nbsp;&#26500;&#36896;</h3></div></div></div>
 
-<p>Constructors can be invoked using the new operator. The fully qualified class name
-should be used for all but the primitive type and String (where int, float, etc, can be
-used).</p>
+<p>&#26500;&#36896;&#20989;&#25968;&#21487;&#20197;&#20351;&#29992;new&#36816;&#31639;&#31526;&#35843;&#29992;&#12290;&#25152;&#26377;&#22320;&#26041;&#30340;&#31867;&#21517;&#24212;&#35813;&#26159;&#31526;&#21512;&#35201;&#27714;&#30340;&#65292;
+&#65292;&#38500;&#20102;&#21407;&#35821;&#31867;&#22411;&#21644;&#23383;&#31526;&#20018;&#65288;&#20854;&#20013;&#25972;&#25968;&#65292;&#28014;&#28857;&#65292;&#31561;&#31561;&#65292;&#37117;&#21487;&#20197;
+&#20351;&#29992;&#65289;&#12290;</p>
 <pre class="programlisting">Inventor einstein = p.parseExpression(
         <span class="hl-string">"new org.spring.samples.spel.inventor.Inventor(</span><span class="emphasis"><em>'Albert Einstein</em></span><span class="hl-string">', </span><span class="emphasis"><em>'German</em></span><span class="hl-string">')")
 </span>        .getValue(Inventor.<span class="hl-keyword">class</span>);
@@ -755,10 +720,10 @@ p.parseExpression(
 </span>            <span class="emphasis"><em>'Albert Einstein</em></span><span class="hl-string">', </span><span class="emphasis"><em>'German</em></span><span class="hl-string">'))").getValue(societyContext);</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-variables" href="#expressions-ref-variables"></a>8.5.11&nbsp;Variables</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-variables" href="#expressions-ref-variables"></a>8.5.11&nbsp;&#21464;&#37327;</h3></div></div></div>
 
-<p>Variables can be referenced in the expression using the syntax <code class="literal">#variableName</code>. Variables
-are set using the method setVariable on the <code class="literal">StandardEvaluationContext</code>.</p>
+<p>&#21464;&#37327;&#21487;&#20197;&#22312;&#20351;&#29992;&#35821;&#27861;<code class="literal">&#65283;variableName</code>&#34920;&#36798;&#24341;&#29992;&#12290;&#21464;&#37327;
+&#20351;&#29992;&#22312;<code class="literal">StandardEvaluationContext</code>&#26041;&#27861;&#30340;setVariable&#35774;&#32622;&#12290;</p>
 <pre class="programlisting">Inventor tesla = <span class="hl-keyword">new</span> Inventor(<span class="hl-string">"Nikola Tesla"</span>, <span class="hl-string">"Serbian"</span>);
 StandardEvaluationContext context = <span class="hl-keyword">new</span> StandardEvaluationContext(tesla);
 context.setVariable(<span class="hl-string">"newName"</span>, <span class="hl-string">"Mike Tesla"</span>);
@@ -767,12 +732,12 @@ parser.parseExpression(<span class="hl-string">"Name = #newName"</span>).getValu
 
 System.out.println(tesla.getName()) <span class="hl-comment">// "Mike Tesla"</span></pre>
 
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-this-root" href="#expressions-this-root"></a>The #this and #root variables</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="expressions-this-root" href="#expressions-this-root"></a>&#35813;&#65283;this &#21644; #root&#21464;&#37327;</h4></div></div></div>
 
-<p>The variable #this is always defined and refers to the current evaluation object
-(against which unqualified references are resolved). The variable #root is always
-defined and refers to the root context object. Although #this may vary as components of
-an expression are evaluated, #root always refers to the root.</p>
+<p>&#21464;&#37327;#this &#22987;&#32456;&#23450;&#20041;&#21644;&#25351;&#21521;&#30340;&#26159;&#24403;&#21069;&#30340;&#25191;&#34892;&#23545;&#35937;
+&#65288;&#19981;&#25903;&#25345;&#23545;&#20854;&#20013;&#19981;&#21512;&#26684;&#30340;&#24341;&#29992;&#35299;&#26512;&#65289;&#12290;&#21464;&#37327;#root&#24635;&#26159;
+&#23450;&#20041;&#21644;&#25351;&#21521;root context object&#12290;&#34429;&#28982;&#65283;this&#21487;&#33021;&#20316;&#20026;&#34920;&#36798;&#24335;&#30340;&#19968;&#20123;&#32452;&#20214;&#34987;&#25191;&#34892;
+&#65292;&#20294;#root&#24635;&#26159;&#25351; root&#12290;</p>
 <pre class="programlisting"><span class="hl-comment">// create an array of integers</span>
 List&lt;Integer&gt; primes = <span class="hl-keyword">new</span> ArrayList&lt;Integer&gt;();
 primes.addAll(Arrays.asList(<span class="hl-number">2</span>,<span class="hl-number">3</span>,<span class="hl-number">5</span>,<span class="hl-number">7</span>,<span class="hl-number">11</span>,<span class="hl-number">13</span>,<span class="hl-number">17</span>));
@@ -789,15 +754,15 @@ List&lt;Integer&gt; primesGreaterThanTen = (List&lt;Integer&gt;) parser.parseExp
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-functions" href="#expressions-ref-functions"></a>8.5.12&nbsp;Functions</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-ref-functions" href="#expressions-ref-functions"></a>8.5.12&nbsp;&#20989;&#25968;</h3></div></div></div>
 
-<p>You can extend SpEL by registering user defined functions that can be called within the
-expression string. The function is registered with the <code class="literal">StandardEvaluationContext</code> using
-the method.</p>
+<p>&#24744;&#21487;&#20197;&#36890;&#36807;&#27880;&#20876;&#65292;&#21487;&#20197;&#22312;&#35813;&#35843;&#29992;&#29992;&#25143;&#33258;&#23450;&#20041;&#20989;&#25968;&#25193;&#23637;SpEL
+&#34920;&#36798;&#24335;&#23383;&#31526;&#20018;&#12290;&#35813;&#20989;&#25968;&#27880;&#20876;&#21040;'StandardEvaluationContext`&#20351;&#29992;
+&#35813;&#26041;&#27861;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">void</span> registerFunction(String name, Method m)</pre>
 
-<p>A reference to a Java Method provides the implementation of the function. For example, a
-utility method to reverse a string is shown below.</p>
+<p>&#24341;&#29992;&#19968;&#20010;Java&#26041;&#27861;&#25552;&#20379;&#20102;&#20989;&#25968;&#30340;&#23454;&#29616;&#12290;&#20030;&#20010;&#20363;&#23376;
+&#19968;&#20010;&#23454;&#29992;&#30340;&#26041;&#27861;&#26469;&#25197;&#36716;&#23383;&#31526;&#20018;&#22914;&#19979;&#25152;&#31034;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">abstract</span> <span class="hl-keyword">class</span> StringUtils {
 
     <span class="hl-keyword">public</span> <span class="hl-keyword">static</span> String reverseString(String input) {
@@ -809,8 +774,7 @@ utility method to reverse a string is shown below.</p>
     }
 }</pre>
 
-<p>This method is then registered with the evaluation context and can be used within an
-expression string.</p>
+<p>&#36825;&#20010;&#26041;&#27861;&#22312;&#35299;&#26512;&#22120;&#19978;&#32447;&#25991;&#24403;&#20013;&#34987;&#27880;&#20876;&#65292;&#20316;&#20026;&#23383;&#31526;&#20018;&#34987;&#35843;&#29992;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 StandardEvaluationContext context = <span class="hl-keyword">new</span> StandardEvaluationContext();
 
@@ -821,10 +785,10 @@ String helloWorldReversed = parser.parseExpression(
     <span class="hl-string">"#reverseString(</span><span class="emphasis"><em>'hello</em></span><span class="hl-string">')").getValue(context, String.class);</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-bean-references" href="#expressions-bean-references"></a>8.5.13&nbsp;Bean references</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-bean-references" href="#expressions-bean-references"></a>8.5.13&nbsp;bean&#24341;&#29992;</h3></div></div></div>
 
-<p>If the evaluation context has been configured with a bean resolver it is possible to
-lookup beans from an expression using the (@) symbol.</p>
+<p>&#22914;&#26524;&#35299;&#26512;&#19978;&#19979;&#25991;&#24050;&#32463;&#37197;&#32622;&#65292;&#37027;&#20040;bean&#35299;&#26512;&#22120;&#33021;&#22815;
+&#20174;&#34920;&#36798;&#24335;&#20351;&#29992;&#65288;@&#65289;&#31526;&#21495;&#26597;&#25214;bean&#31867;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 StandardEvaluationContext context = <span class="hl-keyword">new</span> StandardEvaluationContext();
 context.setBeanResolver(<span class="hl-keyword">new</span> MyBeanResolver());
@@ -833,15 +797,15 @@ context.setBeanResolver(<span class="hl-keyword">new</span> MyBeanResolver());
 Object bean = parser.parseExpression(<span class="hl-string">"@foo"</span>).getValue(context);</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-ternary" href="#expressions-operator-ternary"></a>8.5.14&nbsp;Ternary Operator (If-Then-Else)</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-ternary" href="#expressions-operator-ternary"></a>8.5.14&nbsp;&#19977;&#20803;&#36816;&#31639;&#31526;&#65288;IF-THEN-ELSE&#65289;</h3></div></div></div>
 
-<p>You can use the ternary operator for performing if-then-else conditional logic inside
-the expression. A minimal example is:</p>
+<p>&#24744;&#21487;&#20197;&#20351;&#29992;&#19977;&#20803;&#36816;&#31639;&#31526;&#20869;&#37096;&#25191;&#34892;&#30340;if-then-else&#26465;&#20214;&#36923;&#36753;
+&#30340;&#34920;&#36798;&#12290;&#19968;&#20010;&#26368;&#31616;&#21333;&#30340;&#20363;&#23376;&#26159;&#65306;</p>
 <pre class="programlisting">String falseString = parser.parseExpression(
         <span class="hl-string">"false ? </span><span class="emphasis"><em>'trueExp</em></span><span class="hl-string">' : </span><span class="emphasis"><em>'falseExp</em></span><span class="hl-string">'").getValue(String.class);</span></pre>
 
-<p>In this case, the boolean false results in returning the string value <span class="emphasis"><em>falseExp</em></span>. A more
-realistic example is shown below.</p>
+<p>&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#22312;&#36820;&#22238;&#23383;&#31526;&#20018;&#20540;&#8220;falseExp'&#24067;&#23572;&#20551;&#30340;&#32467;&#26524;&#12290;
+&#26356;&#22810;&#26696;&#20363;:</p>
 <pre class="programlisting">parser.parseExpression(<span class="hl-string">"Name"</span>).setValue(societyContext, <span class="hl-string">"IEEE"</span>);
 societyContext.setVariable(<span class="hl-string">"queryName"</span>, <span class="hl-string">"Nikola Tesla"</span>);
 
@@ -852,26 +816,25 @@ String queryResultString = parser.parseExpression(expression)
         .getValue(societyContext, String.<span class="hl-keyword">class</span>);
 <span class="hl-comment">// queryResultString = "Nikola Tesla is a member of the IEEE Society"</span></pre>
 
-<p>Also see the next section on the Elvis operator for an even shorter syntax for the
-ternary operator.</p>
+<p>&#21516;&#26102;&#21487;&#20197;&#22312;&#19979;&#19968;&#33410;&#30475;&#21040; Elvis &#36816;&#31639;&#31526; &#20351;&#29992;&#19968;&#20010;&#26356;&#30701;&#30340;&#19977;&#20803;&#36816;&#31639;&#31526;&#35821;&#27861;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-elvis" href="#expressions-operator-elvis"></a>8.5.15&nbsp;The Elvis Operator</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-elvis" href="#expressions-operator-elvis"></a>8.5.15&nbsp;Elvis&#25805;&#20316;&#31526;</h3></div></div></div>
 
-<p>The Elvis operator is a shortening of the ternary operator syntax and is used in the
-<a class="ulink" href="http://groovy.codehaus.org/Operators#Operators-ElvisOperator(%3F%3A)" target="_top">Groovy</a> language.
-With the ternary operator syntax you usually have to repeat a variable twice, for
-example:</p>
+<p>Elvis&#25805;&#20316;&#31526;&#26159;&#19977;&#20803;&#36816;&#31639;&#31526;&#35821;&#27861;&#30340;&#32553;&#30701;&#65292;&#24182;&#29992;&#20110;&#22312;
+<a class="ulink" href="http://groovy.codehaus.org/Operators#Operators-ElvisOperator(%3F%3A)" target="_top">Groovy</a>&#35821;&#35328;&#12290;
+&#19982;&#19977;&#20803;&#36816;&#31639;&#31526;&#30340;&#35821;&#27861;&#65292;&#20320;&#36890;&#24120;&#35201;&#37325;&#22797;&#21464;&#37327;&#20004;&#27425;&#65292;
+&#31034;&#20363;&#65306;</p>
 <pre class="programlisting">String name = "Elvis Presley";
 String displayName = name != null ? name : "Unknown";</pre>
 
-<p>Instead you can use the Elvis operator, named for the resemblance to Elvis' hair style.</p>
+<p>&#21462;&#32780;&#20195;&#20043;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;Elvis&#25805;&#20316;&#31526;&#65292;&#21629;&#21517;&#28789;&#24863;&#26469;&#33258;&#29483;&#29579;&#30340;&#21457;&#22411;&#39118;&#26684;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 String name = parser.parseExpression(<span class="hl-string">"null?:'</span><span class="emphasis"><em>Unknown</em></span><span class="hl-string">'").getValue(String.class);
 </span>
 System.out.println(name); <span class="hl-comment">// </span><span class="emphasis"><em>Unknown</em></span></pre>
 
-<p>Here is a more complex example.</p>
+<p>&#36825;&#37324;&#26159;&#19968;&#20010;&#26356;&#22797;&#26434;&#30340;&#20363;&#23376;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 Inventor tesla = <span class="hl-keyword">new</span> Inventor(<span class="hl-string">"Nikola Tesla"</span>, <span class="hl-string">"Serbian"</span>);
@@ -888,13 +851,13 @@ name = parser.parseExpression(<span class="hl-string">"Name?:'</span><span class
 System.out.println(name); <span class="hl-comment">// Elvis Presley</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-safe-navigation" href="#expressions-operator-safe-navigation"></a>8.5.16&nbsp;Safe Navigation operator</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-operator-safe-navigation" href="#expressions-operator-safe-navigation"></a>8.5.16&nbsp;&#23433;&#20840;&#23548;&#33322;&#36816;&#31639;&#31526;</h3></div></div></div>
 
-<p>The Safe Navigation operator is used to avoid a <code class="literal">NullPointerException</code> and comes from
-the <a class="ulink" href="http://groovy.codehaus.org/Operators#Operators-SafeNavigationOperator(%3F.)" target="_top">Groovy</a>
-language. Typically when you have a reference to an object you might need to verify that
-it is not null before accessing methods or properties of the object. To avoid this, the
-safe navigation operator will simply return null instead of throwing an exception.</p>
+<p>&#23433;&#20840;&#23548;&#33322;&#25805;&#20316;&#31526;&#26159;&#29992;&#26469;&#36991;&#20813;'NullPointerException`&#21644;&#26469;&#33258;
+&#35813;http://groovy.codehaus.org/Operators#Operators-SafeNavigationOperator(%3F.)[Groovy]
+&#35821;&#35328;&#12290;&#36890;&#24120;&#24773;&#20917;&#19979;&#65292;&#24403;&#20320;&#26377;&#19968;&#20010;&#21442;&#32771;&#30340;&#23545;&#35937;&#65292;&#20320;&#21487;&#33021;&#38656;&#35201;&#39564;&#35777;
+&#23427;&#19981;&#26159;&#35775;&#38382;&#26041;&#27861;&#25110;&#23545;&#35937;&#30340;&#23646;&#24615;&#20043;&#21069;&#31354;&#12290;&#20026;&#20102;&#36991;&#20813;&#36825;&#31181;&#24773;&#20917;&#65292;&#35813;
+&#23433;&#20840;&#33322;&#34892;&#36816;&#31639;&#31526;&#23558;&#31616;&#21333;&#22320;&#36820;&#22238;&#31354;&#20195;&#26367;&#25243;&#20986;&#30340;&#24322;&#24120;&#12290;</p>
 <pre class="programlisting">ExpressionParser parser = <span class="hl-keyword">new</span> SpelExpressionParser();
 
 Inventor tesla = <span class="hl-keyword">new</span> Inventor(<span class="hl-string">"Nikola Tesla"</span>, <span class="hl-string">"Serbian"</span>);
@@ -911,70 +874,69 @@ city = parser.parseExpression(<span class="hl-string">"PlaceOfBirth?.City"</span
 
 System.out.println(city); <span class="hl-comment">// null - does not throw NullPointerException!!!</span></pre>
 
-<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>The Elvis operator can be used to apply default values in expressions, e.g. in an
-<code class="literal">@Value</code> expression:</p>
+<p>[&#27880;&#24847;]</p>
+<div class="informalexample">
+<p>Elvis&#25805;&#20316;&#31526;&#21487;&#29992;&#20110;&#24212;&#29992;&#20013;&#30340;&#34920;&#36798;&#24335;&#30340;&#40664;&#35748;&#20540;&#65292;&#20363;&#22914;&#22312;&#19968;&#20010;
+<code class="literal">@ Value</code>&#34920;&#36798;&#24335;&#65306;</p>
 <pre class="programlisting">@Value(<span class="hl-string">"#{systemProperties[</span><span class="emphasis"><em>'pop3.port</em></span><span class="hl-string">'] ?: 25}")</span></pre>
 
-<p>This will inject a system property <code class="literal">pop3.port</code> if it is defined or 25 if not.</p>
-</td></tr></table></div>
+<p>&#22914;&#26524;&#23427;&#19981;&#23384;&#22312;,&#37027;&#20040;&#23558;&#23450;&#20041;&#20026;25</p>
+</div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-collection-selection" href="#expressions-collection-selection"></a>8.5.17&nbsp;Collection Selection</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-collection-selection" href="#expressions-collection-selection"></a>8.5.17&nbsp;&#38598;&#21512;&#36873;&#25321;</h3></div></div></div>
 
-<p>Selection is a powerful expression language feature that allows you to transform some
-source collection into another by selecting from its entries.</p>
-<p>Selection uses the syntax <code class="literal">?[selectionExpression]</code>. This will filter the collection and
-return a new collection containing a subset of the original elements. For example,
-selection would allow us to easily get a list of Serbian inventors:</p>
+<p>&#36873;&#25321;&#26159;&#19968;&#20010;&#24378;&#22823;&#30340;&#34920;&#36798;&#24335;&#35821;&#35328;&#21151;&#33021;&#65292;&#20182;&#20801;&#35768;&#20320;&#36716;&#25442;&#19968;&#20123;
+&#28304;&#38598;&#21512;&#21040;&#21478;&#19968;&#20010;&#36890;&#36807;&#20854;&#26465;&#30446;&#36873;&#25321;&#12290;</p>
+<p>&#36873;&#25321;&#20351;&#29992;&#35821;&#27861;<code class="literal">&#65311;[selectionExpression]</code>.&#36825;&#23558;&#36807;&#28388;&#25910;&#38598;&#21644;
+&#36820;&#22238;&#19968;&#20010;&#21253;&#21547;&#21407;&#26377;&#20803;&#32032;&#30340;&#23376;&#38598;&#30340;&#26032;&#30340;&#38598;&#21512;&#12290;&#20363;&#22914;&#65292;
+&#36873;&#25321;&#20351;&#25105;&#20204;&#33021;&#22815;&#36731;&#26494;&#22320;&#33719;&#24471;Serbian inventors&#30340;&#21015;&#34920;&#65306;</p>
 <pre class="programlisting">List&lt;Inventor&gt; list = (List&lt;Inventor&gt;) parser.parseExpression(
         <span class="hl-string">"Members.?[Nationality == </span><span class="emphasis"><em>'Serbian</em></span><span class="hl-string">']").getValue(societyContext);</span></pre>
 
-<p>Selection is possible upon both lists and maps. In the former case the selection
-criteria is evaluated against each individual list element whilst against a map the
-selection criteria is evaluated against each map entry (objects of the Java type
-<code class="literal">Map.Entry</code>). Map entries have their key and value accessible as properties for use in
-the selection.</p>
-<p>This expression will return a new map consisting of those elements of the original map
-where the entry value is less than 27.</p>
+<p>&#36873;&#25321;&#21487;&#20197;&#34987;&#20351;&#29992;&#22312;lists&#25110;&#32773;maps&#38598;&#21512;&#24403;&#20013;&#12290;&#22312;&#21069;&#32773;&#30340;&#24773;&#20917;&#19979;&#65292;&#36873;&#25321;
+&#26631;&#20934;&#25191;&#34892;&#23545;&#27599;&#20010;&#21015;&#34920;&#20803;&#32032;&#65292;&#21516;&#26102;&#38024;&#23545;map
+&#36873;&#25321;&#23450;&#20041;&#30340;&#25805;&#20316;&#23558;&#20250;&#23545;map&#20013;&#30340;&#27599;&#20010;key&#25191;&#34892;&#12290;
+&#65288;&#23545;&#35937;&#31867;&#20284;&#8216;Map.Entry&#8217;&#65289;
+Map entries have their key and value accessible as properties for use in the selection&#12290;</p>
+<p>&#19979;&#38754;&#36825;&#20010;&#20363;&#23376;&#23558;&#36820;&#22238;&#30001;&#21407;&#22987;&#26144;&#23556;&#65288;&#20854;&#20013;&#26465;&#30446;&#20540;&#23567;&#20110;27&#65289;&#25152;&#21462;&#24471;&#30340;&#36825;&#20123;&#20803;&#32032;&#30340;&#26032;map&#12290;</p>
 <pre class="programlisting">Map newMap = parser.parseExpression(<span class="hl-string">"map.?[value&lt;27]"</span>).getValue();</pre>
 
-<p>In addition to returning all the selected elements, it is possible to retrieve just the
-first or the last value. To obtain the first entry matching the selection the syntax is
-<code class="literal">^[...]</code> whilst to obtain the last matching selection the syntax is <code class="literal">$[...]</code>.</p>
+<p>&#38500;&#20102;&#36820;&#22238;&#25152;&#26377;&#36873;&#23450;&#30340;&#20803;&#32032;&#65292;&#20063;&#21487;&#20197;&#29992;&#26469;&#33719;&#21462;
+&#31532;&#19968;&#25110;&#26368;&#21518;&#19968;&#20010;&#20540;&#12290;&#20197;&#33719;&#24471;&#31532;&#19968;&#26465;&#30446;&#30456;&#21305;&#37197;&#30340;&#36873;&#25321;&#30340;&#35821;&#27861;&#26159;
+<code class="literal">^ [...]</code>&#32780;&#33719;&#24471;&#26368;&#21518;&#19968;&#20010;&#21305;&#37197;&#36873;&#25321;&#35821;&#27861;&#26159;<code class="literal">$ [...]</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-collection-projection" href="#expressions-collection-projection"></a>8.5.18&nbsp;Collection Projection</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-collection-projection" href="#expressions-collection-projection"></a>8.5.18&nbsp;&#38598;&#21512;&#25237;&#24433;</h3></div></div></div>
 
-<p>Projection allows a collection to drive the evaluation of a sub-expression and the
-result is a new collection. The syntax for projection is <code class="literal">![projectionExpression]</code>. Most
-easily understood by example, suppose we have a list of inventors but want the list of
-cities where they were born. Effectively we want to evaluate <span class="emphasis"><em>placeOfBirth.city</em></span> for
-every entry in the inventor list. Using projection:</p>
+<p>&#25237;&#24433;&#20801;&#35768;&#38598;&#21512;&#39537;&#21160;&#23376;&#34920;&#36798;&#24335;&#21644;&#35299;&#26512;
+&#29983;&#25104;&#19968;&#20010;&#26032;&#30340;&#38598;&#21512;&#12290;&#35821;&#27861;&#25237;&#24433;<code class="literal">&#65281;[projectionExpression]</code>. &#22810;&#25968;
+&#21151;&#33021;&#36890;&#36807;&#23454;&#20363;&#23481;&#26131;&#29702;&#35299;&#65292;&#20551;&#35774;&#25105;&#20204;&#26377;Inventor list&#65292;&#24076;&#26395;&#24471;&#21040;
+&#20182;&#20204;&#20986;&#29983;&#30340;&#22478;&#24066;&#12290;&#26377;&#25928;&#30340;&#26041;&#24335;&#26159;&#25105;&#20204;&#35201;&#20351;&#29992;&#8220;placeOfBirth.city&#8221;&#35299;&#26512;
+&#22312;Inventor &#20013;&#30340;&#27599;&#20010;&#26465;&#30446;&#12290;&#20351;&#29992;&#25237;&#24433;&#65306;</p>
 <pre class="programlisting"><span class="hl-comment">// returns [</span><span class="emphasis"><em>Smiljan</em></span>, <span class="emphasis"><em>Idvor</em></span> ]
 List placesOfBirth = (List)parser.parseExpression(<span class="hl-string">"Members.![placeOfBirth.city]"</span>);</pre>
 
-<p>A map can also be used to drive projection and in this case the projection expression is
-evaluated against each entry in the map (represented as a Java <code class="literal">Map.Entry</code>). The result
-of a projection across a map is a list consisting of the evaluation of the projection
-expression against each map entry.</p>
+<p>&#19968;&#20010;map&#20063;&#21487;&#20197;&#29992;&#20110;&#39537;&#21160;&#25237;&#24433;&#12290; &#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#25237;&#24433;&#34920;&#36798;&#24335;
+&#23558;&#35299;&#26512;map&#20013;&#30340;&#27599;&#19968;&#20010;&#20803;&#32032;&#65288;&#20316;&#20026;Java <code class="literal">Map.Entry</code>&#26041;&#27861;&#30340;&#19968;&#20010;&#20195;&#29702;&#65289;&#12290;
+&#36890;&#36807;&#25237;&#24433;&#19968;&#20010;map&#23558;&#33719;&#24471;&#19968;&#20010;&#30001;&#25237;&#24433;&#34920;&#36798;&#24335;&#36941;&#21382;&#27599;&#20010;&#20803;&#32032;&#25152;&#24471;&#21040;&#30340;list&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-templating" href="#expressions-templating"></a>8.5.19&nbsp;Expression templating</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="expressions-templating" href="#expressions-templating"></a>8.5.19&nbsp;&#34920;&#36798;&#27169;&#26495;</h3></div></div></div>
 
-<p>Expression templates allow a mixing of literal text with one or more evaluation blocks.
-Each evaluation block is delimited with prefix and suffix characters that you can
-define, a common choice is to use <code class="literal">#{ }</code> as the delimiters. For example,</p>
+<p>&#34920;&#36798;&#24335;&#27169;&#26495;&#20801;&#35768;&#25991;&#23383;&#25991;&#26412;&#19982;&#19968;&#20010;&#25110;&#22810;&#20010;&#35299;&#26512;&#22359;&#30340;&#28151;&#21512;&#12290;
+&#20320;&#21487;&#20197;&#27599;&#20010;&#35299;&#26512;&#22359;&#20998;&#38548;&#21069;&#32512;&#21644;&#21518;&#32512;&#30340;&#23383;&#31526;&#65292;
+&#24403;&#28982;&#65292;&#24120;&#35265;&#30340;&#36873;&#25321;&#26159;&#20351;&#29992;<code class="literal">&#65283;{}</code>&#20316;&#20026;&#20998;&#38548;&#31526;&#12290;&#20363;&#22914;&#65292;</p>
 <pre class="programlisting">String randomPhrase = parser.parseExpression(
         <span class="hl-string">"random number is #{T(java.lang.Math).random()}"</span>,
         <span class="hl-keyword">new</span> TemplateParserContext()).getValue(String.<span class="hl-keyword">class</span>);
 
 <span class="hl-comment">// evaluates to "random number is 0.7038186818312008"</span></pre>
 
-<p>The string is evaluated by concatenating the literal text 'random number is ' with the
-result of evaluating the expression inside the #{ } delimiter, in this case the result
-of calling that random() method. The second argument to the method <code class="literal">parseExpression()</code>
-is of the type <code class="literal">ParserContext</code>. The <code class="literal">ParserContext</code> interface is used to influence how
-the expression is parsed in order to support the expression templating functionality.
-The definition of <code class="literal">TemplateParserContext</code> is shown below.</p>
+<p>&#35813;&#23383;&#31526;&#20018;&#26159;&#36890;&#36807;&#36830;&#25509;&#25991;&#23383;&#8220;random number is&#8221;&#19982;
+&#35745;&#31639;&#34920;&#36798;&#24335;&#30340;&#65283;{}&#23450;&#30028;&#31526;&#33719;&#21462;&#30340;&#32467;&#26524;&#65292;&#22312;&#27492;&#24773;&#20917;&#19979;&#30340;&#32467;&#26524;
+&#20013;&#35843;&#29992;&#19968;&#20010;&#38543;&#26426;&#65288;&#65289;&#26041;&#27861;&#12290;&#31532;&#20108;&#20010;&#21442;&#25968;&#30340;&#26041;&#27861;<code class="literal">parseExpression&#65288;&#65289;</code>
+&#26159;&#31867;&#22411;<code class="literal">ParserContext</code>&#30340;&#12290;&#22312;<code class="literal">ParserContext</code>&#25509;&#21475;&#29992;&#20110;&#24433;&#21709;&#22914;&#20309;
+&#34920;&#36798;&#34987;&#35299;&#26512;&#65292;&#20197;&#20415;&#25903;&#25345;&#25152;&#36848;&#34920;&#36798;&#27169;&#26495;&#30340;&#21151;&#33021;&#12290;
+<code class="literal">&#30340;TemplateParserContext</code>&#30340;&#23450;&#20041;&#22914;&#19979;&#25152;&#31034;&#12290;</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> TemplateParserContext <span class="hl-keyword">implements</span> ParserContext {
 
     <span class="hl-keyword">public</span> String getExpressionPrefix() {

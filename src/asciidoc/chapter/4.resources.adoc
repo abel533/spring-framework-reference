@@ -128,7 +128,7 @@ ServletContextResource 完全支持以流和 URL 的方式访问，可只有当 
 
 
 [[resources-resourceloader]]
-=== The ResourceLoader
+=== ResourceLoader 接口
 
 ResourceLoader 接口是用来加载 Resource 对象的，换句话说，就是当一个对象需要获取 Resource 实例时，可以选择实现 ResourceLoader 接口。
 
@@ -190,7 +190,7 @@ spring 里所有的应用上下文都是实现了 ResourceLoader 接口，因此
 
 | file:
 | `file:///data/config.xml`
-| 将其作为 URL 对象，从文件系统加载 footnote:[另请参阅:specialcharacters,macros[<<resources-filesystemresource-caveats>>].]
+| 将其作为 URL 对象，从文件系统加载 footnote:[另请参阅:[<<resources-filesystemresource-caveats>>]]
 
 | http:
 | `http://myserver/logo.png`
@@ -436,19 +436,11 @@ com/mycompany/package1/service-context.xml
 
 
 [[resources-filesystemresource-caveats]]
-==== FileSystemResource caveats
+==== FileSystemResource 警告
 
-A `FileSystemResource` that is not attached to a `FileSystemApplicationContext` (that
-is, a `FileSystemApplicationContext` is not the actual `ResourceLoader`) will treat
-absolute vs. relative paths as you would expect. Relative paths are relative to the
-current working directory, while absolute paths are relative to the root of the
-filesystem.
+`FileSystemResource` 没有依附 `FileSystemApplicationContext`，因为  `FileSystemApplicationContext 并不是一个真正的 `ResourceLoader`。`FileSystemResource` 并没有如你所期望的那样来处理绝对和相对路径。相对路径是相对与当前工作而言，而绝对路径则是相对文件系统的根目录而言。
 
-For backwards compatibility (historical) reasons however, this changes when the
-`FileSystemApplicationContext` is the `ResourceLoader`. The
-`FileSystemApplicationContext` simply forces all attached `FileSystemResource` instances
-to treat all location paths as relative, whether they start with a leading slash or not.
-In practice, this means the following are equivalent:
+然而为了向后兼容，当 `FileSystemApplicationContext` 是一个 `ResourceLoader` 实例式，我们做了一些改变 —— 不管 FileSystemResource` 实例的位置路径时候以 '/' 开头， `FileSystemApplicationContext` 都强制将其作为相对路径来处理。事实上，这意味着以下例子等效：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -464,8 +456,7 @@ In practice, this means the following are equivalent:
 		new FileSystemXmlApplicationContext("/conf/context.xml");
 ----
 
-As are the following: (Even though it would make sense for them to be different, as one
-case is relative and the other absolute.)
+还有：（即使它们的意义不一样 —— 一个是相对路径，另一个是绝对路径。）
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -481,21 +472,19 @@ case is relative and the other absolute.)
 	ctx.getResource("/some/resource/path/myTemplate.txt");
 ----
 
-In practice, if true absolute filesystem paths are needed, it is better to forgo the use
-of absolute paths with `FileSystemResource` / `FileSystemXmlApplicationContext`, and
-just force the use of a `UrlResource`, by using the `file:` URL prefix.
+实践中，如果确实需要使用绝对路径，建议放弃使用 `FileSystemResource` / `FileSystemXmlApplicationContext` 在绝对路劲的使用，而强制使用 `file:` 的 `UrlResource`。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
-	// actual context type doesn't matter, the Resource will always be UrlResource
+	// Resource 只会是 UrlResource，与上下文的真实类型无关
 	ctx.getResource("file:///some/resource/path/myTemplate.txt");
 ----
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
-	// force this FileSystemXmlApplicationContext to load its definition via a UrlResource
+	// 强制 FileSystemXmlApplicationContext 通过 UrlResource 加载资源
 	ApplicationContext ctx =
 		new FileSystemXmlApplicationContext("file:///conf/context.xml");
 ----

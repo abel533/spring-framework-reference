@@ -1,0 +1,485 @@
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+   <title>16.&nbsp;Marshalling XML using O/X Mappers</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="orm.html" title="15.&nbsp;Object Relational Mapping (ORM) Data Access"><link rel="next" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">16.&nbsp;Marshalling XML using O/X Mappers</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="orm.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-web.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="oxm" href="#oxm"></a>16.&nbsp;Marshalling XML using O/X Mappers</h2></div></div></div>
+
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-introduction" href="#oxm-introduction"></a>16.1&nbsp;Introduction</h2></div></div></div>
+
+<p>In this chapter, we will describe Spring&#8217;s Object/XML Mapping support. Object/XML
+Mapping, or O/X mapping for short, is the act of converting an XML document to and from
+an object. This conversion process is also known as XML Marshalling, or XML
+Serialization. This chapter uses these terms interchangeably.</p>
+<p>Within the field of O/X mapping, a <span class="emphasis"><em>marshaller</em></span> is responsible for serializing an
+object (graph) to XML. In similar fashion, an <span class="emphasis"><em>unmarshaller</em></span> deserializes the XML to
+an object graph. This XML can take the form of a DOM document, an input or output
+stream, or a SAX handler.</p>
+<p>Some of the benefits of using Spring for your O/X mapping needs are:</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_ease_of_configuration" href="#_ease_of_configuration"></a>16.1.1&nbsp;Ease of configuration</h3></div></div></div>
+
+<p>Spring&#8217;s bean factory makes it easy to configure marshallers, without needing to
+construct JAXB context, JiBX binding factories, etc. The marshallers can be configured
+as any other bean in your application context. Additionally, XML Schema-based
+configuration is available for a number of marshallers, making the configuration even
+simpler.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consistent_interfaces" href="#_consistent_interfaces"></a>16.1.2&nbsp;Consistent Interfaces</h3></div></div></div>
+
+<p>Spring&#8217;s O/X mapping operates through two global interfaces: the <code class="literal">Marshaller</code> and
+<code class="literal">Unmarshaller</code> interface. These abstractions allow you to switch O/X mapping frameworks
+with relative ease, with little or no changes required on the classes that do the
+marshalling. This approach has the additional benefit of making it possible to do XML
+marshalling with a mix-and-match approach (e.g. some marshalling performed using JAXB,
+other using XMLBeans) in a non-intrusive fashion, leveraging the strength of each
+technology.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_consistent_exception_hierarchy" href="#_consistent_exception_hierarchy"></a>16.1.3&nbsp;Consistent Exception Hierarchy</h3></div></div></div>
+
+<p>Spring provides a conversion from exceptions from the underlying O/X mapping tool to its
+own exception hierarchy with the <code class="literal">XmlMappingException</code> as the root exception. As can be
+expected, these runtime exceptions wrap the original exception so no information is lost.</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-marshaller-unmarshaller" href="#oxm-marshaller-unmarshaller"></a>16.2&nbsp;Marshaller and Unmarshaller</h2></div></div></div>
+
+<p>As stated in the introduction, a <span class="emphasis"><em>marshaller</em></span> serializes an object to XML, and an
+<span class="emphasis"><em>unmarshaller</em></span> deserializes XML stream to an object. In this section, we will describe
+the two Spring interfaces used for this purpose.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-marshaller" href="#oxm-marshaller"></a>16.2.1&nbsp;Marshaller</h3></div></div></div>
+
+<p>Spring abstracts all marshalling operations behind the
+<code class="literal">org.springframework.oxm.Marshaller</code> interface, the main methods of which is listed
+below.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Marshaller {
+
+    <strong class="hl-tag" style="color: blue">/**
+     * Marshals the object graph with the given root into the provided Result.
+     */</strong>
+    <span class="hl-keyword">void</span> marshal(Object graph, Result result) <span class="hl-keyword">throws</span> XmlMappingException, IOException;
+
+}</pre>
+
+<p>The <code class="literal">Marshaller</code> interface has one main method, which marshals the given object to a
+given <code class="literal">javax.xml.transform.Result</code>. Result is a tagging interface that basically
+represents an XML output abstraction: concrete implementations wrap various XML
+representations, as indicated in the table below.</p>
+<div class="informaltable"><a name="oxm-marshller-tbl" href="#oxm-marshller-tbl"></a>
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Result implementation</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Wraps XML representation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">DOMResult</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">org.w3c.dom.Node</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">SAXResult</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">org.xml.sax.ContentHandler</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">StreamResult</code></p></td><td style="" align="left" valign="top"><p><code class="literal">java.io.File</code>, <code class="literal">java.io.OutputStream</code>, or <code class="literal">java.io.Writer</code></p></td></tr></tbody></table>
+</div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Although the <code class="literal">marshal()</code> method accepts a plain object as its first parameter, most
+<code class="literal">Marshaller</code> implementations cannot handle arbitrary objects. Instead, an object class
+must be mapped in a mapping file, marked with an annotation, registered with the
+marshaller, or have a common base class. Refer to the further sections in this chapter
+to determine how your O/X technology of choice manages this.</p>
+</td></tr></table></div>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-unmarshaller" href="#oxm-unmarshaller"></a>16.2.2&nbsp;Unmarshaller</h3></div></div></div>
+
+<p>Similar to the <code class="literal">Marshaller</code>, there is the <code class="literal">org.springframework.oxm.Unmarshaller</code>
+interface.</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">interface</span> Unmarshaller {
+
+    <strong class="hl-tag" style="color: blue">/**
+     * Unmarshals the given provided Source into an object graph.
+     */</strong>
+    Object unmarshal(Source source) <span class="hl-keyword">throws</span> XmlMappingException, IOException;
+}</pre>
+
+<p>This interface also has one method, which reads from the given
+<code class="literal">javax.xml.transform.Source</code> (an XML input abstraction), and returns the object read. As
+with Result, Source is a tagging interface that has three concrete implementations. Each
+wraps a different XML representation, as indicated in the table below.</p>
+<div class="informaltable"><a name="oxm-unmarshller-tbl" href="#oxm-unmarshller-tbl"></a>
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Source implementation</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Wraps XML representation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">DOMSource</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">org.w3c.dom.Node</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">SAXSource</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">org.xml.sax.InputSource</code>, and <code class="literal">org.xml.sax.XMLReader</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">StreamSource</code></p></td><td style="" align="left" valign="top"><p><code class="literal">java.io.File</code>, <code class="literal">java.io.InputStream</code>, or <code class="literal">java.io.Reader</code></p></td></tr></tbody></table>
+</div>
+
+<p>Even though there are two separate marshalling interfaces ( <code class="literal">Marshaller</code> and
+<code class="literal">Unmarshaller</code>), all implementations found in Spring-WS implement both in one class.
+This means that you can wire up one marshaller class and refer to it both as a
+marshaller and an unmarshaller in your <code class="literal">applicationContext.xml</code>.</p>
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-xmlmappingexception" href="#oxm-xmlmappingexception"></a>16.2.3&nbsp;XmlMappingException</h3></div></div></div>
+
+<p>Spring converts exceptions from the underlying O/X mapping tool to its own exception
+hierarchy with the <code class="literal">XmlMappingException</code> as the root exception. As can be expected,
+these runtime exceptions wrap the original exception so no information will be lost.</p>
+<p>Additionally, the <code class="literal">MarshallingFailureException</code> and <code class="literal">UnmarshallingFailureException</code>
+provide a distinction between marshalling and unmarshalling operations, even though the
+underlying O/X mapping tool does not do so.</p>
+<p>The O/X Mapping exception hierarchy is shown in the following figure:
+image::images/oxm-exceptions.png[width=400]</p>
+<p>O/X Mapping exception hierarchy</p>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-usage" href="#oxm-usage"></a>16.3&nbsp;Using Marshaller and Unmarshaller</h2></div></div></div>
+
+<p>Spring&#8217;s OXM can be used for a wide variety of situations. In the following example, we
+will use it to marshal the settings of a Spring-managed application as an XML file. We
+will use a simple JavaBean to represent the settings:</p>
+<pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Settings {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">boolean</span> fooEnabled;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">boolean</span> isFooEnabled() {
+        <span class="hl-keyword">return</span> fooEnabled;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setFooEnabled(<span class="hl-keyword">boolean</span> fooEnabled) {
+        <span class="hl-keyword">this</span>.fooEnabled = fooEnabled;
+    }
+}</pre>
+
+<p>The application class uses this bean to store its settings. Besides a main method, the
+class has two methods: <code class="literal">saveSettings()</code> saves the settings bean to a file named
+<code class="literal">settings.xml</code>, and <code class="literal">loadSettings()</code> loads these settings again. A <code class="literal">main()</code> method
+constructs a Spring application context, and calls these two methods.</p>
+<pre class="programlisting"><span class="hl-keyword">import</span> java.io.FileInputStream;
+<span class="hl-keyword">import</span> java.io.FileOutputStream;
+<span class="hl-keyword">import</span> java.io.IOException;
+<span class="hl-keyword">import</span> javax.xml.transform.stream.StreamResult;
+<span class="hl-keyword">import</span> javax.xml.transform.stream.StreamSource;
+
+<span class="hl-keyword">import</span> org.springframework.context.ApplicationContext;
+<span class="hl-keyword">import</span> org.springframework.context.support.ClassPathXmlApplicationContext;
+<span class="hl-keyword">import</span> org.springframework.oxm.Marshaller;
+<span class="hl-keyword">import</span> org.springframework.oxm.Unmarshaller;
+
+<span class="hl-keyword">public</span> <span class="hl-keyword">class</span> Application {
+
+    <span class="hl-keyword">private</span> <span class="hl-keyword">static</span> <span class="hl-keyword">final</span> String FILE_NAME = <span class="hl-string">"settings.xml"</span>;
+    <span class="hl-keyword">private</span> Settings settings = <span class="hl-keyword">new</span> Settings();
+    <span class="hl-keyword">private</span> Marshaller marshaller;
+    <span class="hl-keyword">private</span> Unmarshaller unmarshaller;
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setMarshaller(Marshaller marshaller) {
+        <span class="hl-keyword">this</span>.marshaller = marshaller;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> setUnmarshaller(Unmarshaller unmarshaller) {
+        <span class="hl-keyword">this</span>.unmarshaller = unmarshaller;
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> saveSettings() <span class="hl-keyword">throws</span> IOException {
+        FileOutputStream os = null;
+        <span class="hl-keyword">try</span> {
+            os = <span class="hl-keyword">new</span> FileOutputStream(FILE_NAME);
+            <span class="hl-keyword">this</span>.marshaller.marshal(settings, <span class="hl-keyword">new</span> StreamResult(os));
+        } <span class="hl-keyword">finally</span> {
+            <span class="hl-keyword">if</span> (os != null) {
+                os.close();
+            }
+        }
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">void</span> loadSettings() <span class="hl-keyword">throws</span> IOException {
+        FileInputStream is = null;
+        <span class="hl-keyword">try</span> {
+            is = <span class="hl-keyword">new</span> FileInputStream(FILE_NAME);
+            <span class="hl-keyword">this</span>.settings = (Settings) <span class="hl-keyword">this</span>.unmarshaller.unmarshal(<span class="hl-keyword">new</span> StreamSource(is));
+        } <span class="hl-keyword">finally</span> {
+            <span class="hl-keyword">if</span> (is != null) {
+                is.close();
+            }
+        }
+    }
+
+    <span class="hl-keyword">public</span> <span class="hl-keyword">static</span> <span class="hl-keyword">void</span> main(String[] args) <span class="hl-keyword">throws</span> IOException {
+        ApplicationContext appContext =
+                <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-string">"applicationContext.xml"</span>);
+        Application application = (Application) appContext.getBean(<span class="hl-string">"application"</span>);
+        application.saveSettings();
+        application.loadSettings();
+    }
+}</pre>
+
+<p>The <code class="literal">Application</code> requires both a <code class="literal">marshaller</code> and <code class="literal">unmarshaller</code> property to be set. We
+can do so using the following <code class="literal">applicationContext.xml</code>:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"application"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"Application"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"marshaller"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"castorMarshaller"</span><span class="hl-tag"> /&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"unmarshaller"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"castorMarshaller"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"castorMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.castor.CastorMarshaller"</span><span class="hl-tag">/&gt;</span>
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>This application context uses Castor, but we could have used any of the other marshaller
+instances described later in this chapter. Note that Castor does not require any further
+configuration by default, so the bean definition is rather simple. Also note that the
+<code class="literal">CastorMarshaller</code> implements both <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code>, so we can refer to the
+<code class="literal">castorMarshaller</code> bean in both the <code class="literal">marshaller</code> and <code class="literal">unmarshaller</code> property of the
+application.</p>
+<p>This sample application produces the following <code class="literal">settings.xml</code> file:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;settings</span> <span class="hl-attribute">foo-enabled</span>=<span class="hl-value">"false"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-schema-based-config" href="#oxm-schema-based-config"></a>16.4&nbsp;XML Schema-based Configuration</h2></div></div></div>
+
+<p>Marshallers could be configured more concisely using tags from the OXM namespace. To
+make these tags available, the appropriate schema has to be referenced first in the
+preamble of the XML configuration file. Note the <span class="emphasis"><em>oxm</em></span> related text below:</p>
+<pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
+    <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
+    <span class="strong"><strong>xmlns:oxm="http://www.springframework.org/schema/oxm"</strong></span> xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd <span class="strong"><strong>http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm.xsd"</strong></span>&gt;</pre>
+
+<p>Currently, the following tags are available:</p>
+<div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
+<a class="link" href="oxm.html#oxm-jaxb2-xsd" title="XML Schema-based Configuration"><code class="literal">jaxb2-marshaller</code></a>
+</li><li class="listitem">
+<a class="link" href="oxm.html#oxm-xmlbeans-xsd" title="XML Schema-based Configuration"><code class="literal">xmlbeans-marshaller</code></a>
+</li><li class="listitem">
+<a class="link" href="oxm.html#oxm-castor-xsd" title="XML Schema-based Configuration"><code class="literal">castor-marshaller</code></a>
+</li><li class="listitem">
+<a class="link" href="oxm.html#oxm-jibx-xsd" title="XML Schema-based Configuration"><code class="literal">jibx-marshaller</code></a>
+</li></ul></div>
+
+<p>Each tag will be explained in its respective marshaller&#8217;s section. As an example though,
+here is how the configuration of a JAXB2 marshaller might look like:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:jaxb2-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span> <span class="hl-attribute">contextPath</span>=<span class="hl-value">"org.springframework.ws.samples.airline.schema"</span><span class="hl-tag">/&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-jaxb" href="#oxm-jaxb"></a>16.5&nbsp;JAXB</h2></div></div></div>
+
+<p>The JAXB binding compiler translates a W3C XML Schema into one or more Java classes, a
+<code class="literal">jaxb.properties</code> file, and possibly some resource files. JAXB also offers a way to
+generate a schema from annotated Java classes.</p>
+<p>Spring supports the JAXB 2.0 API as XML marshalling strategies, following the
+<code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code> interfaces described in <a class="xref" href="oxm.html#oxm-marshaller-unmarshaller" title="16.2&nbsp;Marshaller and Unmarshaller">Section&nbsp;16.2, &#8220;Marshaller and Unmarshaller&#8221;</a>.
+The corresponding integration classes reside in the <code class="literal">org.springframework.oxm.jaxb</code>
+package.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-jaxb2" href="#oxm-jaxb2"></a>16.5.1&nbsp;Jaxb2Marshaller</h3></div></div></div>
+
+<p>The <code class="literal">Jaxb2Marshaller</code> class implements both the Spring <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code>
+interface. It requires a context path to operate, which you can set using the
+<code class="literal">contextPath</code> property. The context path is a list of colon (:) separated Java package
+names that contain schema derived classes. It also offers a <code class="literal">classesToBeBound</code> property,
+which allows you to set an array of classes to be supported by the marshaller. Schema
+validation is performed by specifying one or more schema resource to the bean, like so:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jaxb2Marshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.jaxb.Jaxb2Marshaller"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"classesToBeBound"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;list&gt;</span>
+                <span class="hl-tag">&lt;value&gt;</span>org.springframework.oxm.jaxb.Flight<span class="hl-tag">&lt;/value&gt;</span>
+                <span class="hl-tag">&lt;value&gt;</span>org.springframework.oxm.jaxb.Flights<span class="hl-tag">&lt;/value&gt;</span>
+            <span class="hl-tag">&lt;/list&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"schema"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"classpath:org/springframework/oxm/schema.xsd"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+
+    ...
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="oxm-jaxb2-xsd" href="#oxm-jaxb2-xsd"></a>XML Schema-based Configuration</h4></div></div></div>
+
+<p>The <code class="literal">jaxb2-marshaller</code> tag configures a <code class="literal">org.springframework.oxm.jaxb.Jaxb2Marshaller</code>.
+Here is an example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:jaxb2-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span> <span class="hl-attribute">contextPath</span>=<span class="hl-value">"org.springframework.ws.samples.airline.schema"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Alternatively, the list of classes to bind can be provided to the marshaller via the
+<code class="literal">class-to-be-bound</code> child tag:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:jaxb2-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;oxm:class-to-be-bound</span> <span class="hl-attribute">name</span>=<span class="hl-value">"org.springframework.ws.samples.airline.schema.Airport"</span><span class="hl-tag">/&gt;</span>
+    <span class="hl-tag">&lt;oxm:class-to-be-bound</span> <span class="hl-attribute">name</span>=<span class="hl-value">"org.springframework.ws.samples.airline.schema.Flight"</span><span class="hl-tag">/&gt;</span>
+    ...
+<span class="hl-tag">&lt;/oxm:jaxb2-marshaller&gt;</span></pre>
+
+<p>Available attributes are:</p>
+<div class="informaltable">
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Required</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">id</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the id of the marshaller</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">contextPath</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>the JAXB Context path</p></td><td style="" align="left" valign="top"><p>no</p></td></tr></tbody></table>
+</div>
+
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-castor" href="#oxm-castor"></a>16.6&nbsp;Castor</h2></div></div></div>
+
+<p>Castor XML mapping is an open source XML binding framework. It allows you to transform
+the data contained in a java object model into/from an XML document. By default, it does
+not require any further configuration, though a mapping file can be used to have more
+control over the behavior of Castor.</p>
+<p>For more information on Castor, refer to the
+<a class="ulink" href="http://castor.codehaus.org/xml-framework.html" target="_top"><span class="emphasis"><em>Castor web site</em></span></a>. The Spring
+integration classes reside in the <code class="literal">org.springframework.oxm.castor</code> package.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-castor-marshaller" href="#oxm-castor-marshaller"></a>16.6.1&nbsp;CastorMarshaller</h3></div></div></div>
+
+<p>As with JAXB, the <code class="literal">CastorMarshaller</code> implements both the <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code>
+interface. It can be wired up as follows:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"castorMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.castor.CastorMarshaller"</span><span class="hl-tag"> /&gt;</span>
+    ...
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+</div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-castor-mapping" href="#oxm-castor-mapping"></a>16.6.2&nbsp;Mapping</h3></div></div></div>
+
+<p>Although it is possible to rely on Castor&#8217;s default marshalling behavior, it might be
+necessary to have more control over it. This can be accomplished using a Castor mapping
+file. For more information, refer to <a class="ulink" href="http://castor.codehaus.org/xml-mapping.html" target="_top">Castor
+XML Mapping</a>.</p>
+<p>The mapping can be set using the <code class="literal">mappingLocation</code> resource property, indicated below
+with a classpath resource.</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"castorMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.castor.CastorMarshaller"</span><span class="hl-tag"> &gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mappingLocation"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"classpath:mapping.xml"</span><span class="hl-tag"> /&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="oxm-castor-xsd" href="#oxm-castor-xsd"></a>XML Schema-based Configuration</h4></div></div></div>
+
+<p>The <code class="literal">castor-marshaller</code> tag configures a
+<code class="literal">org.springframework.oxm.castor.CastorMarshaller</code>. Here is an example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:castor-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span> <span class="hl-attribute">mapping-location</span>=<span class="hl-value">"classpath:org/springframework/oxm/castor/mapping.xml"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>The marshaller instance can be configured in two ways, by specifying either the location
+of a mapping file (through the <code class="literal">mapping-location</code> property), or by identifying Java
+POJOs (through the <code class="literal">target-class</code> or <code class="literal">target-package</code> properties) for which there exist
+corresponding XML descriptor classes. The latter way is usually used in conjunction with
+XML code generation from XML schemas.</p>
+<p>Available attributes are:</p>
+<div class="informaltable">
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Required</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">id</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the id of the marshaller</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">encoding</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the encoding to use for unmarshalling from XML</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">target-class</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>a Java class name for a POJO for which an XML class descriptor is available (as
+  generated through code generation)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">target-package</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>a Java package name that identifies a package that contains POJOs and their
+  corresponding Castor XML descriptor classes (as generated through code generation from
+  XML schemas)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">mapping-location</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>location of a Castor XML mapping file</p></td><td style="" align="left" valign="top"><p>no</p></td></tr></tbody></table>
+</div>
+
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-xmlbeans" href="#oxm-xmlbeans"></a>16.7&nbsp;XMLBeans</h2></div></div></div>
+
+<p>XMLBeans is an XML binding tool that has full XML Schema support, and offers full XML
+Infoset fidelity. It takes a different approach to that of most other O/X mapping
+frameworks, in that all classes that are generated from an XML Schema are all derived
+from <code class="literal">XmlObject</code>, and contain XML binding information in them.</p>
+<p>For more information on XMLBeans, refer to the <a class="ulink" href="http://xmlbeans.apache.org/" target="_top"><span class="emphasis"><em>XMLBeans
+web site </em></span></a>. The Spring-WS integration classes reside in the
+<code class="literal">org.springframework.oxm.xmlbeans</code> package.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-xmlbeans-marshaller" href="#oxm-xmlbeans-marshaller"></a>16.7.1&nbsp;XmlBeansMarshaller</h3></div></div></div>
+
+<p>The <code class="literal">XmlBeansMarshaller</code> implements both the <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code> interfaces.
+It can be configured as follows:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"xmlBeansMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.xmlbeans.XmlBeansMarshaller"</span><span class="hl-tag"> /&gt;</span>
+    ...
+
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Note that the <code class="literal">XmlBeansMarshaller</code> can only marshal objects of type <code class="literal">XmlObject</code>, and not
+every <code class="literal">java.lang.Object</code>.</p>
+</td></tr></table></div>
+
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="oxm-xmlbeans-xsd" href="#oxm-xmlbeans-xsd"></a>XML Schema-based Configuration</h4></div></div></div>
+
+<p>The <code class="literal">xmlbeans-marshaller</code> tag configures a
+<code class="literal">org.springframework.oxm.xmlbeans.XmlBeansMarshaller</code>. Here is an example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:xmlbeans-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Available attributes are:</p>
+<div class="informaltable">
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Required</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">id</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the id of the marshaller</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">options</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>the bean name of the XmlOptions that is to be used for this marshaller. Typically a
+  <code class="literal">XmlOptionsFactoryBean</code> definition</p></td><td style="" align="left" valign="top"><p>no</p></td></tr></tbody></table>
+</div>
+
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-jibx" href="#oxm-jibx"></a>16.8&nbsp;JiBX</h2></div></div></div>
+
+<p>The JiBX framework offers a solution similar to that which JDO provides for ORM: a
+binding definition defines the rules for how your Java objects are converted to or from
+XML. After preparing the binding and compiling the classes, a JiBX binding compiler
+enhances the class files, and adds code to handle converting instances of the classes
+from or to XML.</p>
+<p>For more information on JiBX, refer to the <a class="ulink" href="http://jibx.sourceforge.net/" target="_top"><span class="emphasis"><em>JiBX web
+site</em></span></a>. The Spring integration classes reside in the <code class="literal">org.springframework.oxm.jibx</code>
+package.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-jibx-marshaller" href="#oxm-jibx-marshaller"></a>16.8.1&nbsp;JibxMarshaller</h3></div></div></div>
+
+<p>The <code class="literal">JibxMarshaller</code> class implements both the <code class="literal">Marshaller</code> and <code class="literal">Unmarshaller</code>
+interface. To operate, it requires the name of the class to marshal in, which you can
+set using the <code class="literal">targetClass</code> property. Optionally, you can set the binding name using the
+<code class="literal">bindingName</code> property. In the next sample, we bind the <code class="literal">Flights</code> class:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jibxFlightsMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.jibx.JibxMarshaller"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"targetClass"</span><span class="hl-tag">&gt;</span>org.springframework.oxm.jibx.Flights<span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+    ...
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<p>A <code class="literal">JibxMarshaller</code> is configured for a single class. If you want to marshal multiple
+classes, you have to configure multiple <code class="literal">JibxMarshaller</code>s with different <code class="literal">targetClass</code>
+property values.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="oxm-jibx-xsd" href="#oxm-jibx-xsd"></a>XML Schema-based Configuration</h4></div></div></div>
+
+<p>The <code class="literal">jibx-marshaller</code> tag configures a <code class="literal">org.springframework.oxm.jibx.JibxMarshaller</code>.
+Here is an example:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;oxm:jibx-marshaller</span> <span class="hl-attribute">id</span>=<span class="hl-value">"marshaller"</span> <span class="hl-attribute">target-class</span>=<span class="hl-value">"org.springframework.ws.samples.airline.schema.Flight"</span><span class="hl-tag">/&gt;</span></pre>
+
+<p>Available attributes are:</p>
+<div class="informaltable">
+  <table style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Required</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">id</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the id of the marshaller</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>no</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">target-class</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>the target class for this marshaller</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>yes</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">bindingName</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>the binding name used by this marshaller</p></td><td style="" align="left" valign="top"><p>no</p></td></tr></tbody></table>
+</div>
+
+</div>
+</div>
+</div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="oxm-xstream" href="#oxm-xstream"></a>16.9&nbsp;XStream</h2></div></div></div>
+
+<p>XStream is a simple library to serialize objects to XML and back again. It does not
+require any mapping, and generates clean XML.</p>
+<p>For more information on XStream, refer to the <a class="ulink" href="http://xstream.codehaus.org/" target="_top"><span class="emphasis"><em>XStream
+web site</em></span></a>. The Spring integration classes reside in the
+<code class="literal">org.springframework.oxm.xstream</code> package.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="oxm-xstream-marshaller" href="#oxm-xstream-marshaller"></a>16.9.1&nbsp;XStreamMarshaller</h3></div></div></div>
+
+<p>The <code class="literal">XStreamMarshaller</code> does not require any configuration, and can be configured in an
+application context directly. To further customize the XML, you can set an<span class="emphasis"><em>alias map</em></span>,
+which consists of string aliases mapped to classes:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
+    <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"xstreamMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.xstream.XStreamMarshaller"</span><span class="hl-tag">&gt;</span>
+        <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"aliases"</span><span class="hl-tag">&gt;</span>
+            <span class="hl-tag">&lt;props&gt;</span>
+                <span class="hl-tag">&lt;prop</span> <span class="hl-attribute">key</span>=<span class="hl-value">"Flight"</span><span class="hl-tag">&gt;</span>org.springframework.oxm.xstream.Flight<span class="hl-tag">&lt;/prop&gt;</span>
+            <span class="hl-tag">&lt;/props&gt;</span>
+        <span class="hl-tag">&lt;/property&gt;</span>
+    <span class="hl-tag">&lt;/bean&gt;</span>
+    ...
+<span class="hl-tag">&lt;/beans&gt;</span></pre>
+
+<div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="images/warning.png"></td><th align="left">Warning</th></tr><tr><td align="left" valign="top">
+<p>By default, XStream allows for arbitrary classes to be unmarshalled, which can result in
+security vulnerabilities. As such, it is <span class="emphasis"><em>not recommended to use the
+<code class="literal">XStreamMarshaller</code> to unmarshal XML from external sources</em></span> (i.e. the Web), as this can
+result in <span class="emphasis"><em>security vulnerabilities</em></span>. If you do use the <code class="literal">XStreamMarshaller</code> to
+unmarshal XML from an external source, set the <code class="literal">supportedClasses</code> property on the
+<code class="literal">XStreamMarshaller</code>, like so:</p>
+<pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"xstreamMarshaller"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.oxm.xstream.XStreamMarshaller"</span><span class="hl-tag">&gt;</span>
+    <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"supportedClasses"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"org.springframework.oxm.xstream.Flight"</span><span class="hl-tag">/&gt;</span>
+    ...
+<span class="hl-tag">&lt;/bean&gt;</span></pre>
+
+<p>This will make sure that only the registered classes are eligible for unmarshalling.</p>
+<p>Additionally, you can register
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/oxm/xstream/XStreamMarshaller.html#setConverters(com.thoughtworks.xstream.converters.ConverterMatcher%E2%80%A6)" target="_top">custom
+converters</a> to make sure that only your supported classes can be unmarshalled. You might
+want to add a <code class="literal">CatchAllConverter</code> as the last converter in the list, in addition to
+converters that explicitly support the domain classes that should be supported. As a
+result, default XStream converters with lower priorities and possible security
+vulnerabilities do not get invoked.</p>
+</td></tr></table></div>
+
+<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
+<p>Note that XStream is an XML serialization library, not a data binding library.
+Therefore, it has limited namespace support. As such, it is rather unsuitable for usage
+within Web services.</p>
+</td></tr></table></div>
+
+</div>
+</div>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="orm.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-web.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">15.&nbsp;Object Relational Mapping (ORM) Data Access&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;V.&nbsp;The Web</td></tr></table></div></body></html>

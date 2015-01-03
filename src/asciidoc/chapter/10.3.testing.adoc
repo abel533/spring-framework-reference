@@ -1,0 +1,835 @@
+[[integration-testing-annotations]]
+==== Annotations
+
+
+[[integration-testing-annotations-spring]]
+===== Spring Testing Annotations
+The Spring Framework provides the following set of __Spring-specific__ annotations that
+you can use in your unit and integration tests in conjunction with the TestContext
+framework. Refer to the corresponding javadocs for further information, including
+default attribute values, attribute aliases, and so on.
+
+* `@ContextConfiguration`
+
++
+
+Defines class-level metadata that is used to determine how to load and configure an
+`ApplicationContext` for integration tests. Specifically, `@ContextConfiguration`
+declares the application context resource `locations` or the annotated `classes`
+that will be used to load the context.
+
++
+
+Resource locations are typically XML configuration files located in the classpath;
+whereas, annotated classes are typically `@Configuration` classes. However, resource
+locations can also refer to files in the file system, and annotated classes can be
+component classes, etc.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@ContextConfiguration**("/test-config.xml")
+	public class XmlApplicationContextTests {
+		// class body...
+	}
+----
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@ContextConfiguration**(**classes** = TestConfig.class)
+	public class ConfigClassApplicationContextTests {
+		// class body...
+	}
+----
+
++
+
+As an alternative or in addition to declaring resource locations or annotated classes,
+`@ContextConfiguration` may be used to declare `ApplicationContextInitializer` classes.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@ContextConfiguration**(**initializers** = CustomContextIntializer.class)
+	public class ContextInitializerTests {
+		// class body...
+	}
+----
+
++
+
+`@ContextConfiguration` may optionally be used to declare the `ContextLoader` strategy
+as well. Note, however, that you typically do not need to explicitly configure the
+loader since the default loader supports either resource `locations` or annotated
+`classes` as well as `initializers`.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@ContextConfiguration**(**locations** = "/test-context.xml", **loader** = CustomContextLoader.class)
+	public class CustomLoaderXmlApplicationContextTests {
+		// class body...
+	}
+----
+
++
+
+[NOTE]
+====
+`@ContextConfiguration` provides support for __inheriting__ resource locations or
+configuration classes as well as context initializers declared by superclasses by
+default.
+====
+
++
+
+See <<testcontext-ctx-management>> and the `@ContextConfiguration` javadocs for
+further details.
+
+* `@WebAppConfiguration`
+
++
+
+A class-level annotation that is used to declare that the `ApplicationContext` loaded
+for an integration test should be a `WebApplicationContext`. The mere presence of
+`@WebAppConfiguration` on a test class ensures that a `WebApplicationContext` will be
+loaded for the test, using the default value of `"file:src/main/webapp"` for the path to
+the root of the web application (i.e., the __resource base path__). The resource base
+path is used behind the scenes to create a `MockServletContext` which serves as the
+`ServletContext` for the test's `WebApplicationContext`.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@WebAppConfiguration**
+	public class WebAppTests {
+		// class body...
+	}
+----
+
++
+
+To override the default, specify a different base resource path via the __implicit__
+`value` attribute. Both `classpath:` and `file:` resource prefixes are supported. If no
+resource prefix is supplied the path is assumed to be a file system resource.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@WebAppConfiguration("classpath:test-web-resources")**
+	public class WebAppTests {
+		// class body...
+	}
+----
+
++
+
+Note that `@WebAppConfiguration` must be used in conjunction with
+`@ContextConfiguration`, either within a single test class or within a test class
+hierarchy. See the `@WebAppConfiguration` javadocs for further details.
+
++
+
+* `@ContextHierarchy`
+
++
+
+A class-level annotation that is used to define a hierarchy of ++ApplicationContext++s
+for integration tests. `@ContextHierarchy` should be declared with a list of one or more
+`@ContextConfiguration` instances, each of which defines a level in the context
+hierarchy. The following examples demonstrate the use of `@ContextHierarchy` within a
+single test class; however, `@ContextHierarchy` can also be used within a test class
+hierarchy.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextHierarchy({
+		@ContextConfiguration("/parent-config.xml"),
+		@ContextConfiguration("/child-config.xml")
+	})
+	public class ContextHierarchyTests {
+		// class body...
+	}
+----
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@WebAppConfiguration
+	@ContextHierarchy({
+		@ContextConfiguration(classes = AppConfig.class),
+		@ContextConfiguration(classes = WebConfig.class)
+	})
+	public class WebIntegrationTests {
+		// class body...
+	}
+----
+
++
+
+If you need to merge or override the configuration for a given level of the context
+hierarchy within a test class hierarchy, you must explicitly name that level by
+supplying the same value to the `name` attribute in `@ContextConfiguration` at each
+corresponding level in the class hierarchy. See
+<<testcontext-ctx-management-ctx-hierarchies>> and the `@ContextHierarchy` javadocs
+for further examples.
+
+* `@ActiveProfiles`
+
++
+
+A class-level annotation that is used to declare which __bean definition profiles__
+should be active when loading an `ApplicationContext` for test classes.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@ActiveProfiles**("dev")
+	public class DeveloperTests {
+		// class body...
+	}
+----
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@ActiveProfiles**({"dev", "integration"})
+	public class DeveloperIntegrationTests {
+		// class body...
+	}
+----
+
++
+
+[NOTE]
+====
+`@ActiveProfiles` provides support for __inheriting__ active bean definition profiles
+declared by superclasses by default. It is also possible to resolve active bean
+definition profiles programmatically by implementing a custom
+<<testcontext-ctx-management-env-profiles-ActiveProfilesResolver,`ActiveProfilesResolver`>>
+and registering it via the `resolver` attribute of `@ActiveProfiles`.
+====
+
++
+
+See <<testcontext-ctx-management-env-profiles>> and the `@ActiveProfiles` javadocs
+for examples and further details.
+
+* `@TestPropertySource`
+
++
+
+A class-level annotation that is used to configure the locations of properties files and
+inlined properties to be added to the `Environment`'s set of `PropertySources` for an
+`ApplicationContext` loaded for an integration test.
+
++
+
+Test property sources have higher precedence than those loaded from the operating
+system's environment or Java system properties as well as property sources added by the
+application declaratively via `@PropertySource` or programmatically. Thus, test property
+sources can be used to selectively override properties defined in system and application
+property sources. Furthermore, inlined properties have higher precedence than properties
+loaded from resource locations.
+
++
+
+The following example demonstrates how to declare a properties file from the classpath.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@TestPropertySource**("/test.properties")
+	public class MyIntegrationTests {
+		// class body...
+	}
+----
+
++
+
+The following example demonstrates how to declare _inlined_ properties.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@TestPropertySource**(properties = { "timezone = GMT", "port: 4242" })
+	public class MyIntegrationTests {
+		// class body...
+	}
+----
+
+* `@DirtiesContext`
+
++
+
+Indicates that the underlying Spring `ApplicationContext` has been __dirtied__ during
+the execution of a test (i.e., modified or corrupted in some manner -- for example, by
+changing the state of a singleton bean) and should be closed, regardless of whether the
+test passed. When an application context is marked __dirty__, it is removed from the
+testing framework's cache and closed. As a consequence, the underlying Spring container
+will be rebuilt for any subsequent test that requires a context with the same
+configuration metadata.
+
++
+
+`@DirtiesContext` can be used as both a class-level and method-level annotation within
+the same test class. In such scenarios, the `ApplicationContext` is marked as __dirty__
+after any such annotated method as well as after the entire class. If the `ClassMode` is
+set to `AFTER_EACH_TEST_METHOD`, the context is marked dirty after each test method in
+the class.
+
++
+
+The following examples explain when the context would be dirtied for various
+configuration scenarios:
+
++
+
+** After the current test class, when declared on a class with class mode set to
+`AFTER_CLASS` (i.e., the default class mode).
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@DirtiesContext**
+	public class ContextDirtyingTests {
+		// some tests that result in the Spring container being dirtied
+	}
+----
+
++
+
+** After each test method in the current test class, when declared on a class with class
+mode set to `AFTER_EACH_TEST_METHOD.`
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@DirtiesContext**(**classMode** = ClassMode.AFTER_EACH_TEST_METHOD)
+	public class ContextDirtyingTests {
+		// some tests that result in the Spring container being dirtied
+	}
+----
+
++
+
+** After the current test, when declared on a method.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@DirtiesContext**
+	@Test
+	public void testProcessWhichDirtiesAppCtx() {
+		// some logic that results in the Spring container being dirtied
+	}
+----
+
++
+
+If `@DirtiesContext` is used in a test whose context is configured as part of a context
+hierarchy via `@ContextHierarchy`, the `hierarchyMode` flag can be used to control how
+the context cache is cleared. By default an __exhaustive__ algorithm will be used that
+clears the context cache including not only the current level but also all other context
+hierarchies that share an ancestor context common to the current test; all
+++ApplicationContext++s that reside in a sub-hierarchy of the common ancestor context
+will be removed from the context cache and closed. If the __exhaustive__ algorithm is
+overkill for a particular use case, the simpler __current level__ algorithm can be
+specified instead, as seen below.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextHierarchy({
+		@ContextConfiguration("/parent-config.xml"),
+		@ContextConfiguration("/child-config.xml")
+	})
+	public class BaseTests {
+		// class body...
+	}
+
+	public class ExtendedTests extends BaseTests {
+
+		@Test
+		@DirtiesContext(**hierarchyMode = HierarchyMode.CURRENT_LEVEL**)
+		public void test() {
+			// some logic that results in the child context being dirtied
+		}
+	}
+----
+
++
+
+For further details regarding the `EXHAUSTIVE` and `CURRENT_LEVEL` algorithms see the
+`DirtiesContext.HierarchyMode` javadocs.
+
+* `@TestExecutionListeners`
+
++
+
+Defines class-level metadata for configuring which ++TestExecutionListener++s should be
+registered with the `TestContextManager`. Typically, `@TestExecutionListeners` is used
+in conjunction with `@ContextConfiguration`.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@TestExecutionListeners**({CustomTestExecutionListener.class, AnotherTestExecutionListener.class})
+	public class CustomTestExecutionListenerTests {
+		// class body...
+	}
+----
+
++
+
+`@TestExecutionListeners` supports __inherited__ listeners by default. See the javadocs
+for an example and further details.
+
+* `@TransactionConfiguration`
+
++
+
+Defines class-level metadata for configuring transactional tests. Specifically, the bean
+name of the `PlatformTransactionManager` that should be used to drive transactions can
+be explicitly specified if there are multiple beans of type `PlatformTransactionManager`
+in the test's `ApplicationContext` and if the bean name of the desired
+`PlatformTransactionManager` is not "transactionManager". In addition, you can change
+the `defaultRollback` flag to `false`. Typically, `@TransactionConfiguration` is used in
+conjunction with `@ContextConfiguration`.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@ContextConfiguration
+	**@TransactionConfiguration**(**transactionManager** = "txMgr", **defaultRollback** = false)
+	public class CustomConfiguredTransactionalTests {
+		// class body...
+	}
+----
+
++
+
+[NOTE]
+====
+If the default conventions are sufficient for your test configuration, you can avoid
+using `@TransactionConfiguration` altogether. In other words, if you have only one
+transaction manager -- or if you have multiple transaction managers but the transaction
+manager for tests is named "transactionManager" or specified via a
+`TransactionManagementConfigurer` -- and if you want transactions to roll back
+automatically, then there is no need to annotate your test class with
+`@TransactionConfiguration`.
+====
+
++
+
+* `@Rollback`
+
++
+
+Indicates whether the transaction for the annotated test method should be __rolled
+back__ after the test method has completed. If `true`, the transaction is rolled back;
+otherwise, the transaction is committed. Use `@Rollback` to override the default
+rollback flag configured at the class level.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@Rollback**(false)
+	@Test
+	public void testProcessWithoutRollback() {
+		// ...
+	}
+----
+
+* `@BeforeTransaction`
+
++
+
+Indicates that the annotated `public void` method should be executed __before__ a
+transaction is started for test methods configured to run within a transaction via the
+`@Transactional` annotation.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@BeforeTransaction**
+	public void beforeTransaction() {
+		// logic to be executed before a transaction is started
+	}
+----
+
+* `@AfterTransaction`
+
++
+
+Indicates that the annotated `public void` method should be executed __after__ a
+transaction has ended for test methods configured to run within a transaction via the
+`@Transactional` annotation.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@AfterTransaction**
+	public void afterTransaction() {
+		// logic to be executed after a transaction has ended
+	}
+----
+
+* `@Sql`
+
++
+
+Used to annotate a test class or test method to configure SQL scripts to be executed
+against a given database during integration tests.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Test
+	**@Sql**({"/test-schema.sql", "/test-user-data.sql"})
+	public void userTest {
+		// execute code that relies on the test schema and test data
+	}
+----
+
++
+
+See <<testcontext-executing-sql-declaratively>> for further details.
+
+* `@SqlConfig`
+
++
+
+Defines metadata that is used to determine how to parse and execute SQL scripts
+configured via the `@Sql` annotation.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Test
+	@Sql(
+		scripts = "/test-user-data.sql",
+		config = **@SqlConfig**(commentPrefix = "`", separator = "@@")
+	)
+	public void userTest {
+		// execute code that relies on the test data
+	}
+----
+
+* `@SqlGroup`
+
++
+
+A container annotation that aggregates several `@Sql` annotations. Can be used natively,
+declaring several nested `@Sql` annotations. Can also be used in conjunction with Java
+8's support for repeatable annotations, where `@Sql` can simply be declared several times
+on the same class or method, implicitly generating this container annotation.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Test
+	**@SqlGroup**({
+		@Sql(scripts = "/test-schema.sql", config = @SqlConfig(commentPrefix = "`")),
+		@Sql("/test-user-data.sql")
+	)}
+	public void userTest {
+		// execute code that uses the test schema and test data
+	}
+----
+
+
+[[integration-testing-annotations-standard]]
+===== Standard Annotation Support
+The following annotations are supported with standard semantics for all configurations
+of the Spring TestContext Framework. Note that these annotations are not specific to
+tests and can be used anywhere in the Spring Framework.
+
+* `@Autowired`
+* `@Qualifier`
+* `@Resource` (javax.annotation) _if JSR-250 is present_
+* `@Inject` (javax.inject) _if JSR-330 is present_
+* `@Named` (javax.inject) _if JSR-330 is present_
+* `@PersistenceContext` (javax.persistence) _if JPA is present_
+* `@PersistenceUnit` (javax.persistence) _if JPA is present_
+* `@Required`
+* `@Transactional`
+
+.JSR-250 Lifecycle Annotations
+[NOTE]
+====
+In the Spring TestContext Framework `@PostConstruct` and `@PreDestroy` may be used with
+standard semantics on any application components configured in the `ApplicationContext`;
+however, these lifecycle annotations have limited usage within an actual test class.
+
+If a method within a test class is annotated with `@PostConstruct`, that method will be
+executed before any __before__ methods of the underlying test framework (e.g., methods
+annotated with JUnit's `@Before`), and that will apply for every test method in the test
+class. On the other hand, if a method within a test class is annotated with
+`@PreDestroy`, that method will __never__ be executed. Within a test class it is
+therefore recommended to use test lifecycle callbacks from the underlying test framework
+instead of `@PostConstruct` and `@PreDestroy`.
+====
+
+
+[[integration-testing-annotations-junit]]
+===== Spring JUnit Testing Annotations
+The following annotations are __only__ supported when used in conjunction with the
+<<testcontext-junit4-runner,SpringJUnit4ClassRunner>> or the
+<<testcontext-support-classes-junit4,JUnit>> support classes.
+
+* `@IfProfileValue`
+
++
+
+Indicates that the annotated test is enabled for a specific testing environment. If the
+configured `ProfileValueSource` returns a matching `value` for the provided `name`, the
+test is enabled. This annotation can be applied to an entire class or to individual
+methods. Class-level usage overrides method-level usage.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@IfProfileValue**(**name**="java.vendor", **value**="Oracle Corporation")
+	@Test
+	public void testProcessWhichRunsOnlyOnOracleJvm() {
+		// some logic that should run only on Java VMs from Oracle Corporation
+	}
+----
+
++
+
+Alternatively, you can configure `@IfProfileValue` with a list of `values` (with __OR__
+semantics) to achieve TestNG-like support for __test groups__ in a JUnit environment.
+Consider the following example:
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@IfProfileValue**(**name**="test-groups", **values**={"unit-tests", "integration-tests"})
+	@Test
+	public void testProcessWhichRunsForUnitOrIntegrationTestGroups() {
+		// some logic that should run only for unit and integration test groups
+	}
+----
+
++
+
+* `@ProfileValueSourceConfiguration`
+
++
+
+Class-level annotation that specifies what type of `ProfileValueSource` to use when
+retrieving __profile values__ configured through the `@IfProfileValue` annotation. If
+`@ProfileValueSourceConfiguration` is not declared for a test,
+`SystemProfileValueSource` is used by default.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@ProfileValueSourceConfiguration**(CustomProfileValueSource.class)
+	public class CustomProfileValueSourceTests {
+		// class body...
+	}
+----
+
+* `@Timed`
+
++
+
+Indicates that the annotated test method must finish execution in a specified time
+period (in milliseconds). If the text execution time exceeds the specified time period,
+the test fails.
+
++
+
+The time period includes execution of the test method itself, any repetitions of the
+test (see `@Repeat`), as well as any __set up__ or __tear down__ of the test fixture.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@Timed**(millis=1000)
+	public void testProcessWithOneSecondTimeout() {
+		// some logic that should not take longer than 1 second to execute
+	}
+----
+
++
+
+Spring's `@Timed` annotation has different semantics than JUnit's `@Test(timeout=...)`
+support. Specifically, due to the manner in which JUnit handles test execution timeouts
+(that is, by executing the test method in a separate `Thread`), `@Test(timeout=...)`
+preemptively fails the test if the test takes too long. Spring's `@Timed`, on the other
+hand, does not preemptively fail the test but rather waits for the test to complete
+before failing.
+
+* `@Repeat`
+
++
+
+Indicates that the annotated test method must be executed repeatedly. The number of
+times that the test method is to be executed is specified in the annotation.
+
++
+
+The scope of execution to be repeated includes execution of the test method itself as
+well as any __set up__ or __tear down__ of the test fixture.
+
++
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	**@Repeat**(10)
+	@Test
+	public void testProcessRepeatedly() {
+		// ...
+	}
+----
+
+
+[[integration-testing-annotations-meta]]
+===== Meta-Annotation Support for Testing
+As of Spring Framework 4.0, it is possible to use test-related annotations as
+<<beans-meta-annotations,meta-annotations>> in order to create custom _composed annotations_
+and reduce configuration duplication across a test suite.
+
+Each of the following may be used as meta-annotations in conjunction with the
+<<testcontext-framework,TestContext framework>>.
+
+* `@ContextConfiguration`
+* `@ContextHierarchy`
+* `@ActiveProfiles`
+* `@TestPropertySource`
+* `@DirtiesContext`
+* `@WebAppConfiguration`
+* `@TestExecutionListeners`
+* `@Transactional`
+* `@BeforeTransaction`
+* `@AfterTransaction`
+* `@TransactionConfiguration`
+* `@Rollback`
+* `@Sql`
+* `@SqlConfig`
+* `@SqlGroup`
+* `@Repeat`
+* `@Timed`
+* `@IfProfileValue`
+* `@ProfileValueSourceConfiguration`
+
+For example, if we discover that we are repeating the following configuration
+across our JUnit-based test suite...
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration({"/app-config.xml", "/test-data-access-config.xml"})
+	@ActiveProfiles("dev")
+	@Transactional
+	public class OrderRepositoryTests { }
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@ContextConfiguration({"/app-config.xml", "/test-data-access-config.xml"})
+	@ActiveProfiles("dev")
+	@Transactional
+	public class UserRepositoryTests { }
+----
+
+We can reduce the above duplication by introducing a custom _composed annotation_
+that centralizes the common test configuration like this:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@Target(ElementType.TYPE)
+	@Retention(RetentionPolicy.RUNTIME)
+	@ContextConfiguration({"/app-config.xml", "/test-data-access-config.xml"})
+	@ActiveProfiles("dev")
+	@Transactional
+	public @interface TransactionalDevTest { }
+----
+
+Then we can use our custom `@TransactionalDevTest` annotation to simplify the
+configuration of individual test classes as follows:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@TransactionalDevTest
+	public class OrderRepositoryTests { }
+
+	@RunWith(SpringJUnit4ClassRunner.class)
+	@TransactionalDevTest
+	public class UserRepositoryTests { }
+----
+
+
+
