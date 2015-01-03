@@ -62,18 +62,9 @@ JavaConfig提供的许多功能已经成为Spring框架的一部分。因此，�
 
 Spring配置包括至少一个且通常多个由容器管理的bean定义。在基于XML配置的元数据中，这些beans配置成一个`<bean/>`元素，这些`<bean/>`元素定义在顶级元素`<beans/>`的里面。在Java配置中通常在一个`@Configuration`注解的类中，在方法上使用`@Bean`注解。
 
-这些bean定义对应的实际对象组成了你的应用。通常你会定义服务层对象、数据访问层对象（DAO），展现层对象如Struts的`Action`实例，底层对象如Hibernate的`SessionFactories`，JMS的`Queues`等等。一般很少会在容器中配置细粒度的领域对象，因为通常是DAO和业务逻辑负责创建和加载领域对象。
-These bean definitions correspond to the actual objects that make up your application.
-Typically you define service layer objects, data access objects (DAOs), presentation
-objects such as Struts `Action` instances, infrastructure objects such as Hibernate
-`SessionFactories`, JMS `Queues`, and so forth. Typically one does not configure
-fine-grained domain objects in the container, because it is usually the responsibility
-of DAOs and business logic to create and load domain objects. However, you can use
-Spring's integration with AspectJ to configure objects that have been created outside
-the control of an IoC container. See <<aop-atconfigurable,Using AspectJ to
-dependency-inject domain objects with Spring>>.
+这些bean定义对应的实际对象组成了你的应用。通常你会定义服务层对象、数据访问层对象（DAO），展现层对象如Struts的`Action`实例，底层对象如Hibernate的`SessionFactories`，JMS的`Queues`等等。一般很少会在容器中配置细粒度的领域对象，因为通常是DAO和业务逻辑负责创建和加载领域对象。但是你可以使用Spring集成AspectJ来配置IoC容器之外创建的对象。查看<<aop-atconfigurable,在Spring中使用AspectJ依赖注入领域对象>>。
 
-The following example shows the basic structure of XML-based configuration metadata:
+下面的例子演示了基于XML的配置元数据的基础结构：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -85,32 +76,25 @@ The following example shows the basic structure of XML-based configuration metad
 			http://www.springframework.org/schema/beans/spring-beans.xsd">
 
 		<bean id="..." class="...">
-			<!-- collaborators and configuration for this bean go here -->
+			<!-- 在这里写 bean 的配置和相关引用 -->
 		</bean>
 
 		<bean id="..." class="...">
-			<!-- collaborators and configuration for this bean go here -->
+			<!-- 在这里写 bean 的配置和相关引用 -->
 		</bean>
 
-		<!-- more bean definitions go here -->
+		<!-- 更多bean的定义写在这里 -->
 
 	</beans>
 ----
 
-The `id` attribute is a string that you use to identify the individual bean definition.
-The `class` attribute defines the type of the bean and uses the fully qualified
-classname. The value of the id attribute refers to collaborating objects. The XML for
-referring to collaborating objects is not shown in this example; see
-<<beans-dependencies,Dependencies>> for more information.
+`id`属性是一个用来识别每一个独立bean定义的字符串。`class`属性定义了bean的类型，这个属性需要使用bean类的全限定名称。id属性的值可以被其他的bean对象引用。这个例子中没有引用其他bean，查看<<beans-dependencies,bean依赖>>获取更多信息。
 
 
 
 [[beans-factory-instantiation]]
-==== Instantiating a container
-Instantiating a Spring IoC container is straightforward. The location path or paths
-supplied to an `ApplicationContext` constructor are actually resource strings that allow
-the container to load configuration metadata from a variety of external resources such
-as the local file system, from the Java `CLASSPATH`, and so on.
+==== 实例化容器
+实例化Spring IoC容器很容易。将一个或多个位置路径提供给`ApplicationContext`的构造方法就可以让容器加载配制元数据，可以从多种外部资源进行获取，例如文件系统、Java的`CLASSPATH`等等。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -121,14 +105,10 @@ as the local file system, from the Java `CLASSPATH`, and so on.
 
 [NOTE]
 ====
-After you learn about Spring's IoC container, you may want to know more about Spring's
-`Resource` abstraction, as described in <<resources>>, which provides a convenient
-mechanism for reading an InputStream from locations defined in a URI syntax. In
-particular, `Resource` paths are used to construct applications contexts as described in
-<<resources-app-ctx>>.
+在你了解Spring的IoC容器之后，你可能想知道更多有关Spring的`Resource`的更多内容，它的介绍在<<resources>>，它提供了一个方便的机制来读取URI中的InputStream。`Resource`路径是用来构建应用程序上下文的，详细内容请看<<resources-app-ctx>>。
 ====
 
-The following example shows the service layer objects `(services.xml)` configuration file:
+下面的例子是服务层对象`(services.xml)`的配置文件：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -144,15 +124,15 @@ The following example shows the service layer objects `(services.xml)` configura
 		<bean id="petStore" class="org.springframework.samples.jpetstore.services.PetStoreServiceImpl">
 			<property name="accountDao" ref="accountDao"/>
 			<property name="itemDao" ref="itemDao"/>
-			<!-- additional collaborators and configuration for this bean go here -->
+			<!-- 在这里写额外的bean的配置和相关引用 -->
 		</bean>
 
-		<!-- more bean definitions for services go here -->
+		<!-- 更多Service层的bean定义写在这里 -->
 
 	</beans>
 ----
 
-The following example shows the data access objects `daos.xml` file:
+下面的例子是数据访问层`daos.xml`文件:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -165,36 +145,26 @@ The following example shows the data access objects `daos.xml` file:
 
 		<bean id="accountDao"
 			class="org.springframework.samples.jpetstore.dao.jpa.JpaAccountDao">
-			<!-- additional collaborators and configuration for this bean go here -->
+			<!-- 在这里写额外的bean的配置和相关引用 -->
 		</bean>
 
 		<bean id="itemDao" class="org.springframework.samples.jpetstore.dao.jpa.JpaItemDao">
-			<!-- additional collaborators and configuration for this bean go here -->
+			<!-- 在这里写额外的bean的配置和相关引用 -->
 		</bean>
 
-		<!-- more bean definitions for data access objects go here -->
+		<!-- 更多数据访问层的bean定义写在这里 -->
 
 	</beans>
 ----
 
-In the preceding example, the service layer consists of the class `PetStoreServiceImpl`,
-and two data access objects of the type `JpaAccountDao` and `JpaItemDao` (based
-on the JPA Object/Relational mapping standard). The `property name` element refers to the
-name of the JavaBean property, and the `ref` element refers to the name of another bean
-definition. This linkage between `id` and `ref` elements expresses the dependency between
-collaborating objects. For details of configuring an object's dependencies, see
-<<beans-dependencies,Dependencies>>.
+在上面的例子中，服务层包含了`PetStoreServiceImpl`类和两个类型为`JpaAccountDao`和`JpaItemDao`（基于JPA对象/关系映射标准）的数据访问对象。`property name`元素指代JavaBean属性的名称，`ref`元素引用了另一个bean定义的名称。`id`和`ref`直接的这种关系表达出了这两个合作对象间的依赖关系。配置对象直接依赖关系的详细信息，请参见<<beans-dependencies,依赖关系>>。
 
 
 [[beans-factory-xml-import]]
-===== Composing XML-based configuration metadata
-It can be useful to have bean definitions span multiple XML files. Often each individual
-XML configuration file represents a logical layer or module in your architecture.
+===== 编写基于XML的配置元数据
+bean定义可以跨越多个XML文件是非常有用的。通常每个独立的XML配置文件表示一个逻辑层或者是你架构中的一个模块。
 
-You can use the application context constructor to load bean definitions from all these
-XML fragments. This constructor takes multiple `Resource` locations, as was shown in the
-previous section. Alternatively, use one or more occurrences of the `<import/>` element
-to load bean definitions from another file or files. For example:
+你可以使用应用上下文的构造方法从多个XML片段中加载bean的定义。像上面例子中出现过的一样，构造方法可以接收多个`Resource`位置。或者可以在bean定义中使用一个或多个`<import/>`从其他的配置文件引入bean定义。例如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -209,15 +179,7 @@ to load bean definitions from another file or files. For example:
 	</beans>
 ----
 
-In the preceding example, external bean definitions are loaded from three files:
-`services.xml`, `messageSource.xml`, and `themeSource.xml`. All location paths are
-relative to the definition file doing the importing, so `services.xml` must be in the
-same directory or classpath location as the file doing the importing, while
-`messageSource.xml` and `themeSource.xml` must be in a `resources` location below the
-location of the importing file. As you can see, a leading slash is ignored, but given
-that these paths are relative, it is better form not to use the slash at all. The
-contents of the files being imported, including the top level `<beans/>` element, must
-be valid XML bean definitions according to the Spring Schema.
+上面的例子中，外部的bean定义从`services.xml`、`messageSource.xml`和`themeSource.xml`这三个文件中加载。所有的位置路径都是相对于定义执行导入的文件，所以 `services.xml`必须和当前定义导入的文件在相同的路径下。而`messageSource.xml`和`themeSource.xml`必须在当前定义导入的文件路径下的`resources`路径下。你可以看到，这里忽略了反斜杠，由于这里的路径是相对的，因此建议 **不使用反斜杠**。这些被引入文件的内容会被导入进来，包含顶层的`<beans/>`元素，它必须是一个符合Spring架构的有效的XML bean定义。 
 
 [NOTE]
 ====
