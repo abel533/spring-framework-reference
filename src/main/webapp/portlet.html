@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>20.&nbsp;Portlet MVC Framework</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="web-integration.html" title="19.&nbsp;Integrating with other web frameworks"><link rel="next" href="websocket.html" title="21.&nbsp;WebSocket &#25903;&#25345;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">20.&nbsp;Portlet MVC Framework</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="portlet" href="#portlet"></a>20.&nbsp;Portlet MVC Framework</h2></div></div></div>
+   <title>19.&nbsp;Portlet MVC Framework</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="web-integration.html" title="18.&nbsp;Integrating with other web frameworks"><link rel="next" href="websocket.html" title="20.&nbsp;WebSocket &#25903;&#25345;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">19.&nbsp;Portlet MVC Framework</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="portlet" href="#portlet"></a>19.&nbsp;Portlet MVC Framework</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-introduction" href="#portlet-introduction"></a>20.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-introduction" href="#portlet-introduction"></a>19.1&nbsp;Introduction</h2></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>JSR-168 The Java Portlet Specification</b></p></div></div></div>
 
@@ -17,7 +17,7 @@ to JSR 168"</a>, and of course the
 supports JSR-168 Portlet development. As much as possible, the Portlet MVC framework is
 a mirror image of the Web MVC framework, and also uses the same underlying view
 abstractions and integration technology. So, be sure to review the chapters entitled
-<a class="xref" href="mvc.html" title="17.&nbsp;Web MVC &#26694;&#26550;">Chapter&nbsp;17, <i>Web MVC &#26694;&#26550;</i></a> and <a class="xref" href="view.html" title="18.&nbsp;View technologies">Chapter&nbsp;18, <i>View technologies</i></a> before continuing with this chapter.</p>
+<a class="xref" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;">Chapter&nbsp;16, <i>Web MVC &#26694;&#26550;</i></a> and <a class="xref" href="view.html" title="17.&nbsp;View technologies">Chapter&nbsp;17, <i>View technologies</i></a> before continuing with this chapter.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>Bear in mind that while the concepts of Spring MVC are the same in Spring Portlet MVC,
 there are some notable differences created by the unique workflow of JSR-168 portlets.</p>
@@ -68,7 +68,7 @@ are in the purview of the portal/portlet container and are not appropriate at th
 level. However, all mechanisms in Spring that depend on the locale (such as
 internationalization of messages) will still function properly because
 <code class="literal">DispatcherPortlet</code> exposes the current locale in the same way as <code class="literal">DispatcherServlet</code>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-controller" href="#portlet-introduction-controller"></a>20.1.1&nbsp;Controllers - The C in MVC</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-controller" href="#portlet-introduction-controller"></a>19.1.1&nbsp;Controllers - The C in MVC</h3></div></div></div>
 
 <p>The default handler is still a very simple <code class="literal">Controller</code> interface, offering just two
 methods:</p>
@@ -82,7 +82,7 @@ methods:</p>
 as <code class="literal">AbstractController</code>, <code class="literal">SimpleFormController</code>, and so on. Data binding, command object
 usage, model handling, and view resolution are all the same as in the servlet framework.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-view" href="#portlet-introduction-view"></a>20.1.2&nbsp;Views - The V in MVC</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-view" href="#portlet-introduction-view"></a>19.1.2&nbsp;Views - The V in MVC</h3></div></div></div>
 
 <p>All the view rendering capabilities of the servlet framework are used directly via a
 special bridge servlet named <code class="literal">ViewRendererServlet</code>. By using this servlet, the portlet
@@ -90,7 +90,7 @@ request is converted into a servlet request and the view can be rendered using t
 entire normal servlet infrastructure. This means all the existing renderers, such as
 JSP, Velocity, etc., can still be used within the portlet.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-scope" href="#portlet-introduction-scope"></a>20.1.3&nbsp;Web-scoped beans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-introduction-scope" href="#portlet-introduction-scope"></a>19.1.3&nbsp;Web-scoped beans</h3></div></div></div>
 
 <p>Spring Portlet MVC supports beans whose lifecycle is scoped to the current HTTP request
 or HTTP <code class="literal">Session</code> (both normal and global). This is not a specific feature of Spring
@@ -99,7 +99,7 @@ Portlet MVC uses. These bean scopes are described in detail in
 <a class="xref" href="beans.html#beans-factory-scopes-other" title="5.5.4&nbsp;Request, session, and global session scopes">Section&nbsp;5.5.4, &#8220;Request, session, and global session scopes&#8221;</a></p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-dispatcher" href="#portlet-dispatcher"></a>20.2&nbsp;The DispatcherPortlet</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-dispatcher" href="#portlet-dispatcher"></a>19.2&nbsp;The DispatcherPortlet</h2></div></div></div>
 
 <p>Portlet MVC is a request-driven web MVC framework, designed around a portlet that
 dispatches requests to controllers and offers other functionality facilitating the
@@ -138,12 +138,12 @@ bean would be configured. Each of those beans is described in more detail below.
 now, we&#8217;ll just mention them, just to let you know they exist and to enable us to go on
 talking about the <code class="literal">DispatcherPortlet</code>. For most of the beans, defaults are provided so
 you don&#8217;t have to worry about configuring them.</p>
-<div class="table"><a name="portlet-webappctx-special-beans-tbl" href="#portlet-webappctx-special-beans-tbl"></a><p class="title"><b>Table&nbsp;20.1.&nbsp;Special beans in the WebApplicationContext</b></p><div class="table-contents">
+<div class="table"><a name="portlet-webappctx-special-beans-tbl" href="#portlet-webappctx-special-beans-tbl"></a><p class="title"><b>Table&nbsp;19.1.&nbsp;Special beans in the WebApplicationContext</b></p><div class="table-contents">
 
-  <table summary="Special beans in the WebApplicationContext" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Expression</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>handler mapping(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-handlermapping" title="20.5&nbsp;Handler mappings">Section&nbsp;20.5, &#8220;Handler mappings&#8221;</a>) a list of pre- and post-processors and controllers that
+  <table summary="Special beans in the WebApplicationContext" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Expression</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>handler mapping(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-handlermapping" title="19.5&nbsp;Handler mappings">Section&nbsp;19.5, &#8220;Handler mappings&#8221;</a>) a list of pre- and post-processors and controllers that
   will be executed if they match certain criteria (for instance a matching portlet mode
-  specified with the controller)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>controller(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-controller" title="20.4&nbsp;Controllers">Section&nbsp;20.4, &#8220;Controllers&#8221;</a>) the beans providing the actual functionality (or at least,
-  access to the functionality) as part of the MVC triad</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>view resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-viewresolver" title="20.6&nbsp;Views and resolving them">Section&nbsp;20.6, &#8220;Views and resolving them&#8221;</a>) capable of resolving view names to view definitions</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>multipart resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-multipart" title="20.7&nbsp;Multipart (file upload) support">Section&nbsp;20.7, &#8220;Multipart (file upload) support&#8221;</a>) offers functionality to process file uploads from HTML forms</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>handler exception resolver</p></td><td style="" align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-exceptionresolver" title="20.8&nbsp;Handling exceptions">Section&nbsp;20.8, &#8220;Handling exceptions&#8221;</a>) offers functionality to map exceptions to views or
+  specified with the controller)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>controller(s)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-controller" title="19.4&nbsp;Controllers">Section&nbsp;19.4, &#8220;Controllers&#8221;</a>) the beans providing the actual functionality (or at least,
+  access to the functionality) as part of the MVC triad</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>view resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-viewresolver" title="19.6&nbsp;Views and resolving them">Section&nbsp;19.6, &#8220;Views and resolving them&#8221;</a>) capable of resolving view names to view definitions</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>multipart resolver</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-multipart" title="19.7&nbsp;Multipart (file upload) support">Section&nbsp;19.7, &#8220;Multipart (file upload) support&#8221;</a>) offers functionality to process file uploads from HTML forms</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>handler exception resolver</p></td><td style="" align="left" valign="top"><p>(<a class="xref" href="portlet.html#portlet-exceptionresolver" title="19.8&nbsp;Handling exceptions">Section&nbsp;19.8, &#8220;Handling exceptions&#8221;</a>) offers functionality to map exceptions to views or
   implement other more complex exception handling code</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
@@ -158,7 +158,7 @@ the view, preparing data, etc.).
 If a multipart resolver is specified and this is an <code class="literal">ActionRequest</code>, the request is
 inspected for multiparts and if they are found, it is wrapped in a
 <code class="literal">MultipartActionRequest</code> for further processing by other elements in the process. (See
-<a class="xref" href="portlet.html#portlet-multipart" title="20.7&nbsp;Multipart (file upload) support">Section&nbsp;20.7, &#8220;Multipart (file upload) support&#8221;</a> for further information about multipart handling).
+<a class="xref" href="portlet.html#portlet-multipart" title="19.7&nbsp;Multipart (file upload) support">Section&nbsp;19.7, &#8220;Multipart (file upload) support&#8221;</a> for further information about multipart handling).
 </li><li class="listitem">
 An appropriate handler is searched for. If a handler is found, the execution chain
 associated with the handler (pre-processors, post-processors, controllers) will be
@@ -176,7 +176,7 @@ these exception resolvers you can define custom behavior in case such exceptions
 thrown.</p>
 <p>You can customize Spring&#8217;s <code class="literal">DispatcherPortlet</code> by adding context parameters in the
 <code class="literal">portlet.xml</code> file or portlet init-parameters. The possibilities are listed below.</p>
-<div class="table"><a name="portlet-dpp-init-params" href="#portlet-dpp-init-params"></a><p class="title"><b>Table&nbsp;20.2.&nbsp;DispatcherPortlet initialization parameters</b></p><div class="table-contents">
+<div class="table"><a name="portlet-dpp-init-params" href="#portlet-dpp-init-params"></a><p class="title"><b>Table&nbsp;19.2.&nbsp;DispatcherPortlet initialization parameters</b></p><div class="table-contents">
 
   <table summary="DispatcherPortlet initialization parameters" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">contextClass</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Class that implements <code class="literal">WebApplicationContext</code>, which will be used to instantiate the
   context used by this portlet. If this parameter isn&#8217;t specified, the
@@ -185,14 +185,14 @@ thrown.</p>
   multiple Strings (using a comma as a delimiter) to support multiple contexts (in case
   of multiple context locations, for beans that are defined twice, the latest takes
   precedence).</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">namespace</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The namespace of the <code class="literal">WebApplicationContext</code>. Defaults to <code class="literal">[portlet-name]-portlet</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">viewRendererUrl</code></p></td><td style="" align="left" valign="top"><p>The URL at which <code class="literal">DispatcherPortlet</code> can access an instance of <code class="literal">ViewRendererServlet</code>
-  (see <a class="xref" href="portlet.html#portlet-viewservlet" title="20.3&nbsp;The ViewRendererServlet">Section&nbsp;20.3, &#8220;The ViewRendererServlet&#8221;</a>).</p></td></tr></tbody></table>
+  (see <a class="xref" href="portlet.html#portlet-viewservlet" title="19.3&nbsp;The ViewRendererServlet">Section&nbsp;19.3, &#8220;The ViewRendererServlet&#8221;</a>).</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewservlet" href="#portlet-viewservlet"></a>20.3&nbsp;The ViewRendererServlet</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewservlet" href="#portlet-viewservlet"></a>19.3&nbsp;The ViewRendererServlet</h2></div></div></div>
 
 <p>The rendering process in Portlet MVC is a bit more complex than in Web MVC. In order to
-reuse all the <a class="link" href="view.html" title="18.&nbsp;View technologies">view technologies</a> from Spring Web MVC, we must convert the
+reuse all the <a class="link" href="view.html" title="17.&nbsp;View technologies">view technologies</a> from Spring Web MVC, we must convert the
 <code class="literal">PortletRequest</code> / <code class="literal">PortletResponse</code> to <code class="literal">HttpServletRequest</code> / <code class="literal">HttpServletResponse</code> and
 then call the <code class="literal">render</code> method of the <code class="literal">View</code>. To do this, <code class="literal">DispatcherPortlet</code> uses a
 special servlet that exists for just this purpose: the <code class="literal">ViewRendererServlet</code>.</p>
@@ -225,7 +225,7 @@ the appropriate arguments.</p>
 <p>The actual URL for the <code class="literal">ViewRendererServlet</code> can be changed using <code class="literal">DispatcherPortlet</code>'s
 <code class="literal">viewRendererUrl</code> configuration parameter.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-controller" href="#portlet-controller"></a>20.4&nbsp;Controllers</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-controller" href="#portlet-controller"></a>19.4&nbsp;Controllers</h2></div></div></div>
 
 <p>The controllers in Portlet MVC are very similar to the Web MVC Controllers, and porting
 code from one to the other should be simple.</p>
@@ -257,13 +257,13 @@ controllers that already contain a lot of the functionality you might need; most
 these are very similar to controllers from Spring Web MVC. The <code class="literal">Controller</code> interface
 just defines the most common functionality required of every controller: handling an
 action request, handling a render request, and returning a model and a view.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-abstractcontroller" href="#portlet-controller-abstractcontroller"></a>20.4.1&nbsp;AbstractController and PortletContentGenerator</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-abstractcontroller" href="#portlet-controller-abstractcontroller"></a>19.4.1&nbsp;AbstractController and PortletContentGenerator</h3></div></div></div>
 
 <p>Of course, just a <code class="literal">Controller</code> interface isn&#8217;t enough. To provide a basic
 infrastructure, all of Spring Portlet MVC&#8217;s <code class="literal">Controller</code>s inherit from
 <code class="literal">AbstractController</code>, a class offering access to Spring&#8217;s <code class="literal">ApplicationContext</code> and
 control over caching.</p>
-<div class="table"><a name="portlet-ac-features" href="#portlet-ac-features"></a><p class="title"><b>Table&nbsp;20.3.&nbsp;Features offered by the AbstractController</b></p><div class="table-contents">
+<div class="table"><a name="portlet-ac-features" href="#portlet-ac-features"></a><p class="title"><b>Table&nbsp;19.3.&nbsp;Features offered by the AbstractController</b></p><div class="table-contents">
 
   <table summary="Features offered by the AbstractController" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">requireSession</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Indicates whether or not this <code class="literal">Controller</code> requires a session to do its work. This
   feature is offered to all controllers. If a session is not present when such a
@@ -315,10 +315,10 @@ context.</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 <p>The class above and the declaration in the web application context is all you need
-besides setting up a handler mapping (see <a class="xref" href="portlet.html#portlet-handlermapping" title="20.5&nbsp;Handler mappings">Section&nbsp;20.5, &#8220;Handler mappings&#8221;</a>) to get this very
+besides setting up a handler mapping (see <a class="xref" href="portlet.html#portlet-handlermapping" title="19.5&nbsp;Handler mappings">Section&nbsp;19.5, &#8220;Handler mappings&#8221;</a>) to get this very
 simple controller working.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-simple" href="#portlet-controller-simple"></a>20.4.2&nbsp;Other simple controllers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-simple" href="#portlet-controller-simple"></a>19.4.2&nbsp;Other simple controllers</h3></div></div></div>
 
 <p>Although you can extend <code class="literal">AbstractController</code>, Spring Portlet MVC provides a number of
 concrete implementations which offer functionality that is commonly used in simple MVC
@@ -330,7 +330,7 @@ application context (no need to hard-code the view name).</p>
 name. So, if your portlet is in View mode (i.e. <code class="literal">PortletMode.VIEW</code>) then it uses "view"
 as the view name.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-command" href="#portlet-controller-command"></a>20.4.3&nbsp;Command Controllers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-command" href="#portlet-controller-command"></a>19.4.3&nbsp;Command Controllers</h3></div></div></div>
 
 <p>Spring Portlet MVC has the exact same hierarchy of <span class="emphasis"><em>command controllers</em></span> as Spring Web
 MVC. They provide a way to interact with data objects and dynamically bind parameters
@@ -372,7 +372,7 @@ understanding of how they operate in order to use them efficiently. Carefully re
 javadocs for this entire hierarchy and then look at some sample implementations before
 you start using them.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-wrapping" href="#portlet-controller-wrapping"></a>20.4.4&nbsp;PortletWrappingController</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-controller-wrapping" href="#portlet-controller-wrapping"></a>19.4.4&nbsp;PortletWrappingController</h3></div></div></div>
 
 <p>Instead of developing new controllers, it is possible to use existing portlets and map
 requests to them from a <code class="literal">DispatcherPortlet</code>. Using the <code class="literal">PortletWrappingController</code>, you
@@ -391,7 +391,7 @@ of filter mechanism, this is quite handy. For example, this can be used to wrap 
 Hibernate <code class="literal">OpenSessionInViewInterceptor</code> around a MyFaces JSF Portlet.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-handlermapping" href="#portlet-handlermapping"></a>20.5&nbsp;Handler mappings</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-handlermapping" href="#portlet-handlermapping"></a>19.5&nbsp;Handler mappings</h2></div></div></div>
 
 <p>Using a handler mapping you can map incoming portlet requests to appropriate handlers.
 There are some handler mappings you can use out of the box, for example, the
@@ -426,7 +426,7 @@ handler mappings. They all extend <code class="literal">AbstractHandlerMapping</
 properties:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 <code class="literal">interceptors</code>: The list of interceptors to use. <code class="literal">HandlerInterceptor</code>s are discussed
-in <a class="xref" href="portlet.html#portlet-handlermapping-interceptor" title="20.5.4&nbsp;Adding HandlerInterceptors">Section&nbsp;20.5.4, &#8220;Adding HandlerInterceptors&#8221;</a>.
+in <a class="xref" href="portlet.html#portlet-handlermapping-interceptor" title="19.5.4&nbsp;Adding HandlerInterceptors">Section&nbsp;19.5.4, &#8220;Adding HandlerInterceptors&#8221;</a>.
 </li><li class="listitem">
 <code class="literal">defaultHandler</code>: The default handler to use, when this handler mapping does not
 result in a matching handler.
@@ -440,7 +440,7 @@ handlers are always lazily initialized). Default value is false. This property i
 directly implemented in the three concrete Handlers.
 </li></ul></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmode" href="#portlet-handlermapping-portletmode"></a>20.5.1&nbsp;PortletModeHandlerMapping</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmode" href="#portlet-handlermapping-portletmode"></a>19.5.1&nbsp;PortletModeHandlerMapping</h3></div></div></div>
 
 <p>This is a simple handler mapping that maps incoming requests based on the current mode
 of the portlet (e.g. <span class="emphasis"><em>view</em></span>, <span class="emphasis"><em>edit</em></span>, <span class="emphasis"><em>help</em></span>). An example:</p>
@@ -455,7 +455,7 @@ of the portlet (e.g. <span class="emphasis"><em>view</em></span>, <span class="e
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameter" href="#portlet-handlermapping-parameter"></a>20.5.2&nbsp;ParameterHandlerMapping</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameter" href="#portlet-handlermapping-parameter"></a>19.5.2&nbsp;ParameterHandlerMapping</h3></div></div></div>
 
 <p>If we need to navigate around to multiple controllers without changing portlet mode, the
 simplest way to do this is with a request parameter that is used as the key to control
@@ -475,7 +475,7 @@ mapping. The default name of the parameter is <code class="literal">'action'</co
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmodeparameter" href="#portlet-handlermapping-portletmodeparameter"></a>20.5.3&nbsp;PortletModeParameterHandlerMapping</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-portletmodeparameter" href="#portlet-handlermapping-portletmodeparameter"></a>19.5.3&nbsp;PortletModeParameterHandlerMapping</h3></div></div></div>
 
 <p>The most powerful built-in handler mapping, <code class="literal">PortletModeParameterHandlerMapping</code>
 combines the capabilities of the two previous ones to allow different navigation within
@@ -510,7 +510,7 @@ longer be valid in the mapping. This behavior can be changed by setting the
 <p>This mapping can be chained ahead of a <code class="literal">PortletModeHandlerMapping</code>, which can then
 provide defaults for each mode and an overall default as well.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptor" href="#portlet-handlermapping-interceptor"></a>20.5.4&nbsp;Adding HandlerInterceptors</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptor" href="#portlet-handlermapping-interceptor"></a>19.5.4&nbsp;Adding HandlerInterceptors</h3></div></div></div>
 
 <p>Spring&#8217;s handler mapping mechanism has a notion of handler interceptors, which can be
 extremely useful when you want to apply specific functionality to certain requests, for
@@ -534,14 +534,14 @@ handler in the execution chain.</p>
 If you need to execute logic in these methods for just one type of request, be sure to
 check what kind of request it is before processing it.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptoradapter" href="#portlet-handlermapping-interceptoradapter"></a>20.5.5&nbsp;HandlerInterceptorAdapter</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-interceptoradapter" href="#portlet-handlermapping-interceptoradapter"></a>19.5.5&nbsp;HandlerInterceptorAdapter</h3></div></div></div>
 
 <p>As with the servlet package, the portlet package has a concrete implementation of
 <code class="literal">HandlerInterceptor</code> called <code class="literal">HandlerInterceptorAdapter</code>. This class has empty versions
 of all the methods so that you can inherit from this class and implement just one or two
 methods when that is all you need.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameterinterceptor" href="#portlet-handlermapping-parameterinterceptor"></a>20.5.6&nbsp;ParameterMappingInterceptor</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-handlermapping-parameterinterceptor" href="#portlet-handlermapping-parameterinterceptor"></a>19.5.6&nbsp;ParameterMappingInterceptor</h3></div></div></div>
 
 <p>The portlet package also has a concrete interceptor named <code class="literal">ParameterMappingInterceptor</code>
 that is meant to be used directly with <code class="literal">ParameterHandlerMapping</code> and
@@ -557,12 +557,12 @@ interceptor. If you need to do external redirects then you will either need to f
 the mapping parameter manually or write a different interceptor to handle this for you.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewresolver" href="#portlet-viewresolver"></a>20.6&nbsp;Views and resolving them</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-viewresolver" href="#portlet-viewresolver"></a>19.6&nbsp;Views and resolving them</h2></div></div></div>
 
 <p>As mentioned previously, Spring Portlet MVC directly reuses all the view technologies
 from Spring Web MVC. This includes not only the various <code class="literal">View</code> implementations
 themselves, but also the <code class="literal">ViewResolver</code> implementations. For more information, refer to
-<a class="xref" href="view.html" title="18.&nbsp;View technologies">Chapter&nbsp;18, <i>View technologies</i></a> and <a class="xref" href="mvc.html#mvc-viewresolver" title="17.5&nbsp;Resolving views">Section&nbsp;17.5, &#8220;Resolving views&#8221;</a> respectively.</p>
+<a class="xref" href="view.html" title="17.&nbsp;View technologies">Chapter&nbsp;17, <i>View technologies</i></a> and <a class="xref" href="mvc.html#mvc-viewresolver" title="16.5&nbsp;Resolving views">Section&nbsp;16.5, &#8220;Resolving views&#8221;</a> respectively.</p>
 <p>A few items on using the existing <code class="literal">View</code> and <code class="literal">ViewResolver</code> implementations are worth
 mentioning:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -585,7 +585,7 @@ application and that you will have to use an absolute URL.
 <p>Also, for JSP development, the new Spring Taglib and the new Spring Form Taglib both
 work in portlet views in exactly the same way that they work in servlet views.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-multipart" href="#portlet-multipart"></a>20.7&nbsp;Multipart (file upload) support</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-multipart" href="#portlet-multipart"></a>19.7&nbsp;Multipart (file upload) support</h2></div></div></div>
 
 <p>Spring Portlet MVC has built-in multipart support to handle file uploads in portlet
 applications, just like Web MVC does. The design for the multipart support is done with
@@ -609,7 +609,7 @@ any other name, then the <code class="literal">DispatcherPortlet</code> will <sp
 <code class="literal">PortletMultipartResolver</code>, and consequently no multipart support will be in effect.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-resolver" href="#portlet-multipart-resolver"></a>20.7.1&nbsp;Using the PortletMultipartResolver</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-resolver" href="#portlet-multipart-resolver"></a>19.7.1&nbsp;Using the PortletMultipartResolver</h3></div></div></div>
 
 <p>The following example shows how to use the <code class="literal">CommonsPortletMultipartResolver</code>:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"portletMultipartResolver"</span>
@@ -632,7 +632,7 @@ request and actually get access to the multipart files themselves in your contro
 <p>Note that you can only receive multipart file uploads as part of an <code class="literal">ActionRequest</code>, not
 as part of a <code class="literal">RenderRequest</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-forms" href="#portlet-multipart-forms"></a>20.7.2&nbsp;Handling a file upload in a form</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-multipart-forms" href="#portlet-multipart-forms"></a>19.7.2&nbsp;Handling a file upload in a form</h3></div></div></div>
 
 <p>After the <code class="literal">PortletMultipartResolver</code> has finished doing its job, the request will be
 processed like any other. To use the <code class="literal">PortletMultipartResolver</code>, create a form with an
@@ -803,7 +803,7 @@ register any custom property editor because there is no type conversion to be pe
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-exceptionresolver" href="#portlet-exceptionresolver"></a>20.8&nbsp;Handling exceptions</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-exceptionresolver" href="#portlet-exceptionresolver"></a>19.8&nbsp;Handling exceptions</h2></div></div></div>
 
 <p>Just like Servlet MVC, Portlet MVC provides <code class="literal">HandlerExceptionResolver</code>s to ease the
 pain of unexpected exceptions that occur while your request is being processed by a
@@ -811,7 +811,7 @@ handler that matched the request. Portlet MVC also provides a portlet-specific, 
 <code class="literal">SimpleMappingExceptionResolver</code> that enables you to take the class name of any
 exception that might be thrown and map it to a view name.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-annotation" href="#portlet-annotation"></a>20.9&nbsp;Annotation-based controller configuration</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-annotation" href="#portlet-annotation"></a>19.9&nbsp;Annotation-based controller configuration</h2></div></div></div>
 
 <p>Spring 2.5 introduced an annotation-based programming model for MVC controllers, using
 annotations such as <code class="literal">@RequestMapping</code>, <code class="literal">@RequestParam</code>, <code class="literal">@ModelAttribute</code>, etc. This
@@ -822,7 +822,7 @@ Servlet or Portlet API&#8217;s, although they can easily get access to Servlet o
 facilities if desired.</p>
 <p>The following sections document these annotations and how they are most commonly used in
 a Portlet environment.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-setup" href="#portlet-ann-setup"></a>20.9.1&nbsp;Setting up the dispatcher for annotation support</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-setup" href="#portlet-ann-setup"></a>19.9.1&nbsp;Setting up the dispatcher for annotation support</h3></div></div></div>
 
 <p><span class="emphasis"><em>`@RequestMapping` will only be processed if a corresponding <code class="literal">HandlerMapping</code> (for
 type level annotations) and/or <code class="literal">HandlerAdapter</code> (for method level annotations) is
@@ -850,7 +850,7 @@ need to make sure that a corresponding custom <code class="literal">DefaultAnnot
 explicitly also makes sense if you would like to customize the mapping strategy, e.g.
 specifying a custom <code class="literal">WebBindingInitializer</code> (see below).</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-controller" href="#portlet-ann-controller"></a>20.9.2&nbsp;Defining a controller with @Controller</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-controller" href="#portlet-ann-controller"></a>19.9.2&nbsp;Defining a controller with @Controller</h3></div></div></div>
 
 <p>The <code class="literal">@Controller</code> annotation indicates that a particular class serves the role of a
 <span class="emphasis"><em>controller</em></span>. There is no need to extend any controller base class or reference the
@@ -884,7 +884,7 @@ schema as shown in the following XML snippet:</p>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping" href="#portlet-ann-requestmapping"></a>20.9.3&nbsp;Mapping requests with @RequestMapping</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping" href="#portlet-ann-requestmapping"></a>19.9.3&nbsp;Mapping requests with @RequestMapping</h3></div></div></div>
 
 <p>The <code class="literal">@RequestMapping</code> annotation is used to map portlet modes like <span class="emphasis"><em>VIEW</em></span>/<span class="emphasis"><em>EDIT</em></span> onto an
 entire class or a particular handler method. Typically the type-level annotation maps a
@@ -953,7 +953,7 @@ using this annotation:</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping-arguments" href="#portlet-ann-requestmapping-arguments"></a>20.9.4&nbsp;Supported handler method arguments</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestmapping-arguments" href="#portlet-ann-requestmapping-arguments"></a>19.9.4&nbsp;Supported handler method arguments</h3></div></div></div>
 
 <p>Handler methods which are annotated with <code class="literal">@RequestMapping</code> are allowed to have very
 flexible signatures. They may have arguments of the following types, in arbitrary order
@@ -1043,7 +1043,7 @@ model will be implicitly enriched with command objects and the results of
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestparam" href="#portlet-ann-requestparam"></a>20.9.5&nbsp;Binding request parameters to method parameters with @RequestParam</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-requestparam" href="#portlet-ann-requestparam"></a>19.9.5&nbsp;Binding request parameters to method parameters with @RequestParam</h3></div></div></div>
 
 <p>The <code class="literal">@RequestParam</code> annotation is used to bind request parameters to a method parameter
 in your controller.</p>
@@ -1068,7 +1068,7 @@ in your controller.</p>
 parameter is optional by setting <code class="literal">@RequestParam</code>'s <code class="literal">required</code> attribute to <code class="literal">false</code>
 (e.g., <code class="literal">@RequestParam(value="id", required=false)</code>).</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-modelattrib" href="#portlet-ann-modelattrib"></a>20.9.6&nbsp;Providing a link to data from the model with @ModelAttribute</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-modelattrib" href="#portlet-ann-modelattrib"></a>19.9.6&nbsp;Providing a link to data from the model with @ModelAttribute</h3></div></div></div>
 
 <p><code class="literal">@ModelAttribute</code> has two usage scenarios in controllers. When placed on a method
 parameter, <code class="literal">@ModelAttribute</code> is used to map a model attribute to the specific, annotated
@@ -1112,7 +1112,7 @@ chosen handler method, potentially with binding and validation applied to it.</p
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-sessionattrib" href="#portlet-ann-sessionattrib"></a>20.9.7&nbsp;Specifying attributes to store in a Session with @SessionAttributes</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-sessionattrib" href="#portlet-ann-sessionattrib"></a>19.9.7&nbsp;Specifying attributes to store in a Session with @SessionAttributes</h3></div></div></div>
 
 <p>The type-level <code class="literal">@SessionAttributes</code> annotation declares session attributes used by a
 specific handler. This will typically list the names of model attributes or types of
@@ -1127,7 +1127,7 @@ conversational storage, serving as form-backing beans between subsequent request
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-webdatabinder" href="#portlet-ann-webdatabinder"></a>20.9.8&nbsp;Customizing WebDataBinder initialization</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="portlet-ann-webdatabinder" href="#portlet-ann-webdatabinder"></a>19.9.8&nbsp;Customizing WebDataBinder initialization</h3></div></div></div>
 
 <p>To customize request parameter binding with PropertyEditors, etc. via Spring&#8217;s
 <code class="literal">WebDataBinder</code>, you can either use <code class="literal">@InitBinder</code>-annotated methods within your
@@ -1170,7 +1170,7 @@ configuration.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-deployment" href="#portlet-deployment"></a>20.10&nbsp;Portlet application deployment</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="portlet-deployment" href="#portlet-deployment"></a>19.10&nbsp;Portlet application deployment</h2></div></div></div>
 
 <p>The process of deploying a Spring Portlet MVC application is no different than deploying
 any JSR-168 Portlet application. However, this area is confusing enough in general that
@@ -1199,4 +1199,4 @@ this process.</p>
 Some older portals have been known to corrupt the definition of the
 <code class="literal">ViewRendererServlet</code>, thus breaking the rendering of your portlets.</p>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.&nbsp;Integrating with other web frameworks&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;21.&nbsp;WebSocket &#25903;&#25345;</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="web-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="websocket.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">18.&nbsp;Integrating with other web frameworks&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;20.&nbsp;WebSocket &#25903;&#25345;</td></tr></table></div></body></html>

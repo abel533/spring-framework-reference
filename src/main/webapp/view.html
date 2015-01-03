@@ -1,17 +1,17 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>18.&nbsp;View technologies</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="mvc.html" title="17.&nbsp;Web MVC &#26694;&#26550;"><link rel="next" href="web-integration.html" title="19.&nbsp;Integrating with other web frameworks"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.&nbsp;View technologies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mvc.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="web-integration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="view" href="#view"></a>18.&nbsp;View technologies</h2></div></div></div>
+   <title>17.&nbsp;View technologies</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;"><link rel="next" href="web-integration.html" title="18.&nbsp;Integrating with other web frameworks"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">17.&nbsp;View technologies</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="mvc.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="web-integration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="view" href="#view"></a>17.&nbsp;View technologies</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-introduction" href="#view-introduction"></a>18.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-introduction" href="#view-introduction"></a>17.1&nbsp;Introduction</h2></div></div></div>
 
 <p>One of the areas in which Spring excels is in the separation of view technologies from
 the rest of the MVC framework. For example, deciding to use Velocity or XSLT in place of
 an existing JSP is primarily a matter of configuration. This chapter covers the major
 view technologies that work with Spring and touches briefly on how to add new ones. This
-chapter assumes you are already familiar with <a class="xref" href="mvc.html#mvc-viewresolver" title="17.5&nbsp;Resolving views">Section&nbsp;17.5, &#8220;Resolving views&#8221;</a> which covers the
+chapter assumes you are already familiar with <a class="xref" href="mvc.html#mvc-viewresolver" title="16.5&nbsp;Resolving views">Section&nbsp;16.5, &#8220;Resolving views&#8221;</a> which covers the
 basics of how views in general are coupled to the MVC framework.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-jsp" href="#view-jsp"></a>18.2&nbsp;JSP &amp; JSTL</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-jsp" href="#view-jsp"></a>17.2&nbsp;JSP &amp; JSTL</h2></div></div></div>
 
 <p>Spring provides a couple of out-of-the-box solutions for JSP and JSTL views. Using JSP
 or JSTL is done using a normal view resolver defined in the <code class="literal">WebApplicationContext</code>.
@@ -27,7 +27,7 @@ servlet version is 2.4 (JSP 2.0 and JSTL 1.1), which reduces the scope for confu
 somewhat.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-resolver" href="#view-jsp-resolver"></a>18.2.1&nbsp;View resolvers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-resolver" href="#view-jsp-resolver"></a>17.2.1&nbsp;View resolvers</h3></div></div></div>
 
 <p>Just as with any other view technology you&#8217;re integrating with Spring, for JSPs you&#8217;ll
 need a view resolver that will resolve your views. The most commonly used view resolvers
@@ -58,13 +58,13 @@ can mix different types of views using only one resolver.</p>
 above. As a best practice, we strongly encourage placing your JSP files in a directory
 under the <code class="literal">'WEB-INF'</code> directory, so there can be no direct access by clients.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-jstl" href="#view-jsp-jstl"></a>18.2.2&nbsp;<span class="emphasis"><em>Plain-old</em></span> JSPs versus JSTL</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-jstl" href="#view-jsp-jstl"></a>17.2.2&nbsp;<span class="emphasis"><em>Plain-old</em></span> JSPs versus JSTL</h3></div></div></div>
 
 <p>When using the Java Standard Tag Library you must use a special view class, the
 <code class="literal">JstlView</code>, as JSTL needs some preparation before things such as the I18N features will
 work.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-tags" href="#view-jsp-tags"></a>18.2.3&nbsp;Additional tags facilitating development</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-tags" href="#view-jsp-tags"></a>17.2.3&nbsp;Additional tags facilitating development</h3></div></div></div>
 
 <p>Spring provides data binding of request parameters to command objects as described in
 earlier chapters. To facilitate the development of JSP pages in combination with those
@@ -72,9 +72,9 @@ data binding features, Spring provides a few tags that make things even easier. 
 Spring tags have<span class="emphasis"><em>HTML escaping</em></span> features to enable or disable escaping of characters.</p>
 <p>The tag library descriptor (TLD) is included in the <code class="literal">spring-webmvc.jar</code>. Further
 information about the individual tags can be found in the appendix entitled
-<a class="xref" href="spring.tld.html" title="36.&nbsp;spring.tld">Chapter&nbsp;36, <i>spring.tld</i></a>.</p>
+<a class="xref" href="spring.tld.html" title="35.&nbsp;spring.tld">Chapter&nbsp;35, <i>spring.tld</i></a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-formtaglib" href="#view-jsp-formtaglib"></a>18.2.4&nbsp;Using Spring&#8217;s form tag library</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jsp-formtaglib" href="#view-jsp-formtaglib"></a>17.2.4&nbsp;Using Spring&#8217;s form tag library</h3></div></div></div>
 
 <p>As of version 2.0, Spring provides a comprehensive set of data binding-aware tags for
 handling form elements when using JSP and Spring Web MVC. Each tag provides support for
@@ -654,7 +654,7 @@ is the default type.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-tiles" href="#view-tiles"></a>18.3&nbsp;Tiles</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-tiles" href="#view-tiles"></a>17.3&nbsp;Tiles</h2></div></div></div>
 
 <p>It is possible to integrate Tiles - just as any other view technology - in web
 applications using Spring. The following describes in a broad way how to do this.</p>
@@ -663,13 +663,13 @@ applications using Spring. The following describes in a broad way how to do this
 <code class="literal">org.springframework.web.servlet.view.tiles3</code> package.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-tiles-dependencies" href="#view-tiles-dependencies"></a>18.3.1&nbsp;Dependencies</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-tiles-dependencies" href="#view-tiles-dependencies"></a>17.3.1&nbsp;Dependencies</h3></div></div></div>
 
 <p>To be able to use Tiles, you have to add a dependency on Tiles version 3.0.1 or higher
 and <a class="ulink" href="http://tiles.apache.org/framework/dependency-management.html" target="_top">its transitive dependencies</a>
 to your project.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-tiles-integrate" href="#view-tiles-integrate"></a>18.3.2&nbsp;How to integrate Tiles</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-tiles-integrate" href="#view-tiles-integrate"></a>17.3.2&nbsp;How to integrate Tiles</h3></div></div></div>
 
 <p>To be able to use Tiles, you have to configure it using files containing definitions
 (for basic information on definitions and other Tiles concepts, please have a look at
@@ -782,14 +782,14 @@ per preparer name (as used in your Tiles definitions).</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-velocity" href="#view-velocity"></a>18.4&nbsp;Velocity &amp; FreeMarker</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-velocity" href="#view-velocity"></a>17.4&nbsp;Velocity &amp; FreeMarker</h2></div></div></div>
 
 <p><a class="ulink" href="http://velocity.apache.org" target="_top">Velocity</a> and <a class="ulink" href="http://www.freemarker.org" target="_top">FreeMarker</a> are two
 templating languages that can be used as view technologies within Spring MVC
 applications. The languages are quite similar and serve similar needs and so are
 considered together in this section. For semantic and syntactic differences between the
 two languages, see the <a class="ulink" href="http://www.freemarker.org" target="_top">FreeMarker</a> web site.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-dependencies" href="#view-velocity-dependencies"></a>18.4.1&nbsp;Dependencies</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-dependencies" href="#view-velocity-dependencies"></a>17.4.1&nbsp;Dependencies</h3></div></div></div>
 
 <p>Your web application will need to include <code class="literal">velocity-1.x.x.jar</code> or <code class="literal">freemarker-2.x.jar</code>
 in order to work with Velocity or FreeMarker respectively and <code class="literal">commons-collections.jar</code>
@@ -800,7 +800,7 @@ your <code class="literal">'WEB-INF/lib'</code> directory too! If you make use o
 <span class="emphasis"><em>numberToolAttribute</em></span> in your Velocity views, you will also need to include the
 <code class="literal">velocity-tools-generic-1.x.jar</code></p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-contextconfig" href="#view-velocity-contextconfig"></a>18.4.2&nbsp;Context configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-contextconfig" href="#view-velocity-contextconfig"></a>17.4.2&nbsp;Context configuration</h3></div></div></div>
 
 <p>A suitable configuration is initialized by adding the relevant configurer bean
 definition to your <code class="literal">'*-servlet.xml'</code> as shown below:</p>
@@ -844,7 +844,7 @@ different view resolving based on Locale, you have to use the resource bundle re
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-createtemplates" href="#view-velocity-createtemplates"></a>18.4.3&nbsp;Creating templates</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-createtemplates" href="#view-velocity-createtemplates"></a>17.4.3&nbsp;Creating templates</h3></div></div></div>
 
 <p>Your templates need to be stored in the directory specified by the <code class="literal">*Configurer</code> bean
 shown above. This document does not cover details of creating templates for the two
@@ -855,7 +855,7 @@ returns a ModelAndView object containing a view name of "welcome" then the resol
 will look for the <code class="literal">/WEB-INF/freemarker/welcome.ftl</code> or <code class="literal">/WEB-INF/velocity/welcome.vm</code>
 template as appropriate.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-advancedconfig" href="#view-velocity-advancedconfig"></a>18.4.4&nbsp;Advanced configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-advancedconfig" href="#view-velocity-advancedconfig"></a>17.4.4&nbsp;Advanced configuration</h3></div></div></div>
 
 <p>The basic configurations highlighted above will be suitable for most application
 requirements, however additional configuration options are available for when unusual or
@@ -913,7 +913,7 @@ the <code class="literal">FreeMarkerConfigurer</code> bean. The <code class="lit
 the <code class="literal">Configuration</code> object.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-forms" href="#view-velocity-forms"></a>18.4.5&nbsp;Bind support and form handling</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-velocity-forms" href="#view-velocity-forms"></a>17.4.5&nbsp;Bind support and form handling</h3></div></div></div>
 
 <p>Spring provides a tag library for use in JSP&#8217;s that contains (amongst other things) a
 <code class="literal">&lt;spring:bind/&gt;</code> tag. This tag primarily enables forms to display values from form
@@ -998,7 +998,7 @@ macros to generate form input fields, and they can be mixed and matched with sim
 or calls direct to the spring bind macros highlighted previously.</p>
 <p>The following table of available macros show the VTL and FTL definitions and the
 parameter list that each takes.</p>
-<div class="table"><a name="views-macros-defs-tbl" href="#views-macros-defs-tbl"></a><p class="title"><b>Table&nbsp;18.1.&nbsp;Table of macro definitions</b></p><div class="table-contents">
+<div class="table"><a name="views-macros-defs-tbl" href="#views-macros-defs-tbl"></a><p class="title"><b>Table&nbsp;17.1.&nbsp;Table of macro definitions</b></p><div class="table-contents">
 
   <table summary="Table of macro definitions" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">macro</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">VTL definition</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">FTL definition</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>message</strong></span> (output a string from a resource bundle based on the code parameter)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>#springMessage($code)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&lt;@spring.message code/&gt;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>messageText</strong></span> (output a string from a resource bundle based on the code parameter,
   falling back to the value of the default parameter)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>#springMessageText($code $text)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&lt;@spring.messageText code, text/&gt;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>url</strong></span> (prefix a relative URL with the application&#8217;s context root)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>#springUrl($relativeUrl)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&lt;@spring.url relativeUrl/&gt;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>formInput</strong></span> (standard input field for gathering user input)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>#springFormInput($path $attributes)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&lt;@spring.formInput path, attributes, fieldType/&gt;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>formHiddenInput </strong></span>* (hidden input field for submitting non-user input)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>#springFormHiddenInput($path $attributes)</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&lt;@spring.formHiddenInput path, attributes/&gt;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="strong"><strong>formPasswordInput</strong></span> * (standard input field for gathering passwords. Note that no
@@ -1169,18 +1169,18 @@ this directive.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xslt" href="#view-xslt"></a>18.5&nbsp;XSLT</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xslt" href="#view-xslt"></a>17.5&nbsp;XSLT</h2></div></div></div>
 
 <p>XSLT is a transformation language for XML and is popular as a view technology within web
 applications. XSLT can be a good choice as a view technology if your application
 naturally deals with XML, or if your model can easily be converted to XML. The following
 section shows how to produce an XML document as model data and have it transformed with
 XSLT in a Spring Web MVC application.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-xslt-firstwords" href="#view-xslt-firstwords"></a>18.5.1&nbsp;My First Words</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-xslt-firstwords" href="#view-xslt-firstwords"></a>17.5.1&nbsp;My First Words</h3></div></div></div>
 
 <p>This example is a trivial Spring application that creates a list of words in the
 <code class="literal">Controller</code> and adds them to the model map. The map is returned along with the view
-name of our XSLT view. See <a class="xref" href="mvc.html#mvc-controller" title="17.3&nbsp;Implementing Controllers">Section&nbsp;17.3, &#8220;Implementing Controllers&#8221;</a> for details of Spring Web MVC&#8217;s
+name of our XSLT view. See <a class="xref" href="mvc.html#mvc-controller" title="16.3&nbsp;Implementing Controllers">Section&nbsp;16.3, &#8220;Implementing Controllers&#8221;</a> for details of Spring Web MVC&#8217;s
 <code class="literal">Controller</code> interface. The XSLT view will turn the list of words into a simple XML
 document ready for transformation.</p>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="view-xslt-beandefs" href="#view-xslt-beandefs"></a>Bean definitions</h4></div></div></div>
@@ -1310,7 +1310,7 @@ the war file in the <code class="literal">'WEB-INF/xsl'</code> directory.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-xslt-summary" href="#view-xslt-summary"></a>18.5.2&nbsp;Summary</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-xslt-summary" href="#view-xslt-summary"></a>17.5.2&nbsp;Summary</h3></div></div></div>
 
 <p>A summary of the files discussed and their location in the WAR file is shown in the
 simplified WAR structure below.</p>
@@ -1345,9 +1345,9 @@ classpath. JDK 1.4 provides them by default, and most Java EE containers will al
 them available by default, but it&#8217;s a possible source of errors to be aware of.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-document" href="#view-document"></a>18.6&nbsp;Document views (PDF/Excel)</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-document" href="#view-document"></a>17.6&nbsp;Document views (PDF/Excel)</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-document-intro" href="#view-document-intro"></a>18.6.1&nbsp;Introduction</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-document-intro" href="#view-document-intro"></a>17.6.1&nbsp;Introduction</h3></div></div></div>
 
 <p>Returning an HTML page isn&#8217;t always the best way for the user to view the model output,
 and Spring makes it simple to generate a PDF document or an Excel spreadsheet
@@ -1357,7 +1357,7 @@ spreadsheet or PDF viewer application in response.</p>
 <p>In order to use Excel views, you need to add the <span class="emphasis"><em>poi</em></span> library to your classpath, and
 for PDF generation, the iText library.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-document-config" href="#view-document-config"></a>18.6.2&nbsp;Configuration and setup</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-document-config" href="#view-document-config"></a>17.6.2&nbsp;Configuration and setup</h3></div></div></div>
 
 <p>Document based views are handled in an almost identical fashion to XSLT views, and the
 following sections build upon the previous one by demonstrating how the same controller
@@ -1485,13 +1485,13 @@ document should appear listing each of the words in the model map.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-jasper-reports" href="#view-jasper-reports"></a>18.7&nbsp;JasperReports</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-jasper-reports" href="#view-jasper-reports"></a>17.7&nbsp;JasperReports</h2></div></div></div>
 
 <p>JasperReports ( <a class="ulink" href="http://jasperreports.sourceforge.net" target="_top">http://jasperreports.sourceforge.net</a>) is a powerful open-source
 reporting engine that supports the creation of report designs using an easily understood
 XML file format. JasperReports is capable of rendering reports in four different
 formats: CSV, Excel, HTML and PDF.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-dependencies" href="#view-jasper-reports-dependencies"></a>18.7.1&nbsp;Dependencies</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-dependencies" href="#view-jasper-reports-dependencies"></a>17.7.1&nbsp;Dependencies</h3></div></div></div>
 
 <p>Your application will need to include the latest release of JasperReports, which at the
 time of writing was 0.6.1. JasperReports itself depends on the following projects:</p>
@@ -1513,7 +1513,7 @@ POI
 
 <p>JasperReports also requires a JAXP compliant XML parser.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-configuration" href="#view-jasper-reports-configuration"></a>18.7.2&nbsp;Configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-configuration" href="#view-jasper-reports-configuration"></a>17.7.2&nbsp;Configuration</h3></div></div></div>
 
 <p>To configure JasperReports views in your Spring container configuration you need to
 define a <code class="literal">ViewResolver</code> to map view names to the appropriate view class depending on
@@ -1535,7 +1535,7 @@ this file is described in the next section.)</p>
 <p>The Spring Framework contains five different <code class="literal">View</code> implementations for JasperReports,
 four of which correspond to one of the four output formats supported by JasperReports,
 and one that allows for the format to be determined at runtime:</p>
-<div class="table"><a name="view-jasper-reports-configuration-views-classes" href="#view-jasper-reports-configuration-views-classes"></a><p class="title"><b>Table&nbsp;18.2.&nbsp;JasperReports View classes</b></p><div class="table-contents">
+<div class="table"><a name="view-jasper-reports-configuration-views-classes" href="#view-jasper-reports-configuration-views-classes"></a><p class="title"><b>Table&nbsp;17.2.&nbsp;JasperReports View classes</b></p><div class="table-contents">
 
   <table summary="JasperReports View classes" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Class Name</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Render Format</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsCsvView</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>CSV</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsHtmlView</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>HTML</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsPdfView</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>PDF</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsXlsView</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Microsoft Excel</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsMultiFormatView</code></p></td><td style="" align="left" valign="top"><p>The view is <a class="link" href="view.html#view-jasper-reports-configuration-multiformat-view" title="Using JasperReportsMultiFormatView">decided upon at
   runtime</a></p></td></tr></tbody></table>
@@ -1595,7 +1595,7 @@ different format key then you can configure this using the <code class="literal"
 <code class="literal">JasperReportsMultiFormatView</code> class.</p>
 <p>By default the following mapping key mappings are configured in
 <code class="literal">JasperReportsMultiFormatView</code>:</p>
-<div class="table"><a name="view-jasper-reports-configuration-multiformat-view-mappings" href="#view-jasper-reports-configuration-multiformat-view-mappings"></a><p class="title"><b>Table&nbsp;18.3.&nbsp;JasperReportsMultiFormatView Default Mapping Key Mappings</b></p><div class="table-contents">
+<div class="table"><a name="view-jasper-reports-configuration-multiformat-view-mappings" href="#view-jasper-reports-configuration-multiformat-view-mappings"></a><p class="title"><b>Table&nbsp;17.3.&nbsp;JasperReportsMultiFormatView Default Mapping Key Mappings</b></p><div class="table-contents">
 
   <table summary="JasperReportsMultiFormatView Default Mapping Key Mappings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Mapping Key</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">View Class</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>csv</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsCsvView</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>html</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsHtmlView</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>pdf</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">JasperReportsPdfView</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>xls</p></td><td style="" align="left" valign="top"><p><code class="literal">JasperReportsXlsView</code></p></td></tr></tbody></table>
 </div></div><br class="table-break">
@@ -1605,7 +1605,7 @@ different format key then you can configure this using the <code class="literal"
 using the <code class="literal">formatMappings</code> property of <code class="literal">JasperReportsMultiFormatView</code>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-model" href="#view-jasper-reports-model"></a>18.7.3&nbsp;Populating the ModelAndView</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-model" href="#view-jasper-reports-model"></a>17.7.3&nbsp;Populating the ModelAndView</h3></div></div></div>
 
 <p>In order to render your report correctly in the format you have chosen, you must supply
 Spring with all of the data needed to populate your report. For JasperReports this means
@@ -1648,7 +1648,7 @@ simpleReport.reportDataKey=myBeanData</pre>
 instances of <code class="literal">JRDataSource</code> or <code class="literal">Collection</code> into the model you need to use the second
 approach.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-subreports" href="#view-jasper-reports-subreports"></a>18.7.4&nbsp;Working with Sub-Reports</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-subreports" href="#view-jasper-reports-subreports"></a>17.7.4&nbsp;Working with Sub-Reports</h3></div></div></div>
 
 <p>JasperReports provides support for embedded sub-reports within your master report files.
 There are a wide variety of mechanisms for including sub-reports in your report files.
@@ -1706,7 +1706,7 @@ using the <code class="literal">subReportDataKeys</code> property of your chosen
 and the key used in your report design file.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-exporter-parameters" href="#view-jasper-reports-exporter-parameters"></a>18.7.5&nbsp;Configuring Exporter Parameters</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="view-jasper-reports-exporter-parameters" href="#view-jasper-reports-exporter-parameters"></a>17.7.5&nbsp;Configuring Exporter Parameters</h3></div></div></div>
 
 <p>If you have special requirements for exporter configuration&#8201;&#8212;&#8201;perhaps you want a
 specific page size for your PDF report&#8201;&#8212;&#8201;you can configure these exporter parameters
@@ -1734,7 +1734,7 @@ parameter for <code class="literal">net.sf.jasperreports.engine.export.JRHtmlExp
 which will output a footer in the resulting HTML.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-feeds" href="#view-feeds"></a>18.8&nbsp;Feed Views</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-feeds" href="#view-feeds"></a>17.8&nbsp;Feed Views</h2></div></div></div>
 
 <p>Both <code class="literal">AbstractAtomFeedView</code> and <code class="literal">AbstractRssFeedView</code> inherit from the base class
 <code class="literal">AbstractFeedView</code> and are used to provide Atom and RSS Feed views respectfully. They
@@ -1783,17 +1783,17 @@ object after the method returns.</p>
 <p>For an example of creating an Atom view please refer to Alef Arendsen&#8217;s Spring Team Blog
 <a class="ulink" href="https://spring.io/blog/2009/03/16/adding-an-atom-view-to-an-application-using-spring-s-rest-support" target="_top">entry</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xml-marshalling" href="#view-xml-marshalling"></a>18.9&nbsp;XML Marshalling View</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xml-marshalling" href="#view-xml-marshalling"></a>17.9&nbsp;XML Marshalling View</h2></div></div></div>
 
 <p>The <code class="literal">MarshallingView</code> uses an XML <code class="literal">Marshaller</code> defined in the <code class="literal">org.springframework.oxm</code>
 package to render the response content as XML. The object to be marshalled can be set
 explicitly using <code class="literal">MarhsallingView</code>'s <code class="literal">modelKey</code> bean property. Alternatively, the view
 will iterate over all model properties and marshal the first type that is supported
 by the <code class="literal">Marshaller</code>. For more information on the functionality in the
-<code class="literal">org.springframework.oxm</code> package refer to the chapter <a class="link" href="oxm.html" title="16.&nbsp;Marshalling XML using O/X Mappers">Marshalling XML using O/X
+<code class="literal">org.springframework.oxm</code> package refer to the chapter <a class="link" href="oxm.html" title="15.&nbsp;Marshalling XML using O/X Mappers">Marshalling XML using O/X
 Mappers</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-json-mapping" href="#view-json-mapping"></a>18.10&nbsp;JSON Mapping View</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-json-mapping" href="#view-json-mapping"></a>17.10&nbsp;JSON Mapping View</h2></div></div></div>
 
 <p>The <code class="literal">MappingJackson2JsonView</code> uses the Jackson library&#8217;s <code class="literal">ObjectMapper</code> to render the response
 content as JSON. By default, the entire contents of the model map (with the exception of
@@ -1810,7 +1810,7 @@ serializers/deserializers need to be provided for specific types.</p>
 the request has a query parameter named <code class="literal">jsonp</code> or <code class="literal">callback</code>. The JSONP query parameter
 name(s) could be customized through the <code class="literal">jsonpParameterNames</code> property.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xml-mapping" href="#view-xml-mapping"></a>18.11&nbsp;XML Mapping View</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="view-xml-mapping" href="#view-xml-mapping"></a>17.11&nbsp;XML Mapping View</h2></div></div></div>
 
 <p>The <code class="literal">MappingJackson2XmlView</code> uses the
 <a class="ulink" href="https://github.com/FasterXML/jackson-dataformat-xml" target="_top">Jackson XML extension</a>'s <code class="literal">XmlMapper</code>
@@ -1823,4 +1823,4 @@ annotations. When further control is needed, a custom <code class="literal">XmlM
 through the <code class="literal">ObjectMapper</code> property for cases where custom XML
 serializers/deserializers need to be provided for specific types.</p>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mvc.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="web-integration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">17.&nbsp;Web MVC &#26694;&#26550;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;19.&nbsp;Integrating with other web frameworks</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="mvc.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="web-integration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">16.&nbsp;Web MVC &#26694;&#26550;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;18.&nbsp;Integrating with other web frameworks</td></tr></table></div></body></html>

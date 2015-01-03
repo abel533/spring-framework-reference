@@ -1,21 +1,21 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>14.&nbsp;Data access with JDBC</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="dao.html" title="13.&nbsp;DAO support"><link rel="next" href="orm.html" title="15.&nbsp;&#23545;&#35937;&#20851;&#31995;&#26144;&#23556;(ORM)&#25968;&#25454;&#35775;&#38382;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">14.&nbsp;Data access with JDBC</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jdbc" href="#jdbc"></a>14.&nbsp;Data access with JDBC</h2></div></div></div>
+   <title>13.&nbsp;Data access with JDBC</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="dao.html" title="12.&nbsp;DAO support"><link rel="next" href="orm.html" title="14.&nbsp;&#23545;&#35937;&#20851;&#31995;&#26144;&#23556;(ORM)&#25968;&#25454;&#35775;&#38382;"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">13.&nbsp;Data access with JDBC</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jdbc" href="#jdbc"></a>13.&nbsp;Data access with JDBC</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-introduction" href="#jdbc-introduction"></a>14.1&nbsp;Introduction to Spring Framework JDBC</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-introduction" href="#jdbc-introduction"></a>13.1&nbsp;Introduction to Spring Framework JDBC</h2></div></div></div>
 
 <p>The value-add provided by the Spring Framework JDBC abstraction is perhaps best shown by
 the sequence of actions outlined in the table below. The table shows what actions Spring
 will take care of and which actions are the responsibility of you, the application
 developer.</p>
-<div class="table"><a name="jdbc-who-does-what" href="#jdbc-who-does-what"></a><p class="title"><b>Table&nbsp;14.1.&nbsp;Spring JDBC - who does what?</b></p><div class="table-contents">
+<div class="table"><a name="jdbc-who-does-what" href="#jdbc-who-does-what"></a><p class="title"><b>Table&nbsp;13.1.&nbsp;Spring JDBC - who does what?</b></p><div class="table-contents">
 
   <table summary="Spring JDBC - who does what?" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Action</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Spring</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">You</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Define connection parameters.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Open the connection.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Specify the SQL statement.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Declare parameters and provide parameter values</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Prepare and execute the statement.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Set up the loop to iterate through the results (if any).</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Do the work for each iteration.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Process any exception.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Handle transactions.</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top">&nbsp;</td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Close the connection, statement and resultset.</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>X</p></td><td style="" align="left" valign="top">&nbsp;</td></tr></tbody></table>
 </div></div><br class="table-break">
 
 <p>The Spring Framework takes care of all the low-level details that can make JDBC such a
 tedious API to develop with.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-choose-style" href="#jdbc-choose-style"></a>14.1.1&nbsp;Choosing an approach for JDBC database access</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-choose-style" href="#jdbc-choose-style"></a>13.1.1&nbsp;Choosing an approach for JDBC database access</h3></div></div></div>
 
 <p>You can choose among several approaches to form the basis for your JDBC database access.
 In addition to three flavors of the JdbcTemplate, a new SimpleJdbcInsert and
@@ -47,7 +47,7 @@ can be called multiple times with various parameter values passed in.
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-packages" href="#jdbc-packages"></a>14.1.2&nbsp;Package hierarchy</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-packages" href="#jdbc-packages"></a>13.1.2&nbsp;Package hierarchy</h3></div></div></div>
 
 <p>The Spring Framework&#8217;s JDBC abstraction framework consists of four different packages,
 namely <code class="literal">core</code>, <code class="literal">datasource</code>, <code class="literal">object</code>, and <code class="literal">support</code>.</p>
@@ -56,17 +56,17 @@ various callback interfaces, plus a variety of related classes. A subpackage nam
 <code class="literal">org.springframework.jdbc.core.simple</code> contains the <code class="literal">SimpleJdbcInsert</code> and
 <code class="literal">SimpleJdbcCall</code> classes. Another subpackage named
 <code class="literal">org.springframework.jdbc.core.namedparam</code> contains the <code class="literal">NamedParameterJdbcTemplate</code>
-class and the related support classes. See <a class="xref" href="jdbc.html#jdbc-core" title="14.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling">Section&nbsp;14.2, &#8220;Using the JDBC core classes to control basic JDBC processing and error handling&#8221;</a>, <a class="xref" href="jdbc.html#jdbc-advanced-jdbc" title="14.4&nbsp;JDBC batch operations">Section&nbsp;14.4, &#8220;JDBC batch operations&#8221;</a>, and
-<a class="xref" href="jdbc.html#jdbc-simple-jdbc" title="14.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes">Section&nbsp;14.5, &#8220;Simplifying JDBC operations with the SimpleJdbc classes&#8221;</a></p>
+class and the related support classes. See <a class="xref" href="jdbc.html#jdbc-core" title="13.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling">Section&nbsp;13.2, &#8220;Using the JDBC core classes to control basic JDBC processing and error handling&#8221;</a>, <a class="xref" href="jdbc.html#jdbc-advanced-jdbc" title="13.4&nbsp;JDBC batch operations">Section&nbsp;13.4, &#8220;JDBC batch operations&#8221;</a>, and
+<a class="xref" href="jdbc.html#jdbc-simple-jdbc" title="13.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes">Section&nbsp;13.5, &#8220;Simplifying JDBC operations with the SimpleJdbc classes&#8221;</a></p>
 <p>The <code class="literal">org.springframework.jdbc.datasource</code> package contains a utility class for easy
 <code class="literal">DataSource</code> access, and various simple <code class="literal">DataSource</code> implementations that can be used
 for testing and running unmodified JDBC code outside of a Java EE container. A
 subpackage named <code class="literal">org.springfamework.jdbc.datasource.embedded</code> provides support for
 creating in-memory database instances using Java database engines such as HSQL and H2.
-See <a class="xref" href="jdbc.html#jdbc-connections" title="14.3&nbsp;Controlling database connections">Section&nbsp;14.3, &#8220;Controlling database connections&#8221;</a> and <a class="xref" href="jdbc.html#jdbc-embedded-database-support" title="14.8&nbsp;Embedded database support">Section&nbsp;14.8, &#8220;Embedded database support&#8221;</a></p>
+See <a class="xref" href="jdbc.html#jdbc-connections" title="13.3&nbsp;Controlling database connections">Section&nbsp;13.3, &#8220;Controlling database connections&#8221;</a> and <a class="xref" href="jdbc.html#jdbc-embedded-database-support" title="13.8&nbsp;Embedded database support">Section&nbsp;13.8, &#8220;Embedded database support&#8221;</a></p>
 <p>The <code class="literal">org.springframework.jdbc.object</code> package contains classes that represent RDBMS
 queries, updates, and stored procedures as thread safe, reusable objects. See
-<a class="xref" href="jdbc.html#jdbc-object" title="14.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;14.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>.This approach is modeled by JDO, although of course objects returned by
+<a class="xref" href="jdbc.html#jdbc-object" title="13.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;13.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>.This approach is modeled by JDO, although of course objects returned by
 queries are "disconnected" from the database. This higher level of JDBC abstraction
 depends on the lower-level abstraction in the <code class="literal">org.springframework.jdbc.core</code> package.</p>
 <p>The <code class="literal">org.springframework.jdbc.support</code> package provides <code class="literal">SQLException</code> translation
@@ -75,12 +75,12 @@ translated to exceptions defined in the <code class="literal">org.springframewor
 that code using the Spring JDBC abstraction layer does not need to implement JDBC or
 RDBMS-specific error handling. All translated exceptions are unchecked, which gives you
 the option of catching the exceptions from which you can recover while allowing other
-exceptions to be propagated to the caller. See <a class="xref" href="jdbc.html#jdbc-SQLExceptionTranslator" title="14.2.3&nbsp;SQLExceptionTranslator">Section&nbsp;14.2.3, &#8220;SQLExceptionTranslator&#8221;</a>.</p>
+exceptions to be propagated to the caller. See <a class="xref" href="jdbc.html#jdbc-SQLExceptionTranslator" title="13.2.3&nbsp;SQLExceptionTranslator">Section&nbsp;13.2.3, &#8220;SQLExceptionTranslator&#8221;</a>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-core" href="#jdbc-core"></a>14.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-core" href="#jdbc-core"></a>13.2&nbsp;Using the JDBC core classes to control basic JDBC processing and error handling</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-JdbcTemplate" href="#jdbc-JdbcTemplate"></a>14.2.1&nbsp;JdbcTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-JdbcTemplate" href="#jdbc-JdbcTemplate"></a>13.2.1&nbsp;JdbcTemplate</h3></div></div></div>
 
 <p>The <code class="literal">JdbcTemplate</code> class is the central class in the JDBC core package. It handles the
 creation and release of resources, which helps you avoid common errors such as
@@ -199,7 +199,7 @@ callback interfaces, binding variable arrays, and so on.</p>
 <pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.execute(<span class="hl-string">"create table mytable (id integer, name varchar(100))"</span>);</pre>
 
 <p>The following example invokes a simple stored procedure. More sophisticated stored
-procedure support is <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="14.6.4&nbsp;StoredProcedure">covered later</a>.</p>
+procedure support is <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="13.6.4&nbsp;StoredProcedure">covered later</a>.</p>
 <pre class="programlisting"><span class="hl-keyword">this</span>.jdbcTemplate.update(
         <span class="hl-string">"call SUPPORT.REFRESH_ACTORS_SUMMARY(?)"</span>,
         Long.valueOf(unionId));</pre>
@@ -214,7 +214,7 @@ and then safely inject this <span class="emphasis"><em>shared</em></span> refere
 The <code class="literal">JdbcTemplate</code> is stateful, in that it maintains a reference to a <code class="literal">DataSource</code>, but
 this state is <span class="emphasis"><em>not</em></span> conversational state.</p>
 <p>A common practice when using the <code class="literal">JdbcTemplate</code> class (and the associated
-<a class="link" href="jdbc.html#jdbc-NamedParameterJdbcTemplate" title="14.2.2&nbsp;NamedParameterJdbcTemplate"><code class="literal">NamedParameterJdbcTemplate</code></a> classes) is to
+<a class="link" href="jdbc.html#jdbc-NamedParameterJdbcTemplate" title="13.2.2&nbsp;NamedParameterJdbcTemplate"><code class="literal">NamedParameterJdbcTemplate</code></a> classes) is to
 configure a <code class="literal">DataSource</code> in your Spring configuration file, and then dependency-inject
 that shared <code class="literal">DataSource</code> bean into your DAO classes; the <code class="literal">JdbcTemplate</code> is created in
 the setter for the <code class="literal">DataSource</code>. This leads to DAOs that look in part like the following:</p>
@@ -309,7 +309,7 @@ databases, which requires multiple <code class="literal">DataSources</code>, and
 configured <code class="literal">JdbcTemplates</code>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NamedParameterJdbcTemplate" href="#jdbc-NamedParameterJdbcTemplate"></a>14.2.2&nbsp;NamedParameterJdbcTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NamedParameterJdbcTemplate" href="#jdbc-NamedParameterJdbcTemplate"></a>13.2.2&nbsp;NamedParameterJdbcTemplate</h3></div></div></div>
 
 <p>The <code class="literal">NamedParameterJdbcTemplate</code> class adds support for programming JDBC statements
 using named parameters, as opposed to programming JDBC statements using only classic
@@ -417,7 +417,7 @@ functionality only present in the <code class="literal">JdbcTemplate</code> clas
 <p>See also <a class="xref" href="jdbc.html#jdbc-JdbcTemplate-idioms" title="JdbcTemplate best practices">the section called &#8220;JdbcTemplate best practices&#8221;</a> for guidelines on using the
 <code class="literal">NamedParameterJdbcTemplate</code> class in the context of an application.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SQLExceptionTranslator" href="#jdbc-SQLExceptionTranslator"></a>14.2.3&nbsp;SQLExceptionTranslator</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SQLExceptionTranslator" href="#jdbc-SQLExceptionTranslator"></a>13.2.3&nbsp;SQLExceptionTranslator</h3></div></div></div>
 
 <p><code class="literal">SQLExceptionTranslator</code> is an interface to be implemented by classes that can translate
 between <code class="literal">SQLExceptions</code> and Spring&#8217;s own <code class="literal">org.springframework.dao.DataAccessException</code>,
@@ -501,7 +501,7 @@ translator can be used:</p>
 <p>The custom translator is passed a data source in order to look up the error codes in
 <code class="literal">sql-error-codes.xml</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-executing" href="#jdbc-statements-executing"></a>14.2.4&nbsp;Executing statements</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-executing" href="#jdbc-statements-executing"></a>13.2.4&nbsp;Executing statements</h3></div></div></div>
 
 <p>Executing an SQL statement requires very little code. You need a <code class="literal">DataSource</code> and a
 <code class="literal">JdbcTemplate</code>, including the convenience methods that are provided with the
@@ -524,7 +524,7 @@ fully functional class that creates a new table:</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-querying" href="#jdbc-statements-querying"></a>14.2.5&nbsp;Running queries</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-statements-querying" href="#jdbc-statements-querying"></a>13.2.5&nbsp;Running queries</h3></div></div></div>
 
 <p>Some query methods return a single value. To retrieve a count or a specific value from
 one row, use <code class="literal">queryForObject(..)</code>. The latter converts the returned JDBC <code class="literal">Type</code> to the
@@ -575,7 +575,7 @@ example to retrieve a list of all the rows, it would look like this:</p>
 <pre class="literallayout">[{name=Bob, id=1}, {name=Mary, id=2}]</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-updates" href="#jdbc-updates"></a>14.2.6&nbsp;Updating the database</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-updates" href="#jdbc-updates"></a>13.2.6&nbsp;Updating the database</h3></div></div></div>
 
 <p>The following example shows a column updated for a certain primary key. In this example,
 an SQL statement has placeholders for row parameters. The parameter values can be passed
@@ -599,7 +599,7 @@ in the primitive wrapper classes explicitly or using auto-boxing.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-auto-genereted-keys" href="#jdbc-auto-genereted-keys"></a>14.2.7&nbsp;Retrieving auto-generated keys</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-auto-genereted-keys" href="#jdbc-auto-genereted-keys"></a>13.2.7&nbsp;Retrieving auto-generated keys</h3></div></div></div>
 
 <p>An <code class="literal">update()</code> convenience method supports the retrieval of primary keys generated by the
 database. This support is part of the JDBC 3.0 standard; see Chapter 13.6 of the
@@ -627,9 +627,9 @@ jdbcTemplate.update(
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-connections" href="#jdbc-connections"></a>14.3&nbsp;Controlling database connections</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-connections" href="#jdbc-connections"></a>13.3&nbsp;Controlling database connections</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-datasource" href="#jdbc-datasource"></a>14.3.1&nbsp;DataSource</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-datasource" href="#jdbc-datasource"></a>13.3.1&nbsp;DataSource</h3></div></div></div>
 
 <p>Spring obtains a connection to the database through a <code class="literal">DataSource</code>. A <code class="literal">DataSource</code> is
 part of the JDBC specification and is a generalized connection factory. It allows a
@@ -696,27 +696,27 @@ documentation for the respective connection pooling implementations.</p>
 &lt;context:property-placeholder location=<span class="hl-string">"jdbc.properties"</span>/&gt;</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceUtils" href="#jdbc-DataSourceUtils"></a>14.3.2&nbsp;DataSourceUtils</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceUtils" href="#jdbc-DataSourceUtils"></a>13.3.2&nbsp;DataSourceUtils</h3></div></div></div>
 
 <p>The <code class="literal">DataSourceUtils</code> class is a convenient and powerful helper class that provides
 <code class="literal">static</code> methods to obtain connections from JNDI and close connections if necessary. It
 supports thread-bound connections with, for example, <code class="literal">DataSourceTransactionManager</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SmartDataSource" href="#jdbc-SmartDataSource"></a>14.3.3&nbsp;SmartDataSource</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SmartDataSource" href="#jdbc-SmartDataSource"></a>13.3.3&nbsp;SmartDataSource</h3></div></div></div>
 
 <p>The <code class="literal">SmartDataSource</code> interface should be implemented by classes that can provide a
 connection to a relational database. It extends the <code class="literal">DataSource</code> interface to allow
 classes using it to query whether the connection should be closed after a given
 operation. This usage is efficient when you know that you will reuse a connection.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-AbstractDataSource" href="#jdbc-AbstractDataSource"></a>14.3.4&nbsp;AbstractDataSource</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-AbstractDataSource" href="#jdbc-AbstractDataSource"></a>13.3.4&nbsp;AbstractDataSource</h3></div></div></div>
 
 <p><code class="literal">AbstractDataSource</code> is an <code class="literal">abstract</code> base class for Spring&#8217;s <code class="literal">DataSource</code>
 implementations that implements code that is common to all <code class="literal">DataSource</code> implementations.
 You extend the <code class="literal">AbstractDataSource</code> class if you are writing your own <code class="literal">DataSource</code>
 implementation.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SingleConnectionDataSource" href="#jdbc-SingleConnectionDataSource"></a>14.3.5&nbsp;SingleConnectionDataSource</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SingleConnectionDataSource" href="#jdbc-SingleConnectionDataSource"></a>13.3.5&nbsp;SingleConnectionDataSource</h3></div></div></div>
 
 <p>The <code class="literal">SingleConnectionDataSource</code> class is an implementation of the <code class="literal">SmartDataSource</code>
 interface that wraps a <span class="emphasis"><em>single</em></span> <code class="literal">Connection</code> that is <span class="emphasis"><em>not</em></span> closed after each use.
@@ -730,7 +730,7 @@ application server, in conjunction with a simple JNDI environment. In contrast t
 <code class="literal">DriverManagerDataSource</code>, it reuses the same connection all the time, avoiding
 excessive creation of physical connections.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DriverManagerDataSource" href="#jdbc-DriverManagerDataSource"></a>14.3.6&nbsp;DriverManagerDataSource</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DriverManagerDataSource" href="#jdbc-DriverManagerDataSource"></a>13.3.6&nbsp;DriverManagerDataSource</h3></div></div></div>
 
 <p>The <code class="literal">DriverManagerDataSource</code> class is an implementation of the standard <code class="literal">DataSource</code>
 interface that configures a plain JDBC driver through bean properties, and returns a new
@@ -743,7 +743,7 @@ using JavaBean-style connection pools such as <code class="literal">commons-dbcp
 environment, that it is almost always preferable to use such a connection pool over
 <code class="literal">DriverManagerDataSource</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-TransactionAwareDataSourceProxy" href="#jdbc-TransactionAwareDataSourceProxy"></a>14.3.7&nbsp;TransactionAwareDataSourceProxy</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-TransactionAwareDataSourceProxy" href="#jdbc-TransactionAwareDataSourceProxy"></a>13.3.7&nbsp;TransactionAwareDataSourceProxy</h3></div></div></div>
 
 <p><code class="literal">TransactionAwareDataSourceProxy</code> is a proxy for a target <code class="literal">DataSource</code>, which wraps that
 target <code class="literal">DataSource</code> to add awareness of Spring-managed transactions. In this respect, it
@@ -759,7 +759,7 @@ own new code using the higher level abstractions for resource management, such a
 
 <p><span class="emphasis"><em>(See the <code class="literal">TransactionAwareDataSourceProxy</code> javadocs for more details.)</em></span></p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceTransactionManager" href="#jdbc-DataSourceTransactionManager"></a>14.3.8&nbsp;DataSourceTransactionManager</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-DataSourceTransactionManager" href="#jdbc-DataSourceTransactionManager"></a>13.3.8&nbsp;DataSourceTransactionManager</h3></div></div></div>
 
 <p>The <code class="literal">DataSourceTransactionManager</code> class is a <code class="literal">PlatformTransactionManager</code>
 implementation for single JDBC datasources. It binds a JDBC connection from the
@@ -780,7 +780,7 @@ resource case, as it does not require the container to support JTA. Switching be
 both is just a matter of configuration, if you stick to the required connection lookup
 pattern. JTA does not support custom isolation levels!</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NativeJdbcExtractor" href="#jdbc-NativeJdbcExtractor"></a>14.3.9&nbsp;NativeJdbcExtractor</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-NativeJdbcExtractor" href="#jdbc-NativeJdbcExtractor"></a>13.3.9&nbsp;NativeJdbcExtractor</h3></div></div></div>
 
 <p>Sometimes you need to access vendor specific JDBC methods that differ from the standard
 JDBC API. This can be problematic if you are running in an application server or with a
@@ -809,12 +809,12 @@ XAPoolNativeJdbcExtractor
 object in most environments. See the javadocs for more details.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-advanced-jdbc" href="#jdbc-advanced-jdbc"></a>14.4&nbsp;JDBC batch operations</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-advanced-jdbc" href="#jdbc-advanced-jdbc"></a>13.4&nbsp;JDBC batch operations</h2></div></div></div>
 
 <p>Most JDBC drivers provide improved performance if you batch multiple calls to the same
 prepared statement. By grouping updates into batches you limit the number of round trips
 to the database.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-classic" href="#jdbc-batch-classic"></a>14.4.1&nbsp;Basic batch operations with the JdbcTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-classic" href="#jdbc-batch-classic"></a>13.4.1&nbsp;Basic batch operations with the JdbcTemplate</h3></div></div></div>
 
 <p>You accomplish <code class="literal">JdbcTemplate</code> batch processing by implementing two methods of a special
 interface, <code class="literal">BatchPreparedStatementSetter</code>, and passing that in as the second parameter
@@ -856,7 +856,7 @@ case you can use the <code class="literal">InterruptibleBatchPreparedStatementSe
 you to interrupt a batch once the input source is exhausted. The <code class="literal">isBatchExhausted</code> method
 allows you to signal the end of the batch.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-list" href="#jdbc-batch-list"></a>14.4.2&nbsp;Batch operations with a List of objects</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-list" href="#jdbc-batch-list"></a>13.4.2&nbsp;Batch operations with a List of objects</h3></div></div></div>
 
 <p>Both the <code class="literal">JdbcTemplate</code> and the <code class="literal">NamedParameterJdbcTemplate</code> provides an alternate way
 of providing the batch update. Instead of implementing a special batch interface, you
@@ -921,7 +921,7 @@ in the SQL statement.</p>
 affected rows for each batch entry. This count is reported by the JDBC driver. If the
 count is not available, the JDBC driver returns a -2 value.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-multi" href="#jdbc-batch-multi"></a>14.4.3&nbsp;Batch operations with multiple batches</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-batch-multi" href="#jdbc-batch-multi"></a>13.4.3&nbsp;Batch operations with multiple batches</h3></div></div></div>
 
 <p>The last example of a batch update deals with batches that are so large that you want to
 break them up into several smaller batches. You can of course do this with the methods
@@ -969,13 +969,13 @@ each update statement is the one reported by the JDBC driver. If the count is no
 available, the JDBC driver returns a -2 value.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-simple-jdbc" href="#jdbc-simple-jdbc"></a>14.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-simple-jdbc" href="#jdbc-simple-jdbc"></a>13.5&nbsp;Simplifying JDBC operations with the SimpleJdbc classes</h2></div></div></div>
 
 <p>The <code class="literal">SimpleJdbcInsert</code> and <code class="literal">SimpleJdbcCall</code> classes provide a simplified configuration
 by taking advantage of database metadata that can be retrieved through the JDBC driver.
 This means there is less to configure up front, although you can override or turn off
 the metadata processing if you prefer to provide all the details in your code.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-1" href="#jdbc-simple-jdbc-insert-1"></a>14.5.1&nbsp;Inserting data using SimpleJdbcInsert</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-1" href="#jdbc-simple-jdbc-insert-1"></a>13.5.1&nbsp;Inserting data using SimpleJdbcInsert</h3></div></div></div>
 
 <p>Let&#8217;s start by looking at the <code class="literal">SimpleJdbcInsert</code> class with the minimal amount of
 configuration options. You should instantiate the <code class="literal">SimpleJdbcInsert</code> in the data access
@@ -1011,7 +1011,7 @@ important thing to note here is that the keys used for the Map must match the co
 names of the table as defined in the database. This is because we read the metadata in
 order to construct the actual insert statement.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-2" href="#jdbc-simple-jdbc-insert-2"></a>14.5.2&nbsp;Retrieving auto-generated keys using SimpleJdbcInsert</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-2" href="#jdbc-simple-jdbc-insert-2"></a>13.5.2&nbsp;Retrieving auto-generated keys using SimpleJdbcInsert</h3></div></div></div>
 
 <p>This example uses the same insert as the preceding, but instead of passing in the id it
 retrieves the auto-generated key and sets it on the new Actor object. When you create
@@ -1048,7 +1048,7 @@ class here; <code class="literal">java.lang.Number</code> is the base class that
 multiple auto-generated columns, or the generated values are non-numeric, then you can
 use a <code class="literal">KeyHolder</code> that is returned from the <code class="literal">executeReturningKeyHolder</code> method.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-3" href="#jdbc-simple-jdbc-insert-3"></a>14.5.3&nbsp;Specifying columns for a SimpleJdbcInsert</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-insert-3" href="#jdbc-simple-jdbc-insert-3"></a>13.5.3&nbsp;Specifying columns for a SimpleJdbcInsert</h3></div></div></div>
 
 <p>You can limit the columns for an insert by specifying a list of column names with the
 <code class="literal">usingColumns</code> method:</p>
@@ -1080,7 +1080,7 @@ use a <code class="literal">KeyHolder</code> that is returned from the <code cla
 <p>The execution of the insert is the same as if you had relied on the metadata to determine
 which columns to use.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-parameters" href="#jdbc-simple-jdbc-parameters"></a>14.5.4&nbsp;Using SqlParameterSource to provide parameter values</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-parameters" href="#jdbc-simple-jdbc-parameters"></a>13.5.4&nbsp;Using SqlParameterSource to provide parameter values</h3></div></div></div>
 
 <p>Using a <code class="literal">Map</code> to provide parameter values works fine, but it&#8217;s not the most convenient
 class to use. Spring provides a couple of implementations of the <code class="literal">SqlParameterSource</code>
@@ -1139,7 +1139,7 @@ convenient <code class="literal">addValue</code> method that can be chained.</p>
 <p>As you can see, the configuration is the same; only the executing code has to change to
 use these alternative input classes.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-1" href="#jdbc-simple-jdbc-call-1"></a>14.5.5&nbsp;Calling a stored procedure with SimpleJdbcCall</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-1" href="#jdbc-simple-jdbc-call-1"></a>13.5.5&nbsp;Calling a stored procedure with SimpleJdbcCall</h3></div></div></div>
 
 <p>The <code class="literal">SimpleJdbcCall</code> class leverages metadata in the database to look up names of <code class="literal">in</code>
 and <code class="literal">out</code> parameters, so that you do not have to declare them explicitly. You can
@@ -1234,7 +1234,7 @@ this configuration:</p>
 <p>By taking this action, you avoid conflicts in the case used for the names of your
 returned <code class="literal">out</code> parameters.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-2" href="#jdbc-simple-jdbc-call-2"></a>14.5.6&nbsp;Explicitly declaring parameters to use for a SimpleJdbcCall</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-2" href="#jdbc-simple-jdbc-call-2"></a>13.5.6&nbsp;Explicitly declaring parameters to use for a SimpleJdbcCall</h3></div></div></div>
 
 <p>You have seen how the parameters are deduced based on metadata, but you can declare then
 explicitly if you wish. You do this by creating and configuring <code class="literal">SimpleJdbcCall</code> with
@@ -1282,10 +1282,10 @@ the preceding example.</p>
 <p>The execution and end results of the two examples are the same; this one specifies all
 details explicitly rather than relying on metadata.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-params" href="#jdbc-params"></a>14.5.7&nbsp;How to define SqlParameters</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-params" href="#jdbc-params"></a>13.5.7&nbsp;How to define SqlParameters</h3></div></div></div>
 
 <p>To define a parameter for the SimpleJdbc classes and also for the RDBMS operations
-classes, covered in <a class="xref" href="jdbc.html#jdbc-object" title="14.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;14.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>, you use an <code class="literal">SqlParameter</code> or one of its subclasses.
+classes, covered in <a class="xref" href="jdbc.html#jdbc-object" title="13.6&nbsp;Modeling JDBC operations as Java objects">Section&nbsp;13.6, &#8220;Modeling JDBC operations as Java objects&#8221;</a>, you use an <code class="literal">SqlParameter</code> or one of its subclasses.
 You typically specify the parameter name and SQL type in the constructor. The SQL type
 is specified using the <code class="literal">java.sql.Types</code> constants. We have already seen declarations
 like:</p>
@@ -1311,7 +1311,7 @@ provide a <code class="literal">RowMapper</code> to handle mapping of rows retur
 option is to specify an <code class="literal">SqlReturnType</code> that provides an opportunity to define
 customized handling of the return values.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-3" href="#jdbc-simple-jdbc-call-3"></a>14.5.8&nbsp;Calling a stored function using SimpleJdbcCall</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-3" href="#jdbc-simple-jdbc-call-3"></a>13.5.8&nbsp;Calling a stored function using SimpleJdbcCall</h3></div></div></div>
 
 <p>You call a stored function in almost the same way as you call a stored procedure, except
 that you provide a function name rather than a procedure name. You use the
@@ -1361,7 +1361,7 @@ that returns an actor&#8217;s full name. Here is the MySQL source for this funct
 <p>The execute method used returns a <code class="literal">String</code> containing the return value from the function
 call.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-4" href="#jdbc-simple-jdbc-call-4"></a>14.5.9&nbsp;Returning ResultSet/REF Cursor from a SimpleJdbcCall</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-simple-jdbc-call-4" href="#jdbc-simple-jdbc-call-4"></a>13.5.9&nbsp;Returning ResultSet/REF Cursor from a SimpleJdbcCall</h3></div></div></div>
 
 <p>Calling a stored procedure or function that returns a result set is a bit tricky. Some
 databases return result sets during the JDBC results processing while others require an
@@ -1409,7 +1409,7 @@ created by passing in the required class to map to in the <code class="literal">
 The list of Actors is then retrieved from the results map and returned to the caller.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-object" href="#jdbc-object"></a>14.6&nbsp;Modeling JDBC operations as Java objects</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-object" href="#jdbc-object"></a>13.6&nbsp;Modeling JDBC operations as Java objects</h2></div></div></div>
 
 <p>The <code class="literal">org.springframework.jdbc.object</code> package contains classes that allow you to access
 the database in a more object-oriented manner. As an example, you can execute queries
@@ -1418,7 +1418,7 @@ column data mapped to the properties of the business object. You can also execut
 procedures and run update, delete, and insert statements.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>Many Spring developers believe that the various RDBMS operation classes described below
-(with the exception of the <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="14.6.4&nbsp;StoredProcedure"><code class="literal">StoredProcedure</code></a> class) can often
+(with the exception of the <a class="link" href="jdbc.html#jdbc-StoredProcedure" title="13.6.4&nbsp;StoredProcedure"><code class="literal">StoredProcedure</code></a> class) can often
 be replaced with straight <code class="literal">JdbcTemplate</code> calls. Often it is simpler to write a DAO
 method that simply calls a method on a <code class="literal">JdbcTemplate</code> directly (as opposed to
 encapsulating a query as a full-blown class).</p>
@@ -1426,7 +1426,7 @@ encapsulating a query as a full-blown class).</p>
 continue using these classes.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlQuery" href="#jdbc-SqlQuery"></a>14.6.1&nbsp;SqlQuery</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlQuery" href="#jdbc-SqlQuery"></a>13.6.1&nbsp;SqlQuery</h3></div></div></div>
 
 <p><code class="literal">SqlQuery</code> is a reusable, threadsafe class that encapsulates an SQL query. Subclasses
 must implement the <code class="literal">newRowMapper(..)</code> method to provide a <code class="literal">RowMapper</code> instance that can
@@ -1436,7 +1436,7 @@ the <code class="literal">MappingSqlQuery</code> subclass provides a much more c
 mapping rows to Java classes. Other implementations that extend <code class="literal">SqlQuery</code> are
 <code class="literal">MappingSqlQueryWithParameters</code> and <code class="literal">UpdatableSqlQuery</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-MappingSqlQuery" href="#jdbc-MappingSqlQuery"></a>14.6.2&nbsp;MappingSqlQuery</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-MappingSqlQuery" href="#jdbc-MappingSqlQuery"></a>13.6.2&nbsp;MappingSqlQuery</h3></div></div></div>
 
 <p><code class="literal">MappingSqlQuery</code> is a reusable query in which concrete subclasses must implement the
 abstract <code class="literal">mapRow(..)</code> method to convert each row of the supplied <code class="literal">ResultSet</code> into an
@@ -1494,7 +1494,7 @@ methods that takes an array of parameter values passed in as varargs.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlUpdate" href="#jdbc-SqlUpdate"></a>14.6.3&nbsp;SqlUpdate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-SqlUpdate" href="#jdbc-SqlUpdate"></a>13.6.3&nbsp;SqlUpdate</h3></div></div></div>
 
 <p>The <code class="literal">SqlUpdate</code> class encapsulates an SQL update. Like a query, an update object is
 reusable, and like all <code class="literal">RdbmsOperation</code> classes, an update can have parameters and is
@@ -1531,7 +1531,7 @@ class since it can easily be parameterized by setting SQL and declaring paramete
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-StoredProcedure" href="#jdbc-StoredProcedure"></a>14.6.4&nbsp;StoredProcedure</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-StoredProcedure" href="#jdbc-StoredProcedure"></a>13.6.4&nbsp;StoredProcedure</h3></div></div></div>
 
 <p>The <code class="literal">StoredProcedure</code> class is a superclass for object abstractions of RDBMS stored
 procedures. This class is <code class="literal">abstract</code>, and its various <code class="literal">execute(..)</code> methods have
@@ -1714,11 +1714,11 @@ delegate to the superclass' untyped <code class="literal">execute(Map parameters
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-parameter-handling" href="#jdbc-parameter-handling"></a>14.7&nbsp;Common problems with parameter and data value handling</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-parameter-handling" href="#jdbc-parameter-handling"></a>13.7&nbsp;Common problems with parameter and data value handling</h2></div></div></div>
 
 <p>Common problems with parameters and data values exist in the different approaches
 provided by the Spring Framework JDBC.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-type-information" href="#jdbc-type-information"></a>14.7.1&nbsp;Providing SQL type information for parameters</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-type-information" href="#jdbc-type-information"></a>13.7.1&nbsp;Providing SQL type information for parameters</h3></div></div></div>
 
 <p>Usually Spring determines the SQL type of the parameters based on the type of parameter
 passed in. It is possible to explicitly provide the SQL type to be used when setting
@@ -1741,7 +1741,7 @@ for registering the SQL type for any of the named parameter values.
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-lob" href="#jdbc-lob"></a>14.7.2&nbsp;Handling BLOB and CLOB objects</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-lob" href="#jdbc-lob"></a>13.7.2&nbsp;Handling BLOB and CLOB objects</h3></div></div></div>
 
 <p>You can store images, other binary objects, and large chunks of text. These large object
 are called BLOB for binary data and CLOB for character data. In Spring you can handle
@@ -1819,7 +1819,7 @@ results.put(<span class="hl-string">"BLOB"</span>, blobBytes); <span class="hl-k
   </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-in-clause" href="#jdbc-in-clause"></a>14.7.3&nbsp;Passing in lists of values for IN clause</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-in-clause" href="#jdbc-in-clause"></a>13.7.3&nbsp;Passing in lists of values for IN clause</h3></div></div></div>
 
 <p>The SQL standard allows for selecting rows based on an expression that includes a
 variable list of values. A typical example would be <code class="literal">select * from T_ACTOR where id in
@@ -1843,7 +1843,7 @@ of object arrays. This list would support multiple expressions defined for the <
 clause such as <code class="literal">select * from T_ACTOR where (id, last_name) in ((1, 'Johnson'), (2,
 'Harrop'))</code>. This of course requires that your database supports this syntax.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-complex-types" href="#jdbc-complex-types"></a>14.7.4&nbsp;Handling complex types for stored procedure calls</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-complex-types" href="#jdbc-complex-types"></a>13.7.4&nbsp;Handling complex types for stored procedure calls</h3></div></div></div>
 
 <p>When you call stored procedures you can sometimes use complex types specific to the
 database. To accommodate these types, Spring provides a <code class="literal">SqlReturnType</code> for handling
@@ -1908,20 +1908,20 @@ SqlTypeValue value = <span class="hl-keyword">new</span> AbstractSqlTypeValue() 
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-embedded-database-support" href="#jdbc-embedded-database-support"></a>14.8&nbsp;Embedded database support</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-embedded-database-support" href="#jdbc-embedded-database-support"></a>13.8&nbsp;Embedded database support</h2></div></div></div>
 
 <p>The <code class="literal">org.springframework.jdbc.datasource.embedded</code> package provides support for embedded
 Java database engines. Support for <a class="ulink" href="http://www.hsqldb.org" target="_top">HSQL</a>,
 <a class="ulink" href="http://www.h2database.com" target="_top">H2</a>, and <a class="ulink" href="http://db.apache.org/derby" target="_top">Derby</a> is provided
 natively. You can also use an extensible API to plug in new embedded database types and
 <code class="literal">DataSource</code> implementations.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-why-embedded-database" href="#jdbc-why-embedded-database"></a>14.8.1&nbsp;Why use an embedded database?</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-why-embedded-database" href="#jdbc-why-embedded-database"></a>13.8.1&nbsp;Why use an embedded database?</h3></div></div></div>
 
 <p>An embedded database is useful during the development phase of a project because of its
 lightweight nature. Benefits include ease of configuration, quick startup time,
 testability, and the ability to rapidly evolve SQL during development.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-xml" href="#jdbc-embedded-database-xml"></a>14.8.2&nbsp;Creating an embedded database instance using Spring XML</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-xml" href="#jdbc-embedded-database-xml"></a>13.8.2&nbsp;Creating an embedded database instance using Spring XML</h3></div></div></div>
 
 <p>If you want to expose an embedded database instance as a bean in a Spring
 ApplicationContext, use the embedded-database tag in the spring-jdbc namespace:</p>
@@ -1935,7 +1935,7 @@ schema.sql and testdata.sql resources in the classpath. The database instance is
 available to the Spring container as a bean of type <code class="literal">javax.sql.DataSource</code>. This bean
 can then be injected into data access objects as needed.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-java" href="#jdbc-embedded-database-java"></a>14.8.3&nbsp;Creating an embedded database instance programmatically</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-java" href="#jdbc-embedded-database-java"></a>13.8.3&nbsp;Creating an embedded database instance programmatically</h3></div></div></div>
 
 <p>The <code class="literal">EmbeddedDatabaseBuilder</code> class provides a fluent API for constructing an embedded
 database programmatically. Use this when you need to create an embedded database
@@ -1946,7 +1946,7 @@ EmbeddedDatabase db = builder.setType(H2).addScript(<span class="hl-string">"my-
 db.shutdown()</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-extension" href="#jdbc-embedded-database-extension"></a>14.8.4&nbsp;Extending the embedded database support</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-extension" href="#jdbc-embedded-database-extension"></a>13.8.4&nbsp;Extending the embedded database support</h3></div></div></div>
 
 <p>Spring JDBC embedded database support can be extended in two ways:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -1960,26 +1960,26 @@ connection pool, to manage embedded database connections.
 <p>You are encouraged to contribute back extensions to the Spring community at
 <a class="ulink" href="https://jira.spring.io/browse/SPR" target="_top">jira.spring.io</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-HSQL" href="#jdbc-embedded-database-using-HSQL"></a>14.8.5&nbsp;Using HSQL</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-HSQL" href="#jdbc-embedded-database-using-HSQL"></a>13.8.5&nbsp;Using HSQL</h3></div></div></div>
 
 <p>Spring supports HSQL 1.8.0 and above. HSQL is the default embedded database if no type
 is specified explicitly. To specify HSQL explicitly, set the <code class="literal">type</code> attribute of the
 <code class="literal">embedded-database</code> tag to <code class="literal">HSQL</code>. If you are using the builder API, call the
 <code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.HSQL</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-H2" href="#jdbc-embedded-database-using-H2"></a>14.8.6&nbsp;Using H2</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-H2" href="#jdbc-embedded-database-using-H2"></a>13.8.6&nbsp;Using H2</h3></div></div></div>
 
 <p>Spring supports the H2 database as well. To enable H2, set the <code class="literal">type</code> attribute of the
 <code class="literal">embedded-database</code> tag to <code class="literal">H2</code>. If you are using the builder API, call the
 <code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.H2</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-Derby" href="#jdbc-embedded-database-using-Derby"></a>14.8.7&nbsp;Using Derby</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-using-Derby" href="#jdbc-embedded-database-using-Derby"></a>13.8.7&nbsp;Using Derby</h3></div></div></div>
 
 <p>Spring also supports Apache Derby 10.5 and above. To enable Derby, set the <code class="literal">type</code>
 attribute of the <code class="literal">embedded-database</code> tag to <code class="literal">Derby</code>. If using the builder API, call the
 <code class="literal">setType(EmbeddedDatabaseType)</code> method with <code class="literal">EmbeddedDatabaseType.Derby</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-dao-testing" href="#jdbc-embedded-database-dao-testing"></a>14.8.8&nbsp;Testing data access logic with an embedded database</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-embedded-database-dao-testing" href="#jdbc-embedded-database-dao-testing"></a>13.8.8&nbsp;Testing data access logic with an embedded database</h3></div></div></div>
 
 <p>Embedded databases provide a lightweight way to test data access code. The following is
 a data access unit test template that uses an embedded database:</p>
@@ -2009,13 +2009,13 @@ a data access unit test template that uses an embedded database:</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-intializing-datasource" href="#jdbc-intializing-datasource"></a>14.9&nbsp;Initializing a DataSource</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jdbc-intializing-datasource" href="#jdbc-intializing-datasource"></a>13.9&nbsp;Initializing a DataSource</h2></div></div></div>
 
 <p>The <code class="literal">org.springframework.jdbc.datasource.init</code> package provides support for initializing
 an existing <code class="literal">DataSource</code>. The embedded database support provides one option for creating
 and initializing a <code class="literal">DataSource</code> for an application, but sometimes you need to initialize
 an instance running on a server somewhere.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-initializing-datasource-xml" href="#jdbc-initializing-datasource-xml"></a>14.9.1&nbsp;Initializing a database instance using Spring XML</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jdbc-initializing-datasource-xml" href="#jdbc-initializing-datasource-xml"></a>13.9.1&nbsp;Initializing a database instance using Spring XML</h3></div></div></div>
 
 <p>If you want to initialize a database and you can provide a reference to a DataSource
 bean, use the <code class="literal">initialize-database</code> tag in the <code class="literal">spring-jdbc</code> namespace:</p>
@@ -2109,4 +2109,4 @@ Spring web applications, but can be more generally applied.
 </div>
 </div>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">13.&nbsp;DAO support&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;15.&nbsp;&#23545;&#35937;&#20851;&#31995;&#26144;&#23556;(ORM)&#25968;&#25454;&#35775;&#38382;</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dao.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="orm.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.&nbsp;DAO support&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;14.&nbsp;&#23545;&#35937;&#20851;&#31995;&#26144;&#23556;(ORM)&#25968;&#25454;&#35775;&#38382;</td></tr></table></div></body></html>

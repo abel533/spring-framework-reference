@@ -1,6 +1,6 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>33.&nbsp;Classic Spring AOP Usage</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"><link rel="prev" href="classic-spring.html" title="32.&nbsp;Classic Spring Usage"><link rel="next" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">33.&nbsp;Classic Spring AOP Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VII.&nbsp;Appendices</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="classic-aop-spring" href="#classic-aop-spring"></a>33.&nbsp;Classic Spring AOP Usage</h2></div></div></div>
+   <title>32.&nbsp;Classic Spring AOP Usage</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"><link rel="prev" href="classic-spring.html" title="31.&nbsp;Classic Spring Usage"><link rel="next" href="xsd-config.html" title="33.&nbsp;XML Schema-based configuration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">32.&nbsp;Classic Spring AOP Usage</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VII.&nbsp;Appendices</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="classic-aop-spring" href="#classic-aop-spring"></a>32.&nbsp;Classic Spring AOP Usage</h2></div></div></div>
 
 <p>In this appendix we discuss the lower-level Spring AOP APIs and the AOP support used in
 Spring 1.2 applications. For new applications, we recommend the use of the Spring 2.0
@@ -8,10 +8,10 @@ AOP support described in the <a class="link" href="aop.html" title="9.&nbsp;Aspe
 applications, or when reading books and articles, you may come across Spring 1.2 style
 examples. Spring 2.0 is fully backwards compatible with Spring 1.2 and everything
 described in this appendix is fully supported in Spring 2.0.</p>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-pointcuts" href="#classic-aop-api-pointcuts"></a>33.1&nbsp;Pointcut API in Spring</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-pointcuts" href="#classic-aop-api-pointcuts"></a>32.1&nbsp;Pointcut API in Spring</h2></div></div></div>
 
 <p>Let&#8217;s look at how Spring handles the crucial pointcut concept.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-concepts" href="#classic-aop-api-concepts"></a>33.1.1&nbsp;Concepts</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-concepts" href="#classic-aop-api-concepts"></a>32.1.1&nbsp;Concepts</h3></div></div></div>
 
 <p>Spring&#8217;s pointcut model enables pointcut reuse independent of advice types. It&#8217;s
 possible to target different advice using the same pointcut.</p>
@@ -64,7 +64,7 @@ results of pointcut evaluation when an AOP proxy is created.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcut-ops" href="#classic-aop-api-pointcut-ops"></a>33.1.2&nbsp;Operations on pointcuts</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcut-ops" href="#classic-aop-api-pointcut-ops"></a>32.1.2&nbsp;Operations on pointcuts</h3></div></div></div>
 
 <p>Spring supports operations on pointcuts: notably, <span class="emphasis"><em>union</em></span> and <span class="emphasis"><em>intersection</em></span>.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -81,14 +81,14 @@ expressions is usually a simpler approach.
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-aspectj" href="#classic-aop-api-pointcuts-aspectj"></a>33.1.3&nbsp;AspectJ expression pointcuts</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-aspectj" href="#classic-aop-api-pointcuts-aspectj"></a>32.1.3&nbsp;AspectJ expression pointcuts</h3></div></div></div>
 
 <p>Since 2.0, the most important type of pointcut used by Spring is
 <code class="literal">org.springframework.aop.aspectj.AspectJExpressionPointcut</code>. This is a pointcut that
 uses an AspectJ supplied library to parse an AspectJ pointcut expression string.</p>
 <p>See the previous chapter for a discussion of supported AspectJ pointcut primitives.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-impls" href="#classic-aop-api-pointcuts-impls"></a>33.1.4&nbsp;Convenience pointcut implementations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-impls" href="#classic-aop-api-pointcuts-impls"></a>32.1.4&nbsp;Convenience pointcut implementations</h3></div></div></div>
 
 <p>Spring provides several convenient pointcut implementations. Some can be used out of the
 box; others are intended to be subclassed in application-specific pointcuts.</p>
@@ -173,7 +173,7 @@ pointcuts.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-superclasses" href="#classic-aop-api-pointcuts-superclasses"></a>33.1.5&nbsp;Pointcut superclasses</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-superclasses" href="#classic-aop-api-pointcuts-superclasses"></a>32.1.5&nbsp;Pointcut superclasses</h3></div></div></div>
 
 <p>Spring provides useful pointcut superclasses to help you to implement your own pointcuts.</p>
 <p>Because static pointcuts are most useful, you&#8217;ll probably subclass
@@ -190,7 +190,7 @@ abstract method (although it&#8217;s possible to override other methods to custo
 <p>There are also superclasses for dynamic pointcuts.</p>
 <p>You can use custom pointcuts with any advice type in Spring 1.0 RC2 and above.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-custom" href="#classic-aop-api-pointcuts-custom"></a>33.1.6&nbsp;Custom pointcuts</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-pointcuts-custom" href="#classic-aop-api-pointcuts-custom"></a>32.1.6&nbsp;Custom pointcuts</h3></div></div></div>
 
 <p>Because pointcuts in Spring AOP are Java classes, rather than language features (as in
 AspectJ) it&#8217;s possible to declare custom pointcuts, whether static or dynamic. Custom
@@ -203,10 +203,10 @@ for example, "all methods that change instance variables in the target object."<
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advice" href="#classic-aop-api-advice"></a>33.2&nbsp;Advice API in Spring</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advice" href="#classic-aop-api-advice"></a>32.2&nbsp;Advice API in Spring</h2></div></div></div>
 
 <p>Let&#8217;s now look at how Spring AOP handles advice.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-lifecycle" href="#classic-aop-api-advice-lifecycle"></a>33.2.1&nbsp;Advice lifecycles</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-lifecycle" href="#classic-aop-api-advice-lifecycle"></a>32.2.1&nbsp;Advice lifecycles</h3></div></div></div>
 
 <p>Each advice is a Spring bean. An advice instance can be shared across all advised
 objects, or unique to each advised object. This corresponds to <span class="emphasis"><em>per-class</em></span> or
@@ -218,7 +218,7 @@ state; they merely act on the method and arguments.</p>
 the advice adds state to the proxied object.</p>
 <p>It&#8217;s possible to use a mix of shared and per-instance advice in the same AOP proxy.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-types" href="#classic-aop-api-advice-types"></a>33.2.2&nbsp;Advice types in Spring</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-advice-types" href="#classic-aop-api-advice-types"></a>32.2.2&nbsp;Advice types in Spring</h3></div></div></div>
 
 <p>Spring provides several advice types out of the box, and is extensible to support
 arbitrary advice types. Let us look at the basic concepts and standard advice types.</p>
@@ -535,7 +535,7 @@ and stateful mixins.</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advisor" href="#classic-aop-api-advisor"></a>33.3&nbsp;Advisor API in Spring</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advisor" href="#classic-aop-api-advisor"></a>32.3&nbsp;Advisor API in Spring</h2></div></div></div>
 
 <p>In Spring, an Advisor is an aspect that contains just a single advice object associated
 with a pointcut expression.</p>
@@ -548,7 +548,7 @@ example, you could use a interception around advice, throws advice and before ad
 one proxy configuration: Spring will automatically create the necessary interceptor
 chain.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-pfb" href="#classic-aop-pfb"></a>33.4&nbsp;Using the ProxyFactoryBean to create AOP proxies</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-pfb" href="#classic-aop-pfb"></a>32.4&nbsp;Using the ProxyFactoryBean to create AOP proxies</h2></div></div></div>
 
 <p>If you&#8217;re using the Spring IoC container (an ApplicationContext or BeanFactory) for your
 business objects - and you should be! - you will want to use one of Spring&#8217;s AOP
@@ -562,7 +562,7 @@ it to create objects of a different type.)</p>
 <span class="emphasis"><em>org.springframework.aop.framework.ProxyFactoryBean</em></span>. This gives complete control over
 the pointcuts and advice that will apply, and their ordering. However, there are simpler
 options that are preferable if you don&#8217;t need such control.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-1" href="#classic-aop-pfb-1"></a>33.4.1&nbsp;Basics</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-1" href="#classic-aop-pfb-1"></a>32.4.1&nbsp;Basics</h3></div></div></div>
 
 <p>The <code class="literal">ProxyFactoryBean</code>, like other Spring <code class="literal">FactoryBean</code> implementations, introduces a
 level of indirection. If you define a <code class="literal">ProxyFactoryBean</code> with name <code class="literal">foo</code>, what objects
@@ -576,7 +576,7 @@ achieve with other AOP frameworks. For example, an advice may itself reference
 application objects (besides the target, which should be available in any AOP
 framework), benefiting from all the pluggability provided by Dependency Injection.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-2" href="#classic-aop-pfb-2"></a>33.4.2&nbsp;JavaBean properties</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-2" href="#classic-aop-pfb-2"></a>32.4.2&nbsp;JavaBean properties</h3></div></div></div>
 
 <p>In common with most <code class="literal">FactoryBean</code> implementations provided with Spring, the
 <code class="literal">ProxyFactoryBean</code> class is itself a JavaBean. Its properties are used to:</p>
@@ -642,7 +642,7 @@ example, for stateful mixins - use    prototype advices along with a singleton v
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-proxy-types" href="#classic-aop-pfb-proxy-types"></a>33.4.3&nbsp;JDK- and CGLIB-based proxies</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-pfb-proxy-types" href="#classic-aop-pfb-proxy-types"></a>32.4.3&nbsp;JDK- and CGLIB-based proxies</h3></div></div></div>
 
 <p>This section serves as the definitive documentation on how the <code class="literal">ProxyFactoryBean</code>
 chooses to create one of either a JDK- and CGLIB-based proxy for a particular target
@@ -686,7 +686,7 @@ implements; in effect, this is the same as simply supplying a list of each and e
 interface that the target class implements to the <code class="literal">proxyInterfaces</code> property. However,
 it is significantly less work, and less prone to typos.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-intf" href="#classic-aop-api-proxying-intf"></a>33.4.4&nbsp;Proxying interfaces</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-intf" href="#classic-aop-api-proxying-intf"></a>32.4.4&nbsp;Proxying interfaces</h3></div></div></div>
 
 <p>Let&#8217;s look at a simple example of <code class="literal">ProxyFactoryBean</code> in action. This example involves:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -780,7 +780,7 @@ arguably an advantage in that the ProxyFactoryBean definition is self-contained.
 However, there are times when being able to obtain the un-advised target from the
 factory might actually be an <span class="emphasis"><em>advantage</em></span>: for example, in certain test scenarios.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-class" href="#classic-aop-api-proxying-class"></a>33.4.5&nbsp;Proxying classes</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-api-proxying-class" href="#classic-aop-api-proxying-class"></a>32.4.5&nbsp;Proxying classes</h3></div></div></div>
 
 <p>What if you need to proxy a class, rather than one or more interfaces?</p>
 <p>Imagine that in our example above, there was no <code class="literal">Person</code> interface: we needed to advise
@@ -811,7 +811,7 @@ conflicts with other projects that have dependence on a differing version of CGL
 Spring 1.0, dynamic proxies are slightly faster. However, this may change in the future.
 Performance should not be a decisive consideration in this case.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-global-advisors" href="#classic-aop-global-advisors"></a>33.4.6&nbsp;Using <span class="emphasis"><em>global</em></span> advisors</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-global-advisors" href="#classic-aop-global-advisors"></a>32.4.6&nbsp;Using <span class="emphasis"><em>global</em></span> advisors</h3></div></div></div>
 
 <p>By appending an asterisk to an interceptor name, all advisors with bean names matching
 the part before the asterisk, will be added to the advisor chain. This can come in handy
@@ -830,7 +830,7 @@ if you need to add a standard set of <span class="emphasis"><em>global</em></spa
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-concise-proxy" href="#classic-aop-concise-proxy"></a>33.5&nbsp;Concise proxy definitions</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-concise-proxy" href="#classic-aop-concise-proxy"></a>32.5&nbsp;Concise proxy definitions</h2></div></div></div>
 
 <p>Especially when defining transactional proxies, you may end up with many similar proxy
 definitions. The use of parent and child bean definitions, along with inner bean
@@ -883,7 +883,7 @@ and this definition specifies a class, you must make sure to set the<span class=
 attribute to <span class="emphasis"><em>true</em></span>, otherwise the application context will actually try to
 pre-instantiate it.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-prog" href="#classic-aop-prog"></a>33.6&nbsp;Creating AOP proxies programmatically with the ProxyFactory</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-prog" href="#classic-aop-prog"></a>32.6&nbsp;Creating AOP proxies programmatically with the ProxyFactory</h2></div></div></div>
 
 <p>It&#8217;s easy to create AOP proxies programmatically using Spring. This enables you to use
 Spring AOP without dependency on Spring IoC.</p>
@@ -912,7 +912,7 @@ as in general.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advised" href="#classic-aop-api-advised"></a>33.7&nbsp;Manipulating advised objects</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-advised" href="#classic-aop-api-advised"></a>32.7&nbsp;Manipulating advised objects</h2></div></div></div>
 
 <p>However you create AOP proxies, you can manipulate them using the
 <code class="literal">org.springframework.aop.framework.Advised</code> interface. Any AOP proxy can be cast to this
@@ -987,7 +987,7 @@ prevent calling code removing a security interceptor. It may also be used in Spr
 to allow aggressive optimization if runtime advice modification is known not to be
 required.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-autoproxy" href="#classic-aop-autoproxy"></a>33.8&nbsp;Using the "autoproxy" facility</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-autoproxy" href="#classic-aop-autoproxy"></a>32.8&nbsp;Using the "autoproxy" facility</h2></div></div></div>
 
 <p>So far we&#8217;ve considered explicit creation of AOP proxies using a <code class="literal">ProxyFactoryBean</code> or
 similar factory bean.</p>
@@ -1005,7 +1005,7 @@ A special case of autoproxy creation that deserves to be considered separately;
 autoproxy creation driven by source-level metadata attributes.
 </li></ul></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-choices" href="#classic-aop-autoproxy-choices"></a>33.8.1&nbsp;Autoproxy bean definitions</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-choices" href="#classic-aop-autoproxy-choices"></a>32.8.1&nbsp;Autoproxy bean definitions</h3></div></div></div>
 
 <p>The <code class="literal">org.springframework.aop.framework.autoproxy</code> package provides the following
 standard autoproxy creators.</p>
@@ -1097,7 +1097,7 @@ definitions offer insufficient customization to the behavior of the framework
 <code class="literal">DefaultAdvisorAutoProxyCreator</code>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-metadata" href="#classic-aop-autoproxy-metadata"></a>33.8.2&nbsp;Using metadata-driven auto-proxying</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-autoproxy-metadata" href="#classic-aop-autoproxy-metadata"></a>32.8.2&nbsp;Using metadata-driven auto-proxying</h3></div></div></div>
 
 <p>A particularly important type of autoproxying is driven by metadata. This produces a
 similar programming model to .NET <code class="literal">ServicedComponents</code>. Instead of using XML deployment
@@ -1210,7 +1210,7 @@ definitions are prototypes. The <code class="literal">myAttributeAwarePointcut</
 definition, as it doesn&#8217;t hold state for individual advised objects.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-targetsource" href="#classic-aop-targetsource"></a>33.9&nbsp;Using TargetSources</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-targetsource" href="#classic-aop-targetsource"></a>32.9&nbsp;Using TargetSources</h2></div></div></div>
 
 <p>Spring offers the concept of a <span class="emphasis"><em>TargetSource</em></span>, expressed in the
 <code class="literal">org.springframework.aop.TargetSource</code> interface. This interface is responsible for
@@ -1230,7 +1230,7 @@ rather than a singleton bean definition. This allows Spring to create a new targ
 instance when required.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-swap" href="#classic-aop-ts-swap"></a>33.9.1&nbsp;Hot swappable target sources</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-swap" href="#classic-aop-ts-swap"></a>32.9.1&nbsp;Hot swappable target sources</h3></div></div></div>
 
 <p>The <code class="literal">org.springframework.aop.target.HotSwappableTargetSource</code> exists to allow the target
 of an AOP proxy to be switched while allowing callers to keep their references to it.</p>
@@ -1258,7 +1258,7 @@ the new target.</p>
 use a <code class="literal">TargetSource</code> - of course any <code class="literal">TargetSource</code> can be used in conjunction with
 arbitrary advice.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-pool" href="#classic-aop-ts-pool"></a>33.9.2&nbsp;Pooling target sources</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-pool" href="#classic-aop-ts-pool"></a>32.9.2&nbsp;Pooling target sources</h3></div></div></div>
 
 <p>Using a pooling target source provides a similar programming model to stateless session
 EJBs, in which a pool of identical instances is maintained, with method invocations
@@ -1321,7 +1321,7 @@ pooling is problematic if resources are cached.</p>
 <p>Simpler pooling is available using autoproxying. It&#8217;s possible to set the TargetSources
 used by any autoproxy creator.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-prototype" href="#classic-aop-ts-prototype"></a>33.9.3&nbsp;Prototype target sources</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-prototype" href="#classic-aop-ts-prototype"></a>32.9.3&nbsp;Prototype target sources</h3></div></div></div>
 
 <p>Setting up a "prototype" target source is similar to a pooling TargetSource. In this
 case, a new instance of the target will be created on every method invocation. Although
@@ -1338,7 +1338,7 @@ use this approach without very good reason.</p>
 TargetSource implementations to ensure consistent naming. As with the pooling target
 source, the target bean must be a prototype bean definition.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-threadlocal" href="#classic-aop-ts-threadlocal"></a>33.9.4&nbsp;ThreadLocal target sources</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="classic-aop-ts-threadlocal" href="#classic-aop-ts-threadlocal"></a>32.9.4&nbsp;ThreadLocal target sources</h3></div></div></div>
 
 <p><code class="literal">ThreadLocal</code> target sources are useful if you need an object to be created for each
 incoming request (per thread that is). The concept of a <code class="literal">ThreadLocal</code> provide a JDK-wide
@@ -1363,7 +1363,7 @@ ThreadLocals without other proper handling code.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-extensibility" href="#classic-aop-extensibility"></a>33.10&nbsp;Defining new Advice types</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-extensibility" href="#classic-aop-extensibility"></a>32.10&nbsp;Defining new Advice types</h2></div></div></div>
 
 <p>Spring AOP is designed to be extensible. While the interception implementation strategy
 is presently used internally, it is possible to support arbitrary advice types in
@@ -1376,7 +1376,7 @@ only constraint on a custom <code class="literal">Advice</code> type is that it 
 <p>Please refer to the <code class="literal">org.springframework.aop.framework.adapter</code> package&#8217;s Javadocs for
 further information.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-resources" href="#classic-aop-api-resources"></a>33.11&nbsp;Further resources</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="classic-aop-api-resources" href="#classic-aop-api-resources"></a>32.11&nbsp;Further resources</h2></div></div></div>
 
 <p>Please refer to the Spring sample applications for further examples of Spring AOP:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -1388,4 +1388,4 @@ declarative transaction management.
 </li></ul></div>
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-appendices.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">32.&nbsp;Classic Spring Usage&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;34.&nbsp;XML Schema-based configuration</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="classic-spring.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-appendices.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="xsd-config.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">31.&nbsp;Classic Spring Usage&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;33.&nbsp;XML Schema-based configuration</td></tr></table></div></body></html>

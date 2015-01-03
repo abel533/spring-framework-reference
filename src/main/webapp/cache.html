@@ -1,17 +1,17 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>30.&nbsp;Cache Abstraction</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="dynamic-language.html" title="29.&nbsp;Dynamic language support"><link rel="next" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">30.&nbsp;Cache Abstraction</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dynamic-language.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-appendices.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="cache" href="#cache"></a>30.&nbsp;Cache Abstraction</h2></div></div></div>
+   <title>29.&nbsp;Cache Abstraction</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="dynamic-language.html" title="28.&nbsp;Dynamic language support"><link rel="next" href="spring-appendices.html" title="Part&nbsp;VII.&nbsp;Appendices"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">29.&nbsp;Cache Abstraction</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="dynamic-language.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-appendices.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="cache" href="#cache"></a>29.&nbsp;Cache Abstraction</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-introduction" href="#cache-introduction"></a>30.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-introduction" href="#cache-introduction"></a>29.1&nbsp;Introduction</h2></div></div></div>
 
 <p>Since version 3.1, Spring Framework provides support for transparently adding caching
-into an existing Spring application. Similar to the <a class="link" href="transaction.html" title="12.&nbsp;Transaction Management">transaction</a> support,
+into an existing Spring application. Similar to the <a class="link" href="transaction.html" title="11.&nbsp;Transaction Management">transaction</a> support,
 the caching abstraction allows consistent use of various caching solutions with minimal
 impact on the code.</p>
 <p>As from Spring 4.1, the cache abstraction has been significantly improved with the
-support of <a class="link" href="cache.html#cache-jsr-107" title="30.4&nbsp;JCache (JSR-107) annotations">JSR-107 annotations</a> and more customization options.</p>
+support of <a class="link" href="cache.html#cache-jsr-107" title="29.4&nbsp;JCache (JSR-107) annotations">JSR-107 annotations</a> and more customization options.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-strategies" href="#cache-strategies"></a>30.2&nbsp;Understanding the cache abstraction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-strategies" href="#cache-strategies"></a>29.2&nbsp;Understanding the cache abstraction</h2></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Cache vs Buffer</b></p></div></div></div>
 
@@ -54,11 +54,11 @@ store the cache data - that is, the abstraction frees the developer from having 
 the caching logic but does not provide the actual stores. This abstraction is
 materialized by the <code class="literal">org.springframework.cache.Cache</code> and
 <code class="literal">org.springframework.cache.CacheManager</code> interfaces.</p>
-<p>There are <a class="link" href="cache.html#cache-store-configuration" title="30.6&nbsp;Configuring the cache storage">a few implementations</a> of that abstraction
+<p>There are <a class="link" href="cache.html#cache-store-configuration" title="29.6&nbsp;Configuring the cache storage">a few implementations</a> of that abstraction
 available out of the box: JDK <code class="literal">java.util.concurrent.ConcurrentMap</code> based caches,
 <a class="ulink" href="http://ehcache.org/" target="_top">EhCache</a>, Gemfire cache,
 <a class="ulink" href="https://code.google.com/p/guava-libraries/wiki/CachesExplained" target="_top">Guava caches</a> and
-JSR-107 compliant caches. See <a class="xref" href="cache.html#cache-plug" title="30.7&nbsp;Plugging-in different back-end caches">Section&nbsp;30.7, &#8220;Plugging-in different back-end caches&#8221;</a> for more information on plugging in
+JSR-107 compliant caches. See <a class="xref" href="cache.html#cache-plug" title="29.7&nbsp;Plugging-in different back-end caches">Section&nbsp;29.7, &#8220;Plugging-in different back-end caches&#8221;</a> for more information on plugging in
 other cache stores/providers.</p>
 <div class="important" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Important"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Important]" src="images/important.png"></td><th align="left">Important</th></tr><tr><td align="left" valign="top">
 <p>The caching abstraction has no special handling of multi-threaded and multi-process
@@ -83,7 +83,7 @@ cache configuration - the backing cache where the data is stored and read from
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-annotations" href="#cache-annotations"></a>30.3&nbsp;Declarative annotation-based caching</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-annotations" href="#cache-annotations"></a>29.3&nbsp;Declarative annotation-based caching</h2></div></div></div>
 
 <p>For caching declaration, the abstraction provides a set of Java annotations:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -99,7 +99,7 @@ cache configuration - the backing cache where the data is stored and read from
 </li></ul></div>
 
 <p>Let us take a closer look at each annotation:</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-cacheable" href="#cache-annotations-cacheable"></a>30.3.1&nbsp;@Cacheable annotation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-cacheable" href="#cache-annotations-cacheable"></a>29.3.1&nbsp;@Cacheable annotation</h3></div></div></div>
 
 <p>As the name implies, <code class="literal">@Cacheable</code> is used to demarcate methods that are cacheable - that
 is, methods for whom the result is stored into the cache so on subsequent invocations
@@ -262,7 +262,7 @@ only want to cache paperback books:</p>
 framework provides dedicated caching related metadata such as the argument names. The
 next table lists the items made available to the context so one can use them for key and
 conditional computations:</p>
-<div class="table"><a name="cache-spel-context-tbl" href="#cache-spel-context-tbl"></a><p class="title"><b>Table&nbsp;30.1.&nbsp;Cache SpEL available metadata</b></p><div class="table-contents">
+<div class="table"><a name="cache-spel-context-tbl" href="#cache-spel-context-tbl"></a><p class="title"><b>Table&nbsp;29.1.&nbsp;Cache SpEL available metadata</b></p><div class="table-contents">
 
   <table summary="Cache SpEL available metadata" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"><col class="col_4"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Name</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Location</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Example</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>methodName</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The name of the method being invoked</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.methodName</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>method</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The method being invoked</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.method.name</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>target</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The target object being invoked</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.target</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>targetClass</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The class of the target being invoked</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.targetClass</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>args</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The arguments (as array) used for invoking the target</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.args[0]</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>caches</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>root object</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Collection of caches against which the current method is executed</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">#root.caches[0].name</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><span class="emphasis"><em>argument name</em></span></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>evaluation context</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of any of the method argument. If for some reason the names are not available
   (ex: no debug information), the argument names are also available under the <code class="literal">a&lt;#arg&gt;</code>
@@ -273,7 +273,7 @@ conditional computations:</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-put" href="#cache-annotations-put"></a>30.3.2&nbsp;@CachePut annotation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-put" href="#cache-annotations-put"></a>29.3.2&nbsp;@CachePut annotation</h3></div></div></div>
 
 <p>For cases where the cache needs to be updated without interfering with the method
 execution, one can use the <code class="literal">@CachePut</code> annotation. That is, the method will always be
@@ -295,7 +295,7 @@ the exclusion.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-evict" href="#cache-annotations-evict"></a>30.3.3&nbsp;@CacheEvict annotation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-evict" href="#cache-annotations-evict"></a>29.3.3&nbsp;@CacheEvict annotation</h3></div></div></div>
 
 <p>The cache abstraction allows not just population of a cache store but also eviction.
 This process is useful for removing stale or unused data from the cache. Opposed to
@@ -327,7 +327,7 @@ methods act as triggers, the return values are ignored (as they don&#8217;t inte
 cache) - this is not the case with <code class="literal">@Cacheable</code> which adds/updates data into the cache
 and thus requires a result.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-caching" href="#cache-annotations-caching"></a>30.3.4&nbsp;@Caching annotation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-caching" href="#cache-annotations-caching"></a>29.3.4&nbsp;@Caching annotation</h3></div></div></div>
 
 <p>There are cases when multiple annotations of the same type, such as <code class="literal">@CacheEvict</code> or
 <code class="literal">@CachePut</code> need to be specified, for example because the condition or the key
@@ -339,7 +339,7 @@ this case, <code class="literal">@Caching</code>. <code class="literal">@Caching
 <span class="hl-keyword">public</span> Book importBooks(String deposit, Date date)</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-config" href="#cache-annotations-config"></a>30.3.5&nbsp;@CacheConfig annotation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotations-config" href="#cache-annotations-config"></a>29.3.5&nbsp;@CacheConfig annotation</h3></div></div></div>
 
 <p>So far we have seen that caching operations offered many customization options and
 these can be set on an operation basis. However, some of the customization options
@@ -368,7 +368,7 @@ At the operation level
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotation-enable" href="#cache-annotation-enable"></a>30.3.6&nbsp;Enable caching annotations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotation-enable" href="#cache-annotation-enable"></a>29.3.6&nbsp;Enable caching annotations</h3></div></div></div>
 
 <p>It is important to note that even though declaring the cache annotations does not
 automatically trigger their actions - like many things in Spring, the feature has to be
@@ -397,8 +397,8 @@ your code).</p>
 <p>Both the <code class="literal">cache:annotation-driven</code> element and <code class="literal">@EnableCaching</code> annotation allow various
 options to be specified that influence the way the caching behavior is added to the
 application through AOP. The configuration is intentionally similar with that of
-<a class="link" href="transaction.html#tx-annotation-driven-settings" title="Table&nbsp;12.2.&nbsp;Annotation driven transaction settings"><code class="literal">@Transactional</code></a>:</p>
-<div class="table"><a name="cache-annotation-driven-settings" href="#cache-annotation-driven-settings"></a><p class="title"><b>Table&nbsp;30.2.&nbsp;Cache annotation settings</b></p><div class="table-contents">
+<a class="link" href="transaction.html#tx-annotation-driven-settings" title="Table&nbsp;11.2.&nbsp;Annotation driven transaction settings"><code class="literal">@Transactional</code></a>:</p>
+<div class="table"><a name="cache-annotation-driven-settings" href="#cache-annotation-driven-settings"></a><p class="title"><b>Table&nbsp;29.2.&nbsp;Cache annotation settings</b></p><div class="table-contents">
 
   <table summary="Cache annotation settings" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"><col class="col_4"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">XML Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation Attribute</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Default</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">cache-manager</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>N/A (See <code class="literal">CachingConfigurer</code> javadocs)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>cacheManager</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Name of cache manager to use. A default <code class="literal">CacheResolver</code> will be initialized behind
   the scenes with this cache manager (or `cacheManager`if not set). For more
@@ -427,7 +427,7 @@ application through AOP. The configuration is intentionally similar with that of
 <p><code class="literal">&lt;cache:annotation-driven/&gt;</code> only looks for <code class="literal">@Cacheable/@CachePut/@CacheEvict/@Caching</code>
 on beans in the same application context it is defined in. This means that, if you put
 <code class="literal">&lt;cache:annotation-driven/&gt;</code> in a <code class="literal">WebApplicationContext</code> for a <code class="literal">DispatcherServlet</code>, it
-only checks for beans in your controllers, and not your services. See <a class="xref" href="mvc.html#mvc-servlet" title="17.2&nbsp;The DispatcherServlet">Section&nbsp;17.2, &#8220;The DispatcherServlet&#8221;</a>
+only checks for beans in your controllers, and not your services. See <a class="xref" href="mvc.html#mvc-servlet" title="16.2&nbsp;The DispatcherServlet">Section&nbsp;16.2, &#8220;The DispatcherServlet&#8221;</a>
 for more information.</p>
 </td></tr></table></div>
 
@@ -461,7 +461,7 @@ using the aspectj mode in this case.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotation-stereotype" href="#cache-annotation-stereotype"></a>30.3.7&nbsp;Using custom annotations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-annotation-stereotype" href="#cache-annotation-stereotype"></a>29.3.7&nbsp;Using custom annotations</h3></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Custom annotation and AspectJ</b></p></div></div></div>
 
@@ -498,10 +498,10 @@ that is annotations that can annotate other annotations. To wit, let us replace 
 
 <p>Even though <code class="literal">@SlowService</code> is not a Spring annotation, the container automatically picks
 up its declaration at runtime and understands its meaning. Note that as mentioned
-<a class="link" href="cache.html#cache-annotation-enable" title="30.3.6&nbsp;Enable caching annotations">above</a>, the annotation-driven behavior needs to be enabled.</p>
+<a class="link" href="cache.html#cache-annotation-enable" title="29.3.6&nbsp;Enable caching annotations">above</a>, the annotation-driven behavior needs to be enabled.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-jsr-107" href="#cache-jsr-107"></a>30.4&nbsp;JCache (JSR-107) annotations</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-jsr-107" href="#cache-jsr-107"></a>29.4&nbsp;JCache (JSR-107) annotations</h2></div></div></div>
 
 <p>Since the Spring Framework 4.1, the caching abstraction fully supports the JCache
 standard annotations: these are <code class="literal">@CacheResult</code>, <code class="literal">@CacheEvict</code>, <code class="literal">@CacheRemove</code> and
@@ -512,12 +512,12 @@ and provides default <code class="literal">CacheResolver</code> and <code class=
 compliant with the specification. In other words, if you are already using Spring&#8217;s
 caching abstraction, you can switch to these standard annotations without changing
 your cache storage (or configuration, for that matter).</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-jsr-107-summary" href="#cache-jsr-107-summary"></a>30.4.1&nbsp;Features summary</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-jsr-107-summary" href="#cache-jsr-107-summary"></a>29.4.1&nbsp;Features summary</h3></div></div></div>
 
 <p>For those who are familiar with Spring&#8217;s caching annotations, the following table
 describes the main differences between the Spring annotations and the JSR-107
 counterpart:</p>
-<div class="table"><a name="d5e23313" href="#d5e23313"></a><p class="title"><b>Table&nbsp;30.3.&nbsp;Spring vs. JSR-107 caching annotations</b></p><div class="table-contents">
+<div class="table"><a name="d5e23312" href="#d5e23312"></a><p class="title"><b>Table&nbsp;29.3.&nbsp;Spring vs. JSR-107 caching annotations</b></p><div class="table-contents">
 
   <table summary="Spring vs. JSR-107 caching annotations" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Spring</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">JSR-107</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Remark</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@Cacheable</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CacheResult</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Fairly similar. <code class="literal">@CacheResult</code> can cache specific exceptions and force the
   execution of the method regardless of the content of the cache.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CachePut</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@CachePut</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>While Spring updates the cache with the result of the method invocation, JCache
@@ -570,7 +570,7 @@ the method again.</p>
 <span class="hl-keyword">public</span> Book findBook(ISBN isbn)</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_enabling_jsr_107_support" href="#_enabling_jsr_107_support"></a>30.4.2&nbsp;Enabling JSR-107 support</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="_enabling_jsr_107_support" href="#_enabling_jsr_107_support"></a>29.4.2&nbsp;Enabling JSR-107 support</h3></div></div></div>
 
 <p>Nothing specific needs to be done to enable the JSR-107 support alongside Spring&#8217;s
 declarative annotation support. Both <code class="literal">@EnableCaching</code> and the
@@ -586,12 +586,12 @@ caches, a consistent and identical key generation implementation should be used.
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-declarative-xml" href="#cache-declarative-xml"></a>30.5&nbsp;Declarative XML-based caching</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-declarative-xml" href="#cache-declarative-xml"></a>29.5&nbsp;Declarative XML-based caching</h2></div></div></div>
 
 <p>If annotations are not an option (no access to the sources or no external code), one can
 use XML for declarative caching. So instead of annotating the methods for caching, one
 specifies the target method and the caching directives externally (similar to the
-declarative transaction management <a class="link" href="transaction.html#transaction-declarative-first-example" title="12.5.2&nbsp;Example of declarative transaction implementation">advice</a>).
+declarative transaction management <a class="link" href="transaction.html#transaction-declarative-first-example" title="11.5.2&nbsp;Example of declarative transaction implementation">advice</a>).
 The previous example can be translated into:</p>
 <pre class="programlisting"><span class="hl-comment">&lt;!-- the service we want to make cacheable --&gt;</span>
 <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"bookService"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"x.y.service.DefaultBookService"</span><span class="hl-tag">/&gt;</span>
@@ -631,12 +631,12 @@ caching (again due to the AspectJ pointcut) and to create template-like definiti
 we did in the example above by defining the target cache through the <code class="literal">cache:definitions</code>
 <code class="literal">cache</code> attribute).</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-store-configuration" href="#cache-store-configuration"></a>30.6&nbsp;Configuring the cache storage</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-store-configuration" href="#cache-store-configuration"></a>29.6&nbsp;Configuring the cache storage</h2></div></div></div>
 
 <p>Out of the box, the cache abstraction provides several storages integration. To use
 them, one needs to simply declare an appropriate <code class="literal">CacheManager</code> - an entity that
 controls and manages <code class="literal">Cache</code>s and can be used to retrieve these for storage.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-jdk" href="#cache-store-configuration-jdk"></a>30.6.1&nbsp;JDK ConcurrentMap-based Cache</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-jdk" href="#cache-store-configuration-jdk"></a>29.6.1&nbsp;JDK ConcurrentMap-based Cache</h3></div></div></div>
 
 <p>The JDK-based <code class="literal">Cache</code> implementation resides under
 <code class="literal">org.springframework.cache.concurrent</code> package. It allows one to use <code class="literal">ConcurrentHashMap</code>
@@ -659,7 +659,7 @@ suitable for basic use cases, tests or simple applications. The cache scales wel
 very fast but it does not provide any management or persistence capabilities nor
 eviction contracts.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-ehcache" href="#cache-store-configuration-ehcache"></a>30.6.2&nbsp;EhCache-based Cache</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-ehcache" href="#cache-store-configuration-ehcache"></a>29.6.2&nbsp;EhCache-based Cache</h3></div></div></div>
 
 <p>The EhCache implementation is located under <code class="literal">org.springframework.cache.ehcache</code> package.
 Again, to use it, one simply needs to declare the appropriate <code class="literal">CacheManager</code>:</p>
@@ -674,7 +674,7 @@ Again, to use it, one simply needs to declare the appropriate <code class="liter
 is then wired into the dedicated <code class="literal">CacheManager</code> implementation. Note the entire
 ehcache-specific configuration is read from <code class="literal">ehcache.xml</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-guava" href="#cache-store-configuration-guava"></a>30.6.3&nbsp;Guava Cache</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-guava" href="#cache-store-configuration-guava"></a>29.6.3&nbsp;Guava Cache</h3></div></div></div>
 
 <p>The Guava implementation is located under <code class="literal">org.springframework.cache.guava</code> package and
 provides access to several features of Guava.</p>
@@ -697,7 +697,7 @@ will be made available by the manager:</p>
 the <a class="ulink" href="https://code.google.com/p/guava-libraries/wiki/CachesExplained" target="_top">Guava documentation</a>
 for more information about those.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-gemfire" href="#cache-store-configuration-gemfire"></a>30.6.4&nbsp;GemFire-based Cache</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-gemfire" href="#cache-store-configuration-gemfire"></a>29.6.4&nbsp;GemFire-based Cache</h3></div></div></div>
 
 <p>GemFire is a memory-oriented/disk-backed, elastically scalable, continuously available,
 active (with built-in pattern-based subscription notifications), globally replicated
@@ -706,7 +706,7 @@ GemFire as a CacheManager (and more), please refer to the
 <a class="ulink" href="http://docs.spring.io/spring-gemfire/docs/current/reference/htmlsingle/" target="_top">Spring Data GemFire
 reference documentation</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-jsr107" href="#cache-store-configuration-jsr107"></a>30.6.5&nbsp;JSR-107 Cache</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-jsr107" href="#cache-store-configuration-jsr107"></a>29.6.5&nbsp;JSR-107 Cache</h3></div></div></div>
 
 <p>JSR-107 compliant caches can also be used by Spring&#8217;s caching abstraction. The JCache
 implementation is located under <code class="literal">org.springframework.cache.jcache</code> package.</p>
@@ -719,7 +719,7 @@ implementation is located under <code class="literal">org.springframework.cache.
 <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jCacheManager"</span> <span class="hl-attribute">.../&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-noop" href="#cache-store-configuration-noop"></a>30.6.6&nbsp;Dealing with caches without a backing store</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cache-store-configuration-noop" href="#cache-store-configuration-noop"></a>29.6.6&nbsp;Dealing with caches without a backing store</h3></div></div></div>
 
 <p>Sometimes when switching environments or doing testing, one might have cache
 declarations without an actual backing cache configured. As this is an invalid
@@ -745,7 +745,7 @@ handled by the no op cache, which will not store any information causing the tar
 method to be executed every time.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-plug" href="#cache-plug"></a>30.7&nbsp;Plugging-in different back-end caches</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-plug" href="#cache-plug"></a>29.7&nbsp;Plugging-in different back-end caches</h2></div></div></div>
 
 <p>Clearly there are plenty of caching products out there that can be used as a backing
 store. To plug them in, one needs to provide a <code class="literal">CacheManager</code> and <code class="literal">Cache</code> implementation
@@ -758,7 +758,7 @@ package, such as <code class="literal">AbstractCacheManager</code> which takes c
 leaving only the actual <span class="emphasis"><em>mapping</em></span> to be completed. We hope that in time, the libraries
 that provide integration with Spring can fill in this small configuration gap.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-specific-config" href="#cache-specific-config"></a>30.8&nbsp;How can I set the TTL/TTI/Eviction policy/XXX feature?</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cache-specific-config" href="#cache-specific-config"></a>29.8&nbsp;How can I set the TTL/TTI/Eviction policy/XXX feature?</h2></div></div></div>
 
 <p>Directly through your cache provider. The cache abstraction is&#8230; well, an abstraction
 not a cache implementation. The solution you are using might support various data
@@ -767,4 +767,4 @@ policies and different topologies which other solutions do not (take for example
 because there would no backing support. Such functionality should be controlled directly
 through the backing cache, when configuring it or through its native API.</p>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dynamic-language.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-appendices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">29.&nbsp;Dynamic language support&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;VII.&nbsp;Appendices</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="dynamic-language.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-appendices.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.&nbsp;Dynamic language support&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;VII.&nbsp;Appendices</td></tr></table></div></body></html>

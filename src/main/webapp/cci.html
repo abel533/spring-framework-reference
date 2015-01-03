@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>26.&nbsp;JCA CCI</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="jmx.html" title="25.&nbsp;JMX"><link rel="next" href="mail.html" title="27.&nbsp;Email"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">26.&nbsp;JCA CCI</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jmx.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mail.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="cci" href="#cci"></a>26.&nbsp;JCA CCI</h2></div></div></div>
+   <title>25.&nbsp;JCA CCI</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="jmx.html" title="24.&nbsp;JMX"><link rel="next" href="mail.html" title="26.&nbsp;Email"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.&nbsp;JCA CCI</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jmx.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="mail.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="cci" href="#cci"></a>25.&nbsp;JCA CCI</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-introduction" href="#cci-introduction"></a>26.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-introduction" href="#cci-introduction"></a>25.1&nbsp;Introduction</h2></div></div></div>
 
 <p>Java EE provides a specification to standardize access to enterprise information systems
 (EIS): the JCA (Java EE Connector Architecture). This specification is divided into
@@ -32,9 +32,9 @@ special support for such connector-specific APIs.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-config" href="#cci-config"></a>26.2&nbsp;Configuring CCI</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-config" href="#cci-config"></a>25.2&nbsp;Configuring CCI</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-connector" href="#cci-config-connector"></a>26.2.1&nbsp;Connector configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-connector" href="#cci-config-connector"></a>25.2.1&nbsp;Connector configuration</h3></div></div></div>
 
 <p>The base resource to use JCA CCI is the <code class="literal">ConnectionFactory</code> interface. The connector
 used must provide an implementation of this interface.</p>
@@ -61,7 +61,7 @@ might be running.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-connectionfactory" href="#cci-config-connectionfactory"></a>26.2.2&nbsp;ConnectionFactory configuration in Spring</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-connectionfactory" href="#cci-config-connectionfactory"></a>25.2.2&nbsp;ConnectionFactory configuration in Spring</h3></div></div></div>
 
 <p>In order to make connections to the EIS, you need to obtain a <code class="literal">ConnectionFactory</code> from
 the application server if you are in a managed mode, or directly from Spring if you are
@@ -91,7 +91,7 @@ connector. This interface is part of the JCA SPI specification.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-cci-connections" href="#cci-config-cci-connections"></a>26.2.3&nbsp;Configuring CCI connections</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-cci-connections" href="#cci-config-cci-connections"></a>25.2.3&nbsp;Configuring CCI connections</h3></div></div></div>
 
 <p>JCA CCI allow the developer to configure the connections to the EIS using the
 <code class="literal">ConnectionSpec</code> implementation of your connector. In order to configure its properties,
@@ -136,7 +136,7 @@ with the <code class="literal">ConnectionSpec</code> argument, otherwise the var
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-single-connection" href="#cci-config-single-connection"></a>26.2.4&nbsp;Using a single CCI connection</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-config-single-connection" href="#cci-config-single-connection"></a>25.2.4&nbsp;Using a single CCI connection</h3></div></div></div>
 
 <p>If you want to use a single CCI connection, Spring provides a further
 <code class="literal">ConnectionFactory</code> adapter to manage this. The <code class="literal">SingleConnectionFactory</code> adapter class
@@ -169,9 +169,9 @@ Use an intermediary <code class="literal">ConnectionSpecConnectionFactoryAdapter
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-using" href="#cci-using"></a>26.3&nbsp;Using Spring&#8217;s CCI access support</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-using" href="#cci-using"></a>25.3&nbsp;Using Spring&#8217;s CCI access support</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-record-creator" href="#cci-record-creator"></a>26.3.1&nbsp;Record conversion</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-record-creator" href="#cci-record-creator"></a>25.3.1&nbsp;Record conversion</h3></div></div></div>
 
 <p>One of the aims of the JCA CCI support is to provide convenient facilities for
 manipulating CCI records. The developer can specify the strategy to create records and
@@ -224,7 +224,7 @@ implementation of the <code class="literal">RecordExtractor</code> interface can
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-using-template" href="#cci-using-template"></a>26.3.2&nbsp;the CciTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-using-template" href="#cci-using-template"></a>25.3.2&nbsp;the CciTemplate</h3></div></div></div>
 
 <p>The <code class="literal">CciTemplate</code> is the central class of the core CCI support package (
 <code class="literal">org.springframework.jca.cci.core</code>). It simplifies the use of CCI since it handles the
@@ -309,7 +309,7 @@ output <code class="literal">Record</code> as return value.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-using-dao" href="#cci-using-dao"></a>26.3.3&nbsp;DAO support</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-using-dao" href="#cci-using-dao"></a>25.3.3&nbsp;DAO support</h3></div></div></div>
 
 <p>Spring&#8217;s CCI support provides a abstract class for DAOs, supporting injection of a
 <code class="literal">ConnectionFactory</code> or a <code class="literal">CciTemplate</code> instances. The name of the class is
@@ -337,7 +337,7 @@ Internally, this class will create a <code class="literal">CciTemplate</code> in
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="automatic-output-generation" href="#automatic-output-generation"></a>26.3.4&nbsp;Automatic output record generation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="automatic-output-generation" href="#automatic-output-generation"></a>25.3.4&nbsp;Automatic output record generation</h3></div></div></div>
 
 <p>If the connector used only supports the <code class="literal">Interaction.execute(..)</code> method with input and
 output records as parameters (that is, it requires the desired output record to be
@@ -347,7 +347,7 @@ record to be filled by the JCA connector when the response is received. This rec
 be then returned to the caller of the template.</p>
 <p>This property simply holds an implementation of the <code class="literal">RecordCreator</code> interface, used for
 that purpose. The <code class="literal">RecordCreator</code> interface has already been discussed in
-<a class="xref" href="cci.html#cci-record-creator" title="26.3.1&nbsp;Record conversion">Section&nbsp;26.3.1, &#8220;Record conversion&#8221;</a>. The <code class="literal">outputRecordCreator</code> property must be directly specified on
+<a class="xref" href="cci.html#cci-record-creator" title="25.3.1&nbsp;Record conversion">Section&nbsp;25.3.1, &#8220;Record conversion&#8221;</a>. The <code class="literal">outputRecordCreator</code> property must be directly specified on
 the <code class="literal">CciTemplate</code>. This could be done in the application code like so:</p>
 <pre class="programlisting">cciTemplate.setOutputRecordCreator(<span class="hl-keyword">new</span> EciOutputRecordCreator());</pre>
 
@@ -366,17 +366,17 @@ instance.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="template-summary" href="#template-summary"></a>26.3.5&nbsp;Summary</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="template-summary" href="#template-summary"></a>25.3.5&nbsp;Summary</h3></div></div></div>
 
 <p>The following table summarizes the mechanisms of the <code class="literal">CciTemplate</code> class and the
 corresponding methods called on the CCI <code class="literal">Interaction</code> interface:</p>
-<div class="table"><a name="cci-interaction-execute-methods" href="#cci-interaction-execute-methods"></a><p class="title"><b>Table&nbsp;26.1.&nbsp;Usage of Interaction execute methods</b></p><div class="table-contents">
+<div class="table"><a name="cci-interaction-execute-methods" href="#cci-interaction-execute-methods"></a><p class="title"><b>Table&nbsp;25.1.&nbsp;Usage of Interaction execute methods</b></p><div class="table-contents">
 
   <table summary="Usage of Interaction execute methods" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">CciTemplate method signature</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">CciTemplate outputRecordCreator property</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">execute method called on the CCI Interaction</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>boolean execute(InteractionSpec, Record, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, RecordCreator)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, RecordCreator)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record, RecordExtractor)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record, RecordExtractor)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, RecordCreator, RecordExtractor)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, RecordCreator, RecordExtractor)</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="" align="left" valign="top"><p>void execute(InteractionSpec, Record, Record)</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-straight" href="#cci-straight"></a>26.3.6&nbsp;Using a CCI Connection and Interaction directly</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-straight" href="#cci-straight"></a>25.3.6&nbsp;Using a CCI Connection and Interaction directly</h3></div></div></div>
 
 <p><code class="literal">CciTemplate</code> also offers the possibility to work directly with CCI connections and
 interactions, in the same manner as <code class="literal">JdbcTemplate</code> and <code class="literal">JmsTemplate</code>. This is useful
@@ -408,7 +408,7 @@ created inside every callback method. This is completely up to the DAO implement
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-template-example" href="#cci-template-example"></a>26.3.7&nbsp;Example for CciTemplate usage</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-template-example" href="#cci-template-example"></a>25.3.7&nbsp;Example for CciTemplate usage</h3></div></div></div>
 
 <p>In this section, the usage of the <code class="literal">CciTemplate</code> will be shown to acces to a CICS with
 ECI mode, with the IBM CICS ECI connector.</p>
@@ -519,7 +519,7 @@ follows:</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-object" href="#cci-object"></a>26.4&nbsp;Modeling CCI access as operation objects</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-object" href="#cci-object"></a>25.4&nbsp;Modeling CCI access as operation objects</h2></div></div></div>
 
 <p>The <code class="literal">org.springframework.jca.cci.object</code> package contains support classes that allow you
 to access the EIS in a different style: through reusable operation objects, analogous to
@@ -533,7 +533,7 @@ application-level output object and return it.</p>
 CCI support.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-mapping-record" href="#cci-object-mapping-record"></a>26.4.1&nbsp;MappingRecordOperation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-mapping-record" href="#cci-object-mapping-record"></a>25.4.1&nbsp;MappingRecordOperation</h3></div></div></div>
 
 <p><code class="literal">MappingRecordOperation</code> essentially performs the same work as <code class="literal">CciTemplate</code>, but
 represents a specific, pre-configured operation as an object. It provides two template
@@ -587,7 +587,7 @@ MyMappingRecordOperation eisOperation = <span class="hl-keyword">new</span> MyMa
 ...</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-mapping-comm-area" href="#cci-object-mapping-comm-area"></a>26.4.2&nbsp;MappingCommAreaOperation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-mapping-comm-area" href="#cci-object-mapping-comm-area"></a>25.4.2&nbsp;MappingCommAreaOperation</h3></div></div></div>
 
 <p>Some connectors use records based on a COMMAREA which represents an array of bytes
 containing parameters to send to the EIS and data returned by it. Spring provides a
@@ -611,23 +611,23 @@ input COMMAREA and the output COMMAREA into an output object.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-automatic-record-gen" href="#cci-automatic-record-gen"></a>26.4.3&nbsp;Automatic output record generation</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-automatic-record-gen" href="#cci-automatic-record-gen"></a>25.4.3&nbsp;Automatic output record generation</h3></div></div></div>
 
 <p>As every <code class="literal">MappingRecordOperation</code> subclass is based on CciTemplate internally, the same
 way to automatically generate output records as with <code class="literal">CciTemplate</code> is available. Every
 operation object provides a corresponding <code class="literal">setOutputRecordCreator(..)</code> method. For
-further information, see <a class="xref" href="cci.html#automatic-output-generation" title="26.3.4&nbsp;Automatic output record generation">Section&nbsp;26.3.4, &#8220;Automatic output record generation&#8221;</a>.</p>
+further information, see <a class="xref" href="cci.html#automatic-output-generation" title="25.3.4&nbsp;Automatic output record generation">Section&nbsp;25.3.4, &#8220;Automatic output record generation&#8221;</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-summary" href="#cci-object-summary"></a>26.4.4&nbsp;Summary</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-object-summary" href="#cci-object-summary"></a>25.4.4&nbsp;Summary</h3></div></div></div>
 
 <p>The operation object approach uses records in the same manner as the <code class="literal">CciTemplate</code> class.</p>
-<div class="table"><a name="cci-interaction-methods" href="#cci-interaction-methods"></a><p class="title"><b>Table&nbsp;26.2.&nbsp;Usage of Interaction execute methods</b></p><div class="table-contents">
+<div class="table"><a name="cci-interaction-methods" href="#cci-interaction-methods"></a><p class="title"><b>Table&nbsp;25.2.&nbsp;Usage of Interaction execute methods</b></p><div class="table-contents">
 
   <table summary="Usage of Interaction execute methods" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">MappingRecordOperation method signature</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">MappingRecordOperation outputRecordCreator property</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">execute method called on the CCI Interaction</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Object execute(Object)</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>not set</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Record execute(InteractionSpec, Record)</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Object execute(Object)</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>set</p></td><td style="" align="left" valign="top"><p>boolean execute(InteractionSpec, Record, Record)</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-objects-mappring-record-example" href="#cci-objects-mappring-record-example"></a>26.4.5&nbsp;Example for MappingRecordOperation usage</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-objects-mappring-record-example" href="#cci-objects-mappring-record-example"></a>25.4.5&nbsp;Example for MappingRecordOperation usage</h3></div></div></div>
 
 <p>In this section, the usage of the <code class="literal">MappingRecordOperation</code> will be shown to access a
 database with the Blackbox CCI connector.</p>
@@ -730,7 +730,7 @@ follows:</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-objects-mapping-comm-area-example" href="#cci-objects-mapping-comm-area-example"></a>26.4.6&nbsp;Example for MappingCommAreaOperation usage</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="cci-objects-mapping-comm-area-example" href="#cci-objects-mapping-comm-area-example"></a>25.4.6&nbsp;Example for MappingCommAreaOperation usage</h3></div></div></div>
 
 <p>In this section, the usage of the <code class="literal">MappingCommAreaOperation</code> will be shown: accessing a
 CICS with ECI mode with the IBM CICS ECI connector.</p>
@@ -808,7 +808,7 @@ follows:</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-tx" href="#cci-tx"></a>26.5&nbsp;Transactions</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="cci-tx" href="#cci-tx"></a>25.5&nbsp;Transactions</h2></div></div></div>
 
 <p>JCA specifies several levels of transaction support for resource adapters. The kind of
 transactions that your resource adapter supports is specified in its <code class="literal">ra.xml</code> file.
@@ -845,6 +845,6 @@ facilities, be it declarative or programmatic. This is a consequence of Spring&#
 the actual execution strategy. Simply switch between <code class="literal">JtaTransactionManager</code> and
 <code class="literal">CciLocalTransactionManager</code> as needed, keeping your transaction demarcation as-is.</p>
 <p>For more information on Spring&#8217;s transaction facilities, see the chapter entitled
-<a class="xref" href="transaction.html" title="12.&nbsp;Transaction Management">Chapter&nbsp;12, <i>Transaction Management</i></a>.</p>
+<a class="xref" href="transaction.html" title="11.&nbsp;Transaction Management">Chapter&nbsp;11, <i>Transaction Management</i></a>.</p>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jmx.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mail.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">25.&nbsp;JMX&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;27.&nbsp;Email</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jmx.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="mail.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">24.&nbsp;JMX&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;26.&nbsp;Email</td></tr></table></div></body></html>

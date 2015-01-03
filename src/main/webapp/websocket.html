@@ -1,24 +1,24 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>21.&nbsp;WebSocket &#25903;&#25345;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="portlet.html" title="20.&nbsp;Portlet MVC Framework"><link rel="next" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">21.&nbsp;WebSocket &#25903;&#25345;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="portlet.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-integration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="websocket" href="#websocket"></a>21.&nbsp;WebSocket &#25903;&#25345;</h2></div></div></div>
+   <title>20.&nbsp;WebSocket &#25903;&#25345;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="portlet.html" title="19.&nbsp;Portlet MVC Framework"><link rel="next" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">20.&nbsp;WebSocket &#25903;&#25345;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="portlet.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-integration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="websocket" href="#websocket"></a>20.&nbsp;WebSocket &#25903;&#25345;</h2></div></div></div>
 
 <p>This part of the reference documentation covers Spring Framework&#8217;s support for
 WebSocket-style messaging in web applications including use of STOMP as an
 application level WebSocket sub-protocol.</p>
-<p><a class="xref" href="websocket.html#websocket-intro" title="21.1&nbsp;Introduction">Section&nbsp;21.1, &#8220;Introduction&#8221;</a> establishes a frame of mind in which to think about
+<p><a class="xref" href="websocket.html#websocket-intro" title="20.1&nbsp;Introduction">Section&nbsp;20.1, &#8220;Introduction&#8221;</a> establishes a frame of mind in which to think about
 WebSocket, covering adoption challenges, design considerations, and thoughts on
 when it is a good fit.</p>
-<p><a class="xref" href="websocket.html#websocket-server" title="21.2&nbsp;WebSocket API">Section&nbsp;21.2, &#8220;WebSocket API&#8221;</a> reviews the Spring WebSocket API on the
-server-side while <a class="xref" href="websocket.html#websocket-fallback" title="21.3&nbsp;SockJS Fallback Options">Section&nbsp;21.3, &#8220;SockJS Fallback Options&#8221;</a> explains the SockJS protocol and shows
+<p><a class="xref" href="websocket.html#websocket-server" title="20.2&nbsp;WebSocket API">Section&nbsp;20.2, &#8220;WebSocket API&#8221;</a> reviews the Spring WebSocket API on the
+server-side while <a class="xref" href="websocket.html#websocket-fallback" title="20.3&nbsp;SockJS Fallback Options">Section&nbsp;20.3, &#8220;SockJS Fallback Options&#8221;</a> explains the SockJS protocol and shows
 how to configure and use it.</p>
-<p><a class="xref" href="websocket.html#websocket-stomp-overview" title="21.4.1&nbsp;Overview of STOMP">Section&nbsp;21.4.1, &#8220;Overview of STOMP&#8221;</a> introduces the STOMP messaging protocol.
-<a class="xref" href="websocket.html#websocket-stomp-enable" title="21.4.2&nbsp;Enable STOMP over WebSocket">Section&nbsp;21.4.2, &#8220;Enable STOMP over WebSocket&#8221;</a> demonstrates how to configure STOMP support in Spring.
-<a class="xref" href="websocket.html#websocket-stomp-handle-annotations" title="21.4.4&nbsp;Annotation Message Handling">Section&nbsp;21.4.4, &#8220;Annotation Message Handling&#8221;</a> and the following sections explain how to
+<p><a class="xref" href="websocket.html#websocket-stomp-overview" title="20.4.1&nbsp;Overview of STOMP">Section&nbsp;20.4.1, &#8220;Overview of STOMP&#8221;</a> introduces the STOMP messaging protocol.
+<a class="xref" href="websocket.html#websocket-stomp-enable" title="20.4.2&nbsp;Enable STOMP over WebSocket">Section&nbsp;20.4.2, &#8220;Enable STOMP over WebSocket&#8221;</a> demonstrates how to configure STOMP support in Spring.
+<a class="xref" href="websocket.html#websocket-stomp-handle-annotations" title="20.4.4&nbsp;Annotation Message Handling">Section&nbsp;20.4.4, &#8220;Annotation Message Handling&#8221;</a> and the following sections explain how to
 write annotated message handling methods, send messages, choose message broker
 options, as well as work with the special "user" destinations. Finally,
-<a class="xref" href="websocket.html#websocket-stomp-testing" title="21.4.16&nbsp;Testing Annotated Controller Methods">Section&nbsp;21.4.16, &#8220;Testing Annotated Controller Methods&#8221;</a> lists three approaches to testing STOMP/WebSocket
+<a class="xref" href="websocket.html#websocket-stomp-testing" title="20.4.16&nbsp;Testing Annotated Controller Methods">Section&nbsp;20.4.16, &#8220;Testing Annotated Controller Methods&#8221;</a> lists three approaches to testing STOMP/WebSocket
 applications.</p>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-intro" href="#websocket-intro"></a>21.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-intro" href="#websocket-intro"></a>20.1&nbsp;Introduction</h2></div></div></div>
 
 <p>The WebSocket protocol <a class="ulink" href="http://tools.ietf.org/html/rfc6455" target="_top">RFC 6455</a> defines an important
 new capability for web applications: full-duplex, two-way communication between client
@@ -36,7 +36,7 @@ server can use it to send messages to each other.</p>
 WebSocket support. It is compatible with the Java WebSocket API standard
 (<a class="ulink" href="http://jcp.org/en/jsr/detail?id=356" target="_top">JSR-356</a>)
 and also provides additional value-add as explained in the rest of the introduction.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-into-fallback-options" href="#websocket-into-fallback-options"></a>21.1.1&nbsp;WebSocket Fallback Options</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-into-fallback-options" href="#websocket-into-fallback-options"></a>20.1.1&nbsp;WebSocket Fallback Options</h3></div></div></div>
 
 <p>An important challenge to adoption is the lack of support for WebSocket in some
 browsers. Notably the first Internet Explorer version to support WebSocket is
@@ -54,7 +54,7 @@ options based on the <a class="ulink" href="https://github.com/sockjs/sockjs-pro
 These options can be enabled through configuration and do not require
 modifying the application otherwise.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-architecture" href="#websocket-intro-architecture"></a>21.1.2&nbsp;A Messaging Architecture</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-architecture" href="#websocket-intro-architecture"></a>20.1.2&nbsp;A Messaging Architecture</h3></div></div></div>
 
 <p>Aside from short-to-midterm adoption challenges, using WebSocket
 brings up important design considerations that are important to recognize
@@ -76,7 +76,7 @@ a foundation for such a messaging architecture. The module also includes a
 set of annotations for mapping messages to methods, similar to the Spring MVC
 annotation based programming model.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-sub-protocol" href="#websocket-intro-sub-protocol"></a>21.1.3&nbsp;Sub-Protocol Support in WebSocket</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-sub-protocol" href="#websocket-intro-sub-protocol"></a>20.1.3&nbsp;Sub-Protocol Support in WebSocket</h3></div></div></div>
 
 <p>WebSocket does imply a <span class="emphasis"><em>messaging architecture</em></span> but does not mandate the
 use of any specific <span class="emphasis"><em>messaging protocol</em></span>. It is a very thin layer over TCP
@@ -104,7 +104,7 @@ originally created for use in scripting languages with frames inspired
 by HTTP. STOMP is widely support and well suited for use over
 WebSocket and over the web.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-when-to-use" href="#websocket-intro-when-to-use"></a>21.1.4&nbsp;Should I Use WebSocket?</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-when-to-use" href="#websocket-intro-when-to-use"></a>20.1.4&nbsp;Should I Use WebSocket?</h3></div></div></div>
 
 <p>With all the design considerations surrounding the use of WebSocket, it is
 reasonable to ask when is it appropriate to use?</p>
@@ -140,25 +140,25 @@ method for that matter, can easily broadcast a message to all interested
 WebSocket clients or to a specific user.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-server" href="#websocket-server"></a>21.2&nbsp;WebSocket API</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-server" href="#websocket-server"></a>20.2&nbsp;WebSocket API</h2></div></div></div>
 
 <p>The Spring Framework provides a WebSocket API designed to adapt to various WebSocket engines.
 Currently the list includes WebSocket runtimes such as Tomcat 7.0.47+, Jetty 9.1+,
 GlassFish 4.1+, WebLogic 12.1.3+, and Undertow 1.0+ (and WildFly 8.0+). Additional support
 may be added as more WebSocket runtimes become available.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>As explained in the <a class="link" href="websocket.html#websocket-intro-sub-protocol" title="21.1.3&nbsp;Sub-Protocol Support in WebSocket">introduction</a>, direct use of a
+<p>As explained in the <a class="link" href="websocket.html#websocket-intro-sub-protocol" title="20.1.3&nbsp;Sub-Protocol Support in WebSocket">introduction</a>, direct use of a
 WebSocket API is too low level for applications&#8201;&#8212;&#8201;until assumptions are made about the
 format of a message there is little a framework can do to interpret messages or route
 them via annotations. This is why applications should consider using a sub-protocol
-and Spring&#8217;s <a class="link" href="websocket.html#websocket-stomp" title="21.4&nbsp;STOMP Over WebSocket Messaging Architecture">STOMP over WebSocket</a> support.</p>
+and Spring&#8217;s <a class="link" href="websocket.html#websocket-stomp" title="20.4&nbsp;STOMP Over WebSocket Messaging Architecture">STOMP over WebSocket</a> support.</p>
 <p>When using a higher level protocol, the details of the WebSocket API become less
 relevant, much like the details of TCP communication are not exposed to applications
 when using HTTP. Nevertheless this section covers the details of using WebSocket
 directly.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handler" href="#websocket-server-handler"></a>21.2.1&nbsp;Create and Configure a WebSocketHandler</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handler" href="#websocket-server-handler"></a>20.2.1&nbsp;Create and Configure a WebSocketHandler</h3></div></div></div>
 
 <p>Creating a WebSocket server is as simple as implementing <code class="literal">WebSocketHandler</code> or more
 likely extending either <code class="literal">TextWebSocketHandler</code> or <code class="literal">BinaryWebSocketHandler</code>:</p>
@@ -221,7 +221,7 @@ support does not depend on Spring MVC. It is relatively simple to integrate a <c
 into other HTTP serving environments with the help of
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/socket/server/support/WebSocketHttpRequestHandler.html" target="_top">WebSocketHttpRequestHandler</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handshake" href="#websocket-server-handshake"></a>21.2.2&nbsp;Customizing the WebSocket Handshake</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handshake" href="#websocket-server-handshake"></a>20.2.2&nbsp;Customizing the WebSocket Handshake</h3></div></div></div>
 
 <p>The easiest way to customize the initial HTTP WebSocket handshake request is through
 a <code class="literal">HandshakeInterceptor</code>, which exposes "before" and "after" the handshake methods.
@@ -266,11 +266,11 @@ the steps of the WebSocket handshake, including validating the client origin,
 negotiating a sub-protocol, and others. An application may also need to use this
 option if it needs to configure a custom <code class="literal">RequestUpgradeStrategy</code> in order to
 adapt to a WebSocket server engine and version that is not yet supported
-(also see <a class="xref" href="websocket.html#websocket-server-deployment" title="21.2.4&nbsp;Deployment Considerations">Section&nbsp;21.2.4, &#8220;Deployment Considerations&#8221;</a> for more on this subject).
+(also see <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;Deployment Considerations">Section&nbsp;20.2.4, &#8220;Deployment Considerations&#8221;</a> for more on this subject).
 Both the Java-config and XML namespace make it possible to configure a custom
 <code class="literal">HandshakeHandler</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-decorators" href="#websocket-server-decorators"></a>21.2.3&nbsp;WebSocketHandler Decoration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-decorators" href="#websocket-server-decorators"></a>20.2.3&nbsp;WebSocketHandler Decoration</h3></div></div></div>
 
 <p>Spring provides a <code class="literal">WebSocketHandlerDecorator</code> base class that can be used to decorate
 a <code class="literal">WebSocketHandler</code> with additional behavior. Logging and exception handling
@@ -279,7 +279,7 @@ or XML namespace. The <code class="literal">ExceptionWebSocketHandlerDecorator</
 exceptions arising from any WebSocketHandler method and closes the WebSocket
 session with status <code class="literal">1011</code> that indicates a server error.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-deployment" href="#websocket-server-deployment"></a>21.2.4&nbsp;Deployment Considerations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-deployment" href="#websocket-server-deployment"></a>20.2.4&nbsp;Deployment Considerations</h3></div></div></div>
 
 <p>The Spring WebSocket API is easy to integrate into a Spring MVC application where
 the <code class="literal">DispatcherServlet</code> serves both HTTP WebSocket handshake as well as other
@@ -339,7 +339,7 @@ Java initialization API, if required:</p>
 <span class="hl-tag">&lt;/web-app&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-runtime-configuration" href="#websocket-server-runtime-configuration"></a>21.2.5&nbsp;Configuring the WebSocket Engine</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-runtime-configuration" href="#websocket-server-runtime-configuration"></a>20.2.5&nbsp;Configuring the WebSocket Engine</h3></div></div></div>
 
 <p>Each underlying WebSocket engine exposes configuration properties that control
 runtime characteristics such as the size of message buffer sizes, idle timeout,
@@ -444,13 +444,13 @@ that into Spring&#8217;s <code class="literal">DefaultHandshakeHandler</code> th
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-fallback" href="#websocket-fallback"></a>21.3&nbsp;SockJS Fallback Options</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-fallback" href="#websocket-fallback"></a>20.3&nbsp;SockJS Fallback Options</h2></div></div></div>
 
-<p>As explained in the <a class="link" href="websocket.html#websocket-into-fallback-options" title="21.1.1&nbsp;WebSocket Fallback Options">introduction</a>, WebSocket is not
+<p>As explained in the <a class="link" href="websocket.html#websocket-into-fallback-options" title="20.1.1&nbsp;WebSocket Fallback Options">introduction</a>, WebSocket is not
 supported in all browsers yet and may be precluded by restrictive network proxies.
 This is why Spring provides fallback options that emulate the WebSocket API as close
 as possible based on the <a class="ulink" href="https://github.com/sockjs/sockjs-protocol" target="_top">SockJS protocol</a>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-overview" href="#websocket-fallback-sockjs-overview"></a>21.3.1&nbsp;Overview of SockJS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-overview" href="#websocket-fallback-sockjs-overview"></a>20.3.1&nbsp;Overview of SockJS</h3></div></div></div>
 
 <p>The goal of SockJS is to let applications use a WebSocket API but fall back to
 non-WebSocket alternatives when necessary at runtime, i.e. without the need to
@@ -509,7 +509,7 @@ TRACE logging for <code class="literal">org.springframework.web.socket</code>.
 For even more detail refer to the SockJS protocol
 <a class="ulink" href="http://sockjs.github.io/sockjs-protocol/sockjs-protocol-0.3.3.html" target="_top">narrated test</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-enable" href="#websocket-fallback-sockjs-enable"></a>21.3.2&nbsp;Enable SockJS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-enable" href="#websocket-fallback-sockjs-enable"></a>20.3.2&nbsp;Enable SockJS</h3></div></div></div>
 
 <p>SockJS is easy to enable through a configuration:</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
@@ -560,7 +560,7 @@ transport option depending on the browser it&#8217;s running in. Review the
 transport types supported by browser. The client also provides several
 configuration options, for example, to specify which transports to include.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-xhr-vs-iframe" href="#websocket-fallback-xhr-vs-iframe"></a>21.3.3&nbsp;HTTP Streaming in IE 8, 9: Ajax/XHR vs IFrame</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-xhr-vs-iframe" href="#websocket-fallback-xhr-vs-iframe"></a>20.3.3&nbsp;HTTP Streaming in IE 8, 9: Ajax/XHR vs IFrame</h3></div></div></div>
 
 <p>Internet Explorer 8 and 9 are and will remain common for some time. They are
 a key reason for having SockJS. This section covers important
@@ -628,7 +628,7 @@ be cached. For details on how to enable it see the
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-heartbeat" href="#websocket-fallback-sockjs-heartbeat"></a>21.3.4&nbsp;Heartbeat Messages</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-heartbeat" href="#websocket-fallback-sockjs-heartbeat"></a>20.3.4&nbsp;Heartbeat Messages</h3></div></div></div>
 
 <p>The SockJS protocol requires servers to send heartbeat messages to preclude proxies
 from concluding a connection is hung. The Spring SockJS configuiration has a property
@@ -646,7 +646,7 @@ for scheduling heartbeats tasks. The task scheduler is backed by a thread pool
 with default settings based on the number of available processors. Applications
 should consider customizing the settings according to their specific needs.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-servlet3-async" href="#websocket-fallback-sockjs-servlet3-async"></a>21.3.5&nbsp;Servlet 3 Async Requests</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-servlet3-async" href="#websocket-fallback-sockjs-servlet3-async"></a>20.3.5&nbsp;Servlet 3 Async Requests</h3></div></div></div>
 
 <p>HTTP streaming and HTTP long polling SockJS transports require a connection to remain
 open longer than usual. For an overview of these techniques see
@@ -670,7 +670,7 @@ log category to TRACE.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-cors" href="#websocket-fallback-cors"></a>21.3.6&nbsp;CORS Headers for SockJS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-cors" href="#websocket-fallback-cors"></a>20.3.6&nbsp;CORS Headers for SockJS</h3></div></div></div>
 
 <p>The SockJS protocol uses CORS for cross-domain support in the XHR streaming and
 polling transports. Therefore CORS headers are added automatically unless the
@@ -697,7 +697,7 @@ as the <code class="literal">TransportType</code> enum in the source code.</p>
 <p>Alternatively if the CORS configuration allows it consider excluding URLs with the
 SockJS endpoint prefix thus letting Spring&#8217;s SockJsService handle it.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-client" href="#websocket-fallback-sockjs-client"></a>21.3.7&nbsp;SockJS Client</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-client" href="#websocket-fallback-sockjs-client"></a>20.3.7&nbsp;SockJS Client</h3></div></div></div>
 
 <p>A SockJS Java client is provided in order to connect to remote SockJS endpoints without
 using a browser. This can be especially useful when there is a need of bidirectional
@@ -763,13 +763,13 @@ jettyHttpClient.setExecutor(<span class="hl-keyword">new</span> QueuedThreadPool
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-stomp" href="#websocket-stomp"></a>21.4&nbsp;STOMP Over WebSocket Messaging Architecture</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-stomp" href="#websocket-stomp"></a>20.4&nbsp;STOMP Over WebSocket Messaging Architecture</h2></div></div></div>
 
 <p>The WebSocket protocol defines two main types of messages&#8201;&#8212;&#8201;text and binary&#8201;&#8212;&#8201;but leaves their content undefined. Instead it&#8217;s expected that client and
 server may agree on using a sub-protocol, i.e. a higher-level protocol that defines
 the message content. Using a sub-protocol is optional but either way client
 and server both need to understand how to interpret messages.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-overview" href="#websocket-stomp-overview"></a>21.4.1&nbsp;Overview of STOMP</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-overview" href="#websocket-stomp-overview"></a>20.4.1&nbsp;Overview of STOMP</h3></div></div></div>
 
 <p><a class="ulink" href="http://stomp.github.io/stomp-specification-1.2.html#Abstract" target="_top">STOMP</a> is a simple
 messaging protocol originally created for scripting languages (such as Ruby, Python and
@@ -849,7 +849,7 @@ The option to plug a message broker&#8201;&#8212;&#8201;RabbitMQ, ActiveMQ, many
 to provide a programming model for application-level use in the same way that
 Spring MVC provides a programming model based on HTTP.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-enable" href="#websocket-stomp-enable"></a>21.4.2&nbsp;Enable STOMP over WebSocket</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-enable" href="#websocket-stomp-enable"></a>20.4.2&nbsp;Enable STOMP over WebSocket</h3></div></div></div>
 
 <p>The Spring Framework provides support for using STOMP over WebSocket through
 the <code class="literal">spring-messaging</code> and <code class="literal">spring-websocket</code> modules. It&#8217;s easy to enable it.</p>
@@ -915,10 +915,10 @@ stompClient.connect({}, <span class="hl-keyword">function</span>(frame) {
 
 <p>Note that the stompClient above does not need to specify a <code class="literal">login</code> and <code class="literal">passcode</code> headers.
 Even if it did, they would be ignored, or rather overridden, on the server side. See the
-sections <a class="xref" href="websocket.html#websocket-stomp-handle-broker-relay-configure" title="21.4.8&nbsp;Connections To Full-Featured Broker">Section&nbsp;21.4.8, &#8220;Connections To Full-Featured Broker&#8221;</a> and
-<a class="xref" href="websocket.html#websocket-stomp-authentication" title="21.4.10&nbsp;Authentication">Section&nbsp;21.4.10, &#8220;Authentication&#8221;</a> for more information on authentication.</p>
+sections <a class="xref" href="websocket.html#websocket-stomp-handle-broker-relay-configure" title="20.4.8&nbsp;Connections To Full-Featured Broker">Section&nbsp;20.4.8, &#8220;Connections To Full-Featured Broker&#8221;</a> and
+<a class="xref" href="websocket.html#websocket-stomp-authentication" title="20.4.10&nbsp;Authentication">Section&nbsp;20.4.10, &#8220;Authentication&#8221;</a> for more information on authentication.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-message-flow" href="#websocket-stomp-message-flow"></a>21.4.3&nbsp;Flow of Messages</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-message-flow" href="#websocket-stomp-message-flow"></a>20.4.3&nbsp;Flow of Messages</h3></div></div></div>
 
 <p>When a STOMP endpoint is configured, the Spring application acts as the STOMP broker
 to connected clients. It handles incoming messages and sends messages back.
@@ -1016,7 +1016,7 @@ the <code class="literal">"clientOutboundChannel"</code>.
 <p>The next section provides more details on annotated methods including the
 kinds of arguments and return values supported.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-annotations" href="#websocket-stomp-handle-annotations"></a>21.4.4&nbsp;Annotation Message Handling</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-annotations" href="#websocket-stomp-handle-annotations"></a>20.4.4&nbsp;Annotation Message Handling</h3></div></div></div>
 
 <p>The <code class="literal">@MessageMapping</code> annotation is supported on methods of <code class="literal">@Controller</code> classes.
 It can be used for mapping methods to message destinations and can also be combined
@@ -1028,7 +1028,7 @@ e.g. "/foo/{id}" that can then be referenced via <code class="literal">@Destinat
 method arguments.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>Applications can also use dot-separated destinations (vs slash).
-See <a class="xref" href="websocket.html#websocket-stomp-destination-separator" title="21.4.9&nbsp;Using Dot as Separator in @MessageMapping Destinations">Section&nbsp;21.4.9, &#8220;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations&#8221;</a>.</p>
+See <a class="xref" href="websocket.html#websocket-stomp-destination-separator" title="20.4.9&nbsp;Using Dot as Separator in @MessageMapping Destinations">Section&nbsp;20.4.9, &#8220;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations&#8221;</a>.</p>
 </td></tr></table></div>
 
 <p>The following method arguments are supported for <code class="literal">@MessageMapping</code> methods:</p>
@@ -1079,7 +1079,7 @@ Or alternatively an <code class="literal">@SubscribeMapping</code> method can be
 in which case the resulting message is sent to the <code class="literal">"brokerChannel"</code> using
 the specified target destination.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-send" href="#websocket-stomp-handle-send"></a>21.4.5&nbsp;Sending Messages</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-send" href="#websocket-stomp-handle-send"></a>20.4.5&nbsp;Sending Messages</h3></div></div></div>
 
 <p>What if you wanted to send messages to connected clients from any part of the
 application? Any application component can send messages to the <code class="literal">"brokerChannel"</code>.
@@ -1107,7 +1107,7 @@ type, for example:</p>
 <p>But it can also be qualified by its name "brokerMessagingTemplate" if another
 bean of the same type exists.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-simple-broker" href="#websocket-stomp-handle-simple-broker"></a>21.4.6&nbsp;Simple Broker</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-simple-broker" href="#websocket-stomp-handle-simple-broker"></a>20.4.6&nbsp;Simple Broker</h3></div></div></div>
 
 <p>The built-in, simple, message broker handles subscription requests from clients,
 stores them in memory, and broadcasts messages to connected clients with matching
@@ -1115,11 +1115,11 @@ destinations. The broker supports path-like destinations, including subscription
 to Ant-style destination patterns.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>Applications can also use dot-separated destinations (vs slash).
-See <a class="xref" href="websocket.html#websocket-stomp-destination-separator" title="21.4.9&nbsp;Using Dot as Separator in @MessageMapping Destinations">Section&nbsp;21.4.9, &#8220;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations&#8221;</a>.</p>
+See <a class="xref" href="websocket.html#websocket-stomp-destination-separator" title="20.4.9&nbsp;Using Dot as Separator in @MessageMapping Destinations">Section&nbsp;20.4.9, &#8220;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations&#8221;</a>.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-broker-relay" href="#websocket-stomp-handle-broker-relay"></a>21.4.7&nbsp;Full-Featured Broker</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-broker-relay" href="#websocket-stomp-handle-broker-relay"></a>20.4.7&nbsp;Full-Featured Broker</h3></div></div></div>
 
 <p>The simple broker is great for getting started but supports only a subset of
 STOMP commands (e.g. no acks, receipts, etc), relies on a simple message
@@ -1180,11 +1180,11 @@ it acts as a "relay" forwarding messages in both directions.</p>
 
 <p>Furthermore, application components (e.g. HTTP request handling methods,
 business services, etc) can also send messages to the broker relay, as described
-in <a class="xref" href="websocket.html#websocket-stomp-handle-send" title="21.4.5&nbsp;Sending Messages">Section&nbsp;21.4.5, &#8220;Sending Messages&#8221;</a>, in order to broadcast messages to
+in <a class="xref" href="websocket.html#websocket-stomp-handle-send" title="20.4.5&nbsp;Sending Messages">Section&nbsp;20.4.5, &#8220;Sending Messages&#8221;</a>, in order to broadcast messages to
 subscribed WebSocket clients.</p>
 <p>In effect, the broker relay enables robust and scalable message broadcasting.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-broker-relay-configure" href="#websocket-stomp-handle-broker-relay-configure"></a>21.4.8&nbsp;Connections To Full-Featured Broker</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-handle-broker-relay-configure" href="#websocket-stomp-handle-broker-relay-configure"></a>20.4.8&nbsp;Connections To Full-Featured Broker</h3></div></div></div>
 
 <p>A STOMP broker relay maintains a single "system" TCP connection to the broker.
 This connection is used for messages originating from the server-side application
@@ -1223,7 +1223,7 @@ and may be useful for example in a cloud environment where the actual host to wh
 the TCP connection is established is different from the host providing the
 cloud-based STOMP service.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-destination-separator" href="#websocket-stomp-destination-separator"></a>21.4.9&nbsp;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-destination-separator" href="#websocket-stomp-destination-separator"></a>20.4.9&nbsp;Using Dot as Separator in <code class="literal">@MessageMapping</code> Destinations</h3></div></div></div>
 
 <p>Although slash-separated path patterns are familiar to web developers, in messaging
 it is common to use "." as separator for example in the names of topics, queues,
@@ -1279,7 +1279,7 @@ as the separator in <code class="literal">@MessageMapping</code> mappings by con
 
 <p>If the application prefix is set to "/app" then the foo method is effectively mapped to "/app/foo.bar.{baz}".</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-authentication" href="#websocket-stomp-authentication"></a>21.4.10&nbsp;Authentication</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-authentication" href="#websocket-stomp-authentication"></a>20.4.10&nbsp;Authentication</h3></div></div></div>
 
 <p>In a WebSocket-style application it is often useful to know who sent a message.
 Therefore some form of authentication is needed to establish the user identity
@@ -1305,9 +1305,9 @@ when the user has not formally authenticated. For example a mobile app might
 assign some identity to anonymous users, perhaps based on geographical location.
 The do that currently, an application can sub-class <code class="literal">DefaultHandshakeHandler</code>
 and override the <code class="literal">determineUser</code> method. The custom handshake handler can then
-be plugged in (see examples in <a class="xref" href="websocket.html#websocket-server-deployment" title="21.2.4&nbsp;Deployment Considerations">Section&nbsp;21.2.4, &#8220;Deployment Considerations&#8221;</a>).</p>
+be plugged in (see examples in <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;Deployment Considerations">Section&nbsp;20.2.4, &#8220;Deployment Considerations&#8221;</a>).</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-user-destination" href="#websocket-stomp-user-destination"></a>21.4.11&nbsp;User Destinations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-user-destination" href="#websocket-stomp-user-destination"></a>20.4.11&nbsp;User Destinations</h3></div></div></div>
 
 <p>An application can send messages targeting a specific user.
 Spring&#8217;s STOMP support recognizes destinations prefixed with <code class="literal">"/user/"</code>.
@@ -1399,7 +1399,7 @@ for purging inactive destinations.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-appplication-context-events" href="#websocket-stomp-appplication-context-events"></a>21.4.12&nbsp;Listening To ApplicationContext Events and Intercepting Messages</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-appplication-context-events" href="#websocket-stomp-appplication-context-events"></a>20.4.12&nbsp;Listening To ApplicationContext Events and Intercepting Messages</h3></div></div></div>
 
 <p>Several <code class="literal">ApplicationContext</code> events (listed below) are published and can be
 received by implementing Spring&#8217;s <code class="literal">ApplicationListener</code> interface.</p>
@@ -1472,7 +1472,7 @@ to access information about the message.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-websocket-scope" href="#websocket-stomp-websocket-scope"></a>21.4.13&nbsp;WebSocket Scope</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-websocket-scope" href="#websocket-stomp-websocket-scope"></a>20.4.13&nbsp;WebSocket Scope</h3></div></div></div>
 
 <p>Each WebSocket session has a map of attributes. The map is attached as a header to
 inbound client messages and may be accessed from a controller method, for example:</p>
@@ -1530,7 +1530,7 @@ session attributes. The same instance is returned subsequently until the session
 ends. WebSocket-scoped beans will have all Spring lifecycle methods invoked as
 shown in the examples above.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-configuration-performance" href="#websocket-stomp-configuration-performance"></a>21.4.14&nbsp;Configuration and Performance</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-configuration-performance" href="#websocket-stomp-configuration-performance"></a>20.4.14&nbsp;Configuration and Performance</h3></div></div></div>
 
 <p>There is no silver bullet when it comes to performance. Many factors may
 affect it including the size of messages, the volume, whether application
@@ -1541,7 +1541,7 @@ on how to reason about scaling.</p>
 <p>In a messaging application messages are passed through channels for asynchronous
 executions backed by thread pools. Configuring such an application requires
 good knowledge of the channels and the flow of messages. Therefore it is
-recommended to review <a class="xref" href="websocket.html#websocket-stomp-message-flow" title="21.4.3&nbsp;Flow of Messages">Section&nbsp;21.4.3, &#8220;Flow of Messages&#8221;</a>.</p>
+recommended to review <a class="xref" href="websocket.html#websocket-stomp-message-flow" title="20.4.3&nbsp;Flow of Messages">Section&nbsp;20.4.3, &#8220;Flow of Messages&#8221;</a>.</p>
 <p>The obvious place to start is to configure the thread pools backing the
 <code class="literal">"clientInboundChannel"</code> and the <code class="literal">"clientOutboundChannel"</code>. By default both
 are configured at twice the number of available processors.</p>
@@ -1658,7 +1658,7 @@ instance connects to the broker and messages broadcast from one application
 instance can be broadcast through the broker to WebSocket clients connected
 through any other application instances.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-stats" href="#websocket-stomp-stats"></a>21.4.15&nbsp;Runtime Monitoring</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-stats" href="#websocket-stomp-stats"></a>20.4.15&nbsp;Runtime Monitoring</h3></div></div></div>
 
 <p>When using <code class="literal">@EnableWebSocketMessageBroker</code> or <code class="literal">&lt;websocket:message-broker&gt;</code> key
 infrastructure components automatically gather stats and counters that provide
@@ -1732,7 +1732,7 @@ STOMP level the SockJS heartbeats are disabled.
 </dd></dl></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-testing" href="#websocket-stomp-testing"></a>21.4.16&nbsp;Testing Annotated Controller Methods</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-testing" href="#websocket-stomp-testing"></a>20.4.16&nbsp;Testing Annotated Controller Methods</h3></div></div></div>
 
 <p>There are two main approaches to testing applications using Spring&#8217;s STOMP over
 WebSocket support. The first is to write server-side tests verifying the functionality
@@ -1771,4 +1771,4 @@ sample application also demonstrate this approach using Tomcat as the embedded
 WebSocket server and a simple STOMP client for test purposes.</p>
 </div>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="portlet.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-integration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">20.&nbsp;Portlet MVC Framework&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;VI.&nbsp;Integration</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="portlet.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-web.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="spring-integration.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">19.&nbsp;Portlet MVC Framework&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;Part&nbsp;VI.&nbsp;Integration</td></tr></table></div></body></html>

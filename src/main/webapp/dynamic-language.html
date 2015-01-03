@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>29.&nbsp;Dynamic language support</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="scheduling.html" title="28.&nbsp;Task Execution and Scheduling"><link rel="next" href="cache.html" title="30.&nbsp;Cache Abstraction"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">29.&nbsp;Dynamic language support</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="scheduling.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cache.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="dynamic-language" href="#dynamic-language"></a>29.&nbsp;Dynamic language support</h2></div></div></div>
+   <title>28.&nbsp;Dynamic language support</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="scheduling.html" title="27.&nbsp;Task Execution and Scheduling"><link rel="next" href="cache.html" title="29.&nbsp;Cache Abstraction"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">28.&nbsp;Dynamic language support</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="scheduling.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cache.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="dynamic-language" href="#dynamic-language"></a>28.&nbsp;Dynamic language support</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-introduction" href="#dynamic-language-introduction"></a>29.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-introduction" href="#dynamic-language-introduction"></a>28.1&nbsp;Introduction</h2></div></div></div>
 
 <p>Spring 2.0 introduces comprehensive support for using classes and objects that have been
 defined using a dynamic language (such as JRuby) with Spring. This support allows you to
@@ -27,9 +27,9 @@ them.</p>
 </div>
 
 <p>Fully working examples of where this dynamic language support can be immediately useful
-are described in <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="29.4&nbsp;Scenarios">Section&nbsp;29.4, &#8220;Scenarios&#8221;</a>.</p>
+are described in <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="28.4&nbsp;Scenarios">Section&nbsp;28.4, &#8220;Scenarios&#8221;</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-a-first-example" href="#dynamic-language-a-first-example"></a>29.2&nbsp;A first example</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-a-first-example" href="#dynamic-language-a-first-example"></a>28.2&nbsp;A first example</h2></div></div></div>
 
 <p>This bulk of this chapter is concerned with describing the dynamic language support in
 detail. Before diving into all of the ins and outs of the dynamic language support,
@@ -90,7 +90,7 @@ You also need to be using a Spring <code class="literal">ApplicationContext</cod
 container. Using the dynamic-language-backed beans with a plain <code class="literal">BeanFactory</code>
 implementation is supported, but you have to manage the plumbing of the Spring internals
 to do so.</p>
-<p>For more information on schema-based configuration, see <a class="xref" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration">Chapter&nbsp;34, <i>XML Schema-based configuration</i></a>.</p>
+<p>For more information on schema-based configuration, see <a class="xref" href="xsd-config.html" title="33.&nbsp;XML Schema-based configuration">Chapter&nbsp;33, <i>XML Schema-based configuration</i></a>.</p>
 </td></tr></table></div>
 
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
@@ -120,7 +120,7 @@ plain Java and plain Groovy.</p>
 Keep reading for the in-depth detail on the whys and wherefores of the above
 configuration.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-beans" href="#dynamic-language-beans"></a>29.3&nbsp;Defining beans that are backed by dynamic languages</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-beans" href="#dynamic-language-beans"></a>28.3&nbsp;Defining beans that are backed by dynamic languages</h2></div></div></div>
 
 <p>This section describes exactly how you define Spring managed beans in any of the
 supported dynamic languages.</p>
@@ -128,8 +128,8 @@ supported dynamic languages.</p>
 supported dynamic languages. For example, if you want to use Groovy to write certain of
 the classes in your application, then the assumption is that you already know Groovy. If
 you need further details about the dynamic languages themselves, please
-consult <a class="xref" href="dynamic-language.html#dynamic-language-resources" title="29.6&nbsp;Further Resources">Section&nbsp;29.6, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-concepts" href="#dynamic-language-beans-concepts"></a>29.3.1&nbsp;Common concepts</h3></div></div></div>
+consult <a class="xref" href="dynamic-language.html#dynamic-language-resources" title="28.6&nbsp;Further Resources">Section&nbsp;28.6, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-concepts" href="#dynamic-language-beans-concepts"></a>28.3.1&nbsp;Common concepts</h3></div></div></div>
 
 <p>The steps involved in using dynamic-language-backed beans are as follows:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -197,7 +197,7 @@ changed dynamic language source file.</p>
 <p>Let&#8217;s take a look at an example to see just how easy it is to start using refreshable
 beans. To <span class="emphasis"><em>turn on</em></span> the refreshable beans feature, you simply have to specify exactly
 <span class="emphasis"><em>one</em></span> additional attribute on the <code class="literal">&lt;lang:language/&gt;</code> element of your bean definition.
-So if we stick with <a class="link" href="dynamic-language.html#dynamic-language-a-first-example" title="29.2&nbsp;A first example">the example</a> from earlier in this
+So if we stick with <a class="link" href="dynamic-language.html#dynamic-language-a-first-example" title="28.2&nbsp;A first example">the example</a> from earlier in this
 chapter, here&#8217;s what we would change in the Spring XML configuration to effect
 refreshable beans:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
@@ -309,7 +309,7 @@ class GroovyMessenger implements Messenger {
 dynamic language source inside a Spring configuration file, the <code class="literal">&lt;lang:inline-script/&gt;</code>
 element can be useful in some scenarios. For instance, we might want to quickly add a
 Spring <code class="literal">Validator</code> implementation to a Spring MVC <code class="literal">Controller</code>. This is but a moment&#8217;s
-work using inline source. (See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios-validators" title="29.4.2&nbsp;Scripted Validators">Section&nbsp;29.4.2, &#8220;Scripted Validators&#8221;</a> for such an
+work using inline source. (See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios-validators" title="28.4.2&nbsp;Scripted Validators">Section&nbsp;28.4.2, &#8220;Scripted Validators&#8221;</a> for such an
 example.)</p>
 <p>Find below an example of defining the source for a JRuby-based bean directly in a Spring
 XML configuration file using the <code class="literal">inline:</code> notation. (Notice the use of the &lt;
@@ -383,7 +383,7 @@ injection is the injection style favored by the overwhelming majority of develop
 anyway (let&#8217;s leave the discussion as to whether that is a good thing to another day).</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-jruby" href="#dynamic-language-beans-jruby"></a>29.3.2&nbsp;JRuby beans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-jruby" href="#dynamic-language-beans-jruby"></a>28.3.2&nbsp;JRuby beans</h3></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>The JRuby library dependencies</b></p></div></div></div>
 
@@ -480,10 +480,10 @@ as a JRuby-dynamic-language-backed bean (as shown above). Please also note that 
 actually define as many classes and objects as you want in your JRuby script; what is
 important is that the source file as a whole must return an object (for Spring to
 configure).</p>
-<p>See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="29.4&nbsp;Scenarios">Section&nbsp;29.4, &#8220;Scenarios&#8221;</a> for some scenarios where you might want to use
+<p>See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="28.4&nbsp;Scenarios">Section&nbsp;28.4, &#8220;Scenarios&#8221;</a> for some scenarios where you might want to use
 JRuby-based beans.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-groovy" href="#dynamic-language-beans-groovy"></a>29.3.3&nbsp;Groovy beans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-groovy" href="#dynamic-language-beans-groovy"></a>28.3.3&nbsp;Groovy beans</h3></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>The Groovy library dependencies</b></p></div></div></div>
 
@@ -504,7 +504,7 @@ classpath of your application.</p>
 features that people like so much in languages like Python, Ruby and Smalltalk, making
 them available to Java developers using a Java-like syntax. </em></span>"</p>
 <p>If you have read this chapter straight from the top, you will already have
-<a class="link" href="dynamic-language.html#dynamic-language-a-first-example" title="29.2&nbsp;A first example">seen an example</a> of a Groovy-dynamic-language-backed
+<a class="link" href="dynamic-language.html#dynamic-language-a-first-example" title="28.2&nbsp;A first example">seen an example</a> of a Groovy-dynamic-language-backed
 bean. Let&#8217;s look at another example (again using an example from the Spring test suite).</p>
 <pre class="programlisting"><span class="hl-keyword">package</span> org.springframework.scripting;
 
@@ -549,7 +549,7 @@ class GroovyCalculator implements Calculator {
 <p>The resulting output from running the above program will be (unsurprisingly) <span class="emphasis"><em>10</em></span>.
 (Exciting example, huh? Remember that the intent is to illustrate the concept. Please
 consult the dynamic language showcase project for a more complex example, or indeed
-<a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="29.4&nbsp;Scenarios">Section&nbsp;29.4, &#8220;Scenarios&#8221;</a> later in this chapter).</p>
+<a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="28.4&nbsp;Scenarios">Section&nbsp;28.4, &#8220;Scenarios&#8221;</a> later in this chapter).</p>
 <p>It is important that you <span class="emphasis"><em>do not</em></span> define more than one class per Groovy source file.
 While this is perfectly legal in Groovy, it is (arguably) a bad practice: in the
 interests of a consistent approach, you should (in the opinion of this author) respect
@@ -613,7 +613,7 @@ of a <code class="literal">GroovyObjectCustomizer</code> is easy if you are usin
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-bsh" href="#dynamic-language-beans-bsh"></a>29.3.4&nbsp;BeanShell beans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-beans-bsh" href="#dynamic-language-beans-bsh"></a>28.3.4&nbsp;BeanShell beans</h3></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>The BeanShell library dependencies</b></p></div></div></div>
 
@@ -669,16 +669,16 @@ term is used very loosely here).</p>
     <span class="hl-tag">&lt;lang:property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"message"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"Hello World!"</span><span class="hl-tag"> /&gt;</span>
 <span class="hl-tag">&lt;/lang:bsh&gt;</span></pre>
 
-<p>See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="29.4&nbsp;Scenarios">Section&nbsp;29.4, &#8220;Scenarios&#8221;</a> for some scenarios where you might want to use
+<p>See <a class="xref" href="dynamic-language.html#dynamic-language-scenarios" title="28.4&nbsp;Scenarios">Section&nbsp;28.4, &#8220;Scenarios&#8221;</a> for some scenarios where you might want to use
 BeanShell-based beans.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-scenarios" href="#dynamic-language-scenarios"></a>29.4&nbsp;Scenarios</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-scenarios" href="#dynamic-language-scenarios"></a>28.4&nbsp;Scenarios</h2></div></div></div>
 
 <p>The possible scenarios where defining Spring managed beans in a scripting language would
 be beneficial are, of course, many and varied. This section describes two possible use
 cases for the dynamic language support in Spring.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-scenarios-controllers" href="#dynamic-language-scenarios-controllers"></a>29.4.1&nbsp;Scripted Spring MVC Controllers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-scenarios-controllers" href="#dynamic-language-scenarios-controllers"></a>28.4.1&nbsp;Scripted Spring MVC Controllers</h3></div></div></div>
 
 <p>One group of classes that may benefit from using dynamic-language-backed beans is that
 of Spring MVC controllers. In pure Spring MVC applications, the navigational flow
@@ -732,7 +732,7 @@ using the Groovy dynamic language.</p>
 <span class="hl-tag">&lt;/lang:groovy&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-scenarios-validators" href="#dynamic-language-scenarios-validators"></a>29.4.2&nbsp;Scripted Validators</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-scenarios-validators" href="#dynamic-language-scenarios-validators"></a>28.4.2&nbsp;Scripted Validators</h3></div></div></div>
 
 <p>Another area of application development with Spring that may benefit from the
 flexibility afforded by dynamic-language-backed beans is that of validation. It <span class="emphasis"><em>may</em></span>
@@ -773,10 +773,10 @@ class TestBeanValidator implements Validator {
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-final-notes" href="#dynamic-language-final-notes"></a>29.5&nbsp;Bits and bobs</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-final-notes" href="#dynamic-language-final-notes"></a>28.5&nbsp;Bits and bobs</h2></div></div></div>
 
 <p>This last section contains some bits and bobs related to the dynamic language support.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-final-notes-aop" href="#dynamic-language-final-notes-aop"></a>29.5.1&nbsp;AOP - advising scripted beans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-final-notes-aop" href="#dynamic-language-final-notes-aop"></a>28.5.1&nbsp;AOP - advising scripted beans</h3></div></div></div>
 
 <p>It is possible to use the Spring AOP framework to advise scripted beans. The Spring AOP
 framework actually is unaware that a bean that is being advised might be a scripted
@@ -789,7 +789,7 @@ aspects themselves in a supported dynamic language and use such beans to advise 
 Spring beans. This really would be an advanced use of the dynamic language support
 though.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-final-notes-scopes" href="#dynamic-language-final-notes-scopes"></a>29.5.2&nbsp;Scoping</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="dynamic-language-final-notes-scopes" href="#dynamic-language-final-notes-scopes"></a>28.5.2&nbsp;Scoping</h3></div></div></div>
 
 <p>In case it is not immediately obvious, scripted beans can of course be scoped just like
 any other bean. The <code class="literal">scope</code> attribute on the various <code class="literal">&lt;lang:language/&gt;</code> elements allows
@@ -819,7 +819,7 @@ a <a class="link" href="beans.html#beans-factory-scopes-prototype" title="5.5.2&
 in the Spring Framework.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-resources" href="#dynamic-language-resources"></a>29.6&nbsp;Further Resources</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dynamic-language-resources" href="#dynamic-language-resources"></a>28.6&nbsp;Further Resources</h2></div></div></div>
 
 <p>Find below links to further resources about the various dynamic languages described in
 this chapter.</p>
@@ -838,4 +838,4 @@ list of languages supported by the main Spring distribution, your best bet for s
 your favorite scripting language is supported is the
 <a class="ulink" href="https://springmodules.dev.java.net/" target="_top">Spring Modules project</a>.</p>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="scheduling.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cache.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">28.&nbsp;Task Execution and Scheduling&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;30.&nbsp;Cache Abstraction</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="scheduling.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cache.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">27.&nbsp;Task Execution and Scheduling&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;29.&nbsp;Cache Abstraction</td></tr></table></div></body></html>

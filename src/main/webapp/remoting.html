@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>22.&nbsp;Remoting and web services using Spring</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="next" href="ejb.html" title="23.&nbsp;Enterprise JavaBeans (EJB) integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">22.&nbsp;Remoting and web services using Spring</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="remoting" href="#remoting"></a>22.&nbsp;Remoting and web services using Spring</h2></div></div></div>
+   <title>21.&nbsp;Remoting and web services using Spring</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="next" href="ejb.html" title="22.&nbsp;Enterprise JavaBeans (EJB) integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">21.&nbsp;Remoting and web services using Spring</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="remoting" href="#remoting"></a>21.&nbsp;Remoting and web services using Spring</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-introduction" href="#remoting-introduction"></a>22.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-introduction" href="#remoting-introduction"></a>21.1&nbsp;Introduction</h2></div></div></div>
 
 <p>Spring features integration classes for remoting support using various technologies. The
 remoting support eases the development of remote-enabled services, implemented by your
@@ -84,7 +84,7 @@ model and corresponding services:</p>
 the drawbacks of using RMI. We&#8217;ll then continue to show an example using Hessian as the
 protocol.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-rmi" href="#remoting-rmi"></a>22.2&nbsp;Exposing services using RMI</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-rmi" href="#remoting-rmi"></a>21.2&nbsp;Exposing services using RMI</h2></div></div></div>
 
 <p>Using Spring&#8217;s support for RMI, you can transparently expose your services through the
 RMI infrastructure. After having this set up, you basically have a configuration similar
@@ -92,7 +92,7 @@ to remote EJBs, except for the fact that there is no standard support for securi
 context propagation or remote transaction propagation. Spring does provide hooks for
 such additional invocation context when using the RMI invoker, so you can for example
 plug in security frameworks or custom security credentials here.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-server" href="#remoting-rmi-server"></a>22.2.1&nbsp;Exporting the service using the RmiServiceExporter</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-server" href="#remoting-rmi-server"></a>21.2.1&nbsp;Exporting the service using the RmiServiceExporter</h3></div></div></div>
 
 <p>Using the <code class="literal">RmiServiceExporter</code>, we can expose the interface of our AccountService object
 as RMI object. The interface can be accessed by using <code class="literal">RmiProxyFactoryBean</code>, or via
@@ -124,7 +124,7 @@ anonymous port will be used to communicate with the service.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-client" href="#remoting-rmi-client"></a>22.2.2&nbsp;Linking in the service at the client</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-rmi-client" href="#remoting-rmi-client"></a>21.2.2&nbsp;Linking in the service at the client</h3></div></div></div>
 
 <p>Our client is a simple object using the <code class="literal">AccountService</code> to manage accounts:</p>
 <pre class="programlisting"><span class="hl-keyword">public</span> <span class="hl-keyword">class</span> SimpleObject {
@@ -155,11 +155,11 @@ will transparently create an invoker and remotely enable the account service thr
 <code class="literal">RmiServiceExporter</code>. At the client we&#8217;re linking it in using the <code class="literal">RmiProxyFactoryBean</code>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-caucho-protocols" href="#remoting-caucho-protocols"></a>22.3&nbsp;Using Hessian or Burlap to remotely call services via HTTP</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-caucho-protocols" href="#remoting-caucho-protocols"></a>21.3&nbsp;Using Hessian or Burlap to remotely call services via HTTP</h2></div></div></div>
 
 <p>Hessian offers a binary HTTP-based remoting protocol. It is developed by Caucho and more
 information about Hessian itself can be found at <a class="ulink" href="http://www.caucho.com" target="_top">http://www.caucho.com</a>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian" href="#remoting-caucho-protocols-hessian"></a>22.3.1&nbsp;Wiring up the DispatcherServlet for Hessian and co.</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian" href="#remoting-caucho-protocols-hessian"></a>21.3.1&nbsp;Wiring up the DispatcherServlet for Hessian and co.</h3></div></div></div>
 
 <p>Hessian communicates via HTTP and does so using a custom servlet. Using Spring&#8217;s
 <code class="literal">DispatcherServlet</code> principles, as known from Spring Web MVC usage, you can easily wire
@@ -186,7 +186,7 @@ default in <code class="literal">'WEB-INF/applicationContext.xml'</code>), with 
 pointing to specific exporter beans. Each servlet name needs to match the bean name of
 its target exporter in this case.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-server" href="#remoting-caucho-protocols-hessian-server"></a>22.3.2&nbsp;Exposing your beans by using the HessianServiceExporter</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-server" href="#remoting-caucho-protocols-hessian-server"></a>21.3.2&nbsp;Exposing your beans by using the HessianServiceExporter</h3></div></div></div>
 
 <p>In the newly created application context called <code class="literal">remoting-servlet.xml</code>, we&#8217;ll create a
 <code class="literal">HessianServiceExporter</code> exporting your services:</p>
@@ -226,7 +226,7 @@ the target exporter.</p>
 <span class="hl-tag">&lt;/servlet-mapping&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-client" href="#remoting-caucho-protocols-hessian-client"></a>22.3.3&nbsp;Linking in the service on the client</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-hessian-client" href="#remoting-caucho-protocols-hessian-client"></a>21.3.3&nbsp;Linking in the service on the client</h3></div></div></div>
 
 <p>Using the <code class="literal">HessianProxyFactoryBean</code> we can link in the service at the client. The same
 principles apply as with the RMI example. We&#8217;ll create a separate bean factory or
@@ -242,13 +242,13 @@ the <code class="literal">AccountService</code> to manage accounts:</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-burlap" href="#remoting-caucho-protocols-burlap"></a>22.3.4&nbsp;Using Burlap</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-burlap" href="#remoting-caucho-protocols-burlap"></a>21.3.4&nbsp;Using Burlap</h3></div></div></div>
 
 <p>We won&#8217;t discuss Burlap, the XML-based equivalent of Hessian, in detail here, since it
 is configured and set up in exactly the same way as the Hessian variant explained above.
 Just replace the word <code class="literal">Hessian</code> with <code class="literal">Burlap</code> and you&#8217;re all set to go.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-security" href="#remoting-caucho-protocols-security"></a>22.3.5&nbsp;Applying HTTP basic authentication to a service exposed through Hessian or Burlap</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-caucho-protocols-security" href="#remoting-caucho-protocols-security"></a>21.3.5&nbsp;Applying HTTP basic authentication to a service exposed through Hessian or Burlap</h3></div></div></div>
 
 <p>One of the advantages of Hessian and Burlap is that we can easily apply HTTP basic
 authentication, because both protocols are HTTP-based. Your normal HTTP server security
@@ -276,7 +276,7 @@ at <a class="ulink" href="http://projects.spring.io/spring-security/" target="_t
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-httpinvoker" href="#remoting-httpinvoker"></a>22.4&nbsp;Exposing services using HTTP invokers</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-httpinvoker" href="#remoting-httpinvoker"></a>21.4&nbsp;Exposing services using HTTP invokers</h2></div></div></div>
 
 <p>As opposed to Burlap and Hessian, which are both lightweight protocols using their own
 slim serialization mechanisms, Spring HTTP invokers use the standard Java serialization
@@ -289,7 +289,7 @@ Apache <code class="literal">HttpComponents</code> to perform HTTP calls. Use th
 advanced and easier-to-use functionality. Refer to
 <a class="ulink" href="http://hc.apache.org/httpcomponents-client-ga/" target="_top">hc.apache.org/httpcomponents-client-ga/</a>
 for more information.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-server" href="#remoting-httpinvoker-server"></a>22.4.1&nbsp;Exposing the service object</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-server" href="#remoting-httpinvoker-server"></a>21.4.1&nbsp;Exposing the service object</h3></div></div></div>
 
 <p>Setting up the HTTP invoker infrastructure for a service object resembles closely the
 way you would do the same using Hessian or Burlap. Just as Hessian support provides the
@@ -345,7 +345,7 @@ shown in this example:</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-client" href="#remoting-httpinvoker-client"></a>22.4.2&nbsp;Linking in the service at the client</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-httpinvoker-client" href="#remoting-httpinvoker-client"></a>21.4.2&nbsp;Linking in the service at the client</h3></div></div></div>
 
 <p>Again, linking in the service from the client much resembles the way you would do it
 when using Hessian or Burlap. Using a proxy, Spring will be able to translate your calls
@@ -364,7 +364,7 @@ to HTTP POST requests to the URL pointing to the exported service.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-web-services" href="#remoting-web-services"></a>22.5&nbsp;Web services</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-web-services" href="#remoting-web-services"></a>21.5&nbsp;Web services</h2></div></div></div>
 
 <p>Spring provides full support for standard Java web services APIs:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -377,7 +377,7 @@ Accessing web services using JAX-WS
 features <a class="ulink" href="http://www.springframework.org/spring-ws" target="_top">Spring Web Services</a>, a solution for
 contract-first, document-driven web services - highly recommended for building modern,
 future-proof web services.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-servlet" href="#remoting-web-services-jaxws-export-servlet"></a>22.5.1&nbsp;Exposing servlet-based web services using JAX-WS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-servlet" href="#remoting-web-services-jaxws-export-servlet"></a>21.5.1&nbsp;Exposing servlet-based web services using JAX-WS</h3></div></div></div>
 
 <p>Spring provides a convenient base class for JAX-WS servlet endpoint implementations -
 <code class="literal">SpringBeanAutowiringSupport</code>. To expose our <code class="literal">AccountService</code> we extend Spring&#8217;s
@@ -426,7 +426,7 @@ context to allow for access to Spring&#8217;s facilities. This is the case by de
 EE 5 environments, using the standard contract for JAX-WS servlet endpoint deployment.
 See Java EE 5 web service tutorials for details.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-standalone" href="#remoting-web-services-jaxws-export-standalone"></a>22.5.2&nbsp;Exporting standalone web services using JAX-WS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-standalone" href="#remoting-web-services-jaxws-export-standalone"></a>21.5.2&nbsp;Exporting standalone web services using JAX-WS</h3></div></div></div>
 
 <p>The built-in JAX-WS provider that comes with Oracle&#8217;s JDK 1.6 supports exposure of web
 services using the built-in HTTP server that&#8217;s included in JDK 1.6 as well. Spring&#8217;s
@@ -471,7 +471,7 @@ and Spring&#8217;s <code class="literal">@Autowired</code> configuration annotat
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-ri" href="#remoting-web-services-jaxws-export-ri"></a>22.5.3&nbsp;Exporting web services using the JAX-WS RI&#8217;s Spring support</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-export-ri" href="#remoting-web-services-jaxws-export-ri"></a>21.5.3&nbsp;Exporting web services using the JAX-WS RI&#8217;s Spring support</h3></div></div></div>
 
 <p>Oracle&#8217;s JAX-WS RI, developed as part of the GlassFish project, ships Spring support as
 part of its JAX-WS Commons project. This allows for defining JAX-WS endpoints as
@@ -488,7 +488,7 @@ with each endpoint typically delegating to Spring beans (through the use of
 <p>Check out <a class="ulink" href="https://jax-ws-commons.java.net/spring/" target="_top">https://jax-ws-commons.java.net/spring/</a>
 for details on setup and usage style.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-access" href="#remoting-web-services-jaxws-access"></a>22.5.4&nbsp;Accessing web services using JAX-WS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-web-services-jaxws-access" href="#remoting-web-services-jaxws-access"></a>21.5.4&nbsp;Accessing web services using JAX-WS</h3></div></div></div>
 
 <p>Spring provides two factory beans to create JAX-WS web service proxies, namely
 <code class="literal">LocalJaxWsServiceFactoryBean</code> and <code class="literal">JaxWsPortProxyFactoryBean</code>. The former can only
@@ -539,14 +539,14 @@ accordingly first. Check the JAX-WS documentation for details on those requireme
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-jms" href="#remoting-jms"></a>22.6&nbsp;JMS</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-jms" href="#remoting-jms"></a>21.6&nbsp;JMS</h2></div></div></div>
 
 <p>It is also possible to expose services transparently using JMS as the underlying
 communication protocol. The JMS remoting support in the Spring Framework is pretty basic
 - it sends and receives on the <code class="literal">same thread</code> and in the <span class="emphasis"><em>same non-transactional</em></span>
 <code class="literal">Session</code>, and as such throughput will be very implementation dependent. Note that these
 single-threaded and non-transactional constraints apply only to Spring&#8217;s JMS
-<span class="emphasis"><em>remoting</em></span> support. See <a class="xref" href="jms.html" title="24.&nbsp;JMS (Java Message Service)">Chapter&nbsp;24, <i>JMS (Java Message Service)</i></a> for information on Spring&#8217;s rich support for JMS-based
+<span class="emphasis"><em>remoting</em></span> support. See <a class="xref" href="jms.html" title="23.&nbsp;JMS (Java Message Service)">Chapter&nbsp;23, <i>JMS (Java Message Service)</i></a> for information on Spring&#8217;s rich support for JMS-based
 <span class="emphasis"><em>messaging</em></span>.</p>
 <p>The following interface is used on both the server and the client side.</p>
 <pre class="programlisting"><span class="hl-keyword">package</span> com.foo;
@@ -586,7 +586,7 @@ the client and server.</p>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-server" href="#remoting-jms-server"></a>22.6.1&nbsp;Server-side configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-server" href="#remoting-jms-server"></a>21.6.1&nbsp;Server-side configuration</h3></div></div></div>
 
 <p>On the server, you just need to expose the service object using the
 <code class="literal">JmsInvokerServiceExporter</code>.</p>
@@ -626,7 +626,7 @@ the client and server.</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-client" href="#remoting-jms-client"></a>22.6.2&nbsp;Client-side configuration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="remoting-jms-client" href="#remoting-jms-client"></a>21.6.2&nbsp;Client-side configuration</h3></div></div></div>
 
 <p>The client merely needs to create a client-side proxy that will implement the agreed
 upon interface ( <code class="literal">CheckingAccountService</code>). The resulting object created off the back of
@@ -669,12 +669,12 @@ a lightweight POJO based remoting and messaging library based on the Spring Fram
 remoting libraries which extends it to support JMS.</em></span>"</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-amqp" href="#remoting-amqp"></a>22.7&nbsp;AMQP</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-amqp" href="#remoting-amqp"></a>21.7&nbsp;AMQP</h2></div></div></div>
 
 <p>Refer to the <a class="ulink" href="http://docs.spring.io/spring-amqp/reference/html/amqp.html#remoting" target="_top">Spring
 AMQP Reference Document <span class="emphasis"><em>Spring Remoting with AMQP</em></span> section</a> for more information.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-autodection-remote-interfaces" href="#remoting-autodection-remote-interfaces"></a>22.8&nbsp;Auto-detection is not implemented for remote interfaces</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-autodection-remote-interfaces" href="#remoting-autodection-remote-interfaces"></a>21.8&nbsp;Auto-detection is not implemented for remote interfaces</h2></div></div></div>
 
 <p>The main reason why auto-detection of implemented interfaces does not occur for remote
 interfaces is to avoid opening too many doors to remote callers. The target object might
@@ -690,7 +690,7 @@ service interface to be specified.</p>
 exposure of internal methods. Always specifying a service interface is not too much
 effort, and puts you on the safe side regarding controlled exposure of specific methods.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-considerations" href="#remoting-considerations"></a>22.9&nbsp;Considerations when choosing a technology</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="remoting-considerations" href="#remoting-considerations"></a>21.9&nbsp;Considerations when choosing a technology</h2></div></div></div>
 
 <p>Each and every technology presented here has its drawbacks. You should carefully
 consider your needs, the services you are exposing and the objects you&#8217;ll be sending
@@ -721,7 +721,7 @@ possible to get RMI invokers or HTTP invokers to support security context propag
 well, although this is not provided by core Spring: There are just appropriate hooks for
 plugging in third-party or custom solutions here.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="rest-client-access" href="#rest-client-access"></a>22.10&nbsp;Accessing RESTful services on the Client</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="rest-client-access" href="#rest-client-access"></a>21.10&nbsp;Accessing RESTful services on the Client</h2></div></div></div>
 
 <p>The <code class="literal">RestTemplate</code> is the core class for client-side access to RESTful services. It is
 conceptually similar to other template classes in Spring, such as <code class="literal">JdbcTemplate</code> and
@@ -734,7 +734,7 @@ framework that is part of the <code class="literal">org.springframework.oxm</cod
 range of choices of XML to Object mapping technologies to choose from.</p>
 <p>This section describes how to use the <code class="literal">RestTemplate</code> and its associated
 <code class="literal">HttpMessageConverters</code>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-resttemplate" href="#rest-resttemplate"></a>22.10.1&nbsp;RestTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-resttemplate" href="#rest-resttemplate"></a>21.10.1&nbsp;RestTemplate</h3></div></div></div>
 
 <p>Invoking RESTful services in Java is typically done using a helper class such as Apache
 HttpComponents <code class="literal">HttpClient</code>. For common REST operations this approach is too low level as
@@ -758,10 +758,10 @@ httpClient.executeMethod(post);
 methods that make invoking many RESTful services a one-liner and enforce REST best
 practices.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>RestTemplate has an asynchronous counter-part: see <a class="xref" href="remoting.html#rest-async-resttemplate" title="22.10.3&nbsp;Async RestTemplate">Section&nbsp;22.10.3, &#8220;Async RestTemplate&#8221;</a>.</p>
+<p>RestTemplate has an asynchronous counter-part: see <a class="xref" href="remoting.html#rest-async-resttemplate" title="21.10.3&nbsp;Async RestTemplate">Section&nbsp;21.10.3, &#8220;Async RestTemplate&#8221;</a>.</p>
 </td></tr></table></div>
 
-<div class="table"><a name="rest-overview-of-resttemplate-methods-tbl" href="#rest-overview-of-resttemplate-methods-tbl"></a><p class="title"><b>Table&nbsp;22.1.&nbsp;Overview of RestTemplate methods</b></p><div class="table-contents">
+<div class="table"><a name="rest-overview-of-resttemplate-methods-tbl" href="#rest-overview-of-resttemplate-methods-tbl"></a><p class="title"><b>Table&nbsp;21.1.&nbsp;Overview of RestTemplate methods</b></p><div class="table-contents">
 
   <table summary="Overview of RestTemplate methods" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">HTTP Method</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">RestTemplate Method</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>DELETE</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#delete(String,%20Object%E2%80%A6)" target="_top">delete</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>GET</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#getForObject(String,%20Class,%20Object%E2%80%A6)" target="_top">getForObject</a>
   <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#getForEntity(String,%20Class,%20Object%E2%80%A6)" target="_top">getForEntity</a></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>HEAD</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/client/RestTemplate.html#headForHeaders(String,%20Object%E2%80%A6)" target="_top">headForHeaders(String
@@ -930,7 +930,7 @@ String s = template.postForObject(<span class="hl-string">"http://example.com/us
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-message-conversion" href="#rest-message-conversion"></a>22.10.2&nbsp;HTTP Message Conversion</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-message-conversion" href="#rest-message-conversion"></a>21.10.2&nbsp;HTTP Message Conversion</h3></div></div></div>
 
 <p>Objects passed to and returned from the methods <code class="literal">getForObject()</code>, <code class="literal">postForLocation()</code>,
 and <code class="literal">put()</code> are converted to HTTP requests and from HTTP responses by
@@ -1022,13 +1022,13 @@ converter supports ( <code class="literal">application/xml</code>).</p>
 and writes the media type supported by the Java I/O API.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-async-resttemplate" href="#rest-async-resttemplate"></a>22.10.3&nbsp;Async RestTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="rest-async-resttemplate" href="#rest-async-resttemplate"></a>21.10.3&nbsp;Async RestTemplate</h3></div></div></div>
 
 <p>Web applications often need to query external REST services those days. The very nature of
 HTTP and synchronous calls can lead up to challenges when scaling applications for those
 needs: multiple threads may be blocked, waiting for remote HTTP responses.</p>
-<p><code class="literal">AsyncRestTemplate</code> and <a class="xref" href="remoting.html#rest-resttemplate" title="22.10.1&nbsp;RestTemplate">Section&nbsp;22.10.1, &#8220;RestTemplate&#8221;</a>'s APIs are very similar; see
-<a class="xref" href="remoting.html#rest-overview-of-resttemplate-methods-tbl" title="Table&nbsp;22.1.&nbsp;Overview of RestTemplate methods">Table&nbsp;22.1, &#8220;Overview of RestTemplate methods&#8221;</a>. The main difference between those APIs is
+<p><code class="literal">AsyncRestTemplate</code> and <a class="xref" href="remoting.html#rest-resttemplate" title="21.10.1&nbsp;RestTemplate">Section&nbsp;21.10.1, &#8220;RestTemplate&#8221;</a>'s APIs are very similar; see
+<a class="xref" href="remoting.html#rest-overview-of-resttemplate-methods-tbl" title="Table&nbsp;21.1.&nbsp;Overview of RestTemplate methods">Table&nbsp;21.1, &#8220;Overview of RestTemplate methods&#8221;</a>. The main difference between those APIs is
 that <code class="literal">AsyncRestTemplate</code> returns
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/util/concurrent/ListenableFuture.html" target="_top"><code class="literal">ListenableFuture</code></a>
 wrappers as opposed to concrete results.</p>
@@ -1075,4 +1075,4 @@ and
 for more details.</p>
 </div>
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;VI.&nbsp;Integration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;23.&nbsp;Enterprise JavaBeans (EJB) integration</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-integration.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="ejb.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;VI.&nbsp;Integration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;22.&nbsp;Enterprise JavaBeans (EJB) integration</td></tr></table></div></body></html>

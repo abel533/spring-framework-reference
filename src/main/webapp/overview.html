@@ -116,21 +116,21 @@ annotation based programming model.</p>
 
 <p>The <span class="emphasis"><em>Data Access/Integration</em></span> layer consists of the JDBC, ORM, OXM, JMS, and
 Transaction modules.</p>
-<p>The <code class="literal">spring-jdbc</code> module provides a <a class="link" href="jdbc.html#jdbc-introduction" title="14.1&nbsp;Introduction to Spring Framework JDBC">JDBC</a>-abstraction layer that
+<p>The <code class="literal">spring-jdbc</code> module provides a <a class="link" href="jdbc.html#jdbc-introduction" title="13.1&nbsp;Introduction to Spring Framework JDBC">JDBC</a>-abstraction layer that
 removes the need to do tedious JDBC coding and parsing of database-vendor specific error
 codes.</p>
-<p>The <code class="literal">spring-tx</code> module supports <a class="link" href="transaction.html" title="12.&nbsp;Transaction Management">programmatic and declarative transaction</a>
+<p>The <code class="literal">spring-tx</code> module supports <a class="link" href="transaction.html" title="11.&nbsp;Transaction Management">programmatic and declarative transaction</a>
 management for classes that implement special interfaces and for <span class="emphasis"><em>all your POJOs (Plain
 Old Java Objects)</em></span>.</p>
 <p>The <code class="literal">spring-orm</code> module provides integration layers for popular
-<a class="link" href="orm.html#orm-introduction" title="15.1&nbsp;&#20171;&#32461; Spring &#20013;&#30340; ORM">object-relational mapping</a> APIs, including <a class="link" href="orm.html#orm-jpa" title="15.5&nbsp;JPA">JPA</a>,
-<a class="link" href="orm.html#orm-jdo" title="15.4&nbsp;JDO">JDO</a>, and <a class="link" href="orm.html#orm-hibernate" title="15.3&nbsp;Hibernate">Hibernate</a>. Using the <code class="literal">spring-orm</code> module you can
+<a class="link" href="orm.html#orm-introduction" title="14.1&nbsp;&#20171;&#32461; Spring &#20013;&#30340; ORM">object-relational mapping</a> APIs, including <a class="link" href="orm.html#orm-jpa" title="14.5&nbsp;JPA">JPA</a>,
+<a class="link" href="orm.html#orm-jdo" title="14.4&nbsp;JDO">JDO</a>, and <a class="link" href="orm.html#orm-hibernate" title="14.3&nbsp;Hibernate">Hibernate</a>. Using the <code class="literal">spring-orm</code> module you can
 use all of these O/R-mapping frameworks in combination with all of the other features
 Spring offers, such as the simple declarative transaction management feature mentioned
 previously.</p>
-<p>The <code class="literal">spring-oxm</code> module provides an abstraction layer that supports <a class="link" href="oxm.html" title="16.&nbsp;Marshalling XML using O/X Mappers">Object/XML
+<p>The <code class="literal">spring-oxm</code> module provides an abstraction layer that supports <a class="link" href="oxm.html" title="15.&nbsp;Marshalling XML using O/X Mappers">Object/XML
 mapping</a> implementations such as JAXB, Castor, XMLBeans, JiBX and XStream.</p>
-<p>The <code class="literal">spring-jms</code> module (<a class="link" href="jms.html" title="24.&nbsp;JMS (Java Message Service)">Java Messaging Service</a>) contains features for producing and
+<p>The <code class="literal">spring-jms</code> module (<a class="link" href="jms.html" title="23.&nbsp;JMS (Java Message Service)">Java Messaging Service</a>) contains features for producing and
 consuming messages. Since Spring Framework 4.1, it provides integration with the
 <code class="literal">spring-messaging</code> module.</p>
 </div>
@@ -143,7 +143,7 @@ multipart file upload functionality and the initialization of the IoC container 
 Servlet listeners and a web-oriented application context. It also contains the
 web-related parts of Spring&#8217;s remoting support.</p>
 <p>The <code class="literal">spring-webmvc</code> module (also known as the <span class="emphasis"><em>Web-Servlet</em></span> module) contains Spring&#8217;s
-model-view-controller (<a class="link" href="mvc.html#mvc-introduction" title="17.1&nbsp;Spring Web MVC &#26694;&#26550;&#20171;&#32461;"><span class="emphasis"><em>MVC</em></span></a>) implementation for web applications.
+model-view-controller (<a class="link" href="mvc.html#mvc-introduction" title="16.1&nbsp;Spring Web MVC &#26694;&#26550;&#20171;&#32461;"><span class="emphasis"><em>MVC</em></span></a>) implementation for web applications.
 Spring&#8217;s MVC framework provides a clean separation between domain model code and web
 forms and integrates with all of the other features of the Spring Framework.</p>
 <p>The <code class="literal">spring-webmvc-portlet</code> module (also known as the <span class="emphasis"><em>Web-Portlet</em></span> module) provides
@@ -152,11 +152,11 @@ of the <code class="literal">spring-webmvc</code> module.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="overview-testing" href="#overview-testing"></a>2.2.6&nbsp;Test</h3></div></div></div>
 
-<p>The <code class="literal">spring-test</code> module supports the <a class="link" href="testing.html#unit-testing" title="11.2&nbsp;Unit Testing">unit testing</a> and
-<a class="link" href="testing.html#integration-testing" title="11.3&nbsp;Integration Testing">integration testing</a> of Spring components with JUnit or TestNG. It
-provides consistent <a class="link" href="testing.html#testcontext-ctx-management" title="Context management">loading</a> of Spring
-<code class="literal">ApplicationContext</code>s and <a class="link" href="testing.html#testcontext-ctx-management-caching" title="Context caching">caching</a> of those
-contexts. It also provides <a class="link" href="testing.html#mock-objects" title="11.2.1&nbsp;Mock Objects">mock objects</a> that you can use to test your
+<p>The <code class="literal">spring-test</code> module supports the <a class="link" href="aop-api.html#unit-testing" title="10.14&nbsp;Unit Testing">unit testing</a> and
+<a class="link" href="aop-api.html#integration-testing" title="10.15&nbsp;Integration Testing">integration testing</a> of Spring components with JUnit or TestNG. It
+provides consistent <a class="link" href="aop-api.html#testcontext-ctx-management" title="Context management">loading</a> of Spring
+<code class="literal">ApplicationContext</code>s and <a class="link" href="aop-api.html#testcontext-ctx-management-caching" title="Context caching">caching</a> of those
+contexts. It also provides <a class="link" href="aop-api.html#mock-objects" title="10.14.1&nbsp;Mock Objects">mock objects</a> that you can use to test your
 code in isolation.</p>
 </div>
 </div>
@@ -170,7 +170,7 @@ management functionality and web framework integration.</p>
   <div class="mediaobject"><img src="images/overview-full.png" alt="overview full"></div>
 </div></div><br class="figure-break">
 
-<p>Spring&#8217;s <a class="link" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management">declarative transaction management features</a> make
+<p>Spring&#8217;s <a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management">declarative transaction management features</a> make
 the web application fully transactional, just as it would be if you used EJB
 container-managed transactions. All your custom business logic can be implemented with
 simple POJOs and managed by Spring&#8217;s IoC container. Additional services include support
@@ -206,7 +206,7 @@ existing applications is not difficult.</p>
   <div class="mediaobject"><img src="images/overview-ejb.png" alt="overview ejb"></div>
 </div></div><br class="figure-break">
 
-<p>The Spring Framework also provides an <a class="link" href="ejb.html" title="23.&nbsp;Enterprise JavaBeans (EJB) integration">access and abstraction layer</a> for
+<p>The Spring Framework also provides an <a class="link" href="ejb.html" title="22.&nbsp;Enterprise JavaBeans (EJB) integration">access and abstraction layer</a> for
 Enterprise JavaBeans, enabling you to reuse your existing POJOs and wrap them in
 stateless session beans for use in scalable, fail-safe web applications that might need
 declarative security.</p>

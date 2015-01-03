@@ -4,7 +4,7 @@
 
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_jms" href="#_jms"></a>4.1&nbsp;JMS&#25913;&#36827;</h2></div></div></div>
 
-<p>Spring 4.1&#24341;&#20837;&#20102;&#19968;&#20010;&#26356;&#31616;&#21333;&#30340;&#22522;&#30784;&#26550;&#26500;&#65292;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListener.html" target="_top"><code class="literal">@JmsListener</code></a>&#27880;&#35299;bean&#26041;&#27861;&#26469;<a class="link" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">&#27880;&#20876;JMS&#30417;&#21548;&#31471;&#28857;</a>&#12290;XML&#21629;&#21517;&#31354;&#38388;&#24050;&#32463;&#36890;&#36807;&#22686;&#24378;&#26469;&#25903;&#25345;&#36825;&#31181;&#26032;&#30340;&#26041;&#24335;&#65288;<code class="literal">jms:annotation-driven</code>&#65289;&#65292;&#23427;&#20063;&#21487;&#20197;&#23436;&#20840;&#36890;&#36807;Java&#37197;&#32622;( <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/EnableJms.html" target="_top"><code class="literal">@EnableJms</code></a>,
+<p>Spring 4.1&#24341;&#20837;&#20102;&#19968;&#20010;&#26356;&#31616;&#21333;&#30340;&#22522;&#30784;&#26550;&#26500;&#65292;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListener.html" target="_top"><code class="literal">@JmsListener</code></a>&#27880;&#35299;bean&#26041;&#27861;&#26469;<a class="link" href="jms.html#jms-annotated" title="23.6&nbsp;Annotation-driven listener endpoints">&#27880;&#20876;JMS&#30417;&#21548;&#31471;&#28857;</a>&#12290;XML&#21629;&#21517;&#31354;&#38388;&#24050;&#32463;&#36890;&#36807;&#22686;&#24378;&#26469;&#25903;&#25345;&#36825;&#31181;&#26032;&#30340;&#26041;&#24335;&#65288;<code class="literal">jms:annotation-driven</code>&#65289;&#65292;&#23427;&#20063;&#21487;&#20197;&#23436;&#20840;&#36890;&#36807;Java&#37197;&#32622;( <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/EnableJms.html" target="_top"><code class="literal">@EnableJms</code></a>,
 <code class="literal">JmsListenerContainerFactory</code>)&#26469;&#37197;&#32622;&#26550;&#26500;&#12290;&#20063;&#21487;&#20197;&#20351;&#29992; <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/jms/annotation/JmsListenerConfigurer.html" target="_top"><code class="literal">JmsListenerConfigurer</code></a>&#27880;&#35299;&#26469;&#27880;&#20876;&#30417;&#21548;&#31471;&#28857;&#12290;</p>
 <p>Spring 4.1&#36824;&#35843;&#25972;&#20102;JMS&#30340;&#25903;&#25345;&#65292;&#20351;&#24471;&#20320;&#21487;&#20197;&#20174;<code class="literal">spring-messaging</code>&#22312;Spring4.0&#24341;&#20837;&#30340;&#25277;&#35937;&#33719;&#30410;&#65292;&#21363;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -27,14 +27,14 @@ JMS 2.0&#28040;&#36153;&#32773;&#25903;&#25345;&#20849;&#20139;
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="_caching" href="#_caching"></a>4.2&nbsp;Caching&#65288;&#32531;&#23384;&#65289;&#25913;&#36827;</h2></div></div></div>
 
-<p>Spring 4.1 &#25903;&#25345;<a class="link" href="cache.html#cache-jsr-107" title="30.4&nbsp;JCache (JSR-107) annotations">JCache (JSR-107)&#27880;&#35299;</a>&#20351;&#29992;Spring&#30340;&#29616;&#26377;&#32531;&#23384;&#37197;&#32622;&#21644;&#22522;&#30784;&#32467;&#26500;&#30340;&#25277;&#35937;&#65307;&#20351;&#29992;&#26631;&#20934;&#27880;&#35299;&#19981;&#38656;&#35201;&#20219;&#20309;&#26356;&#25913;&#12290;</p>
+<p>Spring 4.1 &#25903;&#25345;<a class="link" href="cache.html#cache-jsr-107" title="29.4&nbsp;JCache (JSR-107) annotations">JCache (JSR-107)&#27880;&#35299;</a>&#20351;&#29992;Spring&#30340;&#29616;&#26377;&#32531;&#23384;&#37197;&#32622;&#21644;&#22522;&#30784;&#32467;&#26500;&#30340;&#25277;&#35937;&#65307;&#20351;&#29992;&#26631;&#20934;&#27880;&#35299;&#19981;&#38656;&#35201;&#20219;&#20309;&#26356;&#25913;&#12290;</p>
 <p>Spring 4.1&#20063;&#22823;&#22823;&#25552;&#39640;&#20102;&#33258;&#24049;&#30340;&#32531;&#23384;&#25277;&#35937;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 &#32531;&#23384;&#21487;&#20197;&#22312;&#36816;&#34892;&#26102;&#20351;&#29992;<a class="link" href="cache.html#cache-annotations-cacheable-cache-resolver" title="Custom cache resolution"><code class="literal">CacheResolver</code></a>&#35299;&#20915;&#12290;&#22240;&#27492;&#20351;&#29992;<code class="literal">value</code>&#21442;&#25968;&#23450;&#20041;&#30340;&#32531;&#23384;&#21517;&#31216;&#19981;&#22312;&#26159;&#24378;&#21046;&#24615;&#30340;&#12290;
 </li><li class="listitem">
 &#26356;&#22810;&#30340;&#25805;&#20316;&#32423;&#33258;&#23450;&#20041;&#39033;&#65306;&#32531;&#23384;&#35299;&#26512;&#22120;&#65292;&#32531;&#23384;&#31649;&#29702;&#22120;&#65292;&#38190;&#20540;&#29983;&#25104;&#22120;
 </li><li class="listitem">
-&#19968;&#20010;&#26032;&#30340;<a class="link" href="cache.html#cache-annotations-config" title="30.3.5&nbsp;@CacheConfig annotation"><code class="literal">@CacheConfig</code>&#31867;&#32423;&#21035;&#27880;&#35299;</a>&#20801;&#35768;&#22312;&#31867;&#32423;&#21035;&#19978;&#20849;&#20139;&#24120;&#29992;&#37197;&#32622;&#65292;<span class="strong"><strong>&#19981;&#38656;&#35201;</strong></span>&#21551;&#29992;&#20219;&#20309;&#32531;&#23384;&#25805;&#20316;&#12290;
+&#19968;&#20010;&#26032;&#30340;<a class="link" href="cache.html#cache-annotations-config" title="29.3.5&nbsp;@CacheConfig annotation"><code class="literal">@CacheConfig</code>&#31867;&#32423;&#21035;&#27880;&#35299;</a>&#20801;&#35768;&#22312;&#31867;&#32423;&#21035;&#19978;&#20849;&#20139;&#24120;&#29992;&#37197;&#32622;&#65292;<span class="strong"><strong>&#19981;&#38656;&#35201;</strong></span>&#21551;&#29992;&#20219;&#20309;&#32531;&#23384;&#25805;&#20316;&#12290;
 </li><li class="listitem">
 &#20351;&#29992;<code class="literal">CacheErrorHandler</code>&#26356;&#22909;&#30340;&#22788;&#29702;&#32531;&#23384;&#26041;&#27861;&#30340;&#24322;&#24120;
 </li></ul></div>
@@ -48,7 +48,7 @@ The existing support for resource handling based on the <code class="literal">Re
 has been expanded with new abstractions <code class="literal">ResourceResolver</code>, <code class="literal">ResourceTransformer</code>,
 and <code class="literal">ResourceUrlProvider</code>. A number of built-in implementations provide support
 for versioned resource URLs (for effective HTTP caching), locating gzipped resources,
-generating an HTML 5 AppCache manifests, and more. See <a class="xref" href="mvc.html#mvc-config-static-resources" title="17.16.7&nbsp;Serving of Resources">Section&nbsp;17.16.7, &#8220;Serving of Resources&#8221;</a>.
+generating an HTML 5 AppCache manifests, and more. See <a class="xref" href="mvc.html#mvc-config-static-resources" title="16.16.7&nbsp;Serving of Resources">Section&nbsp;16.16.7, &#8220;Serving of Resources&#8221;</a>.
 </li><li class="listitem">
 JDK 1.8&#8217;s <code class="literal">java.util.Optional</code> is now supported for <code class="literal">@RequestParam</code>, <code class="literal">@RequestHeader</code>,
 and <code class="literal">@MatrixVariable</code> controller method arguments.
@@ -72,7 +72,7 @@ A new lifecycle option is available for intercepting <code class="literal">@Resp
 methods just after the controller method returns and before the response is written.
 To take advantage declare an <code class="literal">@ControllerAdvice</code> bean that implements <code class="literal">ResponseBodyAdvice</code>.
 The built-in support for <code class="literal">@JsonView</code> and JSONP take advantage of this.
-See <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="17.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;17.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a>.
+See <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;16.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a>.
 </li><li class="listitem">
 <p class="simpara">There are three new <code class="literal">HttpMessageConverter</code> options:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
@@ -93,7 +93,7 @@ by name. A default name is assigned to every <code class="literal">@RequestMappi
 with method <code class="literal">handleFoo</code> is named "FC#handleFoo". The naming strategy is pluggable.
 It is also possible to name an <code class="literal">@RequestMapping</code> explicitly through its name attribute.
 A new <code class="literal">mvcUrl</code> function in the Spring JSP tag library makes this easy to use in JSP pages.
-See <a class="xref" href="mvc.html#mvc-links-to-controllers-from-views" title="17.7.2&nbsp;Building URIs to Controllers and methods from views">Section&nbsp;17.7.2, &#8220;Building URIs to Controllers and methods from views&#8221;</a>.
+See <a class="xref" href="mvc.html#mvc-links-to-controllers-from-views" title="16.7.2&nbsp;Building URIs to Controllers and methods from views">Section&nbsp;16.7.2, &#8220;Building URIs to Controllers and methods from views&#8221;</a>.
 </li><li class="listitem">
 <code class="literal">ResponseEntity</code> provides a builder-style API to guide controller methods
 towards the preparation of server-side responses, e.g. <code class="literal">ResponseEntity.ok()</code>.
@@ -104,7 +104,7 @@ code towards the preparation of HTTP requests.
 <p class="simpara">MVC Java config and XML namespace:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
 View resolvers can now be configured including support for content
-negotiation, see <a class="xref" href="mvc.html#mvc-config-view-resolvers" title="17.16.6&nbsp;View Resolvers">Section&nbsp;17.16.6, &#8220;View Resolvers&#8221;</a>.
+negotiation, see <a class="xref" href="mvc.html#mvc-config-view-resolvers" title="16.16.6&nbsp;View Resolvers">Section&nbsp;16.16.6, &#8220;View Resolvers&#8221;</a>.
 </li><li class="listitem">
 View controllers now have built-in support for redirects and for setting the response
 status. An application can use this to configure redirect URLs, render 404 responses
@@ -113,7 +113,7 @@ Some use cases are
 <a class="ulink" href="https://jira.spring.io/browse/SPR-11543?focusedCommentId=100308&amp;page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-100308" target="_top">listed here</a>.
 </li><li class="listitem">
 Path matching customizations are frequently used and now built-in.
-See <a class="xref" href="mvc.html#mvc-config-path-matching" title="17.16.9&nbsp;Path Matching">Section&nbsp;17.16.9, &#8220;Path Matching&#8221;</a>.
+See <a class="xref" href="mvc.html#mvc-config-path-matching" title="16.16.9&nbsp;Path Matching">Section&nbsp;16.16.9, &#8220;Path Matching&#8221;</a>.
 </li></ul></div>
 
 </li><li class="listitem">
@@ -131,14 +131,14 @@ SockJS (Java) client-side support. See <code class="literal">SockJsClient</code>
 New application context events <code class="literal">SessionSubscribeEvent</code> and <code class="literal">SessionUnubscribeEvent</code> published
 when STOMP clients subscribe and unsubscribe.
 </li><li class="listitem">
-New "websocket" scope. See <a class="xref" href="websocket.html#websocket-stomp-websocket-scope" title="21.4.13&nbsp;WebSocket Scope">Section&nbsp;21.4.13, &#8220;WebSocket Scope&#8221;</a>.
+New "websocket" scope. See <a class="xref" href="websocket.html#websocket-stomp-websocket-scope" title="20.4.13&nbsp;WebSocket Scope">Section&nbsp;20.4.13, &#8220;WebSocket Scope&#8221;</a>.
 </li><li class="listitem">
 <code class="literal">@SendToUser</code> can target only a single session and does not require an authenticated user.
 </li><li class="listitem">
 <code class="literal">@MessageMapping</code> methods can use dot "." instead of slash "/" as path separator.
 See <a class="ulink" href="https://jira.spring.io/browse/SPR-11660" target="_top">SPR-11660</a>.
 </li><li class="listitem">
-STOMP/WebSocket monitoring info collected and logged. See <a class="xref" href="websocket.html#websocket-stomp-stats" title="21.4.15&nbsp;Runtime Monitoring">Section&nbsp;21.4.15, &#8220;Runtime Monitoring&#8221;</a>.
+STOMP/WebSocket monitoring info collected and logged. See <a class="xref" href="websocket.html#websocket-stomp-stats" title="20.4.15&nbsp;Runtime Monitoring">Section&nbsp;20.4.15, &#8220;Runtime Monitoring&#8221;</a>.
 </li><li class="listitem">
 Significantly optimized and improved logging that should remain very readable
 and compact even at DEBUG level.
@@ -158,48 +158,48 @@ session is established. See <a class="ulink" href="https://jira.spring.io/browse
 <p class="simpara">Groovy scripts can now be used to configure the <code class="literal">ApplicationContext</code> loaded for
 integration tests in the TestContext framework.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-ctx-management-groovy" title="Context configuration with Groovy scripts">the section called &#8220;Context configuration with Groovy scripts&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-ctx-management-groovy" title="Context configuration with Groovy scripts">the section called &#8220;Context configuration with Groovy scripts&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">Test-managed transactions can now be programmatically started and ended within
 transactional test methods via the new <code class="literal">TestTransaction</code> API.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-tx-programmatic-tx-mgt" title="Programmatic transaction management">the section called &#8220;Programmatic transaction management&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-tx-programmatic-tx-mgt" title="Programmatic transaction management">the section called &#8220;Programmatic transaction management&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">SQL script execution can now be configured declaratively via the new <code class="literal">@Sql</code> and
 <code class="literal">@SqlConfig</code> annotations on a per-class or per-method basis.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-executing-sql" title="Executing SQL scripts">the section called &#8220;Executing SQL scripts&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-executing-sql" title="Executing SQL scripts">the section called &#8220;Executing SQL scripts&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">Test property sources which automatically override system and application property
 sources can be configured via the new <code class="literal">@TestPropertySource</code> annotation.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-ctx-management-property-sources" title="Context configuration with test property sources">the section called &#8220;Context configuration with test property sources&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-ctx-management-property-sources" title="Context configuration with test property sources">the section called &#8220;Context configuration with test property sources&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">Default <code class="literal">TestExecutionListener</code>s can now be automatically discovered.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-tel-config-automatic-discovery" title="Automatic discovery of default TestExecutionListeners">the section called &#8220;Automatic discovery of default TestExecutionListeners&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-tel-config-automatic-discovery" title="Automatic discovery of default TestExecutionListeners">the section called &#8220;Automatic discovery of default TestExecutionListeners&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">Custom <code class="literal">TestExecutionListener</code>s can now be automatically merged with the default
 listeners.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-tel-config-merging" title="Merging TestExecutionListeners">the section called &#8220;Merging TestExecutionListeners&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-tel-config-merging" title="Merging TestExecutionListeners">the section called &#8220;Merging TestExecutionListeners&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">
 <p class="simpara">The documentation for transactional testing support in the TestContext framework has
 been improved with more thorough explanations and additional examples.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
-See <a class="xref" href="testing.html#testcontext-tx" title="Transaction management">the section called &#8220;Transaction management&#8221;</a> for details.
+See <a class="xref" href="aop-api.html#testcontext-tx" title="Transaction management">the section called &#8220;Transaction management&#8221;</a> for details.
 </li></ul></div>
 
 </li><li class="listitem">

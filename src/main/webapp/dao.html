@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>13.&nbsp;DAO support</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="transaction.html" title="12.&nbsp;Transaction Management"><link rel="next" href="jdbc.html" title="14.&nbsp;Data access with JDBC"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">13.&nbsp;DAO support</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="transaction.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jdbc.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="dao" href="#dao"></a>13.&nbsp;DAO support</h2></div></div></div>
+   <title>12.&nbsp;DAO support</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="transaction.html" title="11.&nbsp;Transaction Management"><link rel="next" href="jdbc.html" title="13.&nbsp;Data access with JDBC"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">12.&nbsp;DAO support</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="transaction.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jdbc.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="dao" href="#dao"></a>12.&nbsp;DAO support</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-introduction" href="#dao-introduction"></a>13.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-introduction" href="#dao-introduction"></a>12.1&nbsp;Introduction</h2></div></div></div>
 
 <p>The Data Access Object (DAO) support in Spring is aimed at making it easy to work with
 data access technologies like JDBC, Hibernate, JPA or JDO in a consistent way. This
@@ -10,7 +10,7 @@ allows one to switch between the aforementioned persistence technologies fairly 
 and it also allows one to code without worrying about catching exceptions that are
 specific to each technology.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-exceptions" href="#dao-exceptions"></a>13.2&nbsp;Consistent exception hierarchy</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-exceptions" href="#dao-exceptions"></a>12.2&nbsp;Consistent exception hierarchy</h2></div></div></div>
 
 <p>Spring provides a convenient translation from technology-specific exceptions like
 <code class="literal">SQLException</code> to its own exception class hierarchy with the <code class="literal">DataAccessException</code> as
@@ -37,12 +37,12 @@ sacrificing generic DAO abstraction in terms of exceptions though.</p>
 <p>The exception hierarchy that Spring provides can be seen below. (Please note that the
 class hierarchy detailed in the image shows only a subset of the entire
 <code class="literal">DataAccessException</code> hierarchy.)</p>
-<div class="figure"><a name="d5e11689" href="#d5e11689"></a><p class="title"><b>Figure&nbsp;13.1.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e11691" href="#d5e11691"></a><p class="title"><b>Figure&nbsp;12.1.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/DataAccessException.gif" alt="DataAccessException"></div>
 </div></div><br class="figure-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-annotations" href="#dao-annotations"></a>13.3&nbsp;Annotations used for configuring DAO or Repository classes</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="dao-annotations" href="#dao-annotations"></a>12.3&nbsp;Annotations used for configuring DAO or Repository classes</h2></div></div></div>
 
 <p>The best way to guarantee that your Data Access Objects (DAOs) or repositories provide
 exception translation is to use the <code class="literal">@Repository</code> annotation. This annotation also
@@ -108,4 +108,4 @@ configure the application context to take advantage of these annotations.</p>
 </td></tr></table></div>
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="transaction.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jdbc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">12.&nbsp;Transaction Management&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;14.&nbsp;Data access with JDBC</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="transaction.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jdbc.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">11.&nbsp;Transaction Management&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;13.&nbsp;Data access with JDBC</td></tr></table></div></body></html>

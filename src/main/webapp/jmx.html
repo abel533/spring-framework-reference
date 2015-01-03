@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>25.&nbsp;JMX</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="jms.html" title="24.&nbsp;JMS (Java Message Service)"><link rel="next" href="cci.html" title="26.&nbsp;JCA CCI"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">25.&nbsp;JMX</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jmx" href="#jmx"></a>25.&nbsp;JMX</h2></div></div></div>
+   <title>24.&nbsp;JMX</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="jms.html" title="23.&nbsp;JMS (Java Message Service)"><link rel="next" href="cci.html" title="25.&nbsp;JCA CCI"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">24.&nbsp;JMX</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jmx" href="#jmx"></a>24.&nbsp;JMX</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-introduction" href="#jmx-introduction"></a>25.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-introduction" href="#jmx-introduction"></a>24.1&nbsp;Introduction</h2></div></div></div>
 
 <p>The JMX support in Spring provides you with the features to easily and transparently
 integrate your Spring application into a JMX infrastructure.</p>
@@ -10,7 +10,7 @@ integrate your Spring application into a JMX infrastructure.</p>
 
 <p>This chapter is not an introduction to JMX&#8230; it doesn&#8217;t try to explain the motivations
 of why one might want to use JMX (or indeed what the letters JMX actually stand for). If
-you are new to JMX, check out <a class="xref" href="jmx.html#jmx-resources" title="25.8&nbsp;Further Resources">Section&nbsp;25.8, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
+you are new to JMX, check out <a class="xref" href="jmx.html#jmx-resources" title="24.8&nbsp;Further Resources">Section&nbsp;24.8, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
 </div>
 
 <p>Specifically, Spring&#8217;s JMX support provides four core features:</p>
@@ -29,7 +29,7 @@ either Spring or JMX interfaces and classes. Indeed, for the most part your appl
 classes need not be aware of either Spring or JMX in order to take advantage of the
 Spring JMX features.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-exporting" href="#jmx-exporting"></a>25.2&nbsp;Exporting your beans to JMX</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-exporting" href="#jmx-exporting"></a>24.2&nbsp;Exporting your beans to JMX</h2></div></div></div>
 
 <p>The core class in Spring&#8217;s JMX framework is the <code class="literal">MBeanExporter</code>. This class is
 responsible for taking your Spring beans and registering them with a JMX <code class="literal">MBeanServer</code>.
@@ -89,7 +89,7 @@ configuration file and pass in the bean as shown below:</p>
 bean. The <code class="literal">beans</code> property tells the <code class="literal">MBeanExporter</code> exactly which of your beans must be
 exported to the JMX <code class="literal">MBeanServer</code>. In the default configuration, the key of each entry
 in the <code class="literal">beans</code> <code class="literal">Map</code> is used as the <code class="literal">ObjectName</code> for the bean referenced by the
-corresponding entry value. This behavior can be changed as described in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+corresponding entry value. This behavior can be changed as described in <a class="xref" href="jmx.html#jmx-naming" title="24.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;24.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
 <p>With this configuration the <code class="literal">testBean</code> bean is exposed as an MBean under the
 <code class="literal">ObjectName</code> <code class="literal">bean:name=testBean1</code>. By default, all <span class="emphasis"><em>public</em></span> properties of the bean
 are exposed as attributes and all <span class="emphasis"><em>public</em></span> methods (bar those inherited from the
@@ -101,7 +101,7 @@ is possible to configure the <code class="literal">phase</code> at which the exp
 registration by setting the <code class="literal">autoStartup</code> flag.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-mbeanserver" href="#jmx-exporting-mbeanserver"></a>25.2.1&nbsp;Creating an MBeanServer</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-mbeanserver" href="#jmx-exporting-mbeanserver"></a>24.2.1&nbsp;Creating an MBeanServer</h3></div></div></div>
 
 <p>The above configuration assumes that the application is running in an environment that
 has one (and only one) <code class="literal">MBeanServer</code> already running. In this case, Spring will attempt
@@ -145,7 +145,7 @@ supplied to the <code class="literal">MBeanExporter</code> via the server proper
 <code class="literal">MBeanServer</code> and will use the supplied <code class="literal">MBeanServer</code> instance. For this to work
 correctly, you must (of course) have a JMX implementation on your classpath.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-mbean-server" href="#jmx-mbean-server"></a>25.2.2&nbsp;Reusing an existing MBeanServer</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-mbean-server" href="#jmx-mbean-server"></a>24.2.2&nbsp;Reusing an existing MBeanServer</h3></div></div></div>
 
 <p>If no server is specified, the <code class="literal">MBeanExporter</code> tries to automatically detect a running
 <code class="literal">MBeanServer</code>. This works in most environment where only one <code class="literal">MBeanServer</code> instance is
@@ -181,7 +181,7 @@ be used:</p>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-lazy" href="#jmx-exporting-lazy"></a>25.2.3&nbsp;Lazy-initialized MBeans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-lazy" href="#jmx-exporting-lazy"></a>24.2.3&nbsp;Lazy-initialized MBeans</h3></div></div></div>
 
 <p>If you configure a bean with the <code class="literal">MBeanExporter</code> that is also configured for lazy
 initialization, then the <code class="literal">MBeanExporter</code> will <span class="emphasis"><em>not</em></span> break this contract and will avoid
@@ -189,7 +189,7 @@ instantiating the bean. Instead, it will register a proxy with the <code class="
 will defer obtaining the bean from the container until the first invocation on the proxy
 occurs.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-auto" href="#jmx-exporting-auto"></a>25.2.4&nbsp;Automatic registration of MBeans</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-auto" href="#jmx-exporting-auto"></a>24.2.4&nbsp;Automatic registration of MBeans</h3></div></div></div>
 
 <p>Any beans that are exported through the <code class="literal">MBeanExporter</code> and are already valid MBeans are
 registered as-is with the <code class="literal">MBeanServer</code> without further intervention from Spring. MBeans
@@ -204,9 +204,9 @@ property to <code class="literal">true</code>:</p>
 <p>Here, the bean called <code class="literal">spring:mbean=true</code> is already a valid JMX MBean and will be
 automatically registered by Spring. By default, beans that are autodetected for JMX
 registration have their bean name used as the <code class="literal">ObjectName</code>. This behavior can be
-overridden as detailed in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+overridden as detailed in <a class="xref" href="jmx.html#jmx-naming" title="24.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;24.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-registration-behavior" href="#jmx-exporting-registration-behavior"></a>25.2.5&nbsp;Controlling the registration behavior</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-exporting-registration-behavior" href="#jmx-exporting-registration-behavior"></a>24.2.5&nbsp;Controlling the registration behavior</h3></div></div></div>
 
 <p>Consider the scenario where a Spring <code class="literal">MBeanExporter</code> attempts to register an <code class="literal">MBean</code>
 with an <code class="literal">MBeanServer</code> using the <code class="literal">ObjectName</code> <code class="literal">'bean:name=testBean1'</code>. If an <code class="literal">MBean</code>
@@ -217,7 +217,7 @@ registered with an <code class="literal">MBeanServer</code>. Spring&#8217;s JMX 
 registration behaviors to control the registration behavior when the registration
 process finds that an <code class="literal">MBean</code> has already been registered under the same <code class="literal">ObjectName</code>;
 these registration behaviors are summarized on the following table:</p>
-<div class="table"><a name="jmx-registration-behaviors" href="#jmx-registration-behaviors"></a><p class="title"><b>Table&nbsp;25.1.&nbsp;Registration Behaviors</b></p><div class="table-contents">
+<div class="table"><a name="jmx-registration-behaviors" href="#jmx-registration-behaviors"></a><p class="title"><b>Table&nbsp;24.1.&nbsp;Registration Behaviors</b></p><div class="table-contents">
 
   <table summary="Registration Behaviors" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Registration behavior</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Explanation</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">REGISTRATION_FAIL_ON_EXISTING</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>This is the default registration behavior. If an <code class="literal">MBean</code> instance has already been
   registered under the same <code class="literal">ObjectName</code>, the <code class="literal">MBean</code> that is being registered will not
@@ -258,7 +258,7 @@ behavior to the <code class="literal">REGISTRATION_REPLACE_EXISTING</code> behav
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-interface" href="#jmx-interface"></a>25.3&nbsp;Controlling the management interface of your beans</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-interface" href="#jmx-interface"></a>24.3&nbsp;Controlling the management interface of your beans</h2></div></div></div>
 
 <p>In the previous example, you had little control over the management interface of your
 bean; <span class="emphasis"><em>all</em></span> of the <span class="emphasis"><em>public</em></span> properties and methods of each exported bean was exposed
@@ -266,7 +266,7 @@ as JMX attributes and operations respectively. To exercise finer-grained control
 exactly which properties and methods of your exported beans are actually exposed as JMX
 attributes and operations, Spring JMX provides a comprehensive and extensible mechanism
 for controlling the management interfaces of your beans.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-assembler" href="#jmx-interface-assembler"></a>25.3.1&nbsp;the MBeanInfoAssembler Interface</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-assembler" href="#jmx-interface-assembler"></a>24.3.1&nbsp;the MBeanInfoAssembler Interface</h3></div></div></div>
 
 <p>Behind the scenes, the <code class="literal">MBeanExporter</code> delegates to an implementation of the
 <code class="literal">org.springframework.jmx.export.assembler.MBeanInfoAssembler</code> interface which is
@@ -278,7 +278,7 @@ saw in the previous examples). Spring provides two additional implementations of
 <code class="literal">MBeanInfoAssembler</code> interface that allow you to control the generated management
 interface using either source-level metadata or any arbitrary interface.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata" href="#jmx-interface-metadata"></a>25.3.2&nbsp;Using Source-Level Metadata (Java annotations)</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata" href="#jmx-interface-metadata"></a>24.3.2&nbsp;Using Source-Level Metadata (Java annotations)</h3></div></div></div>
 
 <p>Using the <code class="literal">MetadataMBeanInfoAssembler</code> you can define the management interfaces for your
 beans using source level metadata. The reading of metadata is encapsulated by the
@@ -357,7 +357,7 @@ earlier:</p>
 annotation and that this <code class="literal">ManagedResource</code> annotation is configured with a set of
 properties. These properties can be used to configure various aspects of the MBean that
 is generated by the <code class="literal">MBeanExporter</code>, and are explained in greater detail later in
-section entitled <a class="xref" href="jmx.html#jmx-interface-metadata-types" title="25.3.3&nbsp;Source-Level Metadata Types">Section&nbsp;25.3.3, &#8220;Source-Level Metadata Types&#8221;</a>.</p>
+section entitled <a class="xref" href="jmx.html#jmx-interface-metadata-types" title="24.3.3&nbsp;Source-Level Metadata Types">Section&nbsp;24.3.3, &#8220;Source-Level Metadata Types&#8221;</a>.</p>
 <p>You will also notice that both the <code class="literal">age</code> and <code class="literal">name</code> properties are annotated with the
 <code class="literal">ManagedAttribute</code> annotation, but in the case of the <code class="literal">age</code> property, only the getter is
 marked. This will cause both of these properties to be included in the management
@@ -401,23 +401,23 @@ instance of the <code class="literal">AnnotationJmxAttributeSource</code> class 
 through the assembler property. This is all that is required to take advantage of
 metadata-driven management interfaces for your Spring-exposed MBeans.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata-types" href="#jmx-interface-metadata-types"></a>25.3.3&nbsp;Source-Level Metadata Types</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-metadata-types" href="#jmx-interface-metadata-types"></a>24.3.3&nbsp;Source-Level Metadata Types</h3></div></div></div>
 
 <p>The following source level metadata types are available for use in Spring JMX:</p>
-<div class="table"><a name="jmx-metadata-types" href="#jmx-metadata-types"></a><p class="title"><b>Table&nbsp;25.2.&nbsp;Source-Level Metadata Types</b></p><div class="table-contents">
+<div class="table"><a name="jmx-metadata-types" href="#jmx-metadata-types"></a><p class="title"><b>Table&nbsp;24.2.&nbsp;Source-Level Metadata Types</b></p><div class="table-contents">
 
   <table summary="Source-Level Metadata Types" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Purpose</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Annotation Type</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark all instances of a <code class="literal">Class</code> as JMX managed resources</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedResource</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Class</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark a method as a JMX operation</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedOperation</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Method</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Mark a getter or setter as one half of a JMX attribute</p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedAttribute</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Method (only getters and setters)</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Define descriptions for operation parameters</p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">@ManagedOperationParameter</code> and <code class="literal">@ManagedOperationParameters</code></p></td><td style="" align="left" valign="top"><p>Method</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 <p>The following configuration parameters are available for use on these source-level
 metadata types:</p>
-<div class="table"><a name="jmx-metadata-parameters" href="#jmx-metadata-parameters"></a><p class="title"><b>Table&nbsp;25.3.&nbsp;Source-Level Metadata Parameters</b></p><div class="table-contents">
+<div class="table"><a name="jmx-metadata-parameters" href="#jmx-metadata-parameters"></a><p class="title"><b>Table&nbsp;24.3.&nbsp;Source-Level Metadata Parameters</b></p><div class="table-contents">
 
   <table summary="Source-Level Metadata Parameters" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"><col class="col_3"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Parameter</th><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Applies to</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ObjectName</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Used by <code class="literal">MetadataNamingStrategy</code> to determine the <code class="literal">ObjectName</code> of a managed resource</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">description</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the friendly description of the resource, attribute or operation</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code>, <code class="literal">ManagedAttribute</code>, <code class="literal">ManagedOperation</code>, <code class="literal">ManagedOperationParameter</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">currencyTimeLimit</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">currencyTimeLimit</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code>, <code class="literal">ManagedAttribute</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">defaultValue</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">defaultValue</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedAttribute</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">log</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">log</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">logFile</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">logFile</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistPolicy</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistPolicy</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistPeriod</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistPeriod</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistLocation</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistLocation</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">persistName</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the value of the <code class="literal">persistName</code> descriptor field</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedResource</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">name</code></p></td><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Sets the display name of an operation parameter</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ManagedOperationParameter</code></p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">index</code></p></td><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p>Sets the index of an operation parameter</p></td><td style="" align="left" valign="top"><p><code class="literal">ManagedOperationParameter</code></p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-autodetect" href="#jmx-interface-autodetect"></a>25.3.4&nbsp;the AutodetectCapableMBeanInfoAssembler interface</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-autodetect" href="#jmx-interface-autodetect"></a>24.3.4&nbsp;the AutodetectCapableMBeanInfoAssembler interface</h3></div></div></div>
 
 <p>To simplify configuration even further, Spring introduces the
 <code class="literal">AutodetectCapableMBeanInfoAssembler</code> interface which extends the <code class="literal">MBeanInfoAssembler</code>
@@ -454,9 +454,9 @@ the <code class="literal">JmxTestBean</code> will still be registered since it i
 attribute and the <code class="literal">MetadataMBeanInfoAssembler</code> detects this and votes to include it. The
 only problem with this approach is that the name of the <code class="literal">JmxTestBean</code> now has business
 meaning. You can address this issue by changing the default behavior for <code class="literal">ObjectName</code>
-creation as defined in <a class="xref" href="jmx.html#jmx-naming" title="25.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;25.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
+creation as defined in <a class="xref" href="jmx.html#jmx-naming" title="24.4&nbsp;Controlling the ObjectNames for your beans">Section&nbsp;24.4, &#8220;Controlling the ObjectNames for your beans&#8221;</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-java" href="#jmx-interface-java"></a>25.3.5&nbsp;Defining management interfaces using Java interfaces</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-java" href="#jmx-interface-java"></a>24.3.5&nbsp;Defining management interfaces using Java interfaces</h3></div></div></div>
 
 <p>In addition to the <code class="literal">MetadataMBeanInfoAssembler</code>, Spring also includes the
 <code class="literal">InterfaceBasedMBeanInfoAssembler</code> which allows you to constrain the methods and
@@ -527,7 +527,7 @@ comma-separated list of interface names to use for that bean.</p>
 on the bean and use all of the interfaces implemented by that bean to create the
 management interface.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-methodnames" href="#jmx-interface-methodnames"></a>25.3.6&nbsp;Using MethodNameBasedMBeanInfoAssembler</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-interface-methodnames" href="#jmx-interface-methodnames"></a>24.3.6&nbsp;Using MethodNameBasedMBeanInfoAssembler</h3></div></div></div>
 
 <p>The <code class="literal">MethodNameBasedMBeanInfoAssembler</code> allows you to specify a list of method names
 that will be exposed to JMX as attributes and operations. The code below shows a sample
@@ -555,7 +555,7 @@ the <code class="literal">methodMappings</code> property of <code class="literal
 lists of method names.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-naming" href="#jmx-naming"></a>25.4&nbsp;Controlling the ObjectNames for your beans</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-naming" href="#jmx-naming"></a>24.4&nbsp;Controlling the ObjectNames for your beans</h2></div></div></div>
 
 <p>Behind the scenes, the <code class="literal">MBeanExporter</code> delegates to an implementation of the
 <code class="literal">ObjectNamingStrategy</code> to obtain <code class="literal">ObjectName</code>s for each of the beans it is registering.
@@ -566,7 +566,7 @@ of the <code class="literal">beans</code> <code class="literal">Map</code> to an
 <code class="literal">ObjectNamingStrategy</code> implementations: the <code class="literal">IdentityNamingStrategy</code> that builds an
 <code class="literal">ObjectName</code> based on the JVM identity of the bean and the <code class="literal">MetadataNamingStrategy</code> that
 uses source level metadata to obtain the <code class="literal">ObjectName</code>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-properties" href="#jmx-naming-properties"></a>25.4.1&nbsp;Reading ObjectNames from Properties</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-properties" href="#jmx-naming-properties"></a>24.4.1&nbsp;Reading ObjectNames from Properties</h3></div></div></div>
 
 <p>You can configure your own <code class="literal">KeyNamingStrategy</code> instance and configure it to read
 <code class="literal">ObjectName</code>s from a <code class="literal">Properties</code> instance rather than use bean key. The
@@ -612,7 +612,7 @@ bean key.</p>
 <p>If no entry in the <code class="literal">Properties</code> instance can be found then the bean key name is used as
 the <code class="literal">ObjectName</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-metadata" href="#jmx-naming-metadata"></a>25.4.2&nbsp;Using the MetadataNamingStrategy</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-naming-metadata" href="#jmx-naming-metadata"></a>24.4.2&nbsp;Using the MetadataNamingStrategy</h3></div></div></div>
 
 <p>The <code class="literal">MetadataNamingStrategy</code> uses the <code class="literal">objectName</code> property of the <code class="literal">ManagedResource</code>
 attribute on each bean to create the <code class="literal">ObjectName</code>. The code below shows the
@@ -650,9 +650,9 @@ example, the generated <code class="literal">ObjectName</code> for the following
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"myBean"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.MyClass"</span><span class="hl-tag">/&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-context-mbeanexport" href="#jmx-context-mbeanexport"></a>25.4.3&nbsp;Configuring annotation based MBean export</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-context-mbeanexport" href="#jmx-context-mbeanexport"></a>24.4.3&nbsp;Configuring annotation based MBean export</h3></div></div></div>
 
-<p>If you prefer using <a class="link" href="jmx.html#jmx-interface-metadata" title="25.3.2&nbsp;Using Source-Level Metadata (Java annotations)">the annotation based approach</a> to define
+<p>If you prefer using <a class="link" href="jmx.html#jmx-interface-metadata" title="24.3.2&nbsp;Using Source-Level Metadata (Java annotations)">the annotation based approach</a> to define
 your management interfaces, then a convenience subclass of <code class="literal">MBeanExporter</code> is available:
 <code class="literal">AnnotationMBeanExporter</code>. When defining an instance of this subclass, the
 <code class="literal">namingStrategy</code>, <code class="literal">assembler</code>, and <code class="literal">attributeSource</code> configuration is no longer needed,
@@ -673,7 +673,7 @@ same purpose.</p>
 <code class="literal">defaultDomain</code> attribute (a property of <code class="literal">AnnotationMBeanExporter</code>) accepts an alternate
 value for the generated MBean <code class="literal">ObjectNames</code>' domains. This would be used in place of the
 fully qualified package name as described in the previous section on
-<a class="link" href="jmx.html#jmx-naming-metadata" title="25.4.2&nbsp;Using the MetadataNamingStrategy"><code class="literal">MetadataNamingStrategy</code></a>.</p>
+<a class="link" href="jmx.html#jmx-naming-metadata" title="24.4.2&nbsp;Using the MetadataNamingStrategy"><code class="literal">MetadataNamingStrategy</code></a>.</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@EnableMBeanExport(server="myMBeanServer", defaultDomain="myDomain")</span></em>
 <em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
 ContextConfiguration {
@@ -693,12 +693,12 @@ startup&#8230;</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-jsr160" href="#jmx-jsr160"></a>25.5&nbsp;JSR-160 Connectors</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-jsr160" href="#jmx-jsr160"></a>24.5&nbsp;JSR-160 Connectors</h2></div></div></div>
 
 <p>For remote access, Spring JMX module offers two <code class="literal">FactoryBean</code> implementations inside the
 <code class="literal">org.springframework.jmx.support</code> package for creating both server- and client-side
 connectors.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-server" href="#jmx-jsr160-server"></a>25.5.1&nbsp;Server-side Connectors</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-server" href="#jmx-jsr160-server"></a>24.5.1&nbsp;Server-side Connectors</h3></div></div></div>
 
 <p>To have Spring JMX create, start and expose a JSR-160 <code class="literal">JMXConnectorServer</code> use the
 following configuration:</p>
@@ -747,7 +747,7 @@ snippet of configuration:</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-client" href="#jmx-jsr160-client"></a>25.5.2&nbsp;Client-side Connectors</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-client" href="#jmx-jsr160-client"></a>24.5.2&nbsp;Client-side Connectors</h3></div></div></div>
 
 <p>To create an <code class="literal">MBeanServerConnection</code> to a remote JSR-160 enabled <code class="literal">MBeanServer</code> use the
 <code class="literal">MBeanServerConnectionFactoryBean</code> as shown below:</p>
@@ -756,7 +756,7 @@ snippet of configuration:</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-protocols" href="#jmx-jsr160-protocols"></a>25.5.3&nbsp;JMX over Burlap/Hessian/SOAP</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-jsr160-protocols" href="#jmx-jsr160-protocols"></a>24.5.3&nbsp;JMX over Burlap/Hessian/SOAP</h3></div></div></div>
 
 <p>JSR-160 permits extensions to the way in which communication is done between the client
 and the server. The examples above are using the mandatory RMI-based implementation
@@ -773,7 +773,7 @@ others:</p>
 documentation for more information.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-proxy" href="#jmx-proxy"></a>25.6&nbsp;Accessing MBeans via Proxies</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-proxy" href="#jmx-proxy"></a>24.6&nbsp;Accessing MBeans via Proxies</h2></div></div></div>
 
 <p>Spring JMX allows you to create proxies that re-route calls to MBeans registered in a
 local or remote <code class="literal">MBeanServer</code>. These proxies provide you with a standard Java interface
@@ -810,10 +810,10 @@ passed to the <code class="literal">MBeanProxyFactoryBean</code> via the <code c
 created will forward all invocations to the <code class="literal">MBeanServer</code> via this
 <code class="literal">MBeanServerConnection</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-notifications" href="#jmx-notifications"></a>25.7&nbsp;Notifications</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-notifications" href="#jmx-notifications"></a>24.7&nbsp;Notifications</h2></div></div></div>
 
 <p>Spring&#8217;s JMX offering includes comprehensive support for JMX notifications.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-listeners" href="#jmx-notifications-listeners"></a>25.7.1&nbsp;Registering Listeners for Notifications</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-listeners" href="#jmx-notifications-listeners"></a>24.7.1&nbsp;Registering Listeners for Notifications</h3></div></div></div>
 
 <p>Spring&#8217;s JMX support makes it very easy to register any number of
 <code class="literal">NotificationListeners</code> with any number of MBeans (this includes MBeans exported by
@@ -1002,7 +1002,7 @@ specification (1.2) entitled <span class="emphasis"><em>The JMX Notification Mod
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-publishing" href="#jmx-notifications-publishing"></a>25.7.2&nbsp;Publishing Notifications</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jmx-notifications-publishing" href="#jmx-notifications-publishing"></a>24.7.2&nbsp;Publishing Notifications</h3></div></div></div>
 
 <p>Spring provides support not just for registering to receive <code class="literal">Notifications</code>, but also
 for publishing <code class="literal">Notifications</code>.</p>
@@ -1074,7 +1074,7 @@ pragmatic&#8230; if you need the functionality offered by the <code class="liter
 you can accept the coupling to both Spring and JMX, then do so.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-resources" href="#jmx-resources"></a>25.8&nbsp;Further Resources</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jmx-resources" href="#jmx-resources"></a>24.8&nbsp;Further Resources</h2></div></div></div>
 
 <p>This section contains links to further resources about JMX.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
@@ -1092,4 +1092,4 @@ various JMX specs)
 </li></ul></div>
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">24.&nbsp;JMS (Java Message Service)&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;26.&nbsp;JCA CCI</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="jms.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="cci.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.&nbsp;JMS (Java Message Service)&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;25.&nbsp;JCA CCI</td></tr></table></div></body></html>

@@ -29,7 +29,7 @@ following chapter</a>.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
 &#8230; provide declarative enterprise services, especially as a replacement for EJB
 declarative services. The most important such service is
-<a class="link" href="transaction.html#transaction-declarative" title="12.5&nbsp;Declarative transaction management"><span class="emphasis"><em>declarative transaction management</em></span></a>.
+<a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management"><span class="emphasis"><em>declarative transaction management</em></span></a>.
 </li><li class="listitem">
 &#8230; allow users to implement custom aspects, complementing their use of OOP with AOP.
 </li></ul></div>
@@ -234,8 +234,8 @@ annotation:</p>
 element:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;aop:aspectj-autoproxy/&gt;</span></pre>
 
-<p>This assumes that you are using schema support as described in <a class="xref" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration">Chapter&nbsp;34, <i>XML Schema-based configuration</i></a>. See
-<a class="xref" href="xsd-config.html#xsd-config-body-schemas-aop" title="34.2.7&nbsp;the aop schema">Section&nbsp;34.2.7, &#8220;the aop schema&#8221;</a> for how to import the tags in the aop namespace.</p>
+<p>This assumes that you are using schema support as described in <a class="xref" href="xsd-config.html" title="33.&nbsp;XML Schema-based configuration">Chapter&nbsp;33, <i>XML Schema-based configuration</i></a>. See
+<a class="xref" href="xsd-config.html#xsd-config-body-schemas-aop" title="33.2.7&nbsp;the aop schema">Section&nbsp;33.2.7, &#8220;the aop schema&#8221;</a> for how to import the tags in the aop namespace.</p>
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="aop-at-aspectj" href="#aop-at-aspectj"></a>9.2.2&nbsp;Declaring an aspect</h3></div></div></div>
@@ -499,7 +499,7 @@ write:</p>
 <span class="hl-tag">&lt;/tx:advice&gt;</span></pre>
 
 <p>The <code class="literal">&lt;aop:config&gt;</code> and <code class="literal">&lt;aop:advisor&gt;</code> elements are discussed in <a class="xref" href="aop.html#aop-schema" title="9.3&nbsp;Schema-based AOP support">Section&nbsp;9.3, &#8220;Schema-based AOP support&#8221;</a>. The
-transaction elements are discussed in <a class="xref" href="transaction.html" title="12.&nbsp;Transaction Management">Chapter&nbsp;12, <i>Transaction Management</i></a>.</p>
+transaction elements are discussed in <a class="xref" href="transaction.html" title="11.&nbsp;Transaction Management">Chapter&nbsp;11, <i>Transaction Management</i></a>.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="aop-pointcuts-examples" href="#aop-pointcuts-examples"></a>Examples</h4></div></div></div>
 
@@ -1279,7 +1279,7 @@ the new <span class="emphasis"><em>syntax</em></span> and refer the reader to th
 (<a class="xref" href="aop.html#aop-ataspectj" title="9.2&nbsp;@AspectJ support">Section&nbsp;9.2, &#8220;@AspectJ support&#8221;</a>) for an understanding of writing pointcut expressions and the binding
 of advice parameters.</p>
 <p>To use the aop namespace tags described in this section, you need to import the
-spring-aop schema as described in <a class="xref" href="xsd-config.html" title="34.&nbsp;XML Schema-based configuration">Chapter&nbsp;34, <i>XML Schema-based configuration</i></a>. See <a class="xref" href="xsd-config.html#xsd-config-body-schemas-aop" title="34.2.7&nbsp;the aop schema">Section&nbsp;34.2.7, &#8220;the aop schema&#8221;</a>
+spring-aop schema as described in <a class="xref" href="xsd-config.html" title="33.&nbsp;XML Schema-based configuration">Chapter&nbsp;33, <i>XML Schema-based configuration</i></a>. See <a class="xref" href="xsd-config.html#xsd-config-body-schemas-aop" title="33.2.7&nbsp;the aop schema">Section&nbsp;33.2.7, &#8220;the aop schema&#8221;</a>
 for how to import the tags in the aop namespace.</p>
 <p>Within your Spring configurations, all aspect and advisor elements must be placed within
 an <code class="literal">&lt;aop:config&gt;</code> element (you can have more than one <code class="literal">&lt;aop:config&gt;</code> element in an
@@ -2002,7 +2002,7 @@ code snippet.</p>
 
 <p>If you invoke a method on an object reference, the method is invoked <span class="emphasis"><em>directly</em></span> on
 that object reference, as can be seen below.</p>
-<div class="figure"><a name="d5e7040" href="#d5e7040"></a><p class="title"><b>Figure&nbsp;9.1.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e7043" href="#d5e7043"></a><p class="title"><b>Figure&nbsp;9.1.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/aop-proxy-plain-pojo-call.png" alt="aop proxy plain pojo call"></div>
 </div></div><br class="figure-break">
 
@@ -2019,7 +2019,7 @@ that object reference, as can be seen below.</p>
 
 <p>Things change slightly when the reference that client code has is a proxy. Consider the
 following diagram and code snippet.</p>
-<div class="figure"><a name="d5e7049" href="#d5e7049"></a><p class="title"><b>Figure&nbsp;9.2.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e7052" href="#d5e7052"></a><p class="title"><b>Figure&nbsp;9.2.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/aop-proxy-call.png" alt="aop proxy call"></div>
 </div></div><br class="figure-break">
 
@@ -2225,7 +2225,7 @@ using Java based configuration simply add <code class="literal">@EnableSpringCon
 
 }</pre>
 
-<p>If you prefer XML based configuration, the Spring <a class="link" href="xsd-config.html#xsd-config-body-schemas-context" title="34.2.8&nbsp;the context schema"><code class="literal">context</code> namespace</a> defines a convenient <code class="literal">context:spring-configured</code> element:</p>
+<p>If you prefer XML based configuration, the Spring <a class="link" href="xsd-config.html#xsd-config-body-schemas-context" title="33.2.8&nbsp;the context schema"><code class="literal">context</code> namespace</a> defines a convenient <code class="literal">context:spring-configured</code> element:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;context:spring-configured/&gt;</span></pre>
 
 <p>Instances of <code class="literal">@Configurable</code> objects created <span class="emphasis"><em>before</em></span> the aspect has been configured

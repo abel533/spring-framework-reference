@@ -1,8 +1,8 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>24.&nbsp;JMS (Java Message Service)</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="ejb.html" title="23.&nbsp;Enterprise JavaBeans (EJB) integration"><link rel="next" href="jmx.html" title="25.&nbsp;JMX"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">24.&nbsp;JMS (Java Message Service)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ejb.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jmx.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jms" href="#jms"></a>24.&nbsp;JMS (Java Message Service)</h2></div></div></div>
+   <title>23.&nbsp;JMS (Java Message Service)</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"><link rel="prev" href="ejb.html" title="22.&nbsp;Enterprise JavaBeans (EJB) integration"><link rel="next" href="jmx.html" title="24.&nbsp;JMX"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">23.&nbsp;JMS (Java Message Service)</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="ejb.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;VI.&nbsp;Integration</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="jmx.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="jms" href="#jms"></a>23.&nbsp;JMS (Java Message Service)</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-introduction" href="#jms-introduction"></a>24.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-introduction" href="#jms-introduction"></a>23.1&nbsp;Introduction</h2></div></div></div>
 
 <p>Spring provides a JMS integration framework that simplifies the use of the JMS API much
 like Spring&#8217;s integration does for the JDBC API.</p>
@@ -42,9 +42,9 @@ implementation of Spring&#8217;s <code class="literal">PlatformTransactionManage
 <code class="literal">JmsTransactionManager</code>). This allows for seamless integration of JMS as a transactional
 resource into Spring&#8217;s transaction management mechanisms.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-using" href="#jms-using"></a>24.2&nbsp;Using Spring JMS</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-using" href="#jms-using"></a>23.2&nbsp;Using Spring JMS</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-jmstemplate" href="#jms-jmstemplate"></a>24.2.1&nbsp;JmsTemplate</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-jmstemplate" href="#jms-jmstemplate"></a>23.2.1&nbsp;JmsTemplate</h3></div></div></div>
 
 <p>The <code class="literal">JmsTemplate</code> class is the central class in the JMS core package. It simplifies the
 use of JMS since it handles the creation and release of resources when sending or
@@ -84,7 +84,7 @@ and provides an integration with the messaging abstraction, i.e.
 <code class="literal">org.springframework.messaging.Message</code>. This allows you to create the message to
 send in generic manner.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-connections" href="#jms-connections"></a>24.2.2&nbsp;Connections</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-connections" href="#jms-connections"></a>23.2.2&nbsp;Connections</h3></div></div></div>
 
 <p>The <code class="literal">JmsTemplate</code> requires a reference to a <code class="literal">ConnectionFactory</code>. The <code class="literal">ConnectionFactory</code>
 is part of the JMS specification and serves as the entry point for working with JMS. It
@@ -133,7 +133,7 @@ MessageConsumers are cached based on a key composed of the destination, selector
 noLocal delivery flag, and the durable subscription name (if creating durable consumers).</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-destinations" href="#jms-destinations"></a>24.2.3&nbsp;Destination Management</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-destinations" href="#jms-destinations"></a>23.2.3&nbsp;Destination Management</h3></div></div></div>
 
 <p>Destinations, like ConnectionFactories, are JMS administered objects that can be stored
 and retrieved in JNDI. When configuring a Spring application context you can use the
@@ -173,13 +173,13 @@ implementations of the <code class="literal">DestinationResolver</code> interfac
 <code class="literal">defaultDestination</code>. The default destination will be used with send and receive
 operations that do not refer to a specific destination.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-mdp" href="#jms-mdp"></a>24.2.4&nbsp;Message Listener Containers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-mdp" href="#jms-mdp"></a>23.2.4&nbsp;Message Listener Containers</h3></div></div></div>
 
 <p>One of the most common uses of JMS messages in the EJB world is to drive message-driven
 beans (MDBs). Spring offers a solution to create message-driven POJOs (MDPs) in a way
-that does not tie a user to an EJB container. (See <a class="xref" href="jms.html#jms-asynchronousMessageReception" title="24.4.2&nbsp;Asynchronous Reception - Message-Driven POJOs">Section&nbsp;24.4.2, &#8220;Asynchronous Reception - Message-Driven POJOs&#8221;</a>
+that does not tie a user to an EJB container. (See <a class="xref" href="jms.html#jms-asynchronousMessageReception" title="23.4.2&nbsp;Asynchronous Reception - Message-Driven POJOs">Section&nbsp;23.4.2, &#8220;Asynchronous Reception - Message-Driven POJOs&#8221;</a>
 for detailed coverage of Spring&#8217;s MDP support.) As from Spring Framework 4.1, endpoint
-methods can be simply annotated using <code class="literal">@JmsListener</code> see <a class="xref" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">Section&nbsp;24.6, &#8220;Annotation-driven listener endpoints&#8221;</a> for more
+methods can be simply annotated using <code class="literal">@JmsListener</code> see <a class="xref" href="jms.html#jms-annotated" title="23.6&nbsp;Annotation-driven listener endpoints">Section&nbsp;23.6, &#8220;Annotation-driven listener endpoints&#8221;</a> for more
 details.</p>
 <p>A message listener container is used to receive messages from a JMS message queue and
 drive the <code class="literal">MessageListener</code> that is injected into it. The listener container is
@@ -222,11 +222,11 @@ a custom <code class="literal">BackOff</code> implementation for more fine-grain
 <code class="literal">ExponentialBackOff</code> for an example.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-tx" href="#jms-tx"></a>24.2.5&nbsp;Transaction management</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-tx" href="#jms-tx"></a>23.2.5&nbsp;Transaction management</h3></div></div></div>
 
 <p>Spring provides a <code class="literal">JmsTransactionManager</code> that manages transactions for a single JMS
 <code class="literal">ConnectionFactory</code>. This allows JMS applications to leverage the managed transaction
-features of Spring as described in <a class="xref" href="transaction.html" title="12.&nbsp;Transaction Management">Chapter&nbsp;12, <i>Transaction Management</i></a>. The <code class="literal">JmsTransactionManager</code> performs
+features of Spring as described in <a class="xref" href="transaction.html" title="11.&nbsp;Transaction Management">Chapter&nbsp;11, <i>Transaction Management</i></a>. The <code class="literal">JmsTransactionManager</code> performs
 local resource transactions, binding a JMS Connection/Session pair from the specified
 <code class="literal">ConnectionFactory</code> to the thread. <code class="literal">JmsTemplate</code> automatically detects such
 transactional resources and operates on them accordingly.</p>
@@ -252,7 +252,7 @@ properties <code class="literal">sessionTransacted</code> and <code class="liter
 transactional JMS <code class="literal">Session</code>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-sending" href="#jms-sending"></a>24.3&nbsp;Sending a Message</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-sending" href="#jms-sending"></a>23.3&nbsp;Sending a Message</h2></div></div></div>
 
 <p>The <code class="literal">JmsTemplate</code> contains many convenience methods to send a message. There are send
 methods that specify the destination using a <code class="literal">javax.jms.Destination</code> object and those
@@ -302,7 +302,7 @@ you should set the <code class="literal">destinationResolver</code> property of 
 <code class="literal">JndiDestinationResolver</code>.</p>
 <p>If you created the <code class="literal">JmsTemplate</code> and specified a default destination, the
 <code class="literal">send(MessageCreator c)</code> sends a message to that destination.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-msg-conversion" href="#jms-msg-conversion"></a>24.3.1&nbsp;Using Message Converters</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-msg-conversion" href="#jms-msg-conversion"></a>23.3.1&nbsp;Using Message Converters</h3></div></div></div>
 
 <p>In order to facilitate the sending of domain model objects, the <code class="literal">JmsTemplate</code> has
 various send methods that take a Java object as an argument for a message&#8217;s data
@@ -353,7 +353,7 @@ example below demonstrates how to modify a message header and a property after a
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-callbacks" href="#jms-callbacks"></a>24.3.2&nbsp;SessionCallback and ProducerCallback</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-callbacks" href="#jms-callbacks"></a>23.3.2&nbsp;SessionCallback and ProducerCallback</h3></div></div></div>
 
 <p>While the send operations cover many common usage scenarios, there are cases when you
 want to perform multiple operations on a JMS <code class="literal">Session</code> or <code class="literal">MessageProducer</code>. The
@@ -362,9 +362,9 @@ want to perform multiple operations on a JMS <code class="literal">Session</code
 these callback methods.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-receiving" href="#jms-receiving"></a>24.4&nbsp;Receiving a message</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-receiving" href="#jms-receiving"></a>23.4&nbsp;Receiving a message</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-sync" href="#jms-receiving-sync"></a>24.4.1&nbsp;Synchronous Reception</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-sync" href="#jms-receiving-sync"></a>23.4.1&nbsp;Synchronous Reception</h3></div></div></div>
 
 <p>While JMS is typically associated with asynchronous processing, it is possible to
 consume messages synchronously. The overloaded <code class="literal">receive(..)</code> methods provide this
@@ -373,13 +373,13 @@ becomes available. This can be a dangerous operation since the calling thread ca
 potentially be blocked indefinitely. The property <code class="literal">receiveTimeout</code> specifies how long
 the receiver should wait before giving up waiting for a message.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-asynchronousMessageReception" href="#jms-asynchronousMessageReception"></a>24.4.2&nbsp;Asynchronous Reception - Message-Driven POJOs</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-asynchronousMessageReception" href="#jms-asynchronousMessageReception"></a>23.4.2&nbsp;Asynchronous Reception - Message-Driven POJOs</h3></div></div></div>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>Spring also supports annotated-listener endpoints through the use of the <code class="literal">@JmsListener</code>
 annotation and provides an open infrastructure to register endpoints programmatically. This
 is by far the most convenient way to setup an asynchronous receiver, see
-<a class="xref" href="jms.html#jms-annotated-support" title="24.6.1&nbsp;Enable listener endpoint annotations">Section&nbsp;24.6.1, &#8220;Enable listener endpoint annotations&#8221;</a> for more details.</p>
+<a class="xref" href="jms.html#jms-annotated-support" title="23.6.1&nbsp;Enable listener endpoint annotations">Section&nbsp;23.6.1, &#8220;Enable listener endpoint annotations&#8221;</a> for more details.</p>
 </td></tr></table></div>
 
 <p>In a fashion similar to a Message-Driven Bean (MDB) in the EJB world, the Message-Driven
@@ -429,7 +429,7 @@ containers that ships with Spring (in this case the <code class="literal">Defaul
 <p>Please refer to the Spring javadocs of the various message listener containers for a full
 description of the features supported by each implementation.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-async-session-aware-message-listener" href="#jms-receiving-async-session-aware-message-listener"></a>24.4.3&nbsp;the SessionAwareMessageListener interface</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-async-session-aware-message-listener" href="#jms-receiving-async-session-aware-message-listener"></a>23.4.3&nbsp;the SessionAwareMessageListener interface</h3></div></div></div>
 
 <p>The <code class="literal">SessionAwareMessageListener</code> interface is a Spring-specific interface that provides
 a similar contract to the JMS <code class="literal">MessageListener</code> interface, but also provides the message
@@ -456,7 +456,7 @@ interface throws <code class="literal">JMSException</code>. In contrast to the s
 interface, when using the <code class="literal">SessionAwareMessageListener</code> interface, it is the
 responsibility of the client code to handle any exceptions thrown.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-async-message-listener-adapter" href="#jms-receiving-async-message-listener-adapter"></a>24.4.4&nbsp;the MessageListenerAdapter</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-receiving-async-message-listener-adapter" href="#jms-receiving-async-message-listener-adapter"></a>23.4.4&nbsp;the MessageListenerAdapter</h3></div></div></div>
 
 <p>The <code class="literal">MessageListenerAdapter</code> class is the final component in Spring&#8217;s asynchronous
 messaging support: in a nutshell, it allows you to expose almost <span class="emphasis"><em>any</em></span> class as a MDP
@@ -553,7 +553,7 @@ if no <code class="literal">Destination</code> is found then an <code class="lit
 please note that this exception <span class="emphasis"><em>will not</em></span> be swallowed and <span class="emphasis"><em>will</em></span> propagate up the
 call stack).</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-tx-participation" href="#jms-tx-participation"></a>24.4.5&nbsp;Processing messages within transactions</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-tx-participation" href="#jms-tx-participation"></a>23.4.5&nbsp;Processing messages within transactions</h3></div></div></div>
 
 <p>Invoking a message listener within a transaction only requires reconfiguration of the
 listener container.</p>
@@ -595,7 +595,7 @@ take care of the rest.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-jca-message-endpoint-manager" href="#jms-jca-message-endpoint-manager"></a>24.5&nbsp;Support for JCA Message Endpoints</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-jca-message-endpoint-manager" href="#jms-jca-message-endpoint-manager"></a>23.5&nbsp;Support for JCA Message Endpoints</h2></div></div></div>
 
 <p>Beginning with version 2.5, Spring also provides support for a JCA-based
 <code class="literal">MessageListener</code> container. The <code class="literal">JmsMessageEndpointManager</code> will attempt to
@@ -665,7 +665,7 @@ contract.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-annotated" href="#jms-annotated"></a>24.6&nbsp;Annotation-driven listener endpoints</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-annotated" href="#jms-annotated"></a>23.6&nbsp;Annotation-driven listener endpoints</h2></div></div></div>
 
 <p>The easiest way to receive a message asynchronously is to use the annotated listener
 endpoint infrastructure. In a nutshell, it allows you to expose a method of a managed
@@ -680,11 +680,11 @@ bean as a JMS listener endpoint.</p>
 <p>The idea of the example above is that whenever a message is available on the
 <code class="literal">javax.jms.Destination</code> "myDestination", the <code class="literal">processOrder</code> method is invoked
 accordingly (in this case, with the content of the JMS message similarly to
-what the <a class="link" href="jms.html#jms-receiving-async-message-listener-adapter" title="24.4.4&nbsp;the MessageListenerAdapter"><code class="literal">MessageListenerAdapter</code></a>
+what the <a class="link" href="jms.html#jms-receiving-async-message-listener-adapter" title="23.4.4&nbsp;the MessageListenerAdapter"><code class="literal">MessageListenerAdapter</code></a>
 provides).</p>
 <p>The annotated endpoint infrastructure creates a message listener container
 behind the scenes for each annotated method, using a <code class="literal">JmsListenerContainerFactory</code>.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-support" href="#jms-annotated-support"></a>24.6.1&nbsp;Enable listener endpoint annotations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-support" href="#jms-annotated-support"></a>23.6.1&nbsp;Enable listener endpoint annotations</h3></div></div></div>
 
 <p>To enable support for <code class="literal">@JmsListener</code> annotations add <code class="literal">@EnableJms</code> to one of
 your <code class="literal">@Configuration</code> classes.</p>
@@ -711,7 +711,7 @@ invoked with a core poll size of 3 threads and a maximum pool size of 10 threads
 an explicit default can be configured by implementing the <code class="literal">JmsListenerConfigurer</code>
 interface. The default is only required if at least one endpoint is registered
 without a specific container factory. See the javadoc for full details and examples.</p>
-<p>If you prefer <a class="link" href="jms.html#jms-namespace" title="24.7&nbsp;JMS Namespace Support">XML configuration</a> use the <code class="literal">&lt;jms:annotation-driven&gt;</code>
+<p>If you prefer <a class="link" href="jms.html#jms-namespace" title="23.7&nbsp;JMS Namespace Support">XML configuration</a> use the <code class="literal">&lt;jms:annotation-driven&gt;</code>
 element.</p>
 <pre class="programlisting"><span class="hl-tag">&lt;jms:annotation-driven/&gt;</span>
 
@@ -723,7 +723,7 @@ element.</p>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-programmatic-registration" href="#jms-annotated-programmatic-registration"></a>24.6.2&nbsp;Programmatic endpoints registration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-programmatic-registration" href="#jms-annotated-programmatic-registration"></a>23.6.2&nbsp;Programmatic endpoints registration</h3></div></div></div>
 
 <p><code class="literal">JmsListenerEndpoint</code> provides a model of an JMS endpoint and is responsible for configuring
 the container for that model. The infrastructure allows you to configure endpoints
@@ -750,7 +750,7 @@ describing a custom invocation mechanism.</p>
 <p>It should be noted that you could just as well skip the use of <code class="literal">@JmsListener</code> altogether
 and only register your endpoints programmatically through <code class="literal">JmsListenerConfigurer</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-method-signature" href="#jms-annotated-method-signature"></a>24.6.3&nbsp;Annotated endpoint method signature</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-method-signature" href="#jms-annotated-method-signature"></a>23.6.3&nbsp;Annotated endpoint method signature</h3></div></div></div>
 
 <p>So far, we have been injecting a simple <code class="literal">String</code> in our endpoint but it can actually
 have a very flexible method signature. Let&#8217;s rewrite it to inject the <code class="literal">Order</code> with
@@ -817,9 +817,9 @@ annotate the payload with <code class="literal">@Valid</code> and configure the 
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-reply" href="#jms-annotated-reply"></a>24.6.4&nbsp;Reply management</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jms-annotated-reply" href="#jms-annotated-reply"></a>23.6.4&nbsp;Reply management</h3></div></div></div>
 
-<p>The existing support in <a class="link" href="jms.html#jms-receiving-async-message-listener-adapter" title="24.4.4&nbsp;the MessageListenerAdapter">MessageListenerAdapter</a>
+<p>The existing support in <a class="link" href="jms.html#jms-receiving-async-message-listener-adapter" title="23.4.4&nbsp;the MessageListenerAdapter">MessageListenerAdapter</a>
 already allows your method to have a non-<code class="literal">void</code> return type. When that&#8217;s the case, the result of
 the invocation is encapsulated in a <code class="literal">javax.jms.Message</code> sent either in the destination specified
 in the <code class="literal">JMSReplyTo</code> header of the original message or in the default destination configured on
@@ -848,7 +848,7 @@ as follow to automatically send a reply:</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-namespace" href="#jms-namespace"></a>24.7&nbsp;JMS Namespace Support</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jms-namespace" href="#jms-namespace"></a>23.7&nbsp;JMS Namespace Support</h2></div></div></div>
 
 <p>Spring provides an XML namespace for simplifying JMS configuration. To use the JMS
 namespace elements you will need to reference the JMS schema:</p>
@@ -865,7 +865,7 @@ namespace elements you will need to reference the JMS schema:</p>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 <p>The namespace consists of three top-level elements: <code class="literal">&lt;annotation-driven/&gt;</code>, <code class="literal">&lt;listener-container/&gt;</code>
-and <code class="literal">&lt;jca-listener-container/&gt;</code>. <code class="literal">&lt;annotation-driven</code> enables the use of <a class="link" href="jms.html#jms-annotated" title="24.6&nbsp;Annotation-driven listener endpoints">annotation-driven listener endpoints</a>. <code class="literal">&lt;listener-container/&gt;</code> and <code class="literal">&lt;jca-listener-container/&gt;</code>
+and <code class="literal">&lt;jca-listener-container/&gt;</code>. <code class="literal">&lt;annotation-driven</code> enables the use of <a class="link" href="jms.html#jms-annotated" title="23.6&nbsp;Annotation-driven listener endpoints">annotation-driven listener endpoints</a>. <code class="literal">&lt;listener-container/&gt;</code> and <code class="literal">&lt;jca-listener-container/&gt;</code>
 defines shared listener container configuration and may contain <code class="literal">&lt;listener/&gt;</code> child elements. Here
 is an example of a basic configuration for two listeners.</p>
 <pre class="programlisting"><span class="hl-tag">&lt;jms:listener-container&gt;</span>
@@ -878,10 +878,10 @@ is an example of a basic configuration for two listeners.</p>
 
 <p>The example above is equivalent to creating two distinct listener container bean
 definitions and two distinct <code class="literal">MessageListenerAdapter</code> bean definitions as demonstrated
-in <a class="xref" href="jms.html#jms-receiving-async-message-listener-adapter" title="24.4.4&nbsp;the MessageListenerAdapter">Section&nbsp;24.4.4, &#8220;the MessageListenerAdapter&#8221;</a>. In addition to the attributes shown
+in <a class="xref" href="jms.html#jms-receiving-async-message-listener-adapter" title="23.4.4&nbsp;the MessageListenerAdapter">Section&nbsp;23.4.4, &#8220;the MessageListenerAdapter&#8221;</a>. In addition to the attributes shown
 above, the <code class="literal">listener</code> element may contain several optional ones. The following table
 describes all available attributes:</p>
-<div class="table"><a name="jms-namespace-listener-tbl" href="#jms-namespace-listener-tbl"></a><p class="title"><b>Table&nbsp;24.1.&nbsp;Attributes of the JMS &lt;listener&gt; element</b></p><div class="table-contents">
+<div class="table"><a name="jms-namespace-listener-tbl" href="#jms-namespace-listener-tbl"></a><p class="title"><b>Table&nbsp;23.1.&nbsp;Attributes of the JMS &lt;listener&gt; element</b></p><div class="table-contents">
 
   <table summary="Attributes of the JMS <listener&gt; element" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>id</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>A bean name for the hosting listener container. If not specified, a bean name will be
   automatically generated.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>destination <span class="emphasis"><em>(required)</em></span></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The destination name for this listener, resolved through the <code class="literal">DestinationResolver</code>
@@ -919,7 +919,7 @@ specifying the id of the bean to expose through the <code class="literal">factor
 of the <code class="literal">AbstractMessageListenerContainer</code> and its concrete subclasses for more details
 on the individual properties. The javadocs also provide a discussion of transaction
 choices and message redelivery scenarios.</p>
-<div class="table"><a name="jms-namespace-listener-container-tbl" href="#jms-namespace-listener-container-tbl"></a><p class="title"><b>Table&nbsp;24.2.&nbsp;Attributes of the JMS &lt;listener-container&gt; element</b></p><div class="table-contents">
+<div class="table"><a name="jms-namespace-listener-container-tbl" href="#jms-namespace-listener-container-tbl"></a><p class="title"><b>Table&nbsp;23.2.&nbsp;Attributes of the JMS &lt;listener-container&gt; element</b></p><div class="table-contents">
 
   <table summary="Attributes of the JMS <listener-container&gt; element" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>container-type</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>The type of this listener container. Available options are: <code class="literal">default</code>, <code class="literal">simple</code>,
   <code class="literal">default102</code>, or <code class="literal">simple102</code> (the default value is <code class="literal">'default'</code>).</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>container-class</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>A custom listener container implementation class as fully qualified class name.
@@ -972,7 +972,7 @@ choices and message redelivery scenarios.</p>
 
 <p>The available configuration options for the JCA variant are described in the following
 table:</p>
-<div class="table"><a name="jms-namespace-jca-listener-container-tbl" href="#jms-namespace-jca-listener-container-tbl"></a><p class="title"><b>Table&nbsp;24.3.&nbsp;Attributes of the JMS &lt;jca-listener-container/&gt; element</b></p><div class="table-contents">
+<div class="table"><a name="jms-namespace-jca-listener-container-tbl" href="#jms-namespace-jca-listener-container-tbl"></a><p class="title"><b>Table&nbsp;23.3.&nbsp;Attributes of the JMS &lt;jca-listener-container/&gt; element</b></p><div class="table-contents">
 
   <table summary="Attributes of the JMS <jca-listener-container/&gt; element" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Attribute</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>factory-id</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Exposes the settings defined by this element as a <code class="literal">JmsListenerContainerFactory</code>
   with the specified id so that they can be reused with other endpoints.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>resource-adapter</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>A reference to the JCA <code class="literal">ResourceAdapter</code> bean (the default bean name is
@@ -996,4 +996,4 @@ table:</p>
 </div></div><br class="table-break">
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ejb.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jmx.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">23.&nbsp;Enterprise JavaBeans (EJB) integration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;25.&nbsp;JMX</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="ejb.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-integration.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="jmx.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">22.&nbsp;Enterprise JavaBeans (EJB) integration&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;24.&nbsp;JMX</td></tr></table></div></body></html>
