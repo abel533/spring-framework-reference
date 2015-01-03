@@ -183,25 +183,15 @@ bean定义可以跨越多个XML文件是非常有用的。通常每个独立的X
 
 [NOTE]
 ====
-It is possible, but not recommended, to reference files in parent directories using a
-relative "../" path. Doing so creates a dependency on a file that is outside the current
-application. In particular, this reference is not recommended for "classpath:" URLs (for
-example, "classpath:../services.xml"), where the runtime resolution process chooses the
-"nearest" classpath root and then looks into its parent directory. Classpath
-configuration changes may lead to the choice of a different, incorrect directory.
+使用一个相对"../"路径引用父目录中的配置是允许的，但是不推荐这么做。如果这么做就产生了一个当前应用外的引用依赖。特别不推荐在使用"classpath:"路径的时候，在运行的时候解析选择“最近”的classpath跟路径，然后在找父目录。Classpath配置的更改可能会导致选择一个不同的、错误的目录。
 
-You can always use fully qualified resource locations instead of relative paths: for
-example, "file:C:/config/services.xml" or "classpath:/config/services.xml". However, be
-aware that you are coupling your application's configuration to specific absolute
-locations. It is generally preferable to keep an indirection for such absolute
-locations, for example, through "${...}" placeholders that are resolved against JVM
-system properties at runtime.
+通常情况下，你可以使用完全限定的资源位置来代替相对路径，例如："file:C:/config/services.xml"或"classpath:/config/services.xml"。但是请注意，你的应用可能和一个特定的绝对路径耦合了。通常更合适的方式是通过间接的方式来使用绝对路径，例如通过"${...}"占位符，在运行时解析JVM的系统属性。
 ====
 
 
 
 [[beans-factory-client]]
-==== Using the container
+==== 使用容器
 The `ApplicationContext` is the interface for an advanced factory capable of maintaining
 a registry of different beans and their dependencies. Using the method `T getBean(String
 name, Class<T> requiredType)` you can retrieve instances of your beans.
