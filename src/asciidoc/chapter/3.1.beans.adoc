@@ -62,6 +62,7 @@ JavaConfig提供的许多功能已经成为Spring框架的一部分。因此，�
 
 Spring配置包括至少一个且通常多个由容器管理的bean定义。在基于XML配置的元数据中，这些beans配置成一个`<bean/>`元素，这些`<bean/>`元素定义在顶级元素`<beans/>`的里面。在Java配置中通常在一个`@Configuration`注解的类中，在方法上使用`@Bean`注解。
 
+这些bean定义对应的实际对象组成了你的应用。通常你会定义服务层对象、数据访问层对象（DAO），展现层对象如Struts的`Action`实例，底层对象如Hibernate的`SessionFactories`，JMS的`Queues`等等。一般很少会在容器中配置细粒度的领域对象，因为通常这都是DAO和业务逻辑负责创建和加载领域对象。
 These bean definitions correspond to the actual objects that make up your application.
 Typically you define service layer objects, data access objects (DAOs), presentation
 objects such as Struts `Action` instances, infrastructure objects such as Hibernate

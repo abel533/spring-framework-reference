@@ -1,0 +1,43 @@
+[[aop-prog]]
+=== Creating AOP proxies programmatically with the ProxyFactory
+It's easy to create AOP proxies programmatically using Spring. This enables you to use
+Spring AOP without dependency on Spring IoC.
+
+The following listing shows creation of a proxy for a target object, with one
+interceptor and one advisor. The interfaces implemented by the target object will
+automatically be proxied:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	ProxyFactory factory = new ProxyFactory(myBusinessInterfaceImpl);
+	factory.addAdvice(myMethodInterceptor);
+	factory.addAdvisor(myAdvisor);
+	MyBusinessInterface tb = (MyBusinessInterface) factory.getProxy();
+----
+
+The first step is to construct an object of type
+`org.springframework.aop.framework.ProxyFactory`. You can create this with a target
+object, as in the above example, or specify the interfaces to be proxied in an alternate
+constructor.
+
+You can add advices (with interceptors as a specialized kind of advice) and/or advisors,
+and manipulate them for the life of the ProxyFactory. If you add an
+IntroductionInterceptionAroundAdvisor, you can cause the proxy to implement additional
+interfaces.
+
+There are also convenience methods on ProxyFactory (inherited from `AdvisedSupport`)
+which allow you to add other advice types such as before and throws advice.
+AdvisedSupport is the superclass of both ProxyFactory and ProxyFactoryBean.
+
+[TIP]
+====
+
+Integrating AOP proxy creation with the IoC framework is best practice in most
+applications. We recommend that you externalize configuration from Java code with AOP,
+as in general.
+====
+
+
+
+

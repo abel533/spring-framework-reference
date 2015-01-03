@@ -50,7 +50,16 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **5.validation.adoc            - [jassen](http://git.oschina.net/thinapple)**
 - **7.expressions.adoc           - [Ji.K'](https://jik92.com/)**
 - **8.aop.adoc                   - [ym919202](http://git.oschina.net/yemaozistar)**
-- 9.aop-api.adoc               -
+- **9.aop-api.adoc(10.1. Introduction) - [waylau](https://github.com/waylau)**
+- 9.1.aop-api.adoc(10.2. Pointcut API in Spring) -
+- 9.2.aop-api.adoc(10.3. Advice API in Spring) -
+- 9.3.aop-api.adoc(10.4. Advisor API in Spring) -
+- 9.4.aop-api.adoc(10.6. Concise proxy definitions) -
+- 9.5.aop-api.adoc(10.7. Creating AOP proxies) -
+- 9.6.aop-api.adoc(10.8. Manipulating advised objects) -
+- 9.7.aop-api.adoc(10.9. Using the "auto-proxy" facility) -
+- 9.8.aop-api.adoc(10.10. Using TargetSources) -
+- 9.9.aop-api.adoc(10.11. Defining new Advice types) -
 - 10.testing.adoc(11. Introduction) -
 - 10.1.testing.adoc(11.3. Integration Testing) -
 - 10.2.testing.adoc(11.3.3. JDBC Testing Support) -

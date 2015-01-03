@@ -1,0 +1,92 @@
+[[aop-api-advised]]
+=== Manipulating advised objects
+However you create AOP proxies, you can manipulate them using the
+`org.springframework.aop.framework.Advised` interface. Any AOP proxy can be cast to this
+interface, whichever other interfaces it implements. This interface includes the
+following methods:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	Advisor[] getAdvisors();
+
+	void addAdvice(Advice advice) throws AopConfigException;
+
+	void addAdvice(int pos, Advice advice) throws AopConfigException;
+
+	void addAdvisor(Advisor advisor) throws AopConfigException;
+
+	void addAdvisor(int pos, Advisor advisor) throws AopConfigException;
+
+	int indexOf(Advisor advisor);
+
+	boolean removeAdvisor(Advisor advisor) throws AopConfigException;
+
+	void removeAdvisor(int index) throws AopConfigException;
+
+	boolean replaceAdvisor(Advisor a, Advisor b) throws AopConfigException;
+
+	boolean isFrozen();
+----
+
+The `getAdvisors()` method will return an Advisor for every advisor, interceptor or
+other advice type that has been added to the factory. If you added an Advisor, the
+returned advisor at this index will be the object that you added. If you added an
+interceptor or other advice type, Spring will have wrapped this in an advisor with a
+pointcut that always returns true. Thus if you added a `MethodInterceptor`, the advisor
+returned for this index will be an `DefaultPointcutAdvisor` returning your
+`MethodInterceptor` and a pointcut that matches all classes and methods.
+
+The `addAdvisor()` methods can be used to add any Advisor. Usually the advisor holding
+pointcut and advice will be the generic `DefaultPointcutAdvisor`, which can be used with
+any advice or pointcut (but not for introductions).
+
+By default, it's possible to add or remove advisors or interceptors even once a proxy
+has been created. The only restriction is that it's impossible to add or remove an
+introduction advisor, as existing proxies from the factory will not show the interface
+change. (You can obtain a new proxy from the factory to avoid this problem.)
+
+A simple example of casting an AOP proxy to the `Advised` interface and examining and
+manipulating its advice:
+
+[source,java,indent=0]
+[subs="verbatim,quotes"]
+----
+	Advised advised = (Advised) myObject;
+	Advisor[] advisors = advised.getAdvisors();
+	int oldAdvisorCount = advisors.length;
+	System.out.println(oldAdvisorCount + " advisors");
+
+	// Add an advice like an interceptor without a pointcut
+	// Will match all proxied methods
+	// Can use for interceptors, before, after returning or throws advice
+	advised.addAdvice(new DebugInterceptor());
+
+	// Add selective advice using a pointcut
+	advised.addAdvisor(new DefaultPointcutAdvisor(mySpecialPointcut, myAdvice));
+
+	assertEquals("Added two advisors", oldAdvisorCount + 2, advised.getAdvisors().length);
+----
+
+[NOTE]
+====
+It's questionable whether it's advisable (no pun intended) to modify advice on a
+business object in production, although there are no doubt legitimate usage cases.
+However, it can be very useful in development: for example, in tests. I have sometimes
+found it very useful to be able to add test code in the form of an interceptor or other
+advice, getting inside a method invocation I want to test. (For example, the advice can
+get inside a transaction created for that method: for example, to run SQL to check that
+a database was correctly updated, before marking the transaction for roll back.)
+====
+
+Depending on how you created the proxy, you can usually set a `frozen` flag, in which
+case the `Advised` `isFrozen()` method will return true, and any attempts to modify
+advice through addition or removal will result in an `AopConfigException`. The ability
+to freeze the state of an advised object is useful in some cases, for example, to
+prevent calling code removing a security interceptor. It may also be used in Spring 1.1
+to allow aggressive optimization if runtime advice modification is known not to be
+required.
+
+
+
+

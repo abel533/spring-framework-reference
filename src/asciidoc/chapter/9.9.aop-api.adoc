@@ -1,0 +1,27 @@
+[[aop-extensibility]]
+=== Defining new Advice types
+
+Spring AOP is designed to be extensible. While the interception implementation strategy
+is presently used internally, it is possible to support arbitrary advice types in
+addition to the out-of-the-box interception around advice, before, throws advice and
+after returning advice.
+
+The `org.springframework.aop.framework.adapter` package is an SPI package allowing
+support for new custom advice types to be added without changing the core framework.
+The only constraint on a custom `Advice` type is that it must implement the
+`org.aopalliance.aop.Advice` marker interface.
+
+Please refer to the `org.springframework.aop.framework.adapter` javadocs for further
+information.
+
+
+
+
+[[aop-api-resources]]
+=== Further resources
+Please refer to the Spring sample applications for further examples of Spring AOP:
+
+* The JPetStore's default configuration illustrates the use of the
+  `TransactionProxyFactoryBean` for declarative transaction management.
+* The `/attributes` directory of the JPetStore illustrates the use of attribute-driven
+  declarative transaction management.
