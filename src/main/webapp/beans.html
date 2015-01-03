@@ -48,17 +48,8 @@ JavaConfig&#25552;&#20379;&#30340;&#35768;&#22810;&#21151;&#33021;&#24050;&#3246
 </li></ul></div>
 
 <p>Spring&#37197;&#32622;&#21253;&#25324;&#33267;&#23569;&#19968;&#20010;&#19988;&#36890;&#24120;&#22810;&#20010;&#30001;&#23481;&#22120;&#31649;&#29702;&#30340;bean&#23450;&#20041;&#12290;&#22312;&#22522;&#20110;XML&#37197;&#32622;&#30340;&#20803;&#25968;&#25454;&#20013;&#65292;&#36825;&#20123;beans&#37197;&#32622;&#25104;&#19968;&#20010;<code class="literal">&lt;bean/&gt;</code>&#20803;&#32032;&#65292;&#36825;&#20123;<code class="literal">&lt;bean/&gt;</code>&#20803;&#32032;&#23450;&#20041;&#22312;&#39030;&#32423;&#20803;&#32032;<code class="literal">&lt;beans/&gt;</code>&#30340;&#37324;&#38754;&#12290;&#22312;Java&#37197;&#32622;&#20013;&#36890;&#24120;&#22312;&#19968;&#20010;<code class="literal">@Configuration</code>&#27880;&#35299;&#30340;&#31867;&#20013;&#65292;&#22312;&#26041;&#27861;&#19978;&#20351;&#29992;<code class="literal">@Bean</code>&#27880;&#35299;&#12290;</p>
-<p>&#36825;&#20123;bean&#23450;&#20041;&#23545;&#24212;&#30340;&#23454;&#38469;&#23545;&#35937;&#32452;&#25104;&#20102;&#20320;&#30340;&#24212;&#29992;&#12290;&#36890;&#24120;&#20320;&#20250;&#23450;&#20041;&#26381;&#21153;&#23618;&#23545;&#35937;&#12289;&#25968;&#25454;&#35775;&#38382;&#23618;&#23545;&#35937;&#65288;DAO&#65289;&#65292;&#23637;&#29616;&#23618;&#23545;&#35937;&#22914;Struts&#30340;<code class="literal">Action</code>&#23454;&#20363;&#65292;&#24213;&#23618;&#23545;&#35937;&#22914;Hibernate&#30340;<code class="literal">SessionFactories</code>&#65292;JMS&#30340;<code class="literal">Queues</code>&#31561;&#31561;&#12290;&#19968;&#33324;&#24456;&#23569;&#20250;&#22312;&#23481;&#22120;&#20013;&#37197;&#32622;&#32454;&#31890;&#24230;&#30340;&#39046;&#22495;&#23545;&#35937;&#65292;&#22240;&#20026;&#36890;&#24120;&#26159;DAO&#21644;&#19994;&#21153;&#36923;&#36753;&#36127;&#36131;&#21019;&#24314;&#21644;&#21152;&#36733;&#39046;&#22495;&#23545;&#35937;&#12290;
-These bean definitions correspond to the actual objects that make up your application.
-Typically you define service layer objects, data access objects (DAOs), presentation
-objects such as Struts <code class="literal">Action</code> instances, infrastructure objects such as Hibernate
-<code class="literal">SessionFactories</code>, JMS <code class="literal">Queues</code>, and so forth. Typically one does not configure
-fine-grained domain objects in the container, because it is usually the responsibility
-of DAOs and business logic to create and load domain objects. However, you can use
-Spring&#8217;s integration with AspectJ to configure objects that have been created outside
-the control of an IoC container. See <a class="link" href="aop.html#aop-atconfigurable" title="9.8.1&nbsp;Using AspectJ to dependency inject domain objects with Spring">Using AspectJ to
-dependency-inject domain objects with Spring</a>.</p>
-<p>The following example shows the basic structure of XML-based configuration metadata:</p>
+<p>&#36825;&#20123;bean&#23450;&#20041;&#23545;&#24212;&#30340;&#23454;&#38469;&#23545;&#35937;&#32452;&#25104;&#20102;&#20320;&#30340;&#24212;&#29992;&#12290;&#36890;&#24120;&#20320;&#20250;&#23450;&#20041;&#26381;&#21153;&#23618;&#23545;&#35937;&#12289;&#25968;&#25454;&#35775;&#38382;&#23618;&#23545;&#35937;&#65288;DAO&#65289;&#65292;&#23637;&#29616;&#23618;&#23545;&#35937;&#22914;Struts&#30340;<code class="literal">Action</code>&#23454;&#20363;&#65292;&#24213;&#23618;&#23545;&#35937;&#22914;Hibernate&#30340;<code class="literal">SessionFactories</code>&#65292;JMS&#30340;<code class="literal">Queues</code>&#31561;&#31561;&#12290;&#19968;&#33324;&#24456;&#23569;&#20250;&#22312;&#23481;&#22120;&#20013;&#37197;&#32622;&#32454;&#31890;&#24230;&#30340;&#39046;&#22495;&#23545;&#35937;&#65292;&#22240;&#20026;&#36890;&#24120;&#26159;DAO&#21644;&#19994;&#21153;&#36923;&#36753;&#36127;&#36131;&#21019;&#24314;&#21644;&#21152;&#36733;&#39046;&#22495;&#23545;&#35937;&#12290;&#20294;&#26159;&#20320;&#21487;&#20197;&#20351;&#29992;Spring&#38598;&#25104;AspectJ&#26469;&#37197;&#32622;IoC&#23481;&#22120;&#20043;&#22806;&#21019;&#24314;&#30340;&#23545;&#35937;&#12290;&#26597;&#30475;<a class="link" href="aop.html#aop-atconfigurable" title="9.8.1&nbsp;Using AspectJ to dependency inject domain objects with Spring">&#22312;Spring&#20013;&#20351;&#29992;AspectJ&#20381;&#36182;&#27880;&#20837;&#39046;&#22495;&#23545;&#35937;</a>&#12290;</p>
+<p>&#19979;&#38754;&#30340;&#20363;&#23376;&#28436;&#31034;&#20102;&#22522;&#20110;XML&#30340;&#37197;&#32622;&#20803;&#25968;&#25454;&#30340;&#22522;&#30784;&#32467;&#26500;&#65306;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -66,41 +57,30 @@ dependency-inject domain objects with Spring</a>.</p>
         http://www.springframework.org/schema/beans/spring-beans.xsd"</span><span class="hl-tag">&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"..."</span> <span class="hl-attribute">class</span>=<span class="hl-value">"..."</span><span class="hl-tag">&gt;</span>
-        <span class="hl-comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span>
+        <span class="hl-comment">&lt;!-- &#22312;&#36825;&#37324;&#20889; bean &#30340;&#37197;&#32622;&#21644;&#30456;&#20851;&#24341;&#29992; --&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"..."</span> <span class="hl-attribute">class</span>=<span class="hl-value">"..."</span><span class="hl-tag">&gt;</span>
-        <span class="hl-comment">&lt;!-- collaborators and configuration for this bean go here --&gt;</span>
+        <span class="hl-comment">&lt;!-- &#22312;&#36825;&#37324;&#20889; bean &#30340;&#37197;&#32622;&#21644;&#30456;&#20851;&#24341;&#29992; --&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 
-    <span class="hl-comment">&lt;!-- more bean definitions go here --&gt;</span>
+    <span class="hl-comment">&lt;!-- &#26356;&#22810;bean&#30340;&#23450;&#20041;&#20889;&#22312;&#36825;&#37324; --&gt;</span>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The <code class="literal">id</code> attribute is a string that you use to identify the individual bean definition.
-The <code class="literal">class</code> attribute defines the type of the bean and uses the fully qualified
-classname. The value of the id attribute refers to collaborating objects. The XML for
-referring to collaborating objects is not shown in this example; see
-<a class="link" href="beans.html#beans-dependencies" title="5.4&nbsp;Dependencies">Dependencies</a> for more information.</p>
+<p><code class="literal">id</code>&#23646;&#24615;&#26159;&#19968;&#20010;&#29992;&#26469;&#35782;&#21035;&#27599;&#19968;&#20010;&#29420;&#31435;bean&#23450;&#20041;&#30340;&#23383;&#31526;&#20018;&#12290;<code class="literal">class</code>&#23646;&#24615;&#23450;&#20041;&#20102;bean&#30340;&#31867;&#22411;&#65292;&#36825;&#20010;&#23646;&#24615;&#38656;&#35201;&#20351;&#29992;bean&#31867;&#30340;&#20840;&#38480;&#23450;&#21517;&#31216;&#12290;id&#23646;&#24615;&#30340;&#20540;&#21487;&#20197;&#34987;&#20854;&#20182;&#30340;bean&#23545;&#35937;&#24341;&#29992;&#12290;&#36825;&#20010;&#20363;&#23376;&#20013;&#27809;&#26377;&#24341;&#29992;&#20854;&#20182;bean&#65292;&#26597;&#30475;<a class="link" href="beans.html#beans-dependencies" title="5.4&nbsp;Dependencies">bean&#20381;&#36182;</a>&#33719;&#21462;&#26356;&#22810;&#20449;&#24687;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-instantiation" href="#beans-factory-instantiation"></a>5.2.2&nbsp;Instantiating a container</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-instantiation" href="#beans-factory-instantiation"></a>5.2.2&nbsp;&#23454;&#20363;&#21270;&#23481;&#22120;</h3></div></div></div>
 
-<p>Instantiating a Spring IoC container is straightforward. The location path or paths
-supplied to an <code class="literal">ApplicationContext</code> constructor are actually resource strings that allow
-the container to load configuration metadata from a variety of external resources such
-as the local file system, from the Java <code class="literal">CLASSPATH</code>, and so on.</p>
+<p>&#23454;&#20363;&#21270;Spring IoC&#23481;&#22120;&#24456;&#23481;&#26131;&#12290;&#23558;&#19968;&#20010;&#25110;&#22810;&#20010;&#20301;&#32622;&#36335;&#24452;&#25552;&#20379;&#32473;<code class="literal">ApplicationContext</code>&#30340;&#26500;&#36896;&#26041;&#27861;&#23601;&#21487;&#20197;&#35753;&#23481;&#22120;&#21152;&#36733;&#37197;&#21046;&#20803;&#25968;&#25454;&#65292;&#21487;&#20197;&#20174;&#22810;&#31181;&#22806;&#37096;&#36164;&#28304;&#36827;&#34892;&#33719;&#21462;&#65292;&#20363;&#22914;&#25991;&#20214;&#31995;&#32479;&#12289;Java&#30340;<code class="literal">CLASSPATH</code>&#31561;&#31561;&#12290;</p>
 <pre class="programlisting">ApplicationContext context =
     <span class="hl-keyword">new</span> ClassPathXmlApplicationContext(<span class="hl-keyword">new</span> String[] {<span class="hl-string">"services.xml"</span>, <span class="hl-string">"daos.xml"</span>});</pre>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>After you learn about Spring&#8217;s IoC container, you may want to know more about Spring&#8217;s
-<code class="literal">Resource</code> abstraction, as described in <a class="xref" href="resources.html" title="6.&nbsp;Resources">Chapter&nbsp;6, <i>Resources</i></a>, which provides a convenient
-mechanism for reading an InputStream from locations defined in a URI syntax. In
-particular, <code class="literal">Resource</code> paths are used to construct applications contexts as described in
-<a class="xref" href="resources.html#resources-app-ctx" title="6.7&nbsp;&#24212;&#29992;&#19978;&#19979;&#25991;&#21644;&#36164;&#28304;&#36335;&#24452;">Section&nbsp;6.7, &#8220;&#24212;&#29992;&#19978;&#19979;&#25991;&#21644;&#36164;&#28304;&#36335;&#24452;&#8221;</a>.</p>
+<p>&#22312;&#20320;&#20102;&#35299;Spring&#30340;IoC&#23481;&#22120;&#20043;&#21518;&#65292;&#20320;&#21487;&#33021;&#24819;&#30693;&#36947;&#26356;&#22810;&#26377;&#20851;Spring&#30340;<code class="literal">Resource</code>&#30340;&#26356;&#22810;&#20869;&#23481;&#65292;&#23427;&#30340;&#20171;&#32461;&#22312;<a class="xref" href="resources.html" title="6.&nbsp;Resources">Chapter&nbsp;6, <i>Resources</i></a>&#65292;&#23427;&#25552;&#20379;&#20102;&#19968;&#20010;&#26041;&#20415;&#30340;&#26426;&#21046;&#26469;&#35835;&#21462;URI&#20013;&#30340;InputStream&#12290;<code class="literal">Resource</code>&#36335;&#24452;&#26159;&#29992;&#26469;&#26500;&#24314;&#24212;&#29992;&#31243;&#24207;&#19978;&#19979;&#25991;&#30340;&#65292;&#35814;&#32454;&#20869;&#23481;&#35831;&#30475;<a class="xref" href="resources.html#resources-app-ctx" title="6.7&nbsp;&#24212;&#29992;&#19978;&#19979;&#25991;&#21644;&#36164;&#28304;&#36335;&#24452;">Section&nbsp;6.7, &#8220;&#24212;&#29992;&#19978;&#19979;&#25991;&#21644;&#36164;&#28304;&#36335;&#24452;&#8221;</a>&#12290;</p>
 </td></tr></table></div>
 
-<p>The following example shows the service layer objects <code class="literal">(services.xml)</code> configuration file:</p>
+<p>&#19979;&#38754;&#30340;&#20363;&#23376;&#26159;&#26381;&#21153;&#23618;&#23545;&#35937;<code class="literal">(services.xml)</code>&#30340;&#37197;&#32622;&#25991;&#20214;&#65306;</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -112,14 +92,14 @@ particular, <code class="literal">Resource</code> paths are used to construct ap
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"petStore"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.samples.jpetstore.services.PetStoreServiceImpl"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"accountDao"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"accountDao"</span><span class="hl-tag">/&gt;</span>
         <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"itemDao"</span> <span class="hl-attribute">ref</span>=<span class="hl-value">"itemDao"</span><span class="hl-tag">/&gt;</span>
-        <span class="hl-comment">&lt;!-- additional collaborators and configuration for this bean go here --&gt;</span>
+        <span class="hl-comment">&lt;!-- &#22312;&#36825;&#37324;&#20889;&#39069;&#22806;&#30340;bean&#30340;&#37197;&#32622;&#21644;&#30456;&#20851;&#24341;&#29992; --&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 
-    <span class="hl-comment">&lt;!-- more bean definitions for services go here --&gt;</span>
+    <span class="hl-comment">&lt;!-- &#26356;&#22810;Service&#23618;&#30340;bean&#23450;&#20041;&#20889;&#22312;&#36825;&#37324; --&gt;</span>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>The following example shows the data access objects <code class="literal">daos.xml</code> file:</p>
+<p>&#19979;&#38754;&#30340;&#20363;&#23376;&#26159;&#25968;&#25454;&#35775;&#38382;&#23618;<code class="literal">daos.xml</code>&#25991;&#20214;:</p>
 <pre class="programlisting"><span class="hl-directive" style="color: maroon">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
 <span class="hl-tag">&lt;beans</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://www.springframework.org/schema/beans"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
@@ -128,32 +108,22 @@ particular, <code class="literal">Resource</code> paths are used to construct ap
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"accountDao"</span>
         <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.samples.jpetstore.dao.jpa.JpaAccountDao"</span><span class="hl-tag">&gt;</span>
-        <span class="hl-comment">&lt;!-- additional collaborators and configuration for this bean go here --&gt;</span>
+        <span class="hl-comment">&lt;!-- &#22312;&#36825;&#37324;&#20889;&#39069;&#22806;&#30340;bean&#30340;&#37197;&#32622;&#21644;&#30456;&#20851;&#24341;&#29992; --&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"itemDao"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.samples.jpetstore.dao.jpa.JpaItemDao"</span><span class="hl-tag">&gt;</span>
-        <span class="hl-comment">&lt;!-- additional collaborators and configuration for this bean go here --&gt;</span>
+        <span class="hl-comment">&lt;!-- &#22312;&#36825;&#37324;&#20889;&#39069;&#22806;&#30340;bean&#30340;&#37197;&#32622;&#21644;&#30456;&#20851;&#24341;&#29992; --&gt;</span>
     <span class="hl-tag">&lt;/bean&gt;</span>
 
-    <span class="hl-comment">&lt;!-- more bean definitions for data access objects go here --&gt;</span>
+    <span class="hl-comment">&lt;!-- &#26356;&#22810;&#25968;&#25454;&#35775;&#38382;&#23618;&#30340;bean&#23450;&#20041;&#20889;&#22312;&#36825;&#37324; --&gt;</span>
 
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>In the preceding example, the service layer consists of the class <code class="literal">PetStoreServiceImpl</code>,
-and two data access objects of the type <code class="literal">JpaAccountDao</code> and <code class="literal">JpaItemDao</code> (based
-on the JPA Object/Relational mapping standard). The <code class="literal">property name</code> element refers to the
-name of the JavaBean property, and the <code class="literal">ref</code> element refers to the name of another bean
-definition. This linkage between <code class="literal">id</code> and <code class="literal">ref</code> elements expresses the dependency between
-collaborating objects. For details of configuring an object&#8217;s dependencies, see
-<a class="link" href="beans.html#beans-dependencies" title="5.4&nbsp;Dependencies">Dependencies</a>.</p>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="beans-factory-xml-import" href="#beans-factory-xml-import"></a>Composing XML-based configuration metadata</h4></div></div></div>
+<p>&#22312;&#19978;&#38754;&#30340;&#20363;&#23376;&#20013;&#65292;&#26381;&#21153;&#23618;&#21253;&#21547;&#20102;<code class="literal">PetStoreServiceImpl</code>&#31867;&#21644;&#20004;&#20010;&#31867;&#22411;&#20026;<code class="literal">JpaAccountDao</code>&#21644;<code class="literal">JpaItemDao</code>&#65288;&#22522;&#20110;JPA&#23545;&#35937;/&#20851;&#31995;&#26144;&#23556;&#26631;&#20934;&#65289;&#30340;&#25968;&#25454;&#35775;&#38382;&#23545;&#35937;&#12290;<code class="literal">property name</code>&#20803;&#32032;&#25351;&#20195;JavaBean&#23646;&#24615;&#30340;&#21517;&#31216;&#65292;<code class="literal">ref</code>&#20803;&#32032;&#24341;&#29992;&#20102;&#21478;&#19968;&#20010;bean&#23450;&#20041;&#30340;&#21517;&#31216;&#12290;<code class="literal">id</code>&#21644;<code class="literal">ref</code>&#30452;&#25509;&#30340;&#36825;&#31181;&#20851;&#31995;&#34920;&#36798;&#20986;&#20102;&#36825;&#20004;&#20010;&#21512;&#20316;&#23545;&#35937;&#38388;&#30340;&#20381;&#36182;&#20851;&#31995;&#12290;&#37197;&#32622;&#23545;&#35937;&#30452;&#25509;&#20381;&#36182;&#20851;&#31995;&#30340;&#35814;&#32454;&#20449;&#24687;&#65292;&#35831;&#21442;&#35265;<a class="link" href="beans.html#beans-dependencies" title="5.4&nbsp;Dependencies">&#20381;&#36182;&#20851;&#31995;</a>&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="beans-factory-xml-import" href="#beans-factory-xml-import"></a>&#32534;&#20889;&#22522;&#20110;XML&#30340;&#37197;&#32622;&#20803;&#25968;&#25454;</h4></div></div></div>
 
-<p>It can be useful to have bean definitions span multiple XML files. Often each individual
-XML configuration file represents a logical layer or module in your architecture.</p>
-<p>You can use the application context constructor to load bean definitions from all these
-XML fragments. This constructor takes multiple <code class="literal">Resource</code> locations, as was shown in the
-previous section. Alternatively, use one or more occurrences of the <code class="literal">&lt;import/&gt;</code> element
-to load bean definitions from another file or files. For example:</p>
+<p>bean&#23450;&#20041;&#21487;&#20197;&#36328;&#36234;&#22810;&#20010;XML&#25991;&#20214;&#26159;&#38750;&#24120;&#26377;&#29992;&#30340;&#12290;&#36890;&#24120;&#27599;&#20010;&#29420;&#31435;&#30340;XML&#37197;&#32622;&#25991;&#20214;&#34920;&#31034;&#19968;&#20010;&#36923;&#36753;&#23618;&#25110;&#32773;&#26159;&#20320;&#26550;&#26500;&#20013;&#30340;&#19968;&#20010;&#27169;&#22359;&#12290;</p>
+<p>&#20320;&#21487;&#20197;&#20351;&#29992;&#24212;&#29992;&#19978;&#19979;&#25991;&#30340;&#26500;&#36896;&#26041;&#27861;&#20174;&#22810;&#20010;XML&#29255;&#27573;&#20013;&#21152;&#36733;bean&#30340;&#23450;&#20041;&#12290;&#20687;&#19978;&#38754;&#20363;&#23376;&#20013;&#20986;&#29616;&#36807;&#30340;&#19968;&#26679;&#65292;&#26500;&#36896;&#26041;&#27861;&#21487;&#20197;&#25509;&#25910;&#22810;&#20010;<code class="literal">Resource</code>&#20301;&#32622;&#12290;&#25110;&#32773;&#21487;&#20197;&#22312;bean&#23450;&#20041;&#20013;&#20351;&#29992;&#19968;&#20010;&#25110;&#22810;&#20010;<code class="literal">&lt;import/&gt;</code>&#20174;&#20854;&#20182;&#30340;&#37197;&#32622;&#25991;&#20214;&#24341;&#20837;bean&#23450;&#20041;&#12290;&#20363;&#22914;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;import</span> <span class="hl-attribute">resource</span>=<span class="hl-value">"services.xml"</span><span class="hl-tag">/&gt;</span>
     <span class="hl-tag">&lt;import</span> <span class="hl-attribute">resource</span>=<span class="hl-value">"resources/messageSource.xml"</span><span class="hl-tag">/&gt;</span>
@@ -163,15 +133,7 @@ to load bean definitions from another file or files. For example:</p>
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"bean2"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"..."</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>In the preceding example, external bean definitions are loaded from three files:
-<code class="literal">services.xml</code>, <code class="literal">messageSource.xml</code>, and <code class="literal">themeSource.xml</code>. All location paths are
-relative to the definition file doing the importing, so <code class="literal">services.xml</code> must be in the
-same directory or classpath location as the file doing the importing, while
-<code class="literal">messageSource.xml</code> and <code class="literal">themeSource.xml</code> must be in a <code class="literal">resources</code> location below the
-location of the importing file. As you can see, a leading slash is ignored, but given
-that these paths are relative, it is better form not to use the slash at all. The
-contents of the files being imported, including the top level <code class="literal">&lt;beans/&gt;</code> element, must
-be valid XML bean definitions according to the Spring Schema.</p>
+<p>&#19978;&#38754;&#30340;&#20363;&#23376;&#20013;&#65292;&#22806;&#37096;&#30340;bean&#23450;&#20041;&#20174;<code class="literal">services.xml</code>&#12289;<code class="literal">messageSource.xml</code>&#21644;<code class="literal">themeSource.xml</code>&#36825;&#19977;&#20010;&#25991;&#20214;&#20013;&#21152;&#36733;&#12290;&#25152;&#26377;&#30340;&#20301;&#32622;&#36335;&#24452;&#37117;&#26159;&#30456;&#23545;&#20110;&#23450;&#20041;&#25191;&#34892;&#23548;&#20837;&#30340;&#25991;&#20214;&#65292;&#25152;&#20197; <code class="literal">services.xml</code>&#24517;&#39035;&#21644;&#24403;&#21069;&#23450;&#20041;&#23548;&#20837;&#30340;&#25991;&#20214;&#22312;&#30456;&#21516;&#30340;&#36335;&#24452;&#19979;&#12290;&#32780;<code class="literal">messageSource.xml</code>&#21644;<code class="literal">themeSource.xml</code>&#24517;&#39035;&#22312;&#24403;&#21069;&#23450;&#20041;&#23548;&#20837;&#30340;&#25991;&#20214;&#36335;&#24452;&#19979;&#30340;<code class="literal">resources</code>&#36335;&#24452;&#19979;&#12290;&#20320;&#21487;&#20197;&#30475;&#21040;&#65292;&#36825;&#37324;&#24573;&#30053;&#20102;&#21453;&#26012;&#26464;&#65292;&#30001;&#20110;&#36825;&#37324;&#30340;&#36335;&#24452;&#26159;&#30456;&#23545;&#30340;&#65292;&#22240;&#27492;&#24314;&#35758; <span class="strong"><strong>&#19981;&#20351;&#29992;&#21453;&#26012;&#26464;</strong></span>&#12290;&#36825;&#20123;&#34987;&#24341;&#20837;&#25991;&#20214;&#30340;&#20869;&#23481;&#20250;&#34987;&#23548;&#20837;&#36827;&#26469;&#65292;&#21253;&#21547;&#39030;&#23618;&#30340;<code class="literal">&lt;beans/&gt;</code>&#20803;&#32032;&#65292;&#23427;&#24517;&#39035;&#26159;&#19968;&#20010;&#31526;&#21512;Spring&#26550;&#26500;&#30340;&#26377;&#25928;&#30340;XML bean&#23450;&#20041;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
 <p>It is possible, but not recommended, to reference files in parent directories using a
 relative "../" path. Doing so creates a dependency on a file that is outside the current
@@ -1399,7 +1361,7 @@ during development, without negating the option of switching to explicit wiring 
 the code base becomes more stable.
 </li></ul></div>
 
-<p>When using XML-based configuration metadata <a href="#ftn.d5e1785" class="footnote" name="d5e1785"><sup class="footnote">[2]</sup></a>, you specify autowire
+<p>When using XML-based configuration metadata <a href="#ftn.d5e1783" class="footnote" name="d5e1783"><sup class="footnote">[2]</sup></a>, you specify autowire
 mode for a bean definition with the <code class="literal">autowire</code> attribute of the <code class="literal">&lt;bean/&gt;</code> element. The
 autowiring functionality has five modes. You specify autowiring <span class="emphasis"><em>per</em></span> bean and thus
 can choose which ones to autowire.</p>
@@ -1723,7 +1685,7 @@ singleton, the Spring IoC container creates <span class="emphasis"><em>exactly o
 defined by that bean definition. This single instance is stored in a cache of such
 singleton beans, and <span class="emphasis"><em>all subsequent requests and references</em></span> for that named bean
 return the cached object.</p>
-<div class="figure"><a name="d5e2023" href="#d5e2023"></a><p class="title"><b>Figure&nbsp;5.2.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e2021" href="#d5e2021"></a><p class="title"><b>Figure&nbsp;5.2.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/singleton.png" alt="singleton"></div>
 </div></div><br class="figure-break">
 
@@ -1752,7 +1714,7 @@ scope for stateless beans.</p>
 (DAO) is not typically configured as a prototype, because a typical DAO does not hold
 any conversational state; it was just easier for this author to reuse the core of the
 singleton diagram.</em></span></p>
-<div class="figure"><a name="d5e2043" href="#d5e2043"></a><p class="title"><b>Figure&nbsp;5.3.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e2041" href="#d5e2041"></a><p class="title"><b>Figure&nbsp;5.3.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/prototype.png" alt="prototype"></div>
 </div></div><br class="figure-break">
 
@@ -5969,5 +5931,5 @@ locator that is described in this
 team blog entry</a>.</p>
 </div>
 </div>
-<div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.d5e958" class="footnote"><p><a href="#d5e958" class="simpara"><sup class="simpara">[1] </sup></a>See <a class="xref" href="overview.html#background-ioc" title="Background">Background</a> </p></div><div id="ftn.d5e1785" class="footnote"><p><a href="#d5e1785" class="simpara"><sup class="simpara">[2] </sup></a>See
+<div class="footnotes"><br><hr style="width:100; text-align:left;margin-left: 0"><div id="ftn.d5e958" class="footnote"><p><a href="#d5e958" class="simpara"><sup class="simpara">[1] </sup></a>See <a class="xref" href="overview.html#background-ioc" title="Background">Background</a> </p></div><div id="ftn.d5e1783" class="footnote"><p><a href="#d5e1783" class="simpara"><sup class="simpara">[2] </sup></a>See
 <a class="xref" href="beans.html#beans-factory-collaborators" title="5.4.1&nbsp;Dependency injection">Section&nbsp;5.4.1, &#8220;Dependency injection&#8221;</a></p></div></div></div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-core.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-core.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="resources.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;III.&nbsp;&#26680;&#24515;&#25216;&#26415;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;6.&nbsp;Resources</td></tr></table></div></body></html>
