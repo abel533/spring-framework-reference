@@ -135,23 +135,13 @@ JavaConfig&#25552;&#20379;&#30340;&#35768;&#22810;&#21151;&#33021;&#24050;&#3246
 
 <p>&#19978;&#38754;&#30340;&#20363;&#23376;&#20013;&#65292;&#22806;&#37096;&#30340;bean&#23450;&#20041;&#20174;<code class="literal">services.xml</code>&#12289;<code class="literal">messageSource.xml</code>&#21644;<code class="literal">themeSource.xml</code>&#36825;&#19977;&#20010;&#25991;&#20214;&#20013;&#21152;&#36733;&#12290;&#25152;&#26377;&#30340;&#20301;&#32622;&#36335;&#24452;&#37117;&#26159;&#30456;&#23545;&#20110;&#23450;&#20041;&#25191;&#34892;&#23548;&#20837;&#30340;&#25991;&#20214;&#65292;&#25152;&#20197; <code class="literal">services.xml</code>&#24517;&#39035;&#21644;&#24403;&#21069;&#23450;&#20041;&#23548;&#20837;&#30340;&#25991;&#20214;&#22312;&#30456;&#21516;&#30340;&#36335;&#24452;&#19979;&#12290;&#32780;<code class="literal">messageSource.xml</code>&#21644;<code class="literal">themeSource.xml</code>&#24517;&#39035;&#22312;&#24403;&#21069;&#23450;&#20041;&#23548;&#20837;&#30340;&#25991;&#20214;&#36335;&#24452;&#19979;&#30340;<code class="literal">resources</code>&#36335;&#24452;&#19979;&#12290;&#20320;&#21487;&#20197;&#30475;&#21040;&#65292;&#36825;&#37324;&#24573;&#30053;&#20102;&#21453;&#26012;&#26464;&#65292;&#30001;&#20110;&#36825;&#37324;&#30340;&#36335;&#24452;&#26159;&#30456;&#23545;&#30340;&#65292;&#22240;&#27492;&#24314;&#35758; <span class="strong"><strong>&#19981;&#20351;&#29992;&#21453;&#26012;&#26464;</strong></span>&#12290;&#36825;&#20123;&#34987;&#24341;&#20837;&#25991;&#20214;&#30340;&#20869;&#23481;&#20250;&#34987;&#23548;&#20837;&#36827;&#26469;&#65292;&#21253;&#21547;&#39030;&#23618;&#30340;<code class="literal">&lt;beans/&gt;</code>&#20803;&#32032;&#65292;&#23427;&#24517;&#39035;&#26159;&#19968;&#20010;&#31526;&#21512;Spring&#26550;&#26500;&#30340;&#26377;&#25928;&#30340;XML bean&#23450;&#20041;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>It is possible, but not recommended, to reference files in parent directories using a
-relative "../" path. Doing so creates a dependency on a file that is outside the current
-application. In particular, this reference is not recommended for "classpath:" URLs (for
-example, "classpath:../services.xml"), where the runtime resolution process chooses the
-"nearest" classpath root and then looks into its parent directory. Classpath
-configuration changes may lead to the choice of a different, incorrect directory.</p>
-<p>You can always use fully qualified resource locations instead of relative paths: for
-example, "file:C:/config/services.xml" or "classpath:/config/services.xml". However, be
-aware that you are coupling your application&#8217;s configuration to specific absolute
-locations. It is generally preferable to keep an indirection for such absolute
-locations, for example, through "${&#8230;}" placeholders that are resolved against JVM
-system properties at runtime.</p>
+<p>&#20351;&#29992;&#19968;&#20010;&#30456;&#23545;"../"&#36335;&#24452;&#24341;&#29992;&#29238;&#30446;&#24405;&#20013;&#30340;&#37197;&#32622;&#26159;&#20801;&#35768;&#30340;&#65292;&#20294;&#26159;&#19981;&#25512;&#33616;&#36825;&#20040;&#20570;&#12290;&#22914;&#26524;&#36825;&#20040;&#20570;&#23601;&#20135;&#29983;&#20102;&#19968;&#20010;&#24403;&#21069;&#24212;&#29992;&#22806;&#30340;&#24341;&#29992;&#20381;&#36182;&#12290;&#29305;&#21035;&#19981;&#25512;&#33616;&#22312;&#20351;&#29992;"classpath:"&#36335;&#24452;&#30340;&#26102;&#20505;&#65292;&#22312;&#36816;&#34892;&#30340;&#26102;&#20505;&#35299;&#26512;&#36873;&#25321;&#8220;&#26368;&#36817;&#8221;&#30340;classpath&#36319;&#36335;&#24452;&#65292;&#28982;&#21518;&#22312;&#25214;&#29238;&#30446;&#24405;&#12290;Classpath&#37197;&#32622;&#30340;&#26356;&#25913;&#21487;&#33021;&#20250;&#23548;&#33268;&#36873;&#25321;&#19968;&#20010;&#19981;&#21516;&#30340;&#12289;&#38169;&#35823;&#30340;&#30446;&#24405;&#12290;</p>
+<p>&#36890;&#24120;&#24773;&#20917;&#19979;&#65292;&#20320;&#21487;&#20197;&#20351;&#29992;&#23436;&#20840;&#38480;&#23450;&#30340;&#36164;&#28304;&#20301;&#32622;&#26469;&#20195;&#26367;&#30456;&#23545;&#36335;&#24452;&#65292;&#20363;&#22914;&#65306;"file:C:/config/services.xml"&#25110;"classpath:/config/services.xml"&#12290;&#20294;&#26159;&#35831;&#27880;&#24847;&#65292;&#20320;&#30340;&#24212;&#29992;&#21487;&#33021;&#21644;&#19968;&#20010;&#29305;&#23450;&#30340;&#32477;&#23545;&#36335;&#24452;&#32806;&#21512;&#20102;&#12290;&#36890;&#24120;&#26356;&#21512;&#36866;&#30340;&#26041;&#24335;&#26159;&#36890;&#36807;&#38388;&#25509;&#30340;&#26041;&#24335;&#26469;&#20351;&#29992;&#32477;&#23545;&#36335;&#24452;&#65292;&#20363;&#22914;&#36890;&#36807;"${&#8230;}"&#21344;&#20301;&#31526;&#65292;&#22312;&#36816;&#34892;&#26102;&#35299;&#26512;JVM&#30340;&#31995;&#32479;&#23646;&#24615;&#12290;</p>
 </td></tr></table></div>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-client" href="#beans-factory-client"></a>5.2.3&nbsp;Using the container</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="beans-factory-client" href="#beans-factory-client"></a>5.2.3&nbsp;&#20351;&#29992;&#23481;&#22120;</h3></div></div></div>
 
 <p>The <code class="literal">ApplicationContext</code> is the interface for an advanced factory capable of maintaining
 a registry of different beans and their dependencies. Using the method <code class="literal">T getBean(String
@@ -1462,7 +1452,7 @@ once, and thus only gets one opportunity to set the properties. The container ca
 provide bean A with a new instance of bean B every time one is needed.</p>
 <p>A solution is to forego some inversion of control. You can <a class="link" href="beans.html#beans-factory-aware" title="5.6.2&nbsp;ApplicationContextAware and BeanNameAware">make
 bean A aware of the container</a> by implementing the <code class="literal">ApplicationContextAware</code> interface,
-and by <a class="link" href="beans.html#beans-factory-client" title="5.2.3&nbsp;Using the container">making a getBean("B") call to the container</a> ask for (a
+and by <a class="link" href="beans.html#beans-factory-client" title="5.2.3&nbsp;&#20351;&#29992;&#23481;&#22120;">making a getBean("B") call to the container</a> ask for (a
 typically new) bean B instance every time bean A needs it. The following is an example
 of this approach:</p>
 <pre class="programlisting"><span class="hl-comment">// a class that uses a stateful Command-style class to perform some processing</span>
