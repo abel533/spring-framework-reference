@@ -50,9 +50,9 @@ Spring MVC 不允许在 final 方法添加 advice。如不能在 `AbstractContro
 <<aop-understanding-aop-proxies>>。
 ****
 
-使用 Spring Web MVC ，你不需要实现框架指定的任何接口或继承任意基类，就可以使用任意对象作为命令对象(或表单对象)。Spring 的数据绑定相当之灵活，比如，Spring可以将不匹配的类型作为应用可识别的验证错误，而不是系统错误，所以，你不需要去重复定义一套属性一致而类型是原始字符串的业务逻辑对象，去处理错误的提交或对字符串进行类型转换。反过来说就是，spring 允许你直接正确类型的参数绑定到业务逻辑对象。
+使用 Spring Web MVC ，你不需要实现框架指定的任何接口或继承任意基类，就可以使用任意对象作为命令对象(或表单对象)。Spring 的数据绑定相当之灵活，比如，Spring可以将不匹配的类型作为应用可识别的验证错误，而不是系统错误，所以，你不需要去重复定义一套属性一致而类型是原始字符串的业务逻辑对象，去处理错误的提交或对字符串进行类型转换。反过来说就是，spring 允许你直接将正确类型的参数绑定到业务逻辑对象。
 
-Spring 的视图解析也相当之灵活。完成一个请求，`Controller` 通常是负责准备一个数据模型 `Map` 和选择一个指定的视图，当然，也支持直接将数据写到的响应流里。视图名称的解析是高度可配置的，可以通过文件扩展名、accept header 的 Content-Type、bean 的名称、属性文件或自定义的 `ViewResolver` 实现来解析。模型(Model,MVC 中的 'M'),是一个 `Map` 接口，提供对视图数据的完全抽象，可直接与渲染模版集成，如 JSP，Veloctiy，Freemarker;或直接生成原始数据、，或xml、json等其他类型的响应内容。模型 `Map` 接口只是负责将数据转换为合适格式，如 jsp 请求属性，velocity 的 model 等。
+Spring 的视图解析也相当之灵活。完成一个请求，`Controller` 通常是负责准备一个数据模型 `Map` 和选择一个指定的视图，当然，也支持直接将数据写到响应流里。视图名称的解析是高度可配置的，可以通过文件扩展名、accept header 的 Content-Type、bean 的名称、属性文件或自定义的 `ViewResolver` 实现来解析。模型(Model,MVC 中的 'M'),是一个 `Map` 接口，提供对视图数据的完全抽象，可直接与渲染模版集成，如 JSP，Veloctiy，Freemarker;或直接生成原始数据，或xml、json等其他类型的响应内容。模型 `Map` 接口只是负责将数据转换为合适格式，如 jsp 请求属性，velocity 的 model 等。
 
 
 [[mvc-features]]
@@ -154,7 +154,7 @@ pattern that Spring Web MVC shares with many other leading web frameworks).
 
 image::images/mvc.png[width=400]
 
-Spring Web MVC 请求的处理的宏观图
+Spring Web MVC 请求处理的宏观图
 
 `DispatcherServlet` 继承了 `HttpServlet` ，是一个真实的 Servlet，因此可以在 `web.xml` 文件声明。另外你需要使用 url 匹配元件指定 `DispatcherServlet` 处理的请求。如下例子，使用了标准 java EE Servlet 配置，配置了一个 `DispatcherServlet`的声明和匹配 url 元件: 
 
@@ -195,10 +195,9 @@ Spring Web MVC 请求的处理的宏观图
 
 Spring MVC 提供的 `WebApplicationInitializer` 接口，可以确保检测到基于代码的配置和用来自动初始化基于 Servlet 3 的容器。它有一个抽象的实现类 `AbstractDispatcherServletInitializer`,简化了`DispatcherServlet` 的注册，只需指定 servlet mapping 就可以了，详情请参考  <<mvc-container-config,Code-based Servlet container initialization>>。
 
-上述的操作仅仅是开启了 Spring Web MVC 之旅的第一步，现在你需要配置 Spring Web MVC 所使用到的各种 bean(这这不在本节讨论范围)。
+上述的操作仅仅是开启了 Spring Web MVC 之旅的第一步，现在你需要配置 Spring Web MVC 所使用到的各种 bean(这不在本节讨论范围)。
 
-如 <<context-introduction>> 所描述那样，在Spring里可以获取到 `ApplicationContext` 实例。在 web MVC 框架，每一个 `DispatcherServlet` 都拥有自己的 `WebApplicationContext`，这个 
-`WebApplicationContext`，这个 `WebApplicationContext` 继承了根 `WebApplicationContext` 定义的所有 bean.
+如 <<context-introduction>> 所描述那样，在Spring里可以获取到 `ApplicationContext` 实例。在 web MVC 框架，每一个 `DispatcherServlet` 都拥有自己的 `WebApplicationContext`，这个 `WebApplicationContext` 继承了根 `WebApplicationContext` 定义的所有 bean.
 
 As detailed in <<context-introduction>>, `ApplicationContext` instances in Spring can be
 scoped. In the Web MVC framework, each `DispatcherServlet` has its own
@@ -231,7 +230,7 @@ image::images/mvc-contexts.gif[width=400]
 	</web-app>
 ----
 
-上述配置，要求在应用程序在 `WEB-INF` 目录下有一个 `golfing-servlet.xml` 的文件，在这个文件里，会包含 Spring MVC 的所有组件(beans)。你可以通过定义 servlet 初始化参数来改变__[servlet-name]-servlet.xml__ 文件的路径，如下：
+上述配置，要求应用程序在 `WEB-INF` 目录下有一个 `golfing-servlet.xml` 文件，在这个文件里，会包含 Spring MVC 的所有组件(beans)。你可以通过定义 servlet 初始化参数来改变__[servlet-name]-servlet.xml__ 文件的路径，如下：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -267,7 +266,7 @@ image::images/mvc-contexts.gif[width=400]
 [[mvc-servlet-special-bean-types]]
 ==== WebApplicationContext 的专用 bean
 
-`DispatcherServlet`  使用了其专用的 bean 来处理请求和渲染视图。这些 bean 是 Spring 的组成部分之一，你可以选择在 `WebApplicationContext` 配置所使用一个或多个专用的bean。当然，比并不需要一开始就去配置这些专用的 bean，因为在你不配置这些 bean时，Spring 会维护一系列默认的 bean。首先我们看一下  `DispatcherServlet` 依赖了哪些专用的 bean，后续再作详解。
+`DispatcherServlet`  使用了其专用的 bean 来处理请求和渲染视图。这些 bean 是 Spring 的组成部分之一，你可以选择在 `WebApplicationContext`配置所使用一个或多个专用的bean。当然，比并不需要一开始就去配置这些专用的 bean，因为在你不配置这些 bean时，Spring 会维护一系列默认的 bean。首先我们看一下  `DispatcherServlet` 依赖了哪些专用的 bean，后续再作详解。
 
 [[mvc-webappctx-special-beans-tbl]]
 .WebApplicationContext 专用 bean 列表
@@ -338,7 +337,7 @@ should be of help to you.
 
 handler 异常解析是在 `WebApplicationContext` 声明的，接收在上述处理过程抛出的异常。使用异常解析器，你可以根据异常信息自定义其处理方式。
 
-`DispatcherServlet` 也支持返回 __last-modification-date__( 在 接口Servlet API 里有相应的)。让指定请求返回 __last-modification-date__ 的处理方式非常简单：`DispatcherServlet`  寻找是否有匹配的 handler，并检查这个 handler 是否 实现了 __LastModified__ 接口，如果实现了该接口，方法的`long getLastModified(request)` 的值会返回到客户端。
+`DispatcherServlet` 也支持返回 __last-modification-date__( 在 Servlet API 里有相应的接口)。让指定请求返回 __last-modification-date__ 的处理方式非常简单：`DispatcherServlet`  寻找是否有匹配的 handler，并检查这个 handler 是否实现了 __LastModified__接口，如果实现了该接口，方法`long getLastModified(request)` 的返回值会返回到客户端。
 
 你可以通过在 web.xml 里设置 Servlet 的初始化参数，来自定义一个 `DispatcherServlet` 实例。下表列出了 `DispatcherServlet` 支持的参数：
 
@@ -1505,20 +1504,12 @@ To customize request parameter binding with PropertyEditors through Spring's
 `WebBindingInitializer`. See the <<mvc-ann-controller-advice>> section for more details.
 
 [[mvc-ann-initbinder]]
-====== Customizing data binding with @InitBinder
-Annotating controller methods with `@InitBinder` allows you to configure web data
-binding directly within your controller class. `@InitBinder` identifies methods that
-initialize the `WebDataBinder` that will be used to populate command and form object
-arguments of annotated handler methods.
+====== 使用 @InitBinder 自定义数据绑定
+使用 @InitBinder 注解的控制器，可以直接配置绑定 web 数据。`@InitBinder` 表示那些用于初始化 `WebDataBinder` 的方法，将用于填充 注解 handler 方法的命名/表单对象参数。
 
-Such init-binder methods support all arguments that `@RequestMapping` supports, except
-for command/form objects and corresponding validation result objects. Init-binder
-methods must not have a return value. Thus, they are usually declared as `void`. Typical
-arguments include `WebDataBinder` in combination with `WebRequest` or
-`java.util.Locale`, allowing code to register context-specific editors.
+除了命令/表单对象和类似验证结果对象，这些初始化绑定方法支持 `@RequestMapping` 所支持的所有参数。初始化绑定方法规定没有返回值。因此，这些方法常声明为 `void`，通常也会包含 `WebDataBinder` 参数，与 `WebRequest` 或 `java.util.Locale` 结合使用，可注册上下文特定的编辑器。
 
-The following example demonstrates the use of `@InitBinder` to configure a
-`CustomDateEditor` for all `java.util.Date` form properties.
+如下例子，演示了 `@InitBinder` 的使用 —— 配置一个解释所有表单 `java.util.Date` 属性的 `CustomDateEditor`：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1539,17 +1530,11 @@ The following example demonstrates the use of `@InitBinder` to configure a
 ----
 
 [[mvc-ann-webbindinginitializer]]
-====== Configuring a custom WebBindingInitializer
+====== 配置自定义的 WebBindingInitializer
 
-To externalize data binding initialization, you can provide a custom implementation of
-the `WebBindingInitializer` interface, which you then enable by supplying a custom bean
-configuration for an `AnnotationMethodHandlerAdapter`, thus overriding the default
-configuration.
+需要详细初始化数据绑定的，你可以提供一个 `WebBindingInitializer` 接口的自定义实现，然后再提供一个 `AnnotationMethodHandlerAdapter` 的自定义以配置 bean，便可覆盖数据绑定默认的配置。
 
-The following example from the PetClinic application shows a configuration using a
-custom implementation of the `WebBindingInitializer` interface,
-`org.springframework.samples.petclinic.web.ClinicBindingInitializer`, which configures
-PropertyEditors required by several of the PetClinic controllers.
+来自 PetClinic 应用的例子，演示了如何配置：使用了 `WebBindingInitializer` 接口的自定义实现，和一个 `org.springframework.samples.petclinic.web.ClinicBindingInitializer`类(这个类配置了 PetClinic 多个控制器所使用的 PropertyEditors) ：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1562,10 +1547,7 @@ PropertyEditors required by several of the PetClinic controllers.
 	</bean>
 ----
 
-`@InitBinder` methods can also be defined in an ++@ControllerAdvice++-annotated class in
-which case they apply to matching controllers. This provides an alternative to using a
-`WebBindingInitializer`. See the <<mvc-ann-controller-advice>> section for more details.
-
+`@InitBinder` 方法也可在 ++@ControllerAdvice++- 注解的类中使用， 这种情况下，`@InitBinder` 用于映射控制器。这也提供另外一种选择 —— 使用 `WebBindingInitializer`，详情可查看 <<mvc-ann-controller-advice>>。
 
 [[mvc-ann-lastmodified]]
 ===== Support for the Last-Modified Response Header To Facilitate Content Caching
