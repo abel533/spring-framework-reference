@@ -18,15 +18,13 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 
 3. 进入Team后需要先绑定gitosc账号。
 
-4. 可以从下面的章节中选择还没有人翻译的章节（有人翻译的标题都是中文）
+4. 可以从下面的章节中选择还没有人翻译的章节
 
-5. 跟群主说明要翻译的章节，确定后可以开始翻译。
+5. 跟群主说明要翻译的章节（主要用来防止重复，同时更新下面的状态），确定后可以开始翻译。
 
-6. 开始翻译的时候先翻译标题，然后提交（避免其他人重复翻译）。
+6. **翻译前请看下面的要求**。
 
-7. **翻译前请看下面的要求**。
-
-##I. 全部章节(**已分配的章节**)
+##I. 全部章节(加粗内容为已分配的章节)
 
 - **1.introduction.adoc          - [lixiuwen](http://git.oschina.net/lixiuwen)**
 - **2.spring-whats-new.adoc      - [isea533](http://blog.csdn.net/isea533)**
@@ -152,44 +150,6 @@ asciidoc中文文档：
 
 为了便于独立翻译，已经手工将`index.adoc`和`appendix.adoc`进行了拆分。拆分后的内容在`src\asciidoc\chaptor`中。
 
-原来的`index.adoc`改名为`index.adoc.backup`。现在的`index.adoc`内容如下：  
-
-	include::chapter/1.introduction.adoc[]
-	include::chapter/2.spring-whats-new.adoc[]
-	include::chapter/3.beans.adoc[]
-	include::chapter/4.resources.adoc[]
-	include::chapter/5.validation.adoc[]
-	include::chapter/7.expressions.adoc[]
-	include::chapter/8.aop.adoc[]
-	include::chapter/9.aop-api.adoc[]
-	include::chapter/10.testing.adoc[]
-	include::chapter/11.spring-data-tier.adoc[]
-	include::chapter/12.dao.adoc[]
-	include::chapter/13.jdbc.adoc[]
-	include::chapter/14.orm.adoc[]
-	include::chapter/15.oxm.adoc[]
-	include::chapter/16.spring-web.adoc[]
-	include::chapter/17.view.adoc[]
-	include::chapter/18.web-integration.adoc[]
-	include::chapter/19.portlet.adoc[]
-	include::chapter/20.websocket.adoc[]
-	include::chapter/21.spring-integration.adoc[]
-	include::chapter/22.ejb.adoc[]
-	include::chapter/23.jms.adoc[]
-	include::chapter/24.jmx.adoc[]
-	include::chapter/25.cci.adoc[]
-	include::chapter/26.mail.adoc[]
-	include::chapter/27.scheduling.adoc[]
-	include::chapter/28.dynamic-language.adoc[]
-	include::chapter/29.cache.adoc[]
-	include::chapter/31.classic-spring.adoc[]
-	include::chapter/32.classic-aop-spring.adoc[]
-	include::chapter/33.xsd-config.adoc[]
-	include::chapter/34.extensible-xml.adoc[]
-	include::chapter/35.spring.tld.adoc[]
-
-**注**：上面内容中中断的序号的文件都是不存在的，不是bug。  
-
 Spring项目使用的**Gradle**,编译文档也需要用到**Gradle**，所以如果你想编译本项目，需要按如下进行操作：  
 
 ###1. 下载并配置Gradle
@@ -247,18 +207,13 @@ Spring项目使用的**Gradle**,编译文档也需要用到**Gradle**，所以�
 
 >E:\Git\spring-framework-reference>gradle  
 >:asciidoctor  
->:referenceEpub  
 >:referenceHtmlMulti  
->:referenceHtmlSingle  
->:referencePdf   
->:reference  
->:docsZip  
 >  
 >BUILD SUCCESSFUL  
 >  
->Total time: 7 mins 56.987 secs  
+>Total time: 3 mins 56.987 secs  
 
-成功后可以在根目录下的**build**中看到生成的各项内容。  
+成功后可以在根目录下的**build**中看到生成的内容。  
 
-在**\build\distributions**目录会有一个打包好的zip文件。
+**目前为了节省编译时间，现在只生成了分章节的html。**
 
