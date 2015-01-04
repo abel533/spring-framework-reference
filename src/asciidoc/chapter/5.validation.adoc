@@ -5,59 +5,47 @@
 
 
 [[validation-introduction]]
-=== Introduction
+=== 概述
 
 .JSR-303/JSR-349 Bean Validation
 ****
-Spring Framework 4.0 supports Bean Validation 1.0 (JSR-303) and Bean Validation 1.1
-(JSR-349) in terms of setup support, also adapting it to Spring's `Validator` interface.
+Spring 4.0 默认即支持Bean Validation 1.0 (JSR-303)和 Bean Validation 1.1(JSR-349)校验规范,
+同时也能适配Spring的`Validator`校验接口。
 
-An application can choose to enable Bean Validation once globally, as described in
-<<validation-beanvalidation>>, and use it exclusively for all validation needs.
+应用既可以像<<validation-beanvalidation>>所述一次性开启全局的Bean Validation，也可以在你
+需要验证的地方一一开启。
 
-An application can also register additional Spring `Validator` instances per
-`DataBinder` instance, as described in <<validation-binder>>. This may be useful for
-plugging in validation logic without the use of annotations.
+应用可以像<<validation-binder>>所述在每个`DataBinder`实例中注册多个自定义的Spring `Validator`
+实例，这对那些不愿意使用注解来实现插件式的校验逻辑来说非常有用。
 ****
 
-There are pros and cons for considering validation as business logic, and Spring offers
-a design for validation (and data binding) that does not exclude either one of them.
-Specifically validation should not be tied to the web tier, should be easy to localize
-and it should be possible to plug in any validator available. Considering the above,
-Spring has come up with a `Validator` interface that is both basic ands eminently usable
-in every layer of an application.
+在业务逻辑中考虑数据校验利弊参半，Spring 提供的校验(和数据绑定)方案也未能解决这个问题。
+能明确的是数据校验不应该被限定在web层使用，它应该能很方便的执行本地化，并且能在任何需要
+数据校验的场合以插件的形式提供服务。基于以上考虑，Spring 设计了一个既基本又方便使用且能
+在所有层使用的`Validator`接口。
 
-Data binding is useful for allowing user input to be dynamically bound to the domain
-model of an application (or whatever objects you use to process user input). Spring
-provides the so-called `DataBinder` to do exactly that. The `Validator` and the
-`DataBinder` make up the `validation` package, which is primarily used in but not
-limited to the MVC framework.
+Spring 提供了我们称作`DataBinder`的对象来处理数据绑定，所谓的数据绑定就是将用户的输入
+自动的绑定到我们的领域模型(或者说任意用来处理用户输入的对象)。Spring 的`Validator`和
+`DataBinder`构成了`validation`包，这个包主要被Spring MVC框架使用，但绝不限于只能在该
+框架使用。
 
-The `BeanWrapper` is a fundamental concept in the Spring Framework and is used in a lot
-of places. However, you probably will not have the need to use the `BeanWrapper`
-directly. Because this is reference documentation however, we felt that some explanation
-might be in order. We will explain the `BeanWrapper` in this chapter since, if you were
-going to use it at all, you would most likely do so when trying to bind data to objects.
+在Spring中`BeanWrapper`是一个很基本的概念，在很多地方都有使用到它。但是，你可能从来都没有
+直接使用到它。鉴于这是一份参考文档，我们认为很有必要对`BeanWrapper`进行必要的解释。在这一
+章中我们将解释`BeanWrapper`，在你尝试将数据绑定到对象时一定会使用到它。
 
-Spring's DataBinder and the lower-level BeanWrapper both use PropertyEditors to parse
-and format property values. The `PropertyEditor` concept is part of the JavaBeans
-specification, and is also explained in this chapter. Spring 3 introduces a
-"core.convert" package that provides a general type conversion facility, as well as a
-higher-level "format" package for formatting UI field values. These new packages may be
-used as simpler alternatives to PropertyEditors, and will also be discussed in this
-chapter.
-
-
+Spring的数据绑定和较低级别的BeanWrapper都会使用PropertyEditors来进行转换和格式化。`PropertyEditor`
+是JavaBeans规范的一部分，在这一章中我们将进行探讨。Spring3引入了"core.convert"这个包来提供通用
+的类型转换工具和高级"format"包来格式化UI显示；这两个包提供的工具可以用作PropertyEditors
+的替代品，我们也将在这一章对它们展开讨论。
 
 
 [[validator]]
-=== Validation using Spring's Validator interface
+=== 使用Spring的Validator接口来进行数据校验
 
-Spring features a `Validator` interface that you can use to validate objects. The
-`Validator` interface works using an `Errors` object so that while validating,
-validators can report validation failures to the `Errors` object.
+Spring 提供了`Validator`接口用来进行对象的数据校验。`Validator`接口在进行数据校验的时候
+会要求传入一个`Errors`对象，当有错误产生时会将错误信息放入该`Errors`对象。
 
-Let's consider a small data object:
+我们假设有这么一个数据对象：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -66,20 +54,17 @@ Let's consider a small data object:
 
 		private String name;
 		private int age;
-
-		// the usual getters and setters...
+		
+		// 省略getters和setters...
 	}
 ----
 
-We're going to provide validation behavior for the `Person` class by implementing the
-following two methods of the `org.springframework.validation.Validator` interface:
+为了给`Person`类提供校验行为我们可以通过实现`org.springframework.validation.Validator`这个接口的两个方法来实现：
 
-* `supports(Class)` - Can this `Validator` validate instances of the supplied `Class`?
-* `validate(Object, org.springframework.validation.Errors)` - validates the given object
-  and in case of validation errors, registers those with the given `Errors` object
+* `supports(Class)` - 判断该`Validator`是否能校验提供的`Class`的实例?
+* `validate(Object, org.springframework.validation.Errors)` - 校验给定的对象，如果有校验失败信息，将其放入`Errors`对象
 
-Implementing a `Validator` is fairly straightforward, especially when you know of the
-`ValidationUtils` helper class that the Spring Framework also provides.
+实现一个校验器是相当简单的，尤其是当你知道spring已经提供了一个`ValidationUtils`工具类时。
 
 [source,java,indent=0]
 [subs="verbatim"]
@@ -87,7 +72,7 @@ Implementing a `Validator` is fairly straightforward, especially when you know o
 	public class PersonValidator implements Validator {
 
 		/**
-		 * This Validator validates *just* Person instances
+		 * 这个校验器*仅仅*只校验Person实例
 		 */
 		public boolean supports(Class clazz) {
 			return Person.class.equals(clazz);
@@ -105,10 +90,8 @@ Implementing a `Validator` is fairly straightforward, especially when you know o
 	}
 ----
 
-As you can see, the `static` `rejectIfEmpty(..)` method on the `ValidationUtils` class
-is used to reject the `'name'` property if it is `null` or the empty string. Have a look
-at the `ValidationUtils` javadocs to see what functionality it provides besides the
-example shown previously.
+如同你看到的，`ValidationUtils`中的静态方法`rejectIfEmpty(..)`用来拒绝`'name'`这个属性当它为`null`或空字符串时。
+你可以看看`ValidationUtils`的javadocs，提前了解下除了例子中展示的功能外还有哪些好用的方法。
 
 While it is certainly possible to implement a single `Validator` class to validate each
 of the nested objects in a rich object, it may be better to encapsulate the validation
