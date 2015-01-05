@@ -31,7 +31,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **3.beans.adoc                 - [isea533](http://blog.csdn.net/isea533)**
 - **3.1.beans.adoc(5.1. Introduction&5.2. Container overview) - [isea533](http://blog.csdn.net/isea533)**
 - **3.2.beans.adoc(5.3. Bean overview) - [isea533](http://blog.csdn.net/isea533)**
-- 3.3.beans.adoc(5.4. Dependencies) -
+- **3.3.beans.adoc(5.4. Dependencies) - [reeco](http://my.oschina.net/reeco)**
 - 3.4.beans.adoc(5.5. Bean scopes) -
 - 3.5.beans.adoc(5.6. Customizing the nature of a bean) -
 - 3.6.beans.adoc(5.7. Bean definition inheritance) -
