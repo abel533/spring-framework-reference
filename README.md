@@ -76,7 +76,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 17.view.adoc                 -
 - 18.web-integration.adoc      -
 - 19.portlet.adoc              -
-- **20.websocket.adoc            - [zipu888](http://git.oschina.net/xiaohaogege)**
+- **20.websocket.adoc            - [zipu888](http://git.oschina.net/pangzhuzhu)**
 - 21.spring-integration.adoc   -
 - 22.ejb.adoc                  -
 - 23.jms.adoc                  -
