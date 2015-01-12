@@ -32,7 +32,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **3.1.beans.adoc(5.1. Introduction&5.2. Container overview) - [isea533](http://blog.csdn.net/isea533)**
 - **3.2.beans.adoc(5.3. Bean overview) - [isea533](http://blog.csdn.net/isea533)**
 - **3.3.beans.adoc(5.4. Dependencies) - [reeco](http://my.oschina.net/reeco)**
-- 3.4.beans.adoc(5.5. Bean scopes) -
+- **3.4.beans.adoc(5.5. Bean scopes) - [sealin](http://my.oschina.net/sealday)**
 - 3.5.beans.adoc(5.6. Customizing the nature of a bean) -
 - 3.6.beans.adoc(5.7. Bean definition inheritance) -
 - 3.7.beans.adoc(5.8. Container Extension Points) -
@@ -76,7 +76,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 17.view.adoc                 -
 - 18.web-integration.adoc      -
 - 19.portlet.adoc              -
-- **20.websocket.adoc            - [zipu888](http://git.oschina.net/xiaohaogege)**
+- **20.websocket.adoc            - [zipu888](http://git.oschina.net/pangzhuzhu)**
 - 21.spring-integration.adoc   -
 - 22.ejb.adoc                  -
 - 23.jms.adoc                  -
