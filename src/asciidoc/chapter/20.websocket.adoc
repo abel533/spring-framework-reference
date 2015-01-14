@@ -35,7 +35,7 @@ It is an exciting new capability on the heels of a long history of
 techniques to make the web more interactive including Java applets, XMLHttpRequest,
 Adobe Flash, ActiveXObject, various Comet techniques, server-sent events, and others.
 
-一个完整的WebSocket 协议的介绍超出了这个文档的范围.
+一个完整的WebSocket 协议的介绍超出了这个文档的范围.不管怎样
 A proper introduction of the WebSocket protocol is beyond the scope of this
 document. At a minimum however it's important to understand that HTTP is used only for
 the initial handshake, which relies on a mechanism built into HTTP to request
@@ -45,23 +45,18 @@ the TCP socket underlying the HTTP upgrade request remains open and both client 
 server can use it to send messages to each other.
 
 Spring Framework 4 包含了一个新的对WebSocket提供全面支持的 'spring-websocket' 模块
+兼容了标准的Java WebSocket API(http://jcp.org/en/jsr/detail?id=356[JSR-356])
+而且也提供了额外增值的一些支持比如说其他的一些介绍
 
-It is compatible with the Java WebSocket API standard
-(http://jcp.org/en/jsr/detail?id=356[JSR-356])
-and also provides additional value-add as explained in the rest of the introduction.
 
 
 
 [[websocket-into-fallback-options]]
 ==== WebSocket Fallback Options
-An important challenge to adoption is the lack of support for WebSocket in some
-browsers. Notably the first Internet Explorer version to support WebSocket is
-version 10 (see http://caniuse.com/websockets for support by browser versions).
-Furthermore, some restrictive proxies
-may be configured in ways that either preclude the attempt to do HTTP upgrade
-or otherwise break connection after some time because it has remained opened
-for too long. A good overview on this topic from Peter Lubbers is available in
-the InfoQ article
+一个严重的挑战是在一些浏览器对WebSocket支持的不足.尤其是第一个支持websocket的IE是版本10
+(see http://caniuse.com/websockets 查找浏览器版本对websocket支持的帮助).
+此外,一些使用严格限制的代理的情况也存在这样的问题,比如用来阻止HTTP upgrade的尝试或者因为保持连接太长而被断开连接
+一个良好的关于这个主题的综述来自Peter Lubbers你可以在InFoQ 查看文章
 http://www.infoq.com/articles/Web-Sockets-Proxy-Servers["How HTML5 Web Sockets Interact With Proxy Servers"].
 
 
