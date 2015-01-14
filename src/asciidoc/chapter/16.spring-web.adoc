@@ -953,7 +953,7 @@ Spring 3.1 介绍了一套 `@RequestMapping` 方法的新支持类，分别是 `
 Session 访问可能是非线程安全的，特别是在 Servlet 环境。当允许多个请求并发访问 session 时，可以考虑设置 ++RequestMappingHandlerAdapter++ 的 "synchronizeOnSession" 值为 "true"。
 ====
 
-* `org.springframework.web.context.request.WebRequest` o或
+* `org.springframework.web.context.request.WebRequest` 或
   `org.springframework.web.context.request.NativeWebRequest`.允许通过请求参数访问和 request/session 属性访问，没有与原始的 Servlet/Portlet API 绑定。
 * `java.util.Locale` 给当前请求本地化，取决于最具体的本地化解析器，实际上取决与是 Servlet 环境配置的 `LocaleResolver` 。
 * `java.io.InputStream` / `java.io.Reader` 可访问请求的内容。这是 Servlet API 暴露的原生 InputStream/Reader 。
@@ -1745,57 +1745,31 @@ Spring MVC 引入了基于异步请求的 Servlet 3。在异步请求中，控�
 
 [[mvc-ann-async-exceptions]]
 ===== 异步请求的异常处理
-What happens if a `Callable` returned from a controller method raises an Exception while
-being executed? The effect is similar to what happens when any controller method raises
-an exception. It is handled by a matching `@ExceptionHandler` method in the same
-controller or by one of the configured `HandlerExceptionResolver` instances.
+当控制器返回的 `Callable` 在执行时反生了异常，会出现什么情况？这种情况类似于控制器发生异常时的情况。所出现的异常会由同一控制器里的 `@ExceptionHandler` 方法处理，或由所配置的 `HandlerExceptionResolver` 实例来处理。 
 
 [NOTE]
 ====
-Under the covers, when a `Callable` raises an Exception, Spring MVC still dispatches to
-the Servlet container to resume processing. The only difference is that the result of
-executing the `Callable` is an `Exception` that must be processed with the configured
-`HandlerExceptionResolver` instances.
+在后台，当 `Callable` 执行发生了异常时，Spring MVC 仍然会就将其转发会 Servlet 容器，继续器后续处理。唯一不同的是，执行 `Callable` 返回的结果是一个异常，此异常必须有所配置的 `HandlerExceptionResolver` 实例来处理。
 ====
 
-When using a `DeferredResult`, you have a choice of calling its `setErrorResult(Object)`
-method and provide an `Exception` or any other Object you'd like to use as the result.
-If the result is an `Exception`, it will be processed with a matching
-`@ExceptionHandler` method in the same controller or with any configured
-`HandlerExceptionResolver` instance.
-
+如果是执行 `DeferredResult` 时出现异常，你可以选择调用 `DeferredResult` 提供的 `setErrorResult(Object)` 方法，该方法须提供一个异常或其他你设置设置的对象。 当结果是一个 `Exception` 时，会由同一控制器里的 `@ExceptionHandler` 方法处理，或由所配置的 `HandlerExceptionResolver` 实例来处理。
 
 [[mvc-ann-async-interception]]
-===== Intercepting Async Requests
-An existing `HandlerInterceptor` can implement `AsyncHandlerInterceptor`, which provides
-one additional method `afterConcurrentHandlingStarted`. It is invoked after async
-processing starts and when the initial request processing thread is being exited. See
-the `AsyncHandlerInterceptor` javadocs for more details on that.
+===== 拦截异步请求
+`HandlerInterceptor` 可以实现 `AsyncHandlerInterceptor` 接口，此接口额外提供一个 `afterConcurrentHandlingStarted` 方法。该方法会在初始请求处线程退出 和 异步处理开始之后调用。详细信息可参考 `AsyncHandlerInterceptor` javadocs 。
 
-Further options for async request lifecycle callbacks are provided directly on
-`DeferredResult`, which has the methods `onTimeout(Runnable)` and
-`onCompletion(Runnable)`. Those are called when the async request is about to time out
-or has completed respectively. The timeout event can be handled by setting the
-`DeferredResult` to some value. The completion callback however is final and the result
-can no longer be set.
+也可以选择使用 `DeferredResult` 直接提供的异步请求生命周期回调函数，当中包括了 `onTimeout(Runnable)` 和 `onCompletion(Runnable)` 方法。这两个方法会分别在异步请求超时或完成时调用。超时事件可通过设置 `DeferredResult` 部分值来处理，然而，完成时的回调意味着结束，即不能再设置返回结果。
 
-Similar callbacks are also available with a `Callable`. However, you will need to wrap
-the `Callable` in an instance of `WebAsyncTask` and then use that to register the
-timeout and completion callbacks. Just like with `DeferredResult`, the timeout event can
-be handled and a value can be returned while the completion event is final.
+`Callable` 也可以使用类似的回调功能。可是，你需要将 `Callable` 封装成 `WebAsyncTask` 实例，接着使用这个实例注册超时和完成时事件。如此便可像 `DeferredResult` 那样，处理超时时间和在完成时返回一个值。
 
-You can also register a `CallableProcessingInterceptor` or a
-`DeferredResultProcessingInterceptor` globally through the MVC Java config or the MVC
-namespace. Those interceptors provide a full set of callbacks and apply every time a
-`Callable` or a `DeferredResult` is used.
-
+你可以通过 MVC Java 配置或 MVC 命名空间，注册全局性的 `CallableProcessingInterceptor` 或 `DeferredResultProcessingInterceptor`。这两个拦截器提供了完成的回调机制，而且每次使用 `Callable` 或 `DeferredResult` 都会应用这两个拦截器。
 
 [[mvc-ann-async-configuration]]
-===== Configuration for Async Request Processing
+===== 一步请求处理的配置
 
 [[mvc-ann-async-configuration-servlet3]]
-====== Servlet 3 Async Config
-To use Servlet 3 async request processing, you need to update `web.xml` to version 3.0:
+====== Servlet 3 异步配置
+使用 Servlet 3 的异步请求处理，需要将 `web.xml` 的版本更新为 3.0。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1811,21 +1785,13 @@ To use Servlet 3 async request processing, you need to update `web.xml` to versi
 	</web-app>
 ----
 
-The `DispatcherServlet` and any `Filter` configuration need to have the
-`<async-supported>true</async-supported>` sub-element. Additionally, any `Filter` that
-also needs to get involved in async dispatches should also be configured to support the
-ASYNC dispatcher type. Note that it is safe to enable the ASYNC dispatcher type for all
-filters provided with the Spring Framework since they will not get involved in async
-dispatches unless needed.
+`DispatcherServlet` 和任意 `Filter` 的配置都需要有 `<async-supported>true</async-supported>` 子元件。另外，任意会在异步转发中调用的 'Filter' 都需要支持 ASYNC 转发类型。提示，使用 Spring 框架时，让所有过滤器都支持 ASYNC 转发类型是安全的，因为除非是需要用到，否则他们在异步转发中也不会被调用。
 
 [WARNING]
 ====
-Note that for some Filters it is absolutely critical to ensure they are mapped to
-be invoked during asynchronous dispatches. For example if a filter such as the
-`OpenEntityManagerInViewFilter` is responsible for releasing database connection
-resources and must be invoked at the end of an async request.
+注意，对部分过滤器来说，请确保它们会在异步转发时被映射调用。比如，当一个过滤器是负责释放数据库连接的（如`OpenEntityManagerInViewFilter`），这个过滤器必须在异步请求最后一步才调用。
 
-Below is an example of a propertly configured filter:
+如下，是一个过滤器配置的样例：
 ====
 
 [source,xml,indent=0]
@@ -1855,72 +1821,36 @@ Below is an example of a propertly configured filter:
 
 ----
 
-If using Servlet 3, Java based configuration, e.g. via `WebApplicationInitializer`,
-you'll also need to set the "asyncSupported" flag as well as the ASYNC dispatcher type
-just like with `web.xml`. To simplify all this configuration, consider extending
-`AbstractDispatcherServletInitializer` or
-`AbstractAnnotationConfigDispatcherServletInitializer`, which automatically set those
-options and make it very easy to register `Filter` instances.
+如果使用 Servlet 3，Java 基础配置（如使用 `WebApplicationInitializer`）等，除了需要在 '`web.xml` 配置 ASYNC 转发类型，你还需要设置 "asyncSupported" 标识。如果想简化这些配置的，可以继承 `AbstractDispatcherServletInitializer`或`AbstractAnnotationConfigDispatcherServletInitializer`，这两个抽象类或设置以上标识，如此便可轻松地注册 `Filter` 实例。
 
 [[mvc-ann-async-configuration-spring-mvc]]
-====== Spring MVC Async Config
-The MVC Java config and the MVC namespace both provide options for configuring async
-request processing. `WebMvcConfigurer` has the method `configureAsyncSupport` while
-<mvc:annotation-driven> has an <async-support> sub-element.
+====== Spring MVC 异步配置
+MVC Java 配置和 MVC 命名空间都提供了异步请求处理配置的选项。`WebMvcConfigurer` 可以通过 `configureAsyncSupport` 方法设置，<mvc:annotation-driven>则可通过子元件 <async-support> 设置。
 
-Those allow you to configure the default timeout value to use for async requests, which
-if not set depends on the underlying Servlet container (e.g. 10 seconds on Tomcat). You
-can also configure an `AsyncTaskExecutor` to use for executing `Callable` instances
-returned from controller methods. It is highly recommended to configure this property
-since by default Spring MVC uses `SimpleAsyncTaskExecutor`. The MVC Java config and the
-MVC namespace also allow you to register `CallableProcessingInterceptor` and
-`DeferredResultProcessingInterceptor` instances.
+如果没有配置异步请求超时时间，以上两种配置都会使用默认的超时时间值(取决于底层 Servlet 容器，如 Tomcat 是 10 秒)。也可以配置 `AsyncTaskExecutor`，用来执行控制器方法返回的 `Callable` 实例。另外，强烈推荐你配置 `AsyncTaskExecutor` 属性,因为 Spring MVC 默认是使用 `SimpleAsyncTaskExecutor`。MVC Java 配置和 MVC 命名空间都允许注册 `CallableProcessingInterceptor`和`DeferredResultProcessingInterceptor`实例。
 
-If you need to override the default timeout value for a specific `DeferredResult`, you
-can do so by using the appropriate class constructor. Similarly, for a `Callable`, you
-can wrap it in a `WebAsyncTask` and use the appropriate class constructor to customize
-the timeout value. The class constructor of `WebAsyncTask` also allows providing an
-`AsyncTaskExecutor`.
-
+如果需要覆盖指定 `DeferredResult` 的默认超时值，可以使用其合适的构造器。类似地，如果是覆盖 `Callable` 的默认超时值，可以将其封装为 `WebAsyncTask` 对象并使用合适的构造器来自定义超时值。`WebAsyncTask` 构造器也提供了  `AsyncTaskExecutor`。
 
 
 [[mvc-ann-tests]]
-==== Testing Controllers
-The `spring-test` module offers first class support for testing annotated controllers.
-See <<spring-mvc-test-framework>>.
+==== 测试控制器
+`spring-test` 模块提供了一流的测试类，支持测试注解控制器。详情可查看<<spring-mvc-test-framework>>.
 
 
 
 
 [[mvc-handlermapping]]
-=== Handler mappings
-In previous versions of Spring, users were required to define one or more
-`HandlerMapping` beans in the web application context to map incoming web requests to
-appropriate handlers. With the introduction of annotated controllers, you generally
-don't need to do that because the `RequestMappingHandlerMapping` automatically looks for
-`@RequestMapping` annotations on all `@Controller` beans. However, do keep in mind that
-all `HandlerMapping` classes extending from `AbstractHandlerMapping` have the following
-properties that you can use to customize their behavior:
+=== Handler 映射
+Spring 的前几个版本，开发者都需要在 web 应用的上下文定义(多个) `HandlerMapping` bean，用来将 web 请求映射到指定的 handler。可当引入注解控制器时，开发者基本不再需要这样配置。因为 `RequestMappingHandlerMapping` 会自动寻找所有 `@Controller` bean 中的 `@RequestMapping` 注解。另外提醒一下，所有从 `AbstractHandlerMapping` 继承过来的 `HandlerMapping` 类，都以通过设置以下属性来自定义其行为：
 
-* `interceptors` List of interceptors to use. ++HandlerInterceptor++s are discussed in
-  <<mvc-handlermapping-interceptor>>.
-* `defaultHandler` Default handler to use, when this handler mapping does not result in
-  a matching handler.
-* `order` Based on the value of the order property (see the
-  `org.springframework.core.Ordered` interface), Spring sorts all handler mappings
-  available in the context and applies the first matching handler.
-* `alwaysUseFullPath` If `true` , Spring uses the full path within the current Servlet
-  context to find an appropriate handler. If `false` (the default), the path within the
-  current Servlet mapping is used. For example, if a Servlet is mapped using
-  `/testing/*` and the `alwaysUseFullPath` property is set to true,
-  `/testing/viewPage.html` is used, whereas if the property is set to false,
-  `/viewPage.html` is used.
-* `urlDecode` Defaults to `true`, as of Spring 2.5. If you prefer to compare encoded
-  paths, set this flag to `false`. However, the `HttpServletRequest` always exposes the
-  Servlet path in decoded form. Be aware that the Servlet path will not match when
-  compared with encoded paths.
+* `interceptors` 拦截器链。 ++HandlerInterceptor++s 会在
+  <<mvc-handlermapping-interceptor>> 谈论。
+* `defaultHandler` 默认 handler。此 handler 不影响其他 handler 的使用。
+* `order` order 属性 (可查看 `org.springframework.core.Ordered` 接口), 	Spring会对可匹配的 handler 进行排序，并应用第一个匹配到 handler。
+* `alwaysUseFullPath` 当此属性为 `true` 时，Spring 会使用当前 Servlet 上下文的全路径去寻找合适的 handler。当为 `false` 时(默认值)，Spring 会使用相对路径来寻找合适的 handler。举个例子，当 某个 Servlet 映射 `/testing/*` 请求时，若 `alwaysUseFullPath` 属性为 `true`,会使用 `/testing/viewPage.html`；反之，使用 `/viewPage.html`。
+* `urlDecode` 从 Spring 2.5 开始，此属性默认为 `true`。如果你更需要编码路基路径，可将此属性设置为 true。然而，`HttpServletRequest` 总会暴露解码后的 Servlet 路径。另外注意的是，当比较编码后的路径时，Servlet 路径是不会再匹配的。
 
-The following example shows how to configure an interceptor:
+如下例子，演示了如何配置一个拦截器：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1937,29 +1867,21 @@ The following example shows how to configure an interceptor:
 
 
 [[mvc-handlermapping-interceptor]]
-==== Intercepting requests with a HandlerInterceptor
+==== 使用 HandlerInterceptor 拦截请求
 
-Spring's handler mapping mechanism includes handler interceptors, which are useful when
-you want to apply specific functionality to certain requests, for example, checking for
-a principal.
+Spring 的 handler 映射机制包含了 handler 拦截器。使用handler 拦截器，可以在某些的请求中应用的特殊的功能，比如说，检查权限。
 
-Interceptors located in the handler mapping must implement `HandlerInterceptor` from the
-`org.springframework.web.servlet` package. This interface defines three methods:
-`preHandle(..)` is called __before__ the actual handler is executed; `postHandle(..)` is
-called __after__ the handler is executed; and `afterCompletion(..)` is called __after
-the complete request has finished__. These three methods should provide enough
-flexibility to do all kinds of preprocessing and postprocessing.
+handler 映射的拦截器必须实现 `HandlerInterceptor` 接口(此节接口位于 `org.springframework
+.web.servlet` 包中)。这个接口定义了三个方法：`preHandle(..)` 在 handler 
+执行前调用；`postHandle(..)` 在handler 执行后调用；`afterCompletion(..)` 
+在整一个请求完成后调用。这三个方法基本足够应对各种预处理和后处理的状况。
 
-The `preHandle(..)` method returns a boolean value. You can use this method to break or
-continue the processing of the execution chain. When this method returns `true`, the
-handler execution chain will continue; when it returns false, the `DispatcherServlet`
-assumes the interceptor itself has taken care of requests (and, for example, rendered an
-appropriate view) and does not continue executing the other interceptors and the actual
-handler in the execution chain.
+`preHandle(..)` 方法返回一个 boolean 值。你可以使用这个方法来中断或继续处理 handler 
+执行链。当此方法返回 `true` 时，hadler 执行链会继续执行；反之，`DispatcherServlet` 
+会认为此拦截器已处理完成该请求(和渲染一个视图)，之后不再执行余下的拦截器，也不在执行 
+handler 执行链。
 
-Interceptors can be configured using the `interceptors` property, which is present on
-all `HandlerMapping` classes extending from `AbstractHandlerMapping`. This is shown in
-the example below:
+可以使用 `interceptors` 属性配置拦截器。所有从  `AbstractHandlerMapping` 继承过来的 `HandlerMapping` 类都拥有此属性。演示例子如下：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2013,34 +1935,21 @@ the example below:
 	}
 ----
 
-Any request handled by this mapping is intercepted by the `TimeBasedAccessInterceptor`.
-If the current time is outside office hours, the user is redirected to a static HTML
-file that says, for example, you can only access the website during office hours.
+通过这样的配置，所有请求 handler 都会被 `TimeBasedAccessInterceptor` 拦截。如果当前时间是下班时间，用户会重定向到一个静态页面，换句话说就是，你只能在上班时间访问该网站。
 
-[NOTE]
+[提示]
 ====
-When using the `RequestMappingHandlerMapping` the actual handler is an instance of
-`HandlerMethod` which identifies the specific controller method that will be invoked.
+当使用 `RequestMappingHandlerMapping` 时，真实的 handler 是一个`HandlerMethod` 实例，该实例指定了会被调用的控制器方法。
 ====
 
-As you can see, the Spring adapter class `HandlerInterceptorAdapter` makes it easier to
-extend the `HandlerInterceptor` interface.
+如你所见，Spring 的适配器类 `HandlerInterceptorAdapter`，使继承 `HandlerInterceptor` 接口变得更加简单。
 
 [TIP]
 ====
-
-In the example above, the configured interceptor will apply to all requests handled with
-annotated controller methods. If you want to narrow down the URL paths to which an
-interceptor applies, you can use the MVC namespace or the MVC Java config, or declare
-bean instances of type `MappedInterceptor` to do that. See <<mvc-config-enable>>.
+在上述例子中，所配置的拦截器会应用到所有带注解的请求处理器。如果需要缩窄拦截器的拦截 url 路径范围，可以使用 MVC 命名空间或 MVC Java 配置，或声明 `MappedInterceptor` 类型的 bean 来缩窄拦截器的拦截范围，详情可参考 <<mvc-config-enable>>。
 ====
 
-Note that the `postHandle` method of `HandlerInterceptor` is not always ideally suited for
-use with `@ResponseBody` and `ResponseEntity` methods. In such cases an `HttpMessageConverter`
-writes to and commits the response before `postHandle` is called which makes it impossible
-to change the response, for example to add a header. Instead an application can implement
-`ResponseBodyAdvice` and either declare it as an `@ControllerAdvice` bean or configure it
-directly on `RequestMappingHandlerAdapter`.
+注意，`HandlerInterceptor` 的 `postHandle` 方法不一定适用于`@ResponseBody`和`ResponseEntity`方法。在这种情况下，`HttpMessageConverter` 实例会在 `postHandle` 方法执行之前就将数据写到 response 并提交 response，所以 `postHandle` 方法不可能再处理 response（如添加一个 Header）。相反，应用程序可以实现 `ResponseBodyAdvice` ，将其声明为 `@ControllerAdvice` bean 或将其直接在 `RequestMappingHandlerAdapter` 中配置它。
 
 
 
@@ -2050,51 +1959,35 @@ directly on `RequestMappingHandlerAdapter`.
 
 
 [[mvc-viewresolver]]
-=== Resolving views
-All MVC frameworks for web applications provide a way to address views. Spring provides
-view resolvers, which enable you to render models in a browser without tying you to a
-specific view technology. Out of the box, Spring enables you to use JSPs, Velocity
-templates and XSLT views, for example. See <<view>> for a discussion of how to integrate
-and use a number of disparate view technologies.
+=== 视图解析
+所有 web 应用的 MVC 框架都会提了视图解析的方案，Spring 提供的视图解析，可以让你在不指定特定视图技术的前提下，便可在浏览器中渲染模型。Spring 支持使用 USP，Veloctiy 模板和 XSLT 视图技术，这些视图技术都是开箱即用的。查看<<view>>，可以了解到如何集成和使用多种不同的视图技术。
 
-The two interfaces that are important to the way Spring handles views are `ViewResolver`
-and `View`. The `ViewResolver` provides a mapping between view names and actual views.
-The `View` interface addresses the preparation of the request and hands the request over
-to one of the view technologies.
+`ViewResolver` 和 `View` 是 Spring 处理视图的两个重要接口。当中，`ViewResolver` 提供了视图名称和真实视图之间的映射，`View` 则是负责解决某个视图的技术的请求预处理和请求的后续处理。
 
 
 
 [[mvc-viewresolver-resolver]]
-==== Resolving views with the ViewResolver interface
+==== 使用 ViewResolver 接口解析视图
 
-As discussed in <<mvc-controller>>, all handler methods in the Spring Web MVC
-controllers must resolve to a logical view name, either explicitly (e.g., by returning a
-`String`, `View`, or `ModelAndView`) or implicitly (i.e., based on conventions). Views
-in Spring are addressed by a logical view name and are resolved by a view resolver.
-Spring comes with quite a few view resolvers. This table lists most of them; a couple of
-examples follow.
+如 <<mvc-controller>> 所述，Spring web MVC 中的所有 handler 方法都需要解析某一个逻辑视图名称，可以是显式的，如如返回 `String`, `View`, 或 `ModelAndView` 实例，也可以是隐式的(这个需基于事先约定）。Spring 中视图通过逻辑视图名称来定位，并使用视图解析器解析。Spring 提供了一系列的视图解析其，如下表：
 
 [[mvc-view-resolvers-tbl]]
-.View resolvers
+.视图解析器
 |===
-| ViewResolver| Description
+| 视图解析器| 描述
 
 | `AbstractCachingViewResolver`
-| Abstract view resolver that caches views. Often views need preparation before they can
-  be used; extending this view resolver provides caching.
+| 抽象视图解析器用于缓存视图。通常，在视图使用之前，都需要经过预处理；继承此解析器可用来缓存视图。
 
 | `XmlViewResolver`
-| Implementation of `ViewResolver` that accepts a configuration file written in XML with
-  the same DTD as Spring's XML bean factories. The default configuration file is
-  `/WEB-INF/views.xml`.
+| `ViewResolver` 的实现类，接收一个 xml 的配置文件（使用与 Spring xml bean 工厂一直的 dtd）。默认的配置文件路径是`/WEB-INF/views.xml`.
 
 | `ResourceBundleViewResolver`
-| Implementation of `ViewResolver` that uses bean definitions in a `ResourceBundle`,
-  specified by the bundle base name. Typically you define the bundle in a properties
-  file, located in the classpath. The default file name is `views.properties`.
+| `ViewResolver` 实现类，使用`ResourceBundle` 中的 bean 定义，其通过 bundle 名称来指定。通常，你可以选择在类路径中，通过 properties 文件来定义 bundle。默认的文件名是 `views.properties`。
 
 | `UrlBasedViewResolver`
-| Simple implementation of the `ViewResolver` interface that effects the direct
+| `ViewResolver` 的简易实现。
+Simple implementation of the `ViewResolver` interface that effects the direct
   resolution of logical view names to URLs, without an explicit mapping definition. This
   is appropriate if your logical names match the names of your view resources in a
   straightforward manner, without the need for arbitrary mappings.
@@ -2106,17 +1999,14 @@ examples follow.
   `setViewClass(..)`. See the `UrlBasedViewResolver` javadocs for details.
 
 | `VelocityViewResolver` / `FreeMarkerViewResolver`
-| Convenient subclass of `UrlBasedViewResolver` that supports `VelocityView` (in effect,
-  Velocity templates) or `FreeMarkerView` ,respectively, and custom subclasses of them.
+| `UrlBasedViewResolver` 的子类，分别支持 `VelocityView`（Velocity 模版）和 `FreeMarkerView`，也支持自定义它们的子类。
 
 | `ContentNegotiatingViewResolver`
-| Implementation of the `ViewResolver` interface that resolves a view based on the
-  request file name or `Accept` header. See <<mvc-multiple-representations>>.
+| `ViewResolver` 的实现类，此解析器可通过请求文件名或 `Accept` 头字段值来解析视图。详情可查看 <<mvc-multiple-representations>>。
 |===
 
-As an example, with JSP as a view technology, you can use the `UrlBasedViewResolver`.
-This view resolver translates a view name to a URL and hands the request over to the
-RequestDispatcher to render the view.
+
+举个例子，解析 JSP 视图技术，可以使用 `UrlBasedViewResolver` 解析器。此解析器会将视图名称转换为 url，和传递请求到 RequestDispatcher，以便渲染视图。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2129,11 +2019,9 @@ RequestDispatcher to render the view.
 	</bean>
 ----
 
-When returning `test` as a logical view name, this view resolver forwards the request to
-the `RequestDispatcher` that will send the request to `/WEB-INF/jsp/test.jsp`.
+当返回 `test` 逻辑逻辑视图名时，此视图解析器会将请求转发到 `RequestDispatcher`，接着 `RequestDispatcher` 将请求发送到 `/WEB-INF/jsp/test.jsp`。
 
-When you combine different view technologies in a web application, you can use the
-`ResourceBundleViewResolver`:
+当你需要在 web 应用中联合使用不同的视图技术时，可以使用 `ResourceBundleViewResolver` 解析器。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2154,27 +2042,17 @@ file "extend". This way you can specify a default view class, for example.
 
 [NOTE]
 ====
-Subclasses of `AbstractCachingViewResolver` cache view instances that they resolve.
-Caching improves performance of certain view technologies. It's possible to turn off the
-cache by setting the `cache` property to `false`. Furthermore, if you must refresh a
-certain view at runtime (for example when a Velocity template is modified), you can use
-the `removeFromCache(String viewName, Locale loc)` method.
+`AbstractCachingViewResolver` 的子类会缓存其解析的视图实例。缓存提高某些视图技术的性能。当然，也可以放弃该缓存功能，只需将 `cache` 属性设置为 `false` 即可。此外，如果必须在运行时刷新视图的(如 Veloctiy 模版更新)，可以使用 `removeFromCache(String viewName, Locale loc)` 方法。
 ====
 
 
 
 [[mvc-viewresolver-chaining]]
-==== Chaining ViewResolvers
-Spring supports multiple view resolvers. Thus you can chain resolvers and, for example,
-override specific views in certain circumstances. You chain view resolvers by adding
-more than one resolver to your application context and, if necessary, by setting the
-`order` property to specify ordering. Remember, the higher the order property, the later
-the view resolver is positioned in the chain.
+==== 视图解析器链
+Spring 提供多种视图技术。因此，你可以定义解析器链，比如，可在某些情况下覆盖指定视图。可通过在应用上下文中添加多个解析器来定义解析器链，如有需要的，也可指定这些解析器的顺序。记住，order 属性越高，解析器的链上位置约靠后。
 
-In the following example, the chain of view resolvers consists of two resolvers, an
-`InternalResourceViewResolver`, which is always automatically positioned as the last
-resolver in the chain, and an `XmlViewResolver` for specifying Excel views. Excel views
-are not supported by the `InternalResourceViewResolver`.
+如下例子，定义了包含两个解析器的解析器链。当中一个是 `InternalResourceViewResolver`，此解析器总是自动定位到解析器链中最后一个；另外一个是 `XmlViewResolver`，用来指定 Excel 视图。`InternalResourceViewResolver` 不支持 Excel 视图。
+
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2197,10 +2075,9 @@ are not supported by the `InternalResourceViewResolver`.
 	</beans>
 ----
 
-If a specific view resolver does not result in a view, Spring examines the context for
-other view resolvers. If additional view resolvers exist, Spring continues to inspect
-them until a view is resolved. If no view resolver returns a view, Spring throws a
-`ServletException`.
+如果一个视图解析器不能导出一个视图，Spring 会检索上下文，查找其他视图解析器。如果查找到其他视图解析器，Spring 会继续处理，直到有解析器导出一个视图。如果没有解析器返回一个视图，Spring 会抛出 `ServletException`。
+
+视图解析协议规定视图解析器可以返回 null，表示没有找到指定的视图。然而，不是所有的视图解析器都可以返回null，因为某些情况下，视图解析器
 
 The contract of a view resolver specifies that a view resolver __can__ return null to
 indicate the view could not be found. Not all view resolvers do this, however, because
