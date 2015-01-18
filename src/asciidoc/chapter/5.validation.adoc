@@ -175,44 +175,35 @@ http://docs.oracle.com/javase/6/docs/api/java/beans/package-summary.html[javabea
 
 
 [[beans-beans-conventions]]
-==== Setting and getting basic and nested properties
-Setting and getting properties is done using the `setPropertyValue(s)` and
-`getPropertyValue(s)` methods that both come with a couple of overloaded variants.
-They're all described in more detail in the javadocs Spring comes with. What's important
-to know is that there are a couple of conventions for indicating properties of an
-object. A couple of examples:
+==== Setting和getting基本及嵌套属性
+Setting和getting属性是通过一组变形的重载方法`setPropertyValue(s)`和`getPropertyValue(s)`来完成的。您可以通过Spring的javadoc来获得更多的信息。
+你必须知道的是描述对象的属性有一些约定俗成的规则。下面有几个例子：
 
 [[beans-beans-conventions-properties-tbl]]
-.Examples of properties
+.属性的例子
 |===
-| Expression| Explanation
+| 表达式| 解释(说明)
 
 | `name`
-| Indicates the property `name` corresponding to the methods `getName()` or `isName()`
-  and `setName(..)`
+| 表示通过方法`getName()`或`isName()`和`setName(..)`来操作属性`name`
 
 | `account.name`
-| Indicates the nested property `name` of the property `account` corresponding e.g. to
-  the methods `getAccount().setName()` or `getAccount().getName()`
+| 表示通过方法`getAccount().setName()`或`getAccount().getName()`来操作`account`的嵌套属性`name`
 
 | `account[2]`
-| Indicates the __third__ element of the indexed property `account`. Indexed properties
-  can be of type `array`, `list` or other __naturally ordered__ collection
+| 表示索引属性`account`的第三个元素。能被索引的属性可以是`array`, `list`或者其他实现了有序集合的类型。
 
 | `account[COMPANYNAME]`
-| Indicates the value of the map entry indexed by the key __COMPANYNAME__ of the Map
-  property `account`
+| 表示指定Map `account`以__COMPANYNAME__为键的值
+
 |===
 
-Below you'll find some examples of working with the `BeanWrapper` to get and set
-properties.
+下面你将看到一些通过`BeanWrapper`来获取和设置属性的例子。
 
-__(This next section is not vitally important to you if you're not planning to work with
-the `BeanWrapper` directly. If you're just using the `DataBinder` and the `BeanFactory`
-and their out-of-the-box implementation, you should skip ahead to the section about
-`PropertyEditors`.)__
+__(下面这一节对那些不想在工作中直接用到`BeanWrapper`的人来说不是那么的重要。如果你只是会用到`DataBinder`和`BeanFactory`
+这类开箱即用的实现，你可以直接跳过这里，直接关注`PropertyEditors`这一节。)__
 
-Consider the following two classes:
+假如有下面这两个类：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -267,32 +258,31 @@ Consider the following two classes:
 	}
 ----
 
-The following code snippets show some examples of how to retrieve and manipulate some of
-the properties of instantiated `Companies` and `Employees`:
+下面的代码快照向你展示了如何获取和操作已经实例化的`Companies`和`Employees`的属性。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
 	BeanWrapper company = BeanWrapperImpl(new Company());
-	// setting the company name..
+	// 设置公司名称..
 	company.setPropertyValue("name", "Some Company Inc.");
-	// ... can also be done like this:
+	// ...也可以像这样做:
 	PropertyValue value = new PropertyValue("name", "Some Company Inc.");
 	company.setPropertyValue(value);
 
-	// ok, let's create the director and tie it to the company:
+	// 现在我们来创建一个主管并把它绑定到公司上:
 	BeanWrapper jim = BeanWrapperImpl(new Employee());
 	jim.setPropertyValue("name", "Jim Stravinsky");
 	company.setPropertyValue("managingDirector", jim.getWrappedInstance());
 
-	// retrieving the salary of the managingDirector through the company
+	// 通过公司属性来获取主管的薪水
 	Float salary = (Float) company.getPropertyValue("managingDirector.salary");
 ----
 
 
 
 [[beans-beans-conversion]]
-==== Built-in PropertyEditor implementations
+==== 内嵌的属性编辑器实现
 
 Spring uses the concept of `PropertyEditors` to effect the conversion between an
 `Object` and a `String`. If you think about it, it sometimes might be handy to be able
