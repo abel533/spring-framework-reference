@@ -2077,7 +2077,7 @@ Spring 提供多种视图技术。因此，你可以定义解析器链，比如�
 
 如果一个视图解析器不能导出一个视图，Spring 会检索上下文，查找其他视图解析器。如果查找到其他视图解析器，Spring 会继续处理，直到有解析器导出一个视图。如果没有解析器返回一个视图，Spring 会抛出 `ServletException`。
 
-视图解析协议规定视图解析器可以返回 null，表示没有找到指定的视图。然而，不是所有的视图解析器都可以返回null，因为某些情况下，视图解析器
+视图解析协议规定视图解析器可以返回 null，表示没有找到指定的视图。然而，不是所有的视图解析器返回null，都表示没有找到视图。因为某些情况下，视图解析器也无法检测视图是否存在。比如，`InternalResourceViewResolver` 在内部逻辑里使用 `RequestDispatcher`，如果 JSP 文件存在，那分发是唯一可以找到 JSP 文件的方式，可分发只能执行一次。`VelocityViewResolver` 和其他解析器也类似。可查看对应视图解析器的 javaDoc 文件，理解其是否报告不存在的视图。
 
 The contract of a view resolver specifies that a view resolver __can__ return null to
 indicate the view could not be found. Not all view resolvers do this, however, because
@@ -2093,31 +2093,10 @@ the last results in the chain not being fully inspected, because the
 
 
 [[mvc-redirecting]]
-==== Redirecting to views
-As mentioned previously, a controller typically returns a logical view name, which a
-view resolver resolves to a particular view technology. For view technologies such as
-JSPs that are processed through the Servlet or JSP engine, this resolution is usually
-handled through the combination of `InternalResourceViewResolver` and
-`InternalResourceView`, which issues an internal forward or include via the Servlet
-API's `RequestDispatcher.forward(..)` method or `RequestDispatcher.include()` method.
-For other view technologies, such as Velocity, XSLT, and so on, the view itself writes
-the content directly to the response stream.
+==== 重定向到视图
+如前文所述，控制器通常返回一个逻辑视图名，再由对应视图解析器解析。对于通过 Servlet 或 JSP 引擎来处理的视图技术(如 JSP)，其解决方式通常会结合  `InternalResourceViewResolver` 和 `InternalResourceView`来处理，使用 Servlet API 的 `RequestDispatcher.forward(..)` 方法或 `RequestDispatcher.include()` 方法发出内部跳转或包含的动作。对于其他视图技术(如Velocity, XSLT 等)，视图会自身内容直接写到响应流。
 
-It is sometimes desirable to issue an HTTP redirect back to the client, before the view
-is rendered. This is desirable, for example, when one controller has been called with
-`POST` data, and the response is actually a delegation to another controller (for
-example on a successful form submission). In this case, a normal internal forward will
-mean that the other controller will also see the same `POST` data, which is potentially
-problematic if it can confuse it with other expected data. Another reason to perform a
-redirect before displaying the result is to eliminate the possibility of the user
-submitting the form data multiple times. In this scenario, the browser will first send
-an initial `POST`; it will then receive a response to redirect to a different URL; and
-finally the browser will perform a subsequent `GET` for the URL named in the redirect
-response. Thus, from the perspective of the browser, the current page does not reflect
-the result of a `POST` but rather of a `GET`. The end effect is that there is no way the
-user can accidentally re- `POST` the same data by performing a refresh. The refresh
-forces a `GET` of the result page, not a resend of the initial `POST` data.
-
+在渲染视图前，有时候需要将 HTTP 请求重定向回客户端。比如：当一个控制器处理完 'POST' 数据，并将响应委托给另一个控制器（如成功提交表单时）。这种情况下，使用正规的内部跳转会让另一个控制器也可检索到 `POST` 数据，若另一个控制器期待的数据与 `POST` 数据混淆，则会已发一些潜在的问题。在显示数据前执行重定向的另一个一个原因是：排除用户多次提交表单的可能性。这种情境下，浏览器首先发送初始化好的 `POST` 请求，接着浏览器接收一个重定向到另一个 URL 的响应，最后，浏览器对后续 URL(上一步响应里的 URL) 执行 `GET` 请求。因此，从浏览器角度来看，当前页面对应的不是 `POST` 的结果，而是 `GET` 的结果。最终的效果就是用户不会因刷新而不小心重新提交一次 `POST` 数据 —— 刷新是 `GET` 一次结果的页面，而不是重新发送 `POST` 数据。
 
 [[mvc-redirecting-redirect-view]]
 ===== RedirectView
@@ -2164,28 +2143,21 @@ view names. The next section discusses this process.
 
 
 [[mvc-redirecting-redirect-prefix]]
-===== The redirect: prefix
+===== redirect: 前缀
 
-While the use of `RedirectView` works fine, if the controller itself creates the
-`RedirectView`, there is no avoiding the fact that the controller is aware that a
-redirection is happening. This is really suboptimal and couples things too tightly. The
-controller should not really care about how the response gets handled. In general it
-should operate only in terms of view names that have been injected into it.
+尽管使用 `RedirectView` 工作正常，可控制器本身创建 `RedirectView` 这一事实，不可否认其是在执行重定向操作。这是不够理想的，两者之间的关系耦合严重。控制器不应该关心响应如何处理。一般而言，控制器只需操作注入的逻辑的视图名即可。
 
-The special `redirect:` prefix allows you to accomplish this. If a view name is returned
-that has the prefix `redirect:`, the `UrlBasedViewResolver` (and all subclasses) will
-recognize this as a special indication that a redirect is needed. The rest of the view
-name will be treated as the redirect URL.
 
-The net effect is the same as if the controller had returned a `RedirectView`, but now
-the controller itself can simply operate in terms of logical view names. A logical view
-name such as `redirect:/myapp/some/resource` will redirect relative to the current
-Servlet context, while a name such as `redirect:http://myhost.com/some/arbitrary/path`
-will redirect to an absolute URL.
+`redirect:` 前缀允许你达到上述效果。当逻辑视图名带上 `redirect:` 前缀时，`UrlBasedViewResolver` 及其子类会识别该前缀执行重定向操作。视图名的余下部分会将重定向的 url。
+
+
+`redirect:` 的作用与控制器返回 `RedirectView` 的效果一致，不过使用 `redirect:`，控制器本身只需操作逻辑视图名即可。逻辑视图名（如 `redirect:/myapp/some/resource`）会相对当前 Servlet 容器重定向，另外如 `redirect:http://myhost.com/some/arbitrary/path` 的逻辑视图，会根据绝对 url 重定向。
 
 
 [[mvc-redirecting-forward-prefix]]
-===== The forward: prefix
+===== forward: 前缀
+
+也可在逻辑视图名前使用 `forward:`，`forward:` 前缀本质也是由`UrlBasedViewResolver`及其子类所处理。使用 `forward:` 前缀，会根据逻辑视图名的余下部分(url)创建`InternalResourceView` 对象（本质是使用 `RequestDispatcher.forward()`）.
 
 It is also possible to use a special `forward:` prefix for view names that are
 ultimately resolved by `UrlBasedViewResolver` and subclasses. This creates an
@@ -2196,37 +2168,22 @@ example). But the prefix can be helpful when you are primarily using another vie
 technology, but still want to force a forward of a resource to be handled by the
 Servlet/JSP engine. (Note that you may also chain multiple view resolvers, instead.)
 
-As with the `redirect:` prefix, if the view name with the `forward:` prefix is injected
-into the controller, the controller does not detect that anything special is happening
-in terms of handling the response.
+与 `redirect:` 前缀类型，当带上 `forward:` 前缀的视图名注入控制器时，控制器不会察觉将如何处理响应。
 
 
 
 [[mvc-multiple-representations]]
 ==== ContentNegotiatingViewResolver
 
-The `ContentNegotiatingViewResolver` does not resolve views itself but rather delegates
-to other view resolvers, selecting the view that resembles the representation requested
-by the client. Two strategies exist for a client to request a representation from the
-server:
+`ContentNegotiatingViewResolver` 自身并没有去解析视图，而是将其委派给其他视图解析器，选择指定响应表述返回给客户端。有以下两种策略，允许客户端请求指定表述方式的资源：
 
-* Use a distinct URI for each resource, typically by using a different file extension in
-  the URI. For example, the URI `http://www.example.com/users/fred.pdf` requests a PDF
-  representation of the user fred, and `http://www.example.com/users/fred.xml` requests
-  an XML representation.
-* Use the same URI for the client to locate the resource, but set the `Accept` HTTP
-  request header to list the http://en.wikipedia.org/wiki/Internet_media_type[media
-  types] that it understands. For example, an HTTP request for
-  `http://www.example.com/users/fred` with an `Accept` header set to `application/pdf`
-  requests a PDF representation of the user fred, while
-  `http://www.example.com/users/fred` with an `Accept` header set to `text/xml` requests
-  an XML representation. This strategy is known as
-  http://en.wikipedia.org/wiki/Content_negotiation[content negotiation].
+* 不同的资源使用不同的 URI 表示：通常使用文件拓展名来表示不同的响应表述，如 `http://www.example.com/users/fred.pdf` 请求用户 fred 的 pdf 视图表述，`http://www.example.com/users/fred.xml` 则是请求用户 fred 的 xml 视图表述。
 
-[NOTE]
+* 使用相同的 uri 加载指定资源，不过使用 `Accept` HTTP 请求头表示其请求的http://en.wikipedia.org/wiki/Internet_media_type[媒体类型]。如uri `http://www.example.com/users/fred`，当 `Accept` 为 `application/pdf` ，表示请求用户 fred 的pdf视图表述，当 `Accept` 为 `application/xml` 表示请求用户 fred 的xml 视图表述。这种策略也可称为 http://en.wikipedia.org/wiki/Content_negotiation[内容协商].
+
+[提示]
 ====
-One issue with the `Accept` header is that it is impossible to set it in a web browser
-within HTML. For example, in Firefox, it is fixed to:
+与 `Accept` 头字段的有关一个 issue，就在不能通过 web 浏览器设置 `Accept` 头字段值。比如说，在 firefox，`Accept` 字段是固定的：
 
 [literal]
 [subs="verbatim"]
@@ -2234,15 +2191,10 @@ within HTML. For example, in Firefox, it is fixed to:
 Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
 ----
 
-For this reason it is common to see the use of a distinct URI for each representation
-when developing browser based web applications.
+由于这个原因，在开发基于浏览器的web应用时，通常会选择使用不同的uri来表示不同的视图表述.
 ====
 
-To support multiple representations of a resource, Spring provides the
-`ContentNegotiatingViewResolver` to resolve a view based on the file extension or
-`Accept` header of the HTTP request. `ContentNegotiatingViewResolver` does not perform
-the view resolution itself but instead delegates to a list of view resolvers that you
-specify through the bean property `ViewResolvers`.
+为了支持同一资源的多种表述,Spring 提供了 `ContentNegotiatingViewResolver`,可根据文件拓展名或 `Accept` 头字段值选择指定资源的表述.`ContentNegotiatingViewResolver` 自身并解释视图,而是将其转发给通过 `ViewResolvers` 属性配置的视图解析器.
 
 The `ContentNegotiatingViewResolver` selects an appropriate `View` to handle the request
 by comparing the request media type(s) with the media type (also known as
@@ -2255,12 +2207,9 @@ representation of the current resource regardless of the logical view name. The 
 header may include wild cards, for example `text/*`, in which case a `View` whose
 Content-Type was `text/xml` is a compatible match.
 
-To support the resolution of a view based on a file extension, use the
-`ContentNegotiatingViewResolver` bean property `mediaTypes` to specify a mapping of file
-extensions to media types. For more information on the algorithm used to determine the
-request media type, refer to the API documentation for `ContentNegotiatingViewResolver`.
+为了支持基于文件拓展名的解析，可以使用 `ContentNegotiatingViewResolver` 的属性 `mediaTypes` 配置可匹配的媒体类型。关于选择哪一种媒体类型的算法的详细信息，可参考 `ContentNegotiatingViewResolver` API 文档。
 
-Here is an example configuration of a `ContentNegotiatingViewResolver:`
+如下，是一个 `ContentNegotiatingViewResolver` 配置样例：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2292,35 +2241,16 @@ Here is an example configuration of a `ContentNegotiatingViewResolver:`
 	<bean id="content" class="com.foo.samples.rest.SampleContentAtomView"/>
 ----
 
-The `InternalResourceViewResolver` handles the translation of view names and JSP pages,
-while the `BeanNameViewResolver` returns a view based on the name of a bean. (See
-"<<mvc-viewresolver-resolver,Resolving views with the ViewResolver interface>>" for more
-details on how Spring looks up and instantiates a view.) In this example, the `content`
-bean is a class that inherits from `AbstractAtomFeedView`, which returns an Atom RSS
-feed. For more information on creating an Atom Feed representation, see the section Atom
-Views.
+`InternalResourceViewResolver` 处理试图名称的解析和 JSP 页面，另外，`BeanNameViewResolver`会返回基于 bean 名称的视图（可参考 "<<mvc-viewresolver-resolver,使用 ViewResolver 解析视图>>，了解 Spring 如何寻找和初始化一个视图"）。在上述例子中，`content` bean 是一个继承 `AbstractAtomFeedView` 的类，这个bean 可以返回一个 RSS 原子。创建 一个原子表述的详细信息，可参考原子视图的那一章。
 
-In the above configuration, if a request is made with an `.html` extension, the view
-resolver looks for a view that matches the `text/html` media type. The
-`InternalResourceViewResolver` provides the matching view for `text/html`. If the
-request is made with the file extension `.atom`, the view resolver looks for a view that
-matches the `application/atom+xml` media type. This view is provided by the
-`BeanNameViewResolver` that maps to the `SampleContentAtomView` if the view name
-returned is `content`. If the request is made with the file extension `.json`, the
-`MappingJackson2JsonView` instance from the `DefaultViews` list will be selected
-regardless of the view name. Alternatively, client requests can be made without a file
-extension but with the `Accept` header set to the preferred media-type, and the same
-resolution of request to views would occur.
+在上述配置中，当请求是由 `.html`拓展名组成时，视图解析器会去寻找一个匹配 `text/html` 的视图。`InternalResourceViewResolver` 提供了 `text/html` 的映射。当请求是由 `.atom` 拓展名组成时，视图解析器会去寻找一个匹配 `.atom` 的视图。这个视图 `BeanNameViewResolver` 有提供，若视图名称为 `content`,则映射到 `SampleContentAtomView`。当请求是由 `.json`拓展名组成时，会选择 `DefaultViews` 提供的 `MappingJackson2JsonView` 接口，注意这个映射与视图名称无关。另外，客户端的请求不带拓展名，通过 `Accept` 头字段指定媒体类型时，也会执行和文件拓展名一样的处理逻辑。
 
 [NOTE]
 ====
-If `ContentNegotiatingViewResolver`'s list of ViewResolvers is not configured
-explicitly, it automatically uses any ViewResolvers defined in the application context.
+当 `ContentNegotiatingViewResolver` 没有明确定义一系列视图解析器时，会随机使用应用上下文的任一解析器。
 ====
 
-The corresponding controller code that returns an Atom RSS feed for a URI of the form
-`http://localhost/content.atom` or `http://localhost/content` with an `Accept` header of
-application/atom+xml is shown below.
+可以根据 `http://localhost/content.atom` 或 `http://localhost/content`和`Accept`字段值为 application/atom+xml 两种情况，返回原子视图的控制器代码如下：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -2345,7 +2275,7 @@ application/atom+xml is shown below.
 
 
 [[mvc-flash-attributes]]
-=== Using flash attributes
+=== 使用 flash 属性
 Flash attributes provide a way for one request to store attributes intended for use in
 another. This is most commonly needed when redirecting -- for example, the
 __Post/Redirect/Get__ pattern. Flash attributes are saved temporarily before the
@@ -2392,11 +2322,11 @@ Therefore the use of flash attributes is recommended mainly for redirect scenari
 
 
 [[mvc-uri-building]]
-=== Building URIs
+=== 构建 URI
 
-Spring MVC provides a mechanism for building and encoding a URI using
-`UriComponentsBuilder` and `UriComponents`.
+Spring MVC 提供了构建和编码 URI 的机制，这种机制的使用需要通过 `UriComponentsBuilder` 和 `UriComponents`.
 
+如下，你可以如此展开和编码 URI 模版字符串：
 For example you can expand and encode a URI template string:
 
 [source,java,indent=0]
@@ -2408,10 +2338,11 @@ For example you can expand and encode a URI template string:
 	URI uri = uriComponents.expand("42", "21").encode().toUri();
 ----
 
+注意，`UriComponents` 是不可变的；如果有需要的，`expand()` 和 `encode()` 操作会返回一个新的实例。
 Note that `UriComponents` is immutable and the `expand()` and `encode()` operations
 return new instances if necessary.
 
-You can also expand and encode using individual URI components:
+你可以单独使用一个 URI 原件展开和编码 URI 模版字符串：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -2422,16 +2353,15 @@ You can also expand and encode using individual URI components:
 			.encode();
 ----
 
-In a Servlet environment the `ServletUriComponentsBuilder` sub-class provides static
-factory methods to copy available URL information from a Servlet requests:
+Servlet 环境中，`ServletUriComponentsBuilder` 的子类提供了从 Servlet 请求复制 URL 信息的静态方法：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
 	HttpServletRequest request = ...
 
-	// Re-use host, scheme, port, path and query string
-	// Replace the "accountId" query param
+	// 重用 host, scheme, port, path 和 query 
+	// 替换 "accountId" 查询参数
 
 	ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromRequest(request)
 			.replaceQueryParam("accountId", "{id}").build()
@@ -2439,42 +2369,41 @@ factory methods to copy available URL information from a Servlet requests:
 			.encode();
 ----
 
-Alternatively, you may choose to copy a subset of the available information up to and
-including the context path:
+另外，你也可以复制上下文和路径信息的某个子集，
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
-	// Re-use host, port and context path
-	// Append "/accounts" to the path
+	// 重用 host，port 和 上下文路径
+	// 将 "/accounts" 附加到路径中
 
 	ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromContextPath(request)
 			.path("/accounts").build()
 ----
 
-Or in cases where the `DispatcherServlet` is mapped by name (e.g. `/main/*`), you can
-also have the literal part of the servlet mapping included:
+若 `DispatcherServlet` 是通过名称映射的（如，`/main/*`),你也可获取到 servlet 映射的文字部分：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
-	// Re-use host, port, context path
-	// Append the literal part of the servlet mapping to the path
-	// Append "/accounts" to the path
+	// 重用 host，port 和 上下文路径
+	// 将 Servlet 映射的文字部分附加到路径中
+	// 将 "/accounts" 附加到路径中
 
 	ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromServletMapping(request)
 			.path("/accounts").build()
 ----
 
 [[mvc-links-to-controllers]]
-==== Building URIs to Controllers and methods
+==== 根据控制器和方法构建 URI
+
+Spring MVC 还提供了另外一种构建和编码 URI 的机制，这种机制可根据应用中对应的控制器和方法来生成 URI。
 
 Spring MVC provides another mechanism for building and encoding URIs that link to
 Controllers and methods defined within an application.
-{javadoc-baseurl}/org/springframework/web/servlet/mvc/method/annotation/MvcUriComponentsBuilder.html[`MvcUriComponentsBuilder`]
-extends `UriComponentsBuilder` and provides such possibilities.
+{javadoc-baseurl}/org/springframework/web/servlet/mvc/method/annotation/MvcUriComponentsBuilder.html[`MvcUriComponentsBuilder`] 提供了这种机制，这个类继承了 `UriComponentsBuilder`。
 
-Given this Controller:
+假设控制器的定义如下:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -2491,8 +2420,7 @@ Given this Controller:
 	}
 ----
 
-and using the `MvcUriComponentsBuilder`, the previous example is now:
-
+现在使用 `MvcUriComponentsBuilder` ，前面构建的例子可以这样写：
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -2501,9 +2429,7 @@ and using the `MvcUriComponentsBuilder`, the previous example is now:
 
 	URI uri = uriComponents.encode().toUri();
 ----
-
-The `MvcUriComponentsBuilder` can also create "mock Controllers", thus enabling to create
-URIs by coding against the actual Controller's API:
+`MvcUriComponentsBuilder` 也可以创建 "模拟控制器"，相对控制器 API 来说，`MvcUriComponentsBuilder`可通过代码来创建 URI。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
