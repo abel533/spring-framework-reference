@@ -67,7 +67,7 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 10.4.2.testing.adoc(11.3.5.4. DI) -
 - 10.5.testing.adoc(11.3.6. Spring MVC Test Framework) -
 - 10.6.testing.adoc(11.3.7. PetClinic Example) -
-- 11.spring-data-tier.adoc     -
+- **11.spring-data-tier.adoc     - [阿信](http://git.oschina.net/songxinqiang)**
 - **12.dao.adoc                  - 已经分配**
 - 13.jdbc.adoc                 -
 - **14.orm.adoc                  - [waylau](https://github.com/waylau)**
