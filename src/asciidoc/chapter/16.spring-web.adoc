@@ -2420,7 +2420,7 @@ Controllers and methods defined within an application.
 	}
 ----
 
-现在使用 `MvcUriComponentsBuilder` ，前面构建的例子可以这样写：
+现在使用 `MvcUriComponentsBuilder` ，那前面构建的例子可以这样写：
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -2456,13 +2456,11 @@ a name attribute that can be used to override the default strategy.
 
 [NOTE]
 ====
-The assigned request mapping names are logged at TRACE level on startup.
+指定的请求匹配名称会在启动时以 TRACE 级别输出日志。
 ====
+Spring JSP 标签库提供的 `mvcUrl` 函数，可以用来准备控制器方法的链接，原理就是基于上述机制。
 
-The Spring JSP tag library provides a function called `mvcUrl` that can be used to
-prepare links to controller methods based on this mechanism.
-
-For example given:
+样例：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -2475,7 +2473,7 @@ For example given:
     }
 ----
 
-The following JSP code can prepare a link:
+如下 JSP 代码可以准备一个链接：
 
 [source,jsp,indent=0]
 [subs="verbatim,quotes"]
@@ -2490,56 +2488,34 @@ The following JSP code can prepare a link:
 
 
 [[mvc-localeresolver]]
-=== Using locales
-Most parts of Spring's architecture support internationalization, just as the Spring web
-MVC framework does. `DispatcherServlet` enables you to automatically resolve messages
-using the client's locale. This is done with `LocaleResolver` objects.
+=== 使用本地化
+Sopring 架构中很大的一部分都支持国际化，Spring  web mvc 框架就是其中的一部分。`DispatcherServlet` 可以根据客户端本地化解析消息。这是通过 `LocaleResolver` 对象完成的。
 
-When a request comes in, the `DispatcherServlet` looks for a locale resolver, and if it
-finds one it tries to use it to set the locale. Using the `RequestContext.getLocale()`
-method, you can always retrieve the locale that was resolved by the locale resolver.
+当请求到来时，`DispatcherServlet` 会查找本地化解析器，当找到时，会使用其来设置当前语言环境。通过 `RequestContext.getLocale()` 方法，你总可以获取到被本地化解析器解析的语言。
 
-In addition to automatic locale resolution, you can also attach an interceptor to the
-handler mapping (see <<mvc-handlermapping-interceptor>> for more information on handler
-mapping interceptors) to change the locale under specific circumstances, for example,
-based on a parameter in the request.
+除了自动完成本地化解析，对于某些特定情况，你也可以在映射 handler 时添加一个拦截器，动态指定当前语言环境，比如说基于请求中的一个参数。（handler 映射拦截器的详细信息可餐卡 <<mvc-handlermapping-interceptor>>）
 
-Locale resolvers and interceptors are defined in the
-`org.springframework.web.servlet.i18n` package and are configured in your application
-context in the normal way. Here is a selection of the locale resolvers included in
-Spring.
+本地化解析器和拦截器在 `org.springframework.web.servlet.i18n` 包中定义，都可通过常规方式配置到应用里。这是 Spring 为本地化解析器提供的一种选择。
 
 
 
 [[mvc-timezone]]
-==== Obtaining Time Zone Information
-In addition to obtaining the client's locale, it is often useful to know their time zone.
-The `LocaleContextResolver` interface offers an extension to `LocaleResolver` that allows
-resolvers to provide a richer `LocaleContext`, which may include time zone information.
+==== 获得时区信息
+除了获得客户端的本地化信息，也常常需要获得客户端的时区信息。
+`LocaleContextResolver` 接口拓展了 `LocaleResolver`，提供一个功能更加丰富的 `LocaleContext`，当中就包含了时区信息的获取。
 
-When available, the user's `TimeZone` can be obtained using the
-`RequestContext.getTimeZone()` method. Time zone information will automatically be used
-by Date/Time `Converter` and `Formatter` objects registered with Spring's
-`ConversionService`.
-
+在需要的时候，可以通过 `RequestContext.getTimeZone()` 方法获取用户的时区。时区信息将自动应用 日期/时间转换器和格式化对象（使用 `ConversionService` 注册）。
 
 
 [[mvc-localeresolver-acceptheader]]
 ==== AcceptHeaderLocaleResolver
-This locale resolver inspects the `accept-language` header in the request that was sent
-by the client (e.g., a web browser). Usually this header field contains the locale of
-the client's operating system. __Note that this resolver does not support time zone
-information.__
+AcceptHeaderLocaleResolver 会检查客户端(如 web 浏览器）所发送请求的 `accept-language` 头字段，通常这个头字段包含了客户端操作系统的本地化信息。__注意，AcceptHeaderLocaleResolver 不支持时区信息的解析。
 
 
 
 [[mvc-localeresolver-cookie]]
 ==== CookieLocaleResolver
-
-This locale resolver inspects a `Cookie` that might exist on the client to see if a
-`Locale` or `TimeZone` is specified. If so, it uses the specified details. Using the
-properties of this locale resolver, you can specify the name of the cookie as well as the
-maximum age. Find below an example of defining a `CookieLocaleResolver`.
+CookieLocaleResolver 会检查客户端的 `Cookie`，判断是否存在 `Locale` 或者 `TimeZone` 的 cookie。如果存在，会使用 `Locale` 或者 `TimeZone` 指定的信息。通过 CookieLocaleResolver 的属性竖着，除了可以指定 cookie 的有效时间，也可以指定的 cookie 的名称。如下，定义了一个 `CookieLocaleResolver`：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -2555,25 +2531,22 @@ maximum age. Find below an example of defining a `CookieLocaleResolver`.
 ----
 
 [[mvc-cookie-locale-resolver-props-tbl]]
-.CookieLocaleResolver properties
+.CookieLocaleResolver 属性
 [cols="1,1,4"]
 |===
-| Property| Default| Description
+| 属性| 默认值| 描述
 
 | cookieName
-| classname + LOCALE
-| The name of the cookie
+| 类名称 + LOCALE
+| cookie 的名称
 
 | cookieMaxAge
 | Integer.MAX_INT
-| The maximum time a cookie will stay persistent on the client. If -1 is specified, the
-  cookie will not be persisted; it will only be available until the client shuts down
-  their browser.
+| cookie 在客户端的最长有效时间。当为 -1 时，cookie 不会被持久化，在客户端关闭浏览器之后就会失效。
 
 | cookiePath
 | /
-| Limits the visibility of the cookie to a certain part of your site. When cookiePath is
-  specified, the cookie will only be visible to that path and the paths below it.
+| 限定 cookie 在网站的可见范围。当指定 cookiePath 时，cookie 就只在当前路径或其下路径可见。
 |===
 
 
@@ -2581,21 +2554,14 @@ maximum age. Find below an example of defining a `CookieLocaleResolver`.
 [[mvc-localeresolver-session]]
 ==== SessionLocaleResolver
 
-The `SessionLocaleResolver` allows you to retrieve `Locale` and `TimeZone` from the
-session that might be associated with the user's request.
+`SessionLocaleResolver` 允许你通过 session 检索 `Locale` 和 `TimeZone`，此 session 或许与用户的请求有关联。
 
 
 
 [[mvc-localeresolver-interceptor]]
 ==== LocaleChangeInterceptor
 
-You can enable changing of locales by adding the `LocaleChangeInterceptor` to one of the
-handler mappings (see <<mvc-handlermapping>>). It will detect a parameter in the request
-and change the locale. It calls `setLocale()` on the `LocaleResolver` that also exists
-in the context. The following example shows that calls to all `*.view` resources
-containing a parameter named `siteLanguage` will now change the locale. So, for example,
-a request for the following URL, `http://www.sf.net/home.view?siteLanguage=nl` will
-change the site language to Dutch.
+通过在 handler 映射中添加 `LocaleChangeInterceptor` 拦截器（可查看<<mvc-handlermapping>>），可以修改本地化信息。 `LocaleChangeInterceptor` 会检测请求里的某一个参数，进而修改本地化信息。它调用了上下文的 `LocaleResolver` 中的 `setLocale()` 方法。如下例子，实现了所有包含 `siteLanguage` 的 `*.view` 资源，其本地化信息都会被改变。所以，如 `http://www.sf.net/home.view?siteLanguage=nl` 这个请求，其网站语言会被修改为荷兰语。
 
 [source,xml,indent=0]
 [subs="verbatim"]
@@ -2625,12 +2591,12 @@ change the site language to Dutch.
 
 
 [[mvc-themeresolver]]
-=== Using themes
+=== 主题的使用
 
 
 
 [[mvc-themeresolver-introduction]]
-==== Overview of themes
+==== 主题概览
 You can apply Spring Web MVC framework themes to set the overall look-and-feel of your
 application, thereby enhancing user experience. A theme is a collection of static
 resources, typically style sheets and images, that affect the visual style of the
