@@ -1,13 +1,10 @@
 [[spring-data-tier]]
-= Data Access
+= 数据访问
 [partintro]
 --
-This part of the reference documentation is concerned with data access and the
-interaction between the data access layer and the business or service layer.
+这部分参考文档介绍有关于数据访问和数据访问层和业务层或服务层之间的相互作用.
 
-Spring's comprehensive transaction management support is covered in some detail,
-followed by thorough coverage of the various data access frameworks and technologies
-that the Spring Framework integrates with.
+Spring的综合事务管理支持也在一些地方被提到, 就在介绍了Spring Framework支持集成的大量数据访问框架和技术之后.
 
 * <<transaction>>
 * <<dao>>
@@ -20,69 +17,52 @@ that the Spring Framework integrates with.
 
 
 [[transaction]]
-== Transaction Management
+== 事务管理
 
 
 
 
 [[transaction-intro]]
-=== Introduction to Spring Framework transaction management
-Comprehensive transaction support is among the most compelling reasons to use the Spring
-Framework. The Spring Framework provides a consistent abstraction for transaction
-management that delivers the following benefits:
+=== Spring Framework事务管理介绍
+广泛的事务支持是Spring Framework吸引人们使用的原因之一. Spring Framework提供的对事务的一致性抽象的
+好处体现在如下方面:
 
-* Consistent programming model across different transaction APIs such as Java
-  Transaction API (JTA), JDBC, Hibernate, Java Persistence API (JPA), and Java Data
-  Objects (JDO).
-* Support for <<transaction-declarative,declarative transaction management>>.
-* Simpler API for <<transaction-programmatic,programmatic>> transaction management than
-  complex transaction APIs such as JTA.
-* Excellent integration with Spring's data access abstractions.
+* 在不同的API之间使用一致的编程模型, 如Java Transaction API (JTA), JDBC, Hibernate,
+  Java Persistence API (JPA), 以及 Java Data Objects (JDO).
+* 支持<<transaction-declarative, 声明式事务管理>>.
+* 对<<transaction-programmatic,可编程事务管理>>比复杂的API, 如JTA,提供更简单的API.
+* 与Spring的数据访问层抽象的完美集成.
 
-The following sections describe the Spring Framework's transaction value-adds and
-technologies. (The chapter also includes discussions of best practices, application
-server integration, and solutions to common problems.)
+下面的章节向你介绍Spring Framework的事务价值提升和技术. (本章同样囊括了最佳实践, 应用集成, 和对常见问题的解决方案.)
 
-* <<transaction-motivation,Advantages of the Spring Framework's transaction support
-  model>> describes __why__ you would use the Spring Framework's transaction abstraction
-  instead of EJB Container-Managed Transactions (CMT) or choosing to drive local
-  transactions through a proprietary API such as Hibernate.
-* <<transaction-strategies,Understanding the Spring Framework transaction abstraction>>
-  outlines the core classes and describes how to configure and obtain `DataSource`
-  instances from a variety of sources.
-* <<tx-resource-synchronization,Synchronizing resources with transactions >>describes
-  how the application code ensures that resources are created, reused, and cleaned up
-  properly.
-* <<transaction-declarative,Declarative transaction management>> describes support for
-  declarative transaction management.
-* <<transaction-programmatic,Programmatic transaction management>> covers support for
-  programmatic (that is, explicitly coded) transaction management.
+* <<transaction-motivation,Spring Framework的事务支持模型的优点>> 描述了你 __为什么__ 需要在
+  EJB 的容器管理事务(Container-Managed Transactions,CMT)中或者使用本地的单独API, 如Hibernate, 时使用
+  Spring Framework的事务抽象来代替Hibernate.
+* <<transaction-strategies,理解Spring Framework事务抽象>> 给出了核心类, 并且说明了怎样从各种数据源中
+     配置和获取`DataSource`实例.
+* <<tx-resource-synchronization,事务中的资源同步 >> 描述了应用代码怎么确保资源是created, reused, 和
+  cleaned up完成了.
+* <<transaction-declarative,声明式事务管理>> 描述了对声明式事务管理的支持.
+* <<transaction-programmatic,可编程事务管理>> 涵盖了对编程式(也就是直接写代码)事务管理的支持.
 
 
 
 
 [[transaction-motivation]]
-=== Advantages of the Spring Framework's transaction support model
-Traditionally, Java EE developers have had two choices for transaction management:
-__global__ or __local__ transactions, both of which have profound limitations. Global
-and local transaction management is reviewed in the next two sections, followed by a
-discussion of how the Spring Framework's transaction management support addresses the
-limitations of the global and local transaction models.
+=== Spring Framework的事务支持模型的优点
+传统上, Java EE 开发者在事务管理上有两个选择:__全局__ 或者 __本地__ 事务, 每一个都有严重的局限性. 关于全局和
+本地事务管理的介绍将在接下来的两节给出, 就在讨论Spring Framework的事务管理支持是怎样弥补这些限制之后.
 
 
 
 [[transaction-global]]
-==== Global transactions
-Global transactions enable you to work with multiple transactional resources, typically
-relational databases and message queues. The application server manages global
-transactions through the JTA, which is a cumbersome API to use (partly due to its
-exception model). Furthermore, a JTA `UserTransaction` normally needs to be sourced from
-JNDI, meaning that you __also__ need to use JNDI in order to use JTA. Obviously the use
-of global transactions would limit any potential reuse of application code, as JTA is
-normally only available in an application server environment.
+==== 全局事务
+全局性事务可以让你混合使用事务资源,传统关系型数据库以及消息队列. 应用服务器管理事务是通过JTA,他的API用起来很笨重(来源于
+他的异常处理模型). 另外, 一个 JTA 的`UserTransaction` 通常需要由JNDI提供, 意味着你在使用JTA的同时 __也__
+需要使用JNDI. 很明显,当JTA是应用服务器上唯一可用的全局事务时,使用它会限制你对应用代码的重用.
 
-Previously, the preferred way to use global transactions was via EJB __CMT__
-(__Container Managed Transaction__): CMT is a form of __declarative transaction
+原先, 较为提倡的使用全局事务的方式是使用EJB 的__CMT__
+(__容器管理事务,Container Managed Transaction__): CMT is a form of __declarative transaction
 management__ (as distinguished from __programmatic transaction management__). EJB CMT
 removes the need for transaction-related JNDI lookups, although of course the use of EJB
 itself necessitates the use of JNDI. It removes most but not all of the need to write
