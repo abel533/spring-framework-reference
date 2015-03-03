@@ -1,43 +1,23 @@
 [[beans-dependencies]]
-=== Dependencies
-A typical enterprise application does not consist of a single object (or bean in the
-Spring parlance). Even the simplest application has a few objects that work together to
-present what the end-user sees as a coherent application. This next section explains how
-you go from defining a number of bean definitions that stand alone to a fully realized
-application where objects collaborate to achieve a goal.
 
+=== 依赖
 
+典型的企业应用不会单一得由一个对象组成（或者说Spring术语中的bean）。即便是最简单的系统也需要多个对象共同协作来展示给终端用户一个条理分明的应用。接下来的这一节内容会阐述如何定义多个独立于应用程序的bean一起协同工作完成目标。
 
 [[beans-factory-collaborators]]
-==== Dependency injection
-__Dependency injection__ (DI) is a process whereby objects define their dependencies,
-that is, the other objects they work with, only through constructor arguments, arguments
-to a factory method, or properties that are set on the object instance after it is
-constructed or returned from a factory method. The container then __injects__ those
-dependencies when it creates the bean. This process is fundamentally the inverse, hence
-the name __Inversion of Control__ (IoC), of the bean itself controlling the instantiation
-or location of its dependencies on its own by using direct construction of classes, or
-the __Service Locator__ pattern.
 
-Code is cleaner with the DI principle and decoupling is more effective when objects are
-provided with their dependencies. The object does not look up its dependencies, and does
-not know the location or class of the dependencies. As such, your classes become easier
-to test, in particular when the dependencies are on interfaces or abstract base classes,
-which allow for stub or mock implementations to be used in unit tests.
+==== 依赖注入
+__依赖注入__ (DI) 是指对象之间的依赖关系，也就是说，一起协作的其他对象只通过构造器的参数、工厂方法的参数或者由构造函数或者工厂方法创建的对象设置属性。因此容器的工作就是创建bean并注入那些依赖关系。这个过程实质通过直接使用类的构造函数或者服务定位模式来反转控制bean的实例或者其依赖关系的位置，因此它有另外一个名字叫__控制反转__ (IoC)。
 
-DI exists in two major variants, <<beans-constructor-injection,Constructor-based
-dependency injection>> and <<beans-setter-injection,Setter-based dependency injection>>.
+运用了DI原理代码会更加清晰并且由依赖关系提供对象也将使各层次的松耦合变得更加容易。对象不需要知道其依赖关系，也不需要知道它的位置或者类之间的依赖。因此，你的类会更容易测试，尤其是当依赖关系是在接口或者抽象基本类，
+
+
+DI主要有两种注入方式，即<<beans-constructor-injection,构造器注入>>和<<beans-setter-injection,Setter注入>>。
 
 
 [[beans-constructor-injection]]
-===== Constructor-based dependency injection
-__Constructor-based__ DI is accomplished by the container invoking a constructor with a
-number of arguments, each representing a dependency. Calling a `static` factory method
-with specific arguments to construct the bean is nearly equivalent, and this discussion
-treats arguments to a constructor and to a `static` factory method similarly. The
-following example shows a class that can only be dependency-injected with constructor
-injection. Notice that there is nothing __special__ about this class, it is a POJO that
-has no dependencies on container specific interfaces, base classes or annotations.
+===== 构造器注入
+__基于构造器注入__ DI通过调用带参数的构造器来实现，每个参数代表着一个依赖关系。此外，还可通过给 `静态` 工厂方法传参数来构造bean。接下来的介绍将认为给构造器传参数和给静态工厂方法传参数是类似的。下面展示了只能使用构造器来注入依赖关系的例子。请注意这个类并没有什么 __特别__ 之处,它只是个普通的POJO，不依赖于特殊的接口，抽象类或者注解。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -58,12 +38,8 @@ has no dependencies on container specific interfaces, base classes or annotation
 ----
 
 [[beans-factory-ctor-arguments-resolution]]
-====== Constructor argument resolution
-Constructor argument resolution matching occurs using the argument's type. If no
-potential ambiguity exists in the constructor arguments of a bean definition, then the
-order in which the constructor arguments are defined in a bean definition is the order
-in which those arguments are supplied to the appropriate constructor when the bean is
-being instantiated. Consider the following class:
+====== 构造器参数解析
+构造器参数通过参数类型进行匹配。如果构造器参数的类型定义没有潜在的歧义，那么bean被实例化的时候，bean定义中构造器参数的定义顺序就是这些参数的顺序并依次进行匹配。看下面的代码：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -78,11 +54,8 @@ being instantiated. Consider the following class:
 
 	}
 ----
+上述代码中参数类型定义不存在潜在的歧义，我们假设`Bar`和`Baz`之间不存在继承关系。因此，下面代码中在元素`<constructor-arg/>`的配置即使没有明确指定构造参数顺序或者类型也会起作用。
 
-No potential ambiguity exists, assuming that `Bar` and `Baz` classes are not related by
-inheritance. Thus the following configuration works fine, and you do not need to specify
-the constructor argument indexes and/or types explicitly in the `<constructor-arg/>`
-element.
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -98,11 +71,7 @@ element.
 		<bean id="baz" class="x.y.Baz"/>
 	</beans>
 ----
-
-When another bean is referenced, the type is known, and matching can occur (as was the
-case with the preceding example). When a simple type is used, such as
-`<value>true</value>`, Spring cannot determine the type of the value, and so cannot match
-by type without help. Consider the following class:
+当另一个bean被引用，它的类型是已知的，并且匹配也没问题（跟前面的例子一样）。当我们使用简单类型，比如`<value>true</value>`。Spring并不能知道该值的类型，不借助其他帮助Spring将不能通过类型进行匹配。看下面的类：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -125,11 +94,9 @@ by type without help. Consider the following class:
 	}
 ----
 
-.[[beans-factory-ctor-arguments-type]]Constructor argument type matching
+.[[beans-factory-ctor-arguments-type]]构造器参数类型匹配
 --
-In the preceding scenario, the container __can__ use type matching with simple types if
-you explicitly specify the type of the constructor argument using the `type` attribute.
-For example:
+针对上面的场景可以使用`type`属性来显式指定那些简单类型那个的构造参数类型，比如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -141,10 +108,9 @@ For example:
 ----
 --
 
-.[[beans-factory-ctor-arguments-index]]Constructor argument index
+.[[beans-factory-ctor-arguments-index]]构造器参数索引
 --
-Use the `index` attribute to specify explicitly the index of constructor arguments. For
-example:
+使用`index`属性来显式指定构造参数的索引，比如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -155,14 +121,13 @@ example:
 	</bean>
 ----
 
-In addition to resolving the ambiguity of multiple simple values, specifying an index
-resolves ambiguity where a constructor has two arguments of the same type. Note that the
-__index is 0 based__.
+
+使用索引可以解决多个简单值的混淆，还能解决构造方法有两个相同类型的参数的混淆问题，注意__index是从0开始的__。
 --
 
-.[[beans-factory-ctor-arguments-name]]Constructor argument name
+.[[beans-factory-ctor-arguments-name]]构造器参数命名
 --
-You can also use the constructor parameter name for value disambiguation:
+你也可以使用构造器参数命名来指定值的类型：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -172,14 +137,8 @@ You can also use the constructor parameter name for value disambiguation:
 		<constructor-arg name="ultimateAnswer" value="42"/>
 	</bean>
 ----
-
-Keep in mind that to make this work out of the box your code must be compiled with the
-debug flag enabled so that Spring can look up the parameter name from the constructor.
-If you can't compile your code with debug flag (or don't want to) you can use
-http://download.oracle.com/javase/6/docs/api/java/beans/ConstructorProperties.html[@ConstructorProperties]
-JDK annotation to explicitly name your constructor arguments. The sample class would
-then have to look as follows:
-
+请记住为了使这个起作用，你的代码编译时要打开编译模式，这样Spring可以检查构造方法的参数。如果你不打开调试模式（或者不想打开），也可以使用
+http://download.oracle.com/javase/6/docs/api/java/beans/ConstructorProperties.html[@ConstructorProperties]  JDK注解明确指出构造函数的参数。下面是简单的例子：
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -201,15 +160,9 @@ then have to look as follows:
 
 
 [[beans-setter-injection]]
-===== Setter-based dependency injection
-__Setter-based__ DI is accomplished by the container calling setter methods on your
-beans after invoking a no-argument constructor or no-argument `static` factory method to
-instantiate your bean.
 
-The following example shows a class that can only be dependency-injected using pure
-setter injection. This class is conventional Java. It is a POJO that has no dependencies
-on container specific interfaces, base classes or annotations.
-
+===== Setter注入
+在调用了无参的构造方法或者无参的`静态`工厂方法实例化bean之后，容器通过回调bean的setter方法来完成setter注入。接下来的例子将展示只使用setter注入依赖。这个类是个普通的Java类
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -227,123 +180,53 @@ on container specific interfaces, base classes or annotations.
 
 	}
 ----
+`ApplicationContext`所管理的beans支持构造函数注入和setter注入，在一些依赖已经使用构造器注入之后它还支持setter注入。你可以以`BeanDefinition`的形式配置依赖，它能根据指定的`PropertyEditor`实现将属性从一种格式转化为另外一种格式。但是，大多数Spring的使用者不会直接使用这些类（也就是通过编程的形式），而是采用XML配置这些`bean`，注解的组件（即用`@Component`，`@Controller`等注解类），或者基于`@Configuration`类的`@Bean`方法。本质上这些资源会转换成`BeanDefinition`的实例并且用于加载整个Spring IoC容器实例。
 
-The `ApplicationContext` supports constructor-based and setter-based DI for the beans it
-manages. It also supports setter-based DI after some dependencies have already been
-injected through the constructor approach. You configure the dependencies in the form of
-a `BeanDefinition`, which you use in conjunction with `PropertyEditor` instances to
-convert properties from one format to another. However, most Spring users do not work
-with these classes directly (i.e., programmatically) but rather with XML `bean`
-definitions, annotated components (i.e., classes annotated with `@Component`,
-`@Controller`, etc.), or `@Bean` methods in Java-based `@Configuration` classes. These
-sources are then converted internally into instances of `BeanDefinition` and used to
-load an entire Spring IoC container instance.
-
-.Constructor-based or setter-based DI?
+.构造器注入还是Setter注入
 ****
-Since you can mix constructor-based and setter-based DI, it is a good rule of thumb to
-use constructors for _mandatory dependencies_ and setter methods or configuration methods
-for _optional dependencies_. Note that use of the <<beans-required-annotation,@Required>>
-annotation on a setter method can be used to make the property a required dependency.
 
-The Spring team generally advocates constructor injection as it enables one to implement
-application components as _immutable objects_ and to ensure that required dependencies
-are not `null`. Furthermore constructor-injected components are always returned to client
-(calling) code in a fully initialized state. As a side note, a large number of constructor
-arguments is a _bad code smell_, implying that the class likely has too many
-responsibilities and should be refactored to better address proper separation of concerns.
+因为你可以混合使用构造器注入和setter注入， _强制性依赖关系_ 时使用构造器注入， _可选的依赖关系_ 时使用setter方法或者配置方法是比较好的经验法则。请注意<<beans-required-annotation,@Required>>注解在setter方法上可以注入所需要的依赖。
 
-Setter injection should primarily only be used for optional dependencies that can be
-assigned reasonable default values within the class. Otherwise, not-null checks must be
-performed everywhere the code uses the dependency. One benefit of setter injection is that
-setter methods make objects of that class amenable to reconfiguration or re-injection
-later. Management through <<jmx,JMX MBeans>> is therefore a compelling use case for setter
-injection.
+Spring开发团队一般主张当实现的应用组件是不可变对象时使用构造器注入并且要保证所需的依赖不是`null`。此外构造器注入的组件总是返回给客户端（或调用）完整的初始化状态。另一方面，大量的构造器参数造成_糟糕的代码异味_，这表明类可能承担了太多的职责应该需要重构以便更好的适当分离要解决的问题。
 
-Use the DI style that makes the most sense for a particular class. Sometimes, when dealing
-with third-party classes for which you do not have the source, the choice is made for you.
-For example, if a third-party class does not expose any setter methods, then constructor
-injection may be the only available form of DI.
+setter注入主要只用作可选的依赖，这些依赖分配合理的缺省值。否则，当代码使用依赖时必须进行非空检查。setter注入的一个好处是setter方法使得这个类的对象在以后的某个时候还可合理的重新配置或者重新注入。<<jmx,JMX MBeans>>的管理就是一个很好的setter注入例子。
+
+使用DI的风格可以使特定的类更有意义。有时，使用第三方类时你并没有资源，那么这个选择很适合你。举个例子，如果第三方类并不公开任何setter方法，那么构造器注入可能是唯一可用的依赖注入方式。
 ****
 
 
 [[beans-dependency-resolution]]
-===== Dependency resolution process
-The container performs bean dependency resolution as follows:
+===== 依赖解决步骤
+容器解决依赖问题通常有以下几个步骤：
 
-* The `ApplicationContext` is created and initialized with configuration metadata that
-  describes all the beans. Configuration metadata can be specified via XML, Java code, or
-  annotations.
-* For each bean, its dependencies are expressed in the form of properties, constructor
-  arguments, or arguments to the static-factory method if you are using that instead of
-  a normal constructor. These dependencies are provided to the bean, __when the bean is
-  actually created__.
-* Each property or constructor argument is an actual definition of the value to set, or
-  a reference to another bean in the container.
-* Each property or constructor argument which is a value is converted from its specified
-  format to the actual type of that property or constructor argument. By default Spring
-  can convert a value supplied in string format to all built-in types, such as `int`,
-  `long`, `String`, `boolean`, etc.
+* 描述所有bean的`ApplicationContext`创建并根据配置的元数据初始化。配置的元数据可以通过置顶的XML，Java代码或者注解。
+* 每个bean的依赖将以属性，构造器参数或者静态工厂方法的形式出现。当这些bean被创建时，这些依赖将会提供给该bean。
+* 每个属性或者构造器参数既可以是一个实际的值也可以是容器中的另一个引用。
+* 每个指定的属性或者构造器参数值必须能够被转换成特定的格式或构造参数所需的类型。默认情况下Spring会以String类型转换为各种内置类型，比如`int`,`long`, `String`, `boolean` 等。
 
-The Spring container validates the configuration of each bean as the container is created.
-However, the bean properties themselves are not set until the bean __is actually created__.
-Beans that are singleton-scoped and set to be pre-instantiated (the default) are created
-when the container is created. Scopes are defined in <<beans-factory-scopes>>. Otherwise,
-the bean is created only when it is requested. Creation of a bean potentially causes a
-graph of beans to be created, as the bean's dependencies and its dependencies'
-dependencies (and so on) are created and assigned. Note that resolution mismatches among
-those dependencies may show up late, i.e. on first creation of the affected bean.
+当Spring容器创建时容器会校验每个bean的配置。但是在bean__被实际创建__ 前，bean的值并不会被设置。那些单例类型的bean和被设置为预安装（默认）的bean会在容器创建时与容器同时创建。Scopes是在<<beans-factory-scopes>>中定义的。同时，另外的bean只会在被需要时创建。伴随着bean被实际创建，作为该bean的依赖和它的依赖的依赖（以此类推）会被创建和分配。注意
+这些依赖之间的解决会显示迟一些
 
-.Circular dependencies
-****
-If you use predominantly constructor injection, it is possible to create an unresolvable
-circular dependency scenario.
+.循环依赖
 
-For example: Class A requires an instance of class B through constructor injection, and
-class B requires an instance of class A through constructor injection. If you configure
-beans for classes A and B to be injected into each other, the Spring IoC container
-detects this circular reference at runtime, and throws a
-`BeanCurrentlyInCreationException`.
-
-One possible solution is to edit the source code of some classes to be configured by
-setters rather than constructors. Alternatively, avoid constructor injection and use
-setter injection only. In other words, although it is not recommended, you can configure
-circular dependencies with setter injection.
-
-Unlike the __typical__ case (with no circular dependencies), a circular dependency
-between bean A and bean B forces one of the beans to be injected into the other prior to
-being fully initialized itself (a classic chicken/egg scenario).
 ****
 
-You can generally trust Spring to do the right thing. It detects configuration problems,
-such as references to non-existent beans and circular dependencies, at container
-load-time. Spring sets properties and resolves dependencies as late as possible, when
-the bean is actually created. This means that a Spring container which has loaded
-correctly can later generate an exception when you request an object if there is a
-problem creating that object or one of its dependencies. For example, the bean throws an
-exception as a result of a missing or invalid property. This potentially delayed
-visibility of some configuration issues is why `ApplicationContext` implementations by
-default pre-instantiate singleton beans. At the cost of some upfront time and memory to
-create these beans before they are actually needed, you discover configuration issues
-when the `ApplicationContext` is created, not later. You can still override this default
-behavior so that singleton beans will lazy-initialize, rather than be pre-instantiated.
+如果你主要使用构造器注入，很有可能会产生无法解决的循环依赖问题。
+举个例子：A类需要通过构造器注入B类的实例，并且B类又需要通过构造器注入A类的实例。如果为类A和类B配置的bean被相互注入的话，Spring IoC容器在运行时会检测到这个循环依赖并且抛出一个`BeanCurrentlyInCreationException`异常。
 
-If no circular dependencies exist, when one or more collaborating beans are being
-injected into a dependent bean, each collaborating bean is __totally__ configured prior
-to being injected into the dependent bean. This means that if bean A has a dependency on
-bean B, the Spring IoC container completely configures bean B prior to invoking the
-setter method on bean A. In other words, the bean is instantiated (if not a
-pre-instantiated singleton), its dependencies are set, and the relevant lifecycle
-methods (such as a <<beans-factory-lifecycle-initializingbean,configured init method>>
-or the <<beans-factory-lifecycle-initializingbean,InitializingBean callback method>>)
-are invoked.
+一个可能的解决方法是修改类的源代码,将构造器注入改为setter注入。或者只使用setter注入避免使用构造器注入。换句话说，虽然这并不被推荐使用，你可以使用setter注入配置循环依赖。
+和__通常的__情况不同（没有循环依赖），bean A 和bean B之间的循环依赖将会导致其中一个bean在被完全初始化的之前被注入到另一个bean里（先有鸡先有蛋的问题）
+****
+
+通常你可以信赖Spring。在容器加载时Spring会检查配置，比如不存在的bean和循环依赖。当bean创建时，Spring尽可能迟得设置属性和依赖关系。这意味着即使Spring正常加载，在你需要一个存在问题或者它的依赖存在问题的对象时，Spring会报出异常。举个例子，bean因设置缺少或者无效的属性会抛出一个异常。因为一些配置问题存在将会导致潜在的可见性被延迟，所以默认`ApplicationContext`的实现bean采用提前实例化的单例模式。在实际需要之前创建这些bean会带来时间和内存的开销，当`ApplicationContext`创建完成时你会发现配置问题，而不是之后。你也可以重写默认的行为使得单例bean延迟实例化而不是提前实例化。
+
+如果不存在循环依赖，当一个或者多个协助bean会被注入依赖bean时,每个协助bean必须在注入依赖bean之前 __完全__ 配置好。这意味着如果bean A对bean B存在依赖关系，
+那么Spring Ioc容器在调用bean A的setter方法之前会完全配置bean B。换句话说，bean会被实例化（如果不是采用提前实例化的单例模式），相关的依赖会被设置好，相关的lifecycle方法（比如<<beans-factory-lifecycle-initializingbean,configured init 方法>>或者<<beans-factory-lifecycle-initializingbean,InitializingBean callback 方法>>）会被调用
 
 
 [[beans-some-examples]]
-===== Examples of dependency injection
-The following example uses XML-based configuration metadata for setter-based DI. A small
-part of a Spring XML configuration file specifies some bean definitions:
-
+===== 一些依赖注入的例子
+接下来的Setter注入例子使用基于XML的配置元数据的方式。相应的Spring XML配置文件：
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -386,9 +269,7 @@ part of a Spring XML configuration file specifies some bean definitions:
 	}
 ----
 
-In the preceding example, setters are declared to match against the properties specified
-in the XML file. The following example uses constructor-based DI:
-
+在前面的例子，我们看到Setter会匹配定义在XML里的属性，接下来的例子会使用构造器注入：
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -427,12 +308,9 @@ in the XML file. The following example uses constructor-based DI:
 	}
 ----
 
-The constructor arguments specified in the bean definition will be used as arguments to
-the constructor of the `ExampleBean`.
+在bean定义中指定的构造器参数会被用作`ExampleBean`的构造器参数。
 
-Now consider a variant of this example, where instead of using a constructor, Spring is
-told to call a `static` factory method to return an instance of the object:
-
+现在来看使用构造器的例子，Spring调用`静态`工厂方法来返回对象的实例：
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -470,31 +348,21 @@ told to call a `static` factory method to return an instance of the object:
 	}
 ----
 
-Arguments to the `static` factory method are supplied via `<constructor-arg/>` elements,
-exactly the same as if a constructor had actually been used. The type of the class being
-returned by the factory method does not have to be of the same type as the class that
-contains the `static` factory method, although in this example it is. An instance
-(non-static) factory method would be used in an essentially identical fashion (aside
-from the use of the `factory-bean` attribute instead of the `class` attribute), so
-details will not be discussed here.
-
-
+`静态`工厂方法参数由`<constructor-arg/>`元素提供，实际上这和使用构造器是一样的。工厂方法
+返回的类的类型并不一定要与包含`静态`工厂方法的类类型一致，虽然在这个例子中是一样的。
+实例工厂方法（不是静态的）与此相同（除了使用`factory-bean`属性代替class属性外），所以这里不作详细讨论。
 
 [[beans-factory-properties-detailed]]
-==== Dependencies and configuration in detail
-As mentioned in the previous section, you can define bean properties and constructor
-arguments as references to other managed beans (collaborators), or as values defined
-inline. Spring's XML-based configuration metadata supports sub-element types within its
-`<property/>` and `<constructor-arg/>` elements for this purpose.
+==== 依赖配置详解
 
+正如在前面章节所提到的，你可以定义bean的属性和构造器参数作为其他所管理的bean的依赖（协作），
+或者是内联的bean。基于XML的Spring配置元数据支持使用`<property/>` 和 `<constructor-arg/>`元素定义。 
 
 [[beans-value-element]]
-===== Straight values (primitives, Strings, and so on)
+===== 直接变量 (基本类型, String类型等)
 
-The `value` attribute of the `<property/>` element specifies a property or constructor
-argument as a human-readable string representation. Spring's
-<<core-convert-ConversionService-API, conversion service>> is used to convert these
-values from a `String` to the actual type of the property or argument.
+`<property/>`元素的`value`值通过可读的字符串形式来指定属性和构造器参数。Spring的<<core-convert-ConversionService-API, conversion service>>
+把`String`转换成属性或者构造器实际需要的类型。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -508,9 +376,7 @@ values from a `String` to the actual type of the property or argument.
 	</bean>
 ----
 
-The following example uses the <<beans-p-namespace,p-namespace>> for even more succinct
-XML configuration.
-
+接下来的例子使用<<beans-p-namespace,p 命名空间>>简化XML配置
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -530,14 +396,11 @@ XML configuration.
 	</beans>
 ----
 
-The preceding XML is more succinct; however, typos are discovered at runtime rather than
-design time, unless you use an IDE such as http://www.jetbrains.com/idea/[IntelliJ
-IDEA] or the https://spring.io/tools/sts[Spring Tool Suite] (STS)
-that support automatic property completion when you create bean definitions. Such IDE
-assistance is highly recommended.
+以上的XML更加简洁；但是，编码的错误只有在运行时才会被发现而不是编码设计的时候，除非你在定义bean的时候，
+使用 http://www.jetbrains.com/idea/[IntelliJIDEA] 或者 https://spring.io/tools/sts[Spring Tool Suite] (STS)
+支持动态属性补全的IDE。IDE的帮助是非常值得推荐的。
 
-You can also configure a `java.util.Properties` instance as:
-
+你也可以配置`java.util.Properties`实例，就像这样：
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -554,18 +417,13 @@ You can also configure a `java.util.Properties` instance as:
 	</bean>
 ----
 
-The Spring container converts the text inside the `<value/>` element into a
-`java.util.Properties` instance by using the JavaBeans `PropertyEditor` mechanism. This
-is a nice shortcut, and is one of a few places where the Spring team do favor the use of
-the nested `<value/>` element over the `value` attribute style.
+Spring容器使用JavaBeans `PropertyEditor`把元素`<value/>`内的文本转换为`java.util.Properties`
+实例。由于这种做法非常简单，所以这是Spring团队在很多地方采用内嵌的`<value/>`元素代替value属性。
 
 [[beans-idref-element]]
-====== The idref element
+====== idref元素
 
-The `idref` element is simply an error-proof way to pass the __id__ (string value - not
-a reference) of another bean in the container to a `<constructor-arg/>` or `<property/>`
-element.
-
+`idref`元素用来将容器内其他bean的__id__（值是字符串-不是引用）传给元素`<constructor-arg/>` 或者 `<property/>`
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -578,9 +436,7 @@ element.
 	</bean>
 ----
 
-The above bean definition snippet is __exactly__ equivalent (at runtime) to the
-following snippet:
-
+上面的bean定义片段__完全__等同于（在运行时）下面片段：
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -591,57 +447,34 @@ following snippet:
 	</bean>
 ----
 
-The first form is preferable to the second, because using the `idref` tag allows the
-container to validate __at deployment time__ that the referenced, named bean actually
-exists. In the second variation, no validation is performed on the value that is passed
-to the `targetName` property of the `client` bean. Typos are only discovered (with most
-likely fatal results) when the `client` bean is actually instantiated. If the `client`
-bean is a <<beans-factory-scopes,prototype>> bean, this typo and the resulting exception
-may only be discovered long after the container is deployed.
+第一种形式比第二种形式更好，因为使用`idref`标签允许容器__在部署时__验证引用的bean是否存在。
+在第二种形式中，传给 `client` bean中属性`targetName`的值并没有被验证。
+只有当 `client` bean完全实例化的时候错误才会被发现（可能伴随着致命的结果）。如果 `client` bean是<<beans-factory-scopes,原型>> bean。那么这个错误和异常可能只有再容器部署很长一段时间后才能被发现。
 
 [NOTE]
 ====
-The `local` attribute on the `idref` element is no longer supported in the 4.0 beans xsd
-since it does not provide value over a regular `bean` reference anymore. Simply change
-your existing `idref local` references to `idref bean` when upgrading to the 4.0 schema.
+`idref`元素上的`local`属性在4.0之后不再支持，因为它不再提供普通`bean`的价值。当你升级到4.0 schema时需要修改存在的`idref local`为`idref bean`
 ====
 
-A common place (at least in versions earlier than Spring 2.0) where the `<idref/>` element
-brings value is in the configuration of <<aop-pfb-1,AOP interceptors>> in a
-`ProxyFactoryBean` bean definition. Using `<idref/>` elements when you specify the
-interceptor names prevents you from misspelling an interceptor id.
-
+与`ProxyFactoryBean` bean定义中使用`<idref/>`元素指定<<aop-pfb-1,AOP 拦截器>>配置 （版本不低于Spring 2.0）相同之处在于：当你指定拦截器名称的时候使用`<idref/>`元素可以防止你拼错拦截器的id。
 
 [[beans-ref-element]]
-===== References to other beans (collaborators)
-The `ref` element is the final element inside a `<constructor-arg/>` or `<property/>`
-definition element. Here you set the value of the specified property of a bean to be a
-reference to another bean (a collaborator) managed by the container. The referenced bean
-is a dependency of the bean whose property will be set, and it is initialized on demand
-as needed before the property is set. (If the collaborator is a singleton bean, it may
-be initialized already by the container.) All references are ultimately a reference to
-another object. Scoping and validation depend on whether you specify the id/name of the
-other object through the `bean`, `local,` or `parent` attributes.
+===== 引用其他bean（协作者）
 
-Specifying the target bean through the `bean` attribute of the `<ref/>` tag is the most
-general form, and allows creation of a reference to any bean in the same container or
-parent container, regardless of whether it is in the same XML file. The value of the
-`bean` attribute may be the same as the `id` attribute of the target bean, or as one of
-the values in the `name` attribute of the target bean.
+在 `<constructor-arg/>` 或者 `<property/>`可以使用`ref` 元素。该元素用来将bean中指定属性的值设置为对容器的另外一个bean（协作者）的引用。
+该引用bean将被作为依赖注入，而且再注入之前会被初始化（如果协作者是单例）。所有的引用最终都是另一个对象的引用。
+bean的范围和验证依赖于你指定的`bean`，`local`，或者 `parent`属性的id/name。
 
+通过`<ref/>`标签的`bean`属性定义目标bean是最常见的形式，通过该标签可以引用同一容器或者父容器任何bean，无论是否在
+相同的xml文件中。xml的`bean`元素的值既可以目标bean的`id`属性也可以是其中一个目标bean的`name` 属性值。
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
 	<ref bean="someBean"/>
 ----
 
-Specifying the target bean through the `parent` attribute creates a reference to a bean
-that is in a parent container of the current container. The value of the `parent`
-attribute may be the same as either the `id` attribute of the target bean, or one of the
-values in the `name` attribute of the target bean, and the target bean must be in a
-parent container of the current one. You use this bean reference variant mainly when you
-have a hierarchy of containers and you want to wrap an existing bean in a parent
-container with a proxy that will have the same name as the parent bean.
+通过`parent`属性指定目标bean来创建bean的引用，该bean是当前容器下的父级容器。`parent`属性值既可以是目标bean的id也可以是
+name属性值。而且目标bean必须在当前容器的父级容器中。使用`parent`属性的主要用途是为了用某个与父级容器中的bean同名的代理来包装父级容器中的一个bean。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -667,17 +500,15 @@ container with a proxy that will have the same name as the parent bean.
 
 [NOTE]
 ====
-The `local` attribute on the `ref` element is no longer supported in the 4.0 beans xsd
-since it does not provide value over a regular `bean` reference anymore. Simply change
-your existing `ref local` references to `ref bean` when upgrading to the 4.0 schema.
+`ref`元素上的`local`属性4.0 beans xsd之后不在支持，因为它能提供的值不比普通`bean`多。当你升级到4.0schema时需要修改存在的`ref local` 为ref bean`。
 ====
 
 
 [[beans-inner-beans]]
-===== Inner beans
+===== 内部bean
 A `<bean/>` element inside the `<property/>` or `<constructor-arg/>` elements defines a
 so-called __inner bean__.
-
+所谓的内部bean就是指在 `<property/>` 或者 `<constructor-arg/>` 元素内部使用`<bean/>`定义bean。
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
 ----
@@ -692,17 +523,12 @@ so-called __inner bean__.
 	</bean>
 ----
 
-An inner bean definition does not require a defined id or name; the container ignores
-these values. It also ignores the `scope` flag. Inner beans are __always__ anonymous and
-they are __always__ created with the outer bean. It is __not__ possible to inject inner
-beans into collaborating beans other than into the enclosing bean.
-
+内部bean的定义不需要id或者name属性。容器会忽略这些属性值。同时容器也会忽略`scope`标志位。内部bean __总是__ 匿名的
+并且他们__总是__伴随着外部bean创建。同时将内部bean注入到包含该内部bean之外的bean是不可能的。
 
 [[beans-collection-elements]]
-===== Collections
-In the `<list/>`, `<set/>`, `<map/>`, and `<props/>` elements, you set the properties
-and arguments of the Java `Collection` types `List`, `Set`, `Map`, and `Properties`,
-respectively.
+===== 集合
+在`<list/>`, `<set/>`, `<map/>`, 和`<props/>`元素中，你可以设置值和参数分别对应Java的集合类型`List`, `Set`, `Map`, 和 `Properties`
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -740,8 +566,8 @@ respectively.
 	</bean>
 ----
 
-__The value of a map key or value, or a set value, can also again be any of the
-following elements:__
+
+__map的key或者value值，或者set的value值还可以是以下任意元素:__
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -750,19 +576,14 @@ following elements:__
 ----
 
 [[beans-collection-elements-merging]]
-====== Collection merging
-The Spring container also supports the __merging__ of collections. An application
-developer can define a parent-style `<list/>`, `<map/>`, `<set/>` or `<props/>` element,
-and have child-style `<list/>`, `<map/>`, `<set/>` or `<props/>` elements inherit and
-override values from the parent collection. That is, the child collection's values are
-the result of merging the elements of the parent and child collections, with the child's
-collection elements overriding values specified in the parent collection.
+====== 集合合并
 
-__This section on merging discusses the parent-child bean mechanism. Readers unfamiliar
-with parent and child bean definitions may wish to read the
-<<beans-child-bean-definitions,relevant section>> before continuing.__
+Spring容器也支持集合的 __合并__。开发者可以定义parent-style`<list/>`, `<map/>`, `<set/>` 或者`<props/>` 元素并，
+child-style 的`<list/>`, `<map/>`, `<set/>` 或者 `<props/>`元素继承和覆盖自父集合。也就是说。父集合元素合并后的值就是子集合的最终结果，而且子集中的元素值将覆盖父集中对应的值。
 
-The following example demonstrates collection merging:
+__关于合并的章节涉及到了parent-child bean机制。不熟悉父子bean的读者可参见<<beans-child-bean-definitions,relevant section>>.__
+
+接下来的例子展示了集合的合并：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -788,11 +609,8 @@ The following example demonstrates collection merging:
 	<beans>
 ----
 
-Notice the use of the `merge=true` attribute on the `<props/>` element of the
-`adminEmails` property of the `child` bean definition. When the `child` bean is resolved
-and instantiated by the container, the resulting instance has an `adminEmails`
-`Properties` collection that contains the result of the merging of the child's
-`adminEmails` collection with the parent's `adminEmails` collection.
+注意`child`bean的定义中`<props/>`元素上的`merge=true`属性的用法。当`child`bean被解析并且被容器初始化，产生的实例包含了`adminEmails`
+，`Properties`集合，其adminEmails将与父集合的adminEmails属性进行合并。
 
 [literal]
 [subs="verbatim,quotes"]
@@ -802,34 +620,23 @@ sales=sales@example.com
 support=support@example.co.uk
 ----
 
-The child `Properties` collection's value set inherits all property elements from the
-parent `<props/>`, and the child's value for the `support` value overrides the value in
-the parent collection.
+子bean的`Properties`集合将从父`<props/>`集成所有属性元素。同时子bean的support值将覆盖父集合的相应值。
 
-This merging behavior applies similarly to the `<list/>`, `<map/>`, and `<set/>`
-collection types. In the specific case of the `<list/>` element, the semantics
-associated with the `List` collection type, that is, the notion of an `ordered`
-collection of values, is maintained; the parent's values precede all of the child list's
-values. In the case of the `Map`, `Set`, and `Properties` collection types, no ordering
-exists. Hence no ordering semantics are in effect for the collection types that underlie
-the associated `Map`, `Set`, and `Properties` implementation types that the container
-uses internally.
+`<list/>`, `<map/>`, 和 `<set/>`集合类型的合并处理都基本类似。`<list/>`元素某个方面有点特殊，这和`List`集合类型的语义学有关
+换句话说，比如维护一个`有序`集合的值，父bean的列表内容将排在子bean李彪内容的前面。对于`Map`, `Set`, 和 `Properties`集合类型没有顺序的概念，
+因此作为相关的`Map`, `Set`, 和 `Properties`实现基础的集合类型在容器内部排序的语义。
 
 [[beans-collection-merge-limitations]]
-====== Limitations of collection merging
-You cannot merge different collection types (such as a `Map` and a `List`), and if you
-do attempt to do so an appropriate `Exception` is thrown. The `merge` attribute must be
-specified on the lower, inherited, child definition; specifying the `merge` attribute on
-a parent collection definition is redundant and will not result in the desired merging.
+====== 集合合并的限制
+
+你不能合并两种不能类型的集合（比如`Map` 和 `List`），如果你这么做了将会抛出相应的`异常`。`merge`属性必须在继承
+的子bean中定义。定义在父bean的集合属性上指定的`merge`属性是多余的并且得不到期望的合并结果。
 
 [[beans-collection-elements-strongly-typed]]
-====== Strongly-typed collection
-With the introduction of generic types in Java 5, you can use strongly typed collections.
-That is, it is possible to declare a `Collection` type such that it can only contain
-`String` elements (for example). If you are using Spring to dependency-inject a
-strongly-typed `Collection` into a bean, you can take advantage of Spring's
-type-conversion support such that the elements of your strongly-typed `Collection`
-instances are converted to the appropriate type prior to being added to the `Collection`.
+====== 强类型集合
+
+Java 5 引入了泛型，这样你可以使用强类型集合。换句话说绳命一个只能包含String类型元素的`Collection`是可能的（比如）。
+如果使用Spring来给bean注入强类型的`Collection`，你可以利用Spring的类型转换，在向强类型`Collection`添加元素前，这些元素将被转换。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -860,18 +667,13 @@ instances are converted to the appropriate type prior to being added to the `Col
 	</beans>
 ----
 
-When the `accounts` property of the `foo` bean is prepared for injection, the generics
-information about the element type of the strongly-typed `Map<String, Float>` is
-available by reflection. Thus Spring's type conversion infrastructure recognizes the
-various value elements as being of type `Float`, and the string values `9.99, 2.75`, and
-`3.99` are converted into an actual `Float` type.
-
+当`foo` bean的`accounts` 属性准备注入时，通过反射获得强类型`Map<String, Float>`元素类型的泛型信息。Spring的底层类型转换
+机制会把各种value元素值转换为`Float`，因此字符串`9.99, 2.75` 和`3.99`将会转换为实际的`Float` 类型。
 
 [[beans-null-element]]
-===== Null and empty string values
-Spring treats empty arguments for properties and the like as empty `Strings`. The
-following XML-based configuration metadata snippet sets the email property to the empty
-`String` value ("").
+===== Null和空字符串
+
+Spring会把空属性当做空字符串处理。以下的基于XML配置的片段将email属性设置为空字符串。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -881,7 +683,7 @@ following XML-based configuration metadata snippet sets the email property to th
 	</bean>
 ----
 
-The preceding example is equivalent to the following Java code:
+先前的例子等同于以下Java代码：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -889,7 +691,7 @@ The preceding example is equivalent to the following Java code:
         exampleBean.setEmail("")
 ----
 
-The `<null/>` element handles `null` values. For example:
+`<null/>`元素处理`null`值，例如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -901,7 +703,7 @@ The `<null/>` element handles `null` values. For example:
 	</bean>
 ----
 
-The above configuration is equivalent to the following Java code:
+上面的配置等同于下面的Java代码：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -911,17 +713,14 @@ The above configuration is equivalent to the following Java code:
 
 
 [[beans-p-namespace]]
-===== XML shortcut with the p-namespace
-The p-namespace enables you to use the `bean` element's attributes, instead of nested
-`<property/>` elements, to describe your property values and/or collaborating beans.
+===== XML使用p命名空间简化
 
-Spring supports extensible configuration formats <<xsd-config,with namespaces>>, which are
-based on an XML Schema definition. The `beans` configuration format discussed in this
-chapter is defined in an XML Schema document. However, the p-namespace is not defined in
-an XSD file and exists only in the core of Spring.
+使用p命名空间可以用`bean` 元素的属性代替<property/>` 元素来描述属性值或者协作bean。
 
-The following example shows two XML snippets that resolve to the same result: The first
-uses standard XML format and the second uses the p-namespace.
+Spring支持名称空间的可扩展配置<<xsd-config,with namespaces>>，这些名称空间基于一种XML Schema定义。这章节涉及到的`beans`
+配置都是定义在一个XML Schema文档理。但是p命名空间不是定义在XSD文件而是存在于Spring内核中。
+
+下面的例子展示了两种XML片段，其结果是一样的：第一个使用了标准XML格式，第二种使用了p命名空间。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -941,13 +740,10 @@ uses standard XML format and the second uses the p-namespace.
 	</beans>
 ----
 
-The example shows an attribute in the p-namespace called email in the bean definition.
-This tells Spring to include a property declaration. As previously mentioned, the
-p-namespace does not have a schema definition, so you can set the name of the attribute
-to the property name.
+在例子中，使用p命名空间的bean定义有了一个叫email的属性。这告诉Spring要包含这个属性的声明。正如前面所说的，
+p命名空间不需要schema定义，因此你可以设置属性的名字作为bean的property的名字。
 
-This next example includes two more bean definitions that both have a reference to
-another bean:
+接下来的例子包括了两种以上bean的定义，都引用了另外一个bean。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -974,31 +770,22 @@ another bean:
 	</beans>
 ----
 
-As you can see, this example includes not only a property value using the p-namespace,
-but also uses a special format to declare property references. Whereas the first bean
-definition uses `<property name="spouse" ref="jane"/>` to create a reference from bean
-`john` to bean `jane`, the second bean definition uses `p:spouse-ref="jane"` as an
-attribute to do the exact same thing. In this case `spouse` is the property name,
-whereas the `-ref` part indicates that this is not a straight value but rather a
-reference to another bean.
+正如你看到的，例子不仅使用p命名空间包含了一个属性值，而且使用了一个特殊的格式声明了一个属性的引用。在第一个bean
+定义中使用了`<property name="spouse" ref="jane"/>`创建一个`john` bean 对`jane` bean的引用，第二个bean的定义使用了`p:spouse-ref="jane"`，它们做了同样一件事情。在这个例子中`spouse`是属性名，而`-ref`部分声明了这不是一个直接的值而是另一个bean的引用。
 
 [NOTE]
 ====
-The p-namespace is not as flexible as the standard XML format. For example, the format
-for declaring property references clashes with properties that end in `Ref`, whereas the
-standard XML format does not. We recommend that you choose your approach carefully and
-communicate this to your team members, to avoid producing XML documents that use all
-three approaches at the same time.
+p命名空间没有标准XML格式那么灵活。举个例子，声明属性的引用是以`Ref`结尾的，采用p命名空间将会产生冲突，但是采用标准XML
+格式则不会。我们建议你小心的选择并和团队成员交流你的想法，避免在XML文档中同时使用所有的三种方法。
 ====
 
 
 [[beans-c-namespace]]
 ===== XML shortcut with the c-namespace
-Similar to the <<beans-p-namespace>>, the __c-namespace__, newly introduced in Spring
-3.1, allows usage of inlined attributes for configuring the constructor arguments rather
-then nested `constructor-arg` elements.
 
-Let's review the examples from <<beans-constructor-injection>> with the `c:` namespace:
+和p命名空间<<beans-p-namespace>>类似，Spring3.1 引入了__c命名空间__，使用内联的构造参数代替嵌套的`constructor-arg`元素
+
+让我们回顾一下<<beans-constructor-injection>>使用c命名空间的例子:
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1025,14 +812,10 @@ Let's review the examples from <<beans-constructor-injection>> with the `c:` nam
 	</beans>
 ----
 
-The `c:` namespace uses the same conventions as the `p:` one (trailing `-ref` for bean
-references) for setting the constructor arguments by their names. And just as well, it
-needs to be declared even though it is not defined in an XSD schema (but it exists
-inside the Spring core).
+和p命名空间约定的一样(bean的引用以`-ref`结尾)，c命名空间使用它们的名称作为构造器参数。同时它需要声明即使它没有
+XSD schema中定义（但是它存在于Spring内核中）
 
-For the rare cases where the constructor argument names are not available (usually if
-the bytecode was compiled without debugging information), one can use fallback to the
-argument indexes:
+极少数的情况下构造器参数的名称不可用（通常字节码没有经过调试信息编译），可以使用备份进行参数索引。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1043,21 +826,16 @@ argument indexes:
 
 [NOTE]
 ====
-Due to the XML grammar, the index notation requires the presence of the leading `_` as
-XML attribute names cannot start with a number (even though some IDE allow it).
+
+因为XML的语法，索引标记需要`_`主导作为XML属性名称，这不能已数字开头（即使某些IDE这么允许）
 ====
 
-In practice, the constructor resolution
-<<beans-factory-ctor-arguments-resolution,mechanism>> is quite efficient in matching
-arguments so unless one really needs to, we recommend using the name notation
-through-out your configuration.
-
+在实践中，构造器解析机智<<beans-factory-ctor-arguments-resolution,机制>>在匹配参数上相当高效。除非你需要这么做，我们建议您在配置中使用符号名称。
 
 [[beans-compound-property-names]]
-===== Compound property names
-You can use compound or nested property names when you set bean properties, as long as
-all components of the path except the final property name are not `null`. Consider the
-following bean definition.
+===== 组合属性名称
+
+当你设置bean属性时可以使用组合或者嵌套属性名称，只要路径上所有组件除了最终属性不为空。看以下bean的定义：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1067,24 +845,16 @@ following bean definition.
 	</bean>
 ----
 
-The `foo` bean has a `fred` property, which has a `bob` property, which has a `sammy`
-property, and that final `sammy` property is being set to the value `123`. In order for
-this to work, the `fred` property of `foo`, and the `bob` property of `fred` must not be
-`null` after the bean is constructed, or a `NullPointerException` is thrown.
-
+`foo` bean有一个`fred`属性，`fred`属性又有个`bob`属性，`bob`属性又有个属性，最后把 `sammy`属性设置值为`123`。为了是这个起作用，`foo`的`fred`属性和 `fred`的`bob`属性在bean被构造后都不能为空，否则会抛出`NullPointerException`异常。
 
 
 [[beans-factory-dependson]]
-==== Using depends-on
+==== 使用 depends-on
 
-If a bean is a dependency of another that usually means that one bean is set as a
-property of another. Typically you accomplish this with the <<beans-ref-element, `<ref/>`
-element>> in XML-based configuration metadata. However, sometimes dependencies between
-beans are less direct; for example, a static initializer in a class needs to be
-triggered, such as database driver registration. The `depends-on` attribute can
-explicitly force one or more beans to be initialized before the bean using this element
-is initialized. The following example uses the `depends-on` attribute to express a
-dependency on a single bean:
+如果一个bean是另外一个bean的依赖，这通常意味着这个bean可以设置成为另外一个bean的属性。在XML配置文件中你可以使用<<beans-ref-element, `<ref/>`element>>
+实现依赖。但是某些时候bean之间的依赖并不是那么直接。举个例子：类的静态块初始化，比如数据库驱动的注册。`depends-on`属性
+可以同于当前bean初始化之前显式地强制一个或多个bean被初始化。下面的例子中使用了`depends-on`属性来指定一个bean的依赖。
+
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1093,9 +863,7 @@ dependency on a single bean:
 	<bean id="manager" class="ManagerBean" />
 ----
 
-To express a dependency on multiple beans, supply a list of bean names as the value of
-the `depends-on` attribute, with commas, whitespace and semicolons, used as valid
-delimiters:
+为了实现多个bean的依赖，你可以在`depends-on`中将指定的多个bean名字用分隔符进行分隔，分隔符可以是逗号，空格以及分号等。
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1110,28 +878,21 @@ delimiters:
 
 [NOTE]
 ====
-The `depends-on` attribute in the bean definition can specify both an initialization
-time dependency and, in the case of <<beans-factory-scopes-singleton,singleton>> beans
-only, a corresponding destroy time dependency. Dependent beans that define a
-`depends-on` relationship with a given bean are destroyed first, prior to the given bean
-itself being destroyed. Thus `depends-on` can also control shutdown order.
+`depends-on`属性在bean的定义中可以指定初始化时的依赖和指定相应的销毁时的依赖，该依赖只针对于<<beans-factory-scopes-singleton,singleton>> bean
+这样`depends-on`可以控制销毁顺序。
+
 ====
 
 
 
 [[beans-factory-lazy-init]]
-==== Lazy-initialized beans
-By default, `ApplicationContext` implementations eagerly create and configure all
-<<beans-factory-scopes-singleton,singleton>> beans as part of the initialization
-process. Generally, this pre-instantiation is desirable, because errors in the
-configuration or surrounding environment are discovered immediately, as opposed to hours
-or even days later. When this behavior is __not__ desirable, you can prevent
-pre-instantiation of a singleton bean by marking the bean definition as
-lazy-initialized. A lazy-initialized bean tells the IoC container to create a bean
-instance when it is first requested, rather than at startup.
+==== 延迟初始化bean
 
-In XML, this behavior is controlled by the `lazy-init` attribute on the `<bean/>`
-element; for example:
+`ApplicationContext`实现的默认行为就是再启动时将所有<<beans-factory-scopes-singleton,singleton>> bean提前进行实例化。
+通常这样的提前实例化方式是好事，因为配置中或者运行环境的错误就会被立刻发现，否则可能要花几个小时甚至几天。如果你不想
+这样，你可以将单例bean定义为延迟加载防止它提前实例化。延迟初始化bean会告诉Ioc容器在第一次需要的时候才实例化而不是在容器启动时就实例化。
+
+在XML配置文件中，延迟初始化通过`<bean/>`元素的`lazy-init`属性进行控制，比如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1140,17 +901,13 @@ element; for example:
 	<bean name="not.lazy" class="com.foo.AnotherBean"/>
 ----
 
-When the preceding configuration is consumed by an `ApplicationContext`, the bean named
-`lazy` is not eagerly pre-instantiated when the `ApplicationContext` is starting up,
-whereas the `not.lazy` bean is eagerly pre-instantiated.
+当`ApplicationContext`实现上面的配置时，设置为`lazy`的bean将不会在`ApplicationContext`启动时提前实例化，而`not.lazy`bean
+却会被提前实例化。
 
-However, when a lazy-initialized bean is a dependency of a singleton bean that is
-__not__ lazy-initialized, the `ApplicationContext` creates the lazy-initialized bean at
-startup, because it must satisfy the singleton's dependencies. The lazy-initialized bean
-is injected into a singleton bean elsewhere that is not lazy-initialized.
+但是当一个延迟加载的bean是单例bean的依赖，但这个单例bean又__不是__ 延迟加载，`ApplicationContext`在启动时创建了延迟加载
+的bean，因为它必须满足单例bean的依赖。因此延迟加载的bean会被注入单例bean，然而在其他地方它不会延迟加载。
 
-You can also control lazy-initialization at the container level by using the
-`default-lazy-init` attribute on the `<beans/>` element; for example:
+你也可以使用`<beans/>`元素上的`default-lazy-init`属性在容器层次上控制延迟加载。比如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1163,142 +920,106 @@ You can also control lazy-initialization at the container level by using the
 
 
 [[beans-factory-autowire]]
-==== Autowiring collaborators
-The Spring container can __autowire__ relationships between collaborating beans. You can
-allow Spring to resolve collaborators (other beans) automatically for your bean by
-inspecting the contents of the `ApplicationContext`. Autowiring has the following
-advantages:
+==== 自动装配协作者
 
-* Autowiring can significantly reduce the need to specify properties or constructor
-  arguments. (Other mechanisms such as a bean template
-  <<beans-child-bean-definitions,discussed elsewhere in this chapter>> are also valuable
-  in this regard.)
-* Autowiring can update a configuration as your objects evolve. For example, if you need
-  to add a dependency to a class, that dependency can be satisfied automatically without
-  you needing to modify the configuration. Thus autowiring can be especially useful
-  during development, without negating the option of switching to explicit wiring when
-  the code base becomes more stable.
+Spring容器可以自动装配相互协作bean的关联关系。因此，如果可能的话，可以自动让Spring检测`ApplicationContext`的内容自动
+处理协作者（其他bean）。自动装配有以下好处：
+  
+* 自动装配可以显著得减少指定属性或者构造器参数的需求。（其他的机制比如bean模板<<beans-child-bean-definitions,discussed elsewhere in this chapter>>在这方面也是由价值的）
 
-When using XML-based configuration metadata footnote:[See
-pass:specialcharacters,macros[<<beans-factory-collaborators>>]], you specify autowire
-mode for a bean definition with the `autowire` attribute of the `<bean/>` element. The
-autowiring functionality has five modes. You specify autowiring __per__ bean and thus
-can choose which ones to autowire.
+* 当对象发生变化时自动装配可以更新配置。比如如果你需要给一个类添加依赖，那么这个依赖可以被自动满足而不需要你去修改配置。
+因此自动依赖在开发时尤其有用，当系统趋于稳定时改为显式装配。
+
+当使用XML配置脚注：[See
+pass:specialcharacters,macros[<<beans-factory-collaborators>>]]，可以使用`<bean/>`元素的`autowire`属性
+为定义的bean指定自动装配模式。你可以指定自动装配__per__ bean，选择那种方式来自动装配。
 
 [[beans-factory-autowiring-modes-tbl]]
 .Autowiring modes
+.自动装配模式
 |===
 | Mode| Explanation
-
+  模式解释
 | no
-| (Default) No autowiring. Bean references must be defined via a `ref` element. Changing
-  the default setting is not recommended for larger deployments, because specifying
-  collaborators explicitly gives greater control and clarity. To some extent, it
-  documents the structure of a system.
-
+| 
+  （默认）不自动装配。Bean的引用必须用`ref`元素定义。对于较大的部署不建议改变默认设置，因为明确指定协作者能更好控制和维护系统。
+  在某种程度上，它记录了系统的结构。
+  
 | byName
-| Autowiring by property name. Spring looks for a bean with the same name as the
-  property that needs to be autowired. For example, if a bean definition is set to
-  autowire by name, and it contains a __master__ property (that is, it has a
-  __setMaster(..)__ method), Spring looks for a bean definition named `master`, and uses
-  it to set the property.
-
+| 
+  通过属性名称自动装配。Spring会寻找相同名称的bean并将其与属性自动装配。譬如，如果bean的定义设置了根据名称自动装配，
+  并且包含了一个__master__ 属性（换句话说，它有__setMaster(..)__方法），Spring会寻找名为`master`的bean的定义，并用它来装配属性
+  
 | byType
-| Allows a property to be autowired if exactly one bean of the property type exists in
-  the container. If more than one exists, a fatal exception is thrown, which indicates
-  that you may not use __byType__ autowiring for that bean. If there are no matching
-  beans, nothing happens; the property is not set.
-
+| 
+  如果容器中存在一个与指定属性类型相同的bean，那么将与该属性自动装配。如果存在多个该类型的bean，将会抛出异常，并指出
+  不能使用__byType__自动装配这个bean。如果没有找到相同类型的，什么也不会发生。属性不会被设置。
+  
 | constructor
-| Analogous to __byType__, but applies to constructor arguments. If there is not exactly
-  one bean of the constructor argument type in the container, a fatal error is raised.
+|
+  和__byType__类似，不同之处在于它应用于构造器参数。如果在容器中没有找到与构造器参数类型一致的bean，就会抛出异常。
 |===
 
-With __byType__ or __constructor__ autowiring mode, you can wire arrays and
-typed-collections. In such cases __all__ autowire candidates within the container that
-match the expected type are provided to satisfy the dependency. You can autowire
-strongly-typed Maps if the expected key type is `String`. An autowired Maps values will
-consist of all bean instances that match the expected type, and the Maps keys will
-contain the corresponding bean names.
+__byType__ 或者 __constructor__ 自动装配模式也可以应用于数组和指定类型的集合。在这种情况下容器中的所有匹配的自动装配对象将
+被应用于满足各种依赖。对于key值类型为String的强类型Map也可以自动装配。一个自动装配的Map value值将由所匹配类型的bean所填充。
 
-You can combine autowire behavior with dependency checking, which is performed after
-autowiring completes.
 
+你可以结合自动装配和依赖检查，后者将会在自动装配完成之后进行。
 
 [[beans-autowired-exceptions]]
-===== Limitations and disadvantages of autowiring
-Autowiring works best when it is used consistently across a project. If autowiring is
-not used in general, it might be confusing to developers to use it to wire only one or
-two bean definitions.
+===== 自动装配的局限性和缺点
 
-Consider the limitations and disadvantages of autowiring:
+在工程里一致使用自动装配，这将会工作得很好。如果自动装配并不常使用，只使用在一个或两个bean的定义上，
+它可能会对开发者产生困扰。
 
-* Explicit dependencies in `property` and `constructor-arg` settings always override
-  autowiring. You cannot autowire so-called __simple__ properties such as primitives,
-  `Strings`, and `Classes` (and arrays of such simple properties). This limitation is
-  by-design.
-* Autowiring is less exact than explicit wiring. Although, as noted in the above table,
-  Spring is careful to avoid guessing in case of ambiguity that might have unexpected
-  results, the relationships between your Spring-managed objects are no longer
-  documented explicitly.
-* Wiring information may not be available to tools that may generate documentation from
-  a Spring container.
-* Multiple bean definitions within the container may match the type specified by the
-  setter method or constructor argument to be autowired. For arrays, collections, or
-  Maps, this is not necessarily a problem. However for dependencies that expect a single
-  value, this ambiguity is not arbitrarily resolved. If no unique bean definition is
-  available, an exception is thrown.
+考虑一下自动装配的局限性和缺点：
 
-In the latter scenario, you have several options:
+  
+* `property` 和 `constructor-arg` 显式的依赖设置总是会覆盖自动装配。你不能装配所谓的__简单__属性比如原始的`Strings`, 和 `Classes`
+   （这样的简单属性数组也是）。这种缺陷是故意设计的。
 
-* Abandon autowiring in favor of explicit wiring.
-* Avoid autowiring for a bean definition by setting its `autowire-candidate` attributes
-  to `false` as described in the next section.
-* Designate a single bean definition as the __primary__ candidate by setting the
-  `primary` attribute of its `<bean/>` element to `true`.
-* Implement the more fine-grained control available
-  with annotation-based configuration, as described in <<beans-annotation-config>>.
+* 自动装配没有显示编写精确。虽然在上面的表格提到的，Spring很小心得避免猜测模糊的情况，这可能会导致意想不到的结果。
+  Spring管理的对象之间的关系不再记录明确。
+  
+* 自动装配的依赖信息可能不能用于根据Spring容器生成文档的的工具。
+  
+* 在容器内部可能存在多个bean的定义与自动装配的setter方法或者构造器参数匹配。对于数组，集合或者Map来说，这不是问题。
+  但是对于单值依赖来说，就会存在模棱两可的问题。如果bean定义不唯一，装配时就会抛出异常。
+  
+针对于上述场景，你会有多个选项：
 
+* 放弃自动装配以便于明确依赖关系。
+  
+* 在bean定义中通过设置`autowire-candidate`属性为`false`避免该bean自动装配，这将会在下一节中详细描述。
+  
+* 在bean定义中设置<bean/>`元素上的`primary`属性为`true`，将该bean设置为首选自动装配bean。
+  
+* 使用注解配置实现更加细粒度的控制，详情见<<beans-annotation-config>>。
 
 [[beans-factory-autowire-candidate]]
-===== Excluding a bean from autowiring
-On a per-bean basis, you can exclude a bean from autowiring. In Spring's XML format, set
-the `autowire-candidate` attribute of the `<bean/>` element to `false`; the container
-makes that specific bean definition unavailable to the autowiring infrastructure
-(including annotation style configurations such as <<beans-autowired-annotation,
-`@Autowired`>>).
+===== 将bean排除在自动装配之外
 
-You can also limit autowire candidates based on pattern-matching against bean names. The
-top-level `<beans/>` element accepts one or more patterns within its
-`default-autowire-candidates` attribute. For example, to limit autowire candidate status
-to any bean whose name ends with __Repository,__ provide a value of *Repository. To
-provide multiple patterns, define them in a comma-separated list. An explicit value of
-`true` or `false` for a bean definitions `autowire-candidate` attribute always takes
-precedence, and for such beans, the pattern matching rules do not apply.
+在提前实例化bean的基础上，你可以将bean排除在自动装配之外。在Spring XML格式中，将`<bean/>` 元素中的`autowire-candidate`属性
+设置为`false`。容器会使特定的bean定义不可于自动装配（包括注解配置比如<<beans-autowired-annotation,`@Autowired`>>）
 
-These techniques are useful for beans that you never want to be injected into other
-beans by autowiring. It does not mean that an excluded bean cannot itself be configured
-using autowiring. Rather, the bean itself is not a candidate for autowiring other beans.
+你也可以对使用bean名字进行模式匹配来对自动装配进行限制。顶层的`<beans/>` 元素在它的`default-autowire-candidates`属性
+接受一个或多个模式。譬如，为了限制
 
+对于那些从来就不会被其他bean采用自动装配的方式注入的bean而言，这是有用的。不过这并不意味这被排除的bean自己就
+不能使用自动装配来注入其他bean。更确切得说，该bean本身不会被考虑作为其他bean自动装配的候选者。
 
 
 [[beans-factory-method-injection]]
-==== Method injection
-In most application scenarios, most beans in the container are
-<<beans-factory-scopes-singleton,singletons>>. When a singleton bean needs to
-collaborate with another singleton bean, or a non-singleton bean needs to collaborate
-with another non-singleton bean, you typically handle the dependency by defining one
-bean as a property of the other. A problem arises when the bean lifecycles are
-different. Suppose singleton bean A needs to use non-singleton (prototype) bean B,
-perhaps on each method invocation on A. The container only creates the singleton bean A
-once, and thus only gets one opportunity to set the properties. The container cannot
-provide bean A with a new instance of bean B every time one is needed.
+==== 方法注入
 
-A solution is to forego some inversion of control. You can <<beans-factory-aware,make
-bean A aware of the container>> by implementing the `ApplicationContextAware` interface,
-and by <<beans-factory-client,making a getBean("B") call to the container>> ask for (a
-typically new) bean B instance every time bean A needs it. The following is an example
-of this approach:
+在大部分的应用场景中，容器中的大部分bean是<<beans-factory-scopes-singleton,singletons>>类型的。当一个单例bean需要和另外一个单例bean，
+协作时，或者一个费单例bean要引用另外一个非单例bean时，通常情况下将一个bean定义为另外一个bean的属性值就行了。不过对于具有不同生命周期的bean
+来说这样做就会有问题了，比如在调用一个单例类型bean A的某个方法，需要引用另一个非单例（prototype）类型bean B，对于bean A来说，容器只会创建一次，这样就没法
+在需要的时候每次让容器为bean A提供一个新的bean B实例。
+
+上面问题的一个解决方法是放弃控制反转，你可以实现`ApplicationContextAware`接口来<<beans-factory-aware,让bean A感知到容器>>，
+并且在需要的时候通过使用<<beans-factory-client,使用getBean("B")向容器请求>>一个（新的）bean B实例。下面的例子使用了这个方法：
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1335,42 +1056,33 @@ of this approach:
 	}
 ----
 
-The preceding is not desirable, because the business code is aware of and coupled to the
-Spring Framework. Method Injection, a somewhat advanced feature of the Spring IoC
-container, allows this use case to be handled in a clean fashion.
+上面的例子并没有达到期望的效果，因为业务代码和Spring框架产生的耦合。方法注入，作为Spring Ioc容器的高级特性，可以以一种
+干净的方法来处理这种情况。
 
 ****
-You can read more about the motivation for Method Injection in
-https://spring.io/blog/2004/08/06/method-injection/[this blog entry].
+
+你可以在 https://spring.io/blog/2004/08/06/method-injection/[this blog entry] 阅读更多关于方法注入的动机。
 ****
 
 
 [[beans-factory-lookup-method-injection]]
-===== Lookup method injection
-Lookup method injection is the ability of the container to override methods on
-__container managed beans__, to return the lookup result for another named bean in the
-container. The lookup typically involves a prototype bean as in the scenario described
-in the preceding section. The Spring Framework implements this method injection by using
-bytecode generation from the CGLIB library to generate dynamically a subclass that
-overrides the method.
+===== Lookup 方法注入
+
+Lookup方法具有使容器覆盖__受容器管理的__bean方法的能力，从而返回指定名字的bean实例。在上述场景中，Lookup方法注入适用于原型bean。
+Lookup方法注入的内部机制是Spring利用了CGLIB库在运行时生成二进制代码的功能，通过动态创建Lookup方法bean的子类从而达到复写Lookup方法的目的。
 
 [NOTE]
 ====
-For this dynamic subclassing to work, the class that the Spring container will subclass
-cannot be `final`, and the method to be overridden cannot be `final` either. Also,
-testing a class that has an `abstract` method requires you to subclass the class
-yourself and to supply a stub implementation of the `abstract` method. Finally, objects
-that have been the target of method injection cannot be serialized. As of Spring 3.2 it
-is no longer necessary to add CGLIB to your classpath, because CGLIB classes are
-repackaged under org.springframework and distributed within the spring-core JAR. This is
-done both for convenience as well as to avoid potential conflicts with other projects
-that use differing versions of CGLIB.
+
+为了使动态子类起作用，Spring容器要子类化的类不能是`final`，并且需要复写的方法也不能是`final`。同样的，要测试一个包含
+`抽象`方法的类也稍微有些不同，你需要子集编写它的子类提供该`抽象`方法的实现。最后，作为方法注入目标的bean不能是序列化的。
+在Spring 3.2之后再也没必要添加CGLIB到classpath，因为CGLIB的类打包在了org.springframework下并且在Spring核心JAR中有所描述。
+这样做既方便，又避免了与其他使用了不同版本CGLIB的项目的冲突。
+
 ====
 
-Looking at the `CommandManager` class in the previous code snippet, you see that the
-Spring container will dynamically override the implementation of the `createCommand()`
-method. Your `CommandManager` class will not have any Spring dependencies, as can be
-seen in the reworked example:
+再看一下在之前代码片段中的`CommandManager`类，你可以发现Spring容器会自动复写`createCommand()`方法的实现。`CommandManager`类
+将不会有任何的Spring依赖，下面返工的例子可以看出：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1394,8 +1106,7 @@ seen in the reworked example:
 	}
 ----
 
-In the client class containing the method to be injected (the `CommandManager` in this
-case), the method to be injected requires a signature of the following form:
+在包含被注入方法的客户类中（这个例子中是`CommandManager`），此方法的定义需要按以下形式进行：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1403,9 +1114,7 @@ case), the method to be injected requires a signature of the following form:
 	<public|protected> [abstract] <return-type> theMethodName(no-arguments);
 ----
 
-If the method is `abstract`, the dynamically-generated subclass implements the method.
-Otherwise, the dynamically-generated subclass overrides the concrete method defined in
-the original class. For example:
+如果方法是`抽象`，动态生成的子类会实现该方法。沟则，动态生成的子类会覆盖类里的具体方法。譬如：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1421,32 +1130,29 @@ the original class. For example:
 	</bean>
 ----
 
-The bean identified as __commandManager__ calls its own method `createCommand()`
-whenever it needs a new instance of the __command__ bean. You must be careful to deploy
-the `command` bean as a prototype, if that is actually what is needed. If it is deployed
-as a <<beans-factory-scopes-singleton,singleton>>, the same instance of the `command`
-bean is returned each time.
+标识为__commandManager__的bean在需要一个新的__command__ bean实例时会调用`createCommand()`方法。你必须将`command`bean部署为
+原型（prototype）类型，如果这是实际需要的话。如果部署为<<beans-factory-scopes-singleton,singleton>>。那么每次将返回相同的
+`command`bean。
 
 [TIP]
 ====
-The interested reader may also find the `ServiceLocatorFactoryBean` (in the
-`org.springframework.beans.factory.config` package) to be of use. The approach used in
-ServiceLocatorFactoryBean is similar to that of another utility class,
-`ObjectFactoryCreatingFactoryBean`, but it allows you to specify your own lookup
-interface as opposed to a Spring-specific lookup interface. Consult the javadocs of
-these classes for additional information.
+
+感兴趣的读者也许发现了`ServiceLocatorFactoryBean`（在包`org.springframework.beans.factory.config`下）可以使用。ServiceLocatorFactoryBean的用法
+与另一个实用类`ObjectFactoryCreatingFactoryBean`类似，但是它允许你指定子集的lookup接口，不一定非要用Spring的lookup接口。要详细了解这种方法参考
+这些类的javadoc。
+
 ====
 
 
 [[beans-factory-arbitrary-method-replacement]]
 ===== Arbitrary method replacement
-A less useful form of method injection than lookup method Injection is the ability to
-replace arbitrary methods in a managed bean with another method implementation. Users
-may safely skip the rest of this section until the functionality is actually needed.
+===== 自定义方法的替代方案
 
-With XML-based configuration metadata, you can use the `replaced-method` element to
-replace an existing method implementation with another, for a deployed bean. Consider
-the following class, with a method computeValue, which we want to override:
+比起Lookup方法注入来，还有一种较少用到的方法注入形式，该注入能使用bean的另一个方法实现去替换自定义方法的方法。
+除非你真的需要该功能，否则可以略过本节。
+
+使用基于XML配置文件时，你可以使用`replaced-method`元素来达到用另一个方法来取代已有方法的目的。考虑下面的类，我们将覆盖
+computeValue方法。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1462,8 +1168,7 @@ the following class, with a method computeValue, which we want to override:
 	}
 ----
 
-A class implementing the `org.springframework.beans.factory.support.MethodReplacer`
-interface provides the new method definition.
+实现`org.springframework.beans.factory.support.MethodReplacer`接口的类提供了新的方法定义。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1483,8 +1188,7 @@ interface provides the new method definition.
 	}
 ----
 
-The bean definition to deploy the original class and specify the method override would
-look like this:
+下面的bean定义中指定了要配置的原始类和将要复写的方法：
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -1499,12 +1203,9 @@ look like this:
 	<bean id="replacementComputeValue" class="a.b.c.ReplacementComputeValue"/>
 ----
 
-You can use one or more contained `<arg-type/>` elements within the `<replaced-method/>`
-element to indicate the method signature of the method being overridden. The signature
-for the arguments is necessary only if the method is overloaded and multiple variants
-exist within the class. For convenience, the type string for an argument may be a
-substring of the fully qualified type name. For example, the following all match
-`java.lang.String`:
+你可以在`<replaced-method/>`元素中可以包含多个`<arg-type/>`元素，这些元素用来标明被复写的方法签名。只有被复写的方法
+存在重载的情况和同名的多个方法变体。为了方便，参数的类型字符可以采用全限定类名的简写。例如，下面的字符串都标识参数类型
+为`java.lang.String`：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -1514,9 +1215,8 @@ substring of the fully qualified type name. For example, the following all match
 	Str
 ----
 
-Because the number of arguments is often enough to distinguish between each possible
-choice, this shortcut can save a lot of typing, by allowing you to type only the
-shortest string that will match an argument type.
+因为参数的数目通常足够用来区别每个可能的选择，这个结晶能减少很多键盘输入的工作，它允许你只输入最短的匹配参数类型的字符串。
+
 
 
 
