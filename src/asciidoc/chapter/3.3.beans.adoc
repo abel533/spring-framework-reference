@@ -1145,7 +1145,7 @@ Lookup方法注入的内部机制是Spring利用了CGLIB库在运行时生成二
 
 
 [[beans-factory-arbitrary-method-replacement]]
-===== Arbitrary method replacement
+
 ===== 自定义方法的替代方案
 
 比起Lookup方法注入来，还有一种较少用到的方法注入形式，该注入能使用bean的另一个方法实现去替换自定义方法的方法。
