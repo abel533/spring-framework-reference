@@ -93,16 +93,12 @@ Spring 提供了`Validator`接口用来进行对象的数据校验。`Validator`
 如同你看到的，`ValidationUtils`中的静态方法`rejectIfEmpty(..)`用来拒绝`'name'`这个属性当它为`null`或空字符串时。
 你可以看看`ValidationUtils`的javadocs，提前了解下除了例子中展示的功能外还有哪些好用的方法。
 
-While it is certainly possible to implement a single `Validator` class to validate each
-of the nested objects in a rich object, it may be better to encapsulate the validation
-logic for each nested class of object in its own `Validator` implementation. A simple
-example of a __'rich'__ object would be a `Customer` that is composed of two `String`
-properties (a first and second name) and a complex `Address` object. `Address` objects
-may be used independently of `Customer` objects, and so a distinct `AddressValidator`
-has been implemented. If you want your `CustomerValidator` to reuse the logic contained
-within the `AddressValidator` class without resorting to copy-and-paste, you can
-dependency-inject or instantiate an `AddressValidator` within your `CustomerValidator`,
-and use it like so:
+当校验一个复杂的对象时，自定义一个校验器类（封装嵌套对象的校验器类）比把校验逻辑分散到各个嵌套对象会更方便管理。
+比如:现在有一个`Customer`复杂对象，它有两个`String`类型的属性（first and second name），以及一个`Address`对象；
+这个`Address`对象和`Customer`对象是毫无关系的，它还实现了`AddressValidator`这样一个校验器。如果你想在`Customer`校验器
+类中重用`Address`校验器的功能（这种重用不是通过简单的代码拷贝），你可以将`Address`校验器的实例通过依赖注入的方式注入到
+`Customer`校验器中。
+像下面所描述的这样：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -124,7 +120,7 @@ and use it like so:
 		}
 
 		/**
-		 * This Validator validates Customer instances, and any subclasses of Customer too
+		 * 这个校验器校验Customer实例，同时也会校验Customer的子类实例
 		 */
 		public boolean supports(Class clazz) {
 			return Customer.class.isAssignableFrom(clazz);
@@ -144,109 +140,70 @@ and use it like so:
 	}
 ----
 
-Validation errors are reported to the `Errors` object passed to the validator. In case
-of Spring Web MVC you can use `<spring:bind/>` tag to inspect the error messages, but of
-course you can also inspect the errors object yourself. More information about the
-methods it offers can be found in the javadocs.
-
-
-
+校验错误都会向作为参数传入的`Errors`对象进行报告。如果你使用的是Spring Web MVC，你可以使用`<spring:bind/>`标签
+来提取校验错误信息，当然你也可以通过自己的方式来提取错误信息，这些方式可以通过阅读javadocs来获取更多的帮助。
 
 [[validation-conversion]]
-=== Resolving codes to error messages
-We've talked about databinding and validation. Outputting messages corresponding to
-validation errors is the last thing we need to discuss. In the example we've shown
-above, we rejected the `name` and the `age` field. If we're going to output the error
-messages by using a `MessageSource`, we will do so using the error code we've given when
-rejecting the field ('name' and 'age' in this case). When you call (either directly, or
-indirectly, using for example the `ValidationUtils` class) `rejectValue` or one of the
-other `reject` methods from the `Errors` interface, the underlying implementation will
-not only register the code you've passed in, but also a number of additional error
-codes. What error codes it registers is determined by the `MessageCodesResolver` that is
-used. By default, the `DefaultMessageCodesResolver` is used, which for example not only
-registers a message with the code you gave, but also messages that include the field
-name you passed to the reject method. So in case you reject a field using
-`rejectValue("age", "too.darn.old")`, apart from the `too.darn.old` code, Spring will
-also register `too.darn.old.age` and `too.darn.old.age.int` (so the first will include
-the field name and the second will include the type of the field); this is done as a
-convenience to aid developers in targeting error messages and suchlike.
+=== 通过错误编码得到错误信息
 
-More information on the `MessageCodesResolver` and the default strategy can be found
-online in the javadocs of
+    前面我们谈到数据绑定和数据校验。如何拿到校验错误信息是我们最后需要讨论的一个问题。在上面的例子中，
+我们拒绝了`name`和`age`属性。如果我们想要输出校验错误的提示信息，就要用到校验失败时设置的错误编码(本例中就是'name'和'age')。
+当你调用`Errors`接口中的`rejectValue`方法或者它的任何一个方法，它的优先实现不仅仅会注册作为参数传入进来的错误编码，
+还会注册一些遵循一定规则的错误编码。注册哪些规则的错误编码取决于你使用的`MessageCodesResolver`。当我们使用默认的`DefaultMessageCodesResolver`
+时，除了会将错误信息注册到你指定的错误编码上之外，这些错误信息还会注册到包含属性名的错误编码上。假如你调用这样一个方法`rejectValue("age", "too.darn.old")`，
+Spring除了会注册`too.darn.old`这个错误编码外，还会注册`too.darn.old.age`和`too.darn.old.age.int`这两个错误编码（即一个是包含属性名，另外一个既包含属性名还包含
+类型）；这在Spring中作为一种约定，这样所有的开发者都能按照这种约定来定位错误信息了。
+
+想要获取更多有关`MessageCodesResolver`和默认的策略，可以通过下面的在线文档获取：
 {javadoc-baseurl}/org/springframework/validation/MessageCodesResolver.html[`MessageCodesResolver`]
-and
 {javadoc-baseurl}/org/springframework/validation/DefaultMessageCodesResolver.html[`DefaultMessageCodesResolver`],
-respectively.
-
-
 
 
 [[beans-beans]]
-=== Bean manipulation and the BeanWrapper
+=== Bean的操作和BeanWrapper
+	`org.springframework.beans`包是符合Oracle公司的JavaBeans规范的。JavaBean是一个拥有默认无参构造函数的类，
+它还有一种命名约定，假如这个类有一个属性`bingoMadness`，那它必须有一个setter方法`setBingoMadness(..)`和
+一个getter方法`getBingoMadness()`。为了获取更多关于JavaBeans及其规范的信息，请参考Oracle的网站(
+http://docs.oracle.com/javase/6/docs/api/java/beans/package-summary.html[javabeans])
 
-The `org.springframework.beans` package adheres to the JavaBeans standard provided by
-Oracle. A JavaBean is simply a class with a default no-argument constructor, which follows
-a naming convention where (by way of an example) a property named `bingoMadness` would
-have a setter method `setBingoMadness(..)` and a getter method `getBingoMadness()`. For
-more information about JavaBeans and the specification, please refer to Oracle's website (
-http://docs.oracle.com/javase/6/docs/api/java/beans/package-summary.html[javabeans]).
+在beans包中相当重要的是`BeanWrapper`接口和它的实现类（`BeanWrapperImpl`）。引用其javadocs中的说明，`BeanWrapper`提供了设置和获取属性值，
+获取属性描述符以及遍历属性来确定它们是可读的还是可写的功能。`BeanWrapper`也支持嵌套属性，允许不限嵌套级数的子属性设置。`BeanWrapper`还支持
+在不需要目标类中加入额外的代码就能添加标准的JavaBeans`PropertyChangeListeners`和`VetoableChangeListeners`。值得一提的是`BeanWrapper`还支持
+索引的属性。通常我们一般不会在应用代码中直接用到`BeanWrapper`，除了`DataBinder`和`BeanFactory`。
 
-One quite important class in the beans package is the `BeanWrapper` interface and its
-corresponding implementation ( `BeanWrapperImpl`). As quoted from the javadocs, the
-`BeanWrapper` offers functionality to set and get property values (individually or in
-bulk), get property descriptors, and to query properties to determine if they are
-readable or writable. Also, the `BeanWrapper` offers support for nested properties,
-enabling the setting of properties on sub-properties to an unlimited depth. Then, the
-`BeanWrapper` supports the ability to add standard JavaBeans `PropertyChangeListeners`
-and `VetoableChangeListeners`, without the need for supporting code in the target class.
-Last but not least, the `BeanWrapper` provides support for the setting of indexed
-properties. The `BeanWrapper` usually isn't used by application code directly, but by
-the `DataBinder` and the `BeanFactory`.
-
-The way the `BeanWrapper` works is partly indicated by its name: __it wraps a bean__ to
-perform actions on that bean, like setting and retrieving properties.
-
+`BeanWrapper`基本上是通过它的名字来进行工作的：它包裹一个bean来代替它执行某些动作，如设置以及获取属性。
 
 
 [[beans-beans-conventions]]
-==== Setting and getting basic and nested properties
-Setting and getting properties is done using the `setPropertyValue(s)` and
-`getPropertyValue(s)` methods that both come with a couple of overloaded variants.
-They're all described in more detail in the javadocs Spring comes with. What's important
-to know is that there are a couple of conventions for indicating properties of an
-object. A couple of examples:
+==== Setting和getting基本及嵌套属性
+Setting和getting属性是通过一组变形的重载方法`setPropertyValue(s)`和`getPropertyValue(s)`来完成的。您可以通过Spring的javadoc来获得更多的信息。
+你必须知道的是描述对象的属性有一些约定俗成的规则。下面有几个例子：
 
 [[beans-beans-conventions-properties-tbl]]
-.Examples of properties
+.属性的例子
 |===
-| Expression| Explanation
+| 表达式| 解释(说明)
 
 | `name`
-| Indicates the property `name` corresponding to the methods `getName()` or `isName()`
-  and `setName(..)`
+| 表示通过方法`getName()`或`isName()`和`setName(..)`来操作属性`name`
 
 | `account.name`
-| Indicates the nested property `name` of the property `account` corresponding e.g. to
-  the methods `getAccount().setName()` or `getAccount().getName()`
+| 表示通过方法`getAccount().setName()`或`getAccount().getName()`来操作`account`的嵌套属性`name`
 
 | `account[2]`
-| Indicates the __third__ element of the indexed property `account`. Indexed properties
-  can be of type `array`, `list` or other __naturally ordered__ collection
+| 表示索引属性`account`的第三个元素。能被索引的属性可以是`array`, `list`或者其他实现了有序集合的类型。
 
 | `account[COMPANYNAME]`
-| Indicates the value of the map entry indexed by the key __COMPANYNAME__ of the Map
-  property `account`
+| 表示指定Map `account`以__COMPANYNAME__为键的值
+
 |===
 
-Below you'll find some examples of working with the `BeanWrapper` to get and set
-properties.
+下面你将看到一些通过`BeanWrapper`来获取和设置属性的例子。
 
-__(This next section is not vitally important to you if you're not planning to work with
-the `BeanWrapper` directly. If you're just using the `DataBinder` and the `BeanFactory`
-and their out-of-the-box implementation, you should skip ahead to the section about
-`PropertyEditors`.)__
+__(下面这一节对那些不想在工作中直接用到`BeanWrapper`的人来说不是那么的重要。如果你只是会用到`DataBinder`和`BeanFactory`
+这类开箱即用的实现，你可以直接跳过这里，直接关注`PropertyEditors`这一节。)__
 
-Consider the following two classes:
+假如有下面这两个类：
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -301,32 +258,31 @@ Consider the following two classes:
 	}
 ----
 
-The following code snippets show some examples of how to retrieve and manipulate some of
-the properties of instantiated `Companies` and `Employees`:
+下面的代码快照向你展示了如何获取和操作已经实例化的`Companies`和`Employees`的属性。
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
 ----
 	BeanWrapper company = BeanWrapperImpl(new Company());
-	// setting the company name..
+	// 设置公司名称..
 	company.setPropertyValue("name", "Some Company Inc.");
-	// ... can also be done like this:
+	// ...也可以像这样做:
 	PropertyValue value = new PropertyValue("name", "Some Company Inc.");
 	company.setPropertyValue(value);
 
-	// ok, let's create the director and tie it to the company:
+	// 现在我们来创建一个主管并把它绑定到公司上:
 	BeanWrapper jim = BeanWrapperImpl(new Employee());
 	jim.setPropertyValue("name", "Jim Stravinsky");
 	company.setPropertyValue("managingDirector", jim.getWrappedInstance());
 
-	// retrieving the salary of the managingDirector through the company
+	// 通过公司属性来获取主管的薪水
 	Float salary = (Float) company.getPropertyValue("managingDirector.salary");
 ----
 
 
 
 [[beans-beans-conversion]]
-==== Built-in PropertyEditor implementations
+==== 内嵌的属性编辑器实现
 
 Spring uses the concept of `PropertyEditors` to effect the conversion between an
 `Object` and a `String`. If you think about it, it sometimes might be handy to be able

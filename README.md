@@ -31,8 +31,8 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - **3.beans.adoc                 - [isea533](http://blog.csdn.net/isea533)**
 - **3.1.beans.adoc(5.1. Introduction&5.2. Container overview) - [isea533](http://blog.csdn.net/isea533)**
 - **3.2.beans.adoc(5.3. Bean overview) - [isea533](http://blog.csdn.net/isea533)**
-- 3.3.beans.adoc(5.4. Dependencies) -
-- 3.4.beans.adoc(5.5. Bean scopes) -
+- **3.3.beans.adoc(5.4. Dependencies) - [reeco](http://my.oschina.net/reeco)**
+- **3.4.beans.adoc(5.5. Bean scopes) - [sealin](http://my.oschina.net/sealday)**
 - 3.5.beans.adoc(5.6. Customizing the nature of a bean) -
 - 3.6.beans.adoc(5.7. Bean definition inheritance) -
 - 3.7.beans.adoc(5.8. Container Extension Points) -
@@ -67,16 +67,16 @@ Spring文档为adoc格式，文件已经按基本的章节拆分为多个adoc文
 - 10.4.2.testing.adoc(11.3.5.4. DI) -
 - 10.5.testing.adoc(11.3.6. Spring MVC Test Framework) -
 - 10.6.testing.adoc(11.3.7. PetClinic Example) -
-- 11.spring-data-tier.adoc     -
+- **11.spring-data-tier.adoc     - [阿信](http://git.oschina.net/songxinqiang)**
 - **12.dao.adoc                  - 已经分配**
 - 13.jdbc.adoc                 -
 - **14.orm.adoc                  - [waylau](https://github.com/waylau)**
 - 15.oxm.adoc                  -
 - **16.spring-web.adoc           - [tianya](tianyatianya-PC)**
 - 17.view.adoc                 -
-- 18.web-integration.adoc      -
+- **18.web-integration.adoc      - [阿信](http://git.oschina.net/songxinqiang)**
 - 19.portlet.adoc              -
-- **20.websocket.adoc            - [zipu888](http://git.oschina.net/xiaohaogege)**
+- **20.websocket.adoc            - [zipu888](http://git.oschina.net/pangzhuzhu)**
 - 21.spring-integration.adoc   -
 - 22.ejb.adoc                  -
 - 23.jms.adoc                  -

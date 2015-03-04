@@ -1,142 +1,99 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>18.&nbsp;Integrating with other web frameworks</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="view.html" title="17.&nbsp;View technologies"><link rel="next" href="portlet.html" title="19.&nbsp;Portlet MVC Framework"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.&nbsp;Integrating with other web frameworks</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="view.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="portlet.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="web-integration" href="#web-integration"></a>18.&nbsp;Integrating with other web frameworks</h2></div></div></div>
+   <title>18.&nbsp;&#21516;&#20854;&#20182;web&#26694;&#26550;&#38598;&#25104;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="view.html" title="17.&nbsp;View technologies"><link rel="next" href="portlet.html" title="19.&nbsp;Portlet MVC Framework"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">18.&nbsp;&#21516;&#20854;&#20182;web&#26694;&#26550;&#38598;&#25104;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="view.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="portlet.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="web-integration" href="#web-integration"></a>18.&nbsp;&#21516;&#20854;&#20182;web&#26694;&#26550;&#38598;&#25104;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="intro" href="#intro"></a>18.1&nbsp;Introduction</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="intro" href="#intro"></a>18.1&nbsp;&#31616;&#20171;</h2></div></div></div>
 
 <div class="sidebar"><div class="titlepage"><div><div><p class="title"><b>Spring Web Flow</b></p></div></div></div>
 
-<p>Spring Web Flow (SWF) aims to be the best solution for the management of web application
-page flow.</p>
-<p>SWF integrates with existing frameworks like Spring MVC and JSF, in both Servlet and
-Portlet environments. If you have a business process (or processes) that would benefit
-from a conversational model as opposed to a purely request model, then SWF may be the
-solution.</p>
-<p>SWF allows you to capture logical page flows as self-contained modules that are reusable
-in different situations, and as such is ideal for building web application modules that
-guide the user through controlled navigations that drive business processes.</p>
-<p>For more information about SWF, consult the
-<a class="ulink" href="http://projects.spring.io/spring-webflow/" target="_top">Spring Web Flow website</a>.</p>
+<p>Spring Web Flow (SWF) &#23450;&#20301;&#20110;&#25104;&#20026;web&#31649;&#29702;&#24212;&#29992;&#24320;&#21457;&#30340;&#26368;&#20339;&#36873;&#25321;.</p>
+<p>SWF &#21487;&#20197;&#21516;&#29616;&#26377;&#30340;&#26694;&#26550;&#38598;&#25104;&#65292;&#20363;&#22914;Spring MVC &#25110;&#32773; JSF, &#19981;&#31649;&#26159;&#22312; Servlet &#36824;&#26159; Portlet &#29615;&#22659;&#20013;. &#22914;&#26524;&#20320;&#26377;&#19968;&#20010;(&#25110;&#35768;&#22810;&#20010;)&#19994;&#21153;
+&#38656;&#35201;&#19968;&#20010;&#20581;&#22766;&#30340;&#21487;&#20132;&#20114;&#30340;&#27169;&#22411;,&#32780;&#19981;&#26159;&#19968;&#20010;&#21333;&#32431;&#30340;&#35831;&#27714;&#27169;&#22411;,&#37027;&#20040;SWF&#26159;&#20320;&#38656;&#35201;&#30340;&#36873;&#25321;.</p>
+<p>SWF &#20801;&#35768;&#20320;&#25429;&#33719;&#36923;&#36753;&#39029;&#38754;&#27969;&#20316;&#20026;&#29420;&#31435;&#30340;&#27169;&#22359;,&#22312;&#19981;&#21516;&#30340;&#24773;&#20917;&#19979;&#26159;&#21487;&#37325;&#29992;&#30340;,&#22240;&#27492;&#26159;&#29702;&#24819;&#30340;&#29992;&#20110;&#26500;&#24314;web&#24212;&#29992;&#31243;&#24207;&#27169;&#22359;,&#24341;&#23548;&#29992;&#25143;&#20351;&#29992;&#21487;&#25511;&#21046;&#30340;&#23548;&#33322;,
+&#39537;&#21160;&#19994;&#21153;&#27969;&#31243;&#25511;&#21046;.</p>
+<p>&#33719;&#21462; SWF&#26356;&#22810;&#30340;&#20449;&#24687;, &#35831;&#27983;&#35272;
+<a class="ulink" href="http://projects.spring.io/spring-webflow/" target="_top">Spring Web Flow &#31449;&#28857;</a>.</p>
 </div>
 
-<p>This chapter details Spring&#8217;s integration with third party web frameworks, such as
+<p>&#26412;&#31456;&#35814;&#32454;&#20171;&#32461;&#20102;Spring&#21644;&#20854;&#20182;&#31532;&#19977;&#26041;&#26694;&#26550;&#30340;&#38598;&#25104;&#65292;&#20363;&#22914;
 <a class="ulink" href="http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html" target="_top">JSF</a>.</p>
-<p>One of the core value propositions of the Spring Framework is that of enabling
-<span class="emphasis"><em>choice</em></span>. In a general sense, Spring does not force one to use or buy into any
-particular architecture, technology, or methodology (although it certainly recommends
-some over others). This freedom to pick and choose the architecture, technology, or
-methodology that is most relevant to a developer and their development team is
-arguably most evident in the web area, where Spring provides its own web framework
-(<a class="link" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;">Spring MVC</a>), while at the same time providing integration with a number of
-popular third party web frameworks. This allows one to continue to leverage any and all
-of the skills one may have acquired in a particular web framework such as JSF, while
-at the same time being able to enjoy the benefits afforded by Spring in other areas such
-as data access, declarative transaction management, and flexible configuration and
-application assembly.</p>
-<p>Having dispensed with the woolly sales patter (c.f. the previous paragraph), the
-remainder of this chapter will concentrate upon the meaty details of integrating your
-favorite web framework with Spring. One thing that is often commented upon by developers
-coming to Java from other languages is the seeming super-abundance of web frameworks
-available in Java. There are indeed a great number of web frameworks in the Java space;
-in fact there are far too many to cover with any semblance of detail in a single
-chapter. This chapter thus picks four of the more popular web frameworks in Java,
-starting with the Spring configuration that is common to all of the supported web
-frameworks, and then detailing the specific integration options for each supported web
-framework.</p>
+<p>Sping&#26694;&#26550;&#30340;&#26680;&#24515;&#20351;&#21629;&#20043;&#19968;&#23601;&#26159;&#25552;&#20379;<span class="emphasis"><em>&#36873;&#25321;</em></span>. &#36890;&#20439;&#35828;, Spring &#19981;&#20250;&#24378;&#36843;&#20219;&#20309;&#20154;&#21435;&#20351;&#29992;&#25110;&#32773;&#34701;&#20837;&#20219;&#20309;&#20855;&#20307;&#30340;&#26550;&#26500;&#12289;&#25216;&#26415;&#25110;&#32773;&#26041;&#27861;
+(&#23613;&#31649;&#23427;&#30830;&#23454;&#26159;&#20250;&#25512;&#33616;&#19968;&#20123;&#32473;&#20320;). &#36825;&#31181;&#22312;&#25361;&#36873;&#26550;&#26500;&#12289;&#25216;&#26415;&#25110;&#32773;&#26041;&#27861;&#19978;&#30340;&#33258;&#30001;,&#26159;&#22312;web&#39046;&#22495;&#30340;&#24320;&#21457;&#32773;&#21644;&#24320;&#21457;&#22242;&#38431;&#25104;&#21592;&#20043;&#38388;&#20105;&#35770;&#26102;&#26368;&#26174;&#32780;&#26131;&#35265;
+&#30340;, &#24403; Spring &#25512;&#20986;&#23427;&#33258;&#24049;&#30340;web&#26694;&#26550;(<a class="link" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;">Spring MVC</a>)&#30340;&#26102;&#20505;, &#21516;&#26102;&#20063;&#25512;&#20986;&#20102;&#21516;&#20854;&#20182;&#20247;&#22810;&#27969;&#34892;&#31532;&#19977;&#26041;web&#26694;&#26550;&#38598;&#25104;&#30340;&#26041;&#26696;.
+&#36825;&#26679;&#23601;&#20801;&#35768;&#20154;&#20204;&#21487;&#20197;&#19968;&#26041;&#38754;&#20139;&#29992;&#30001;Spring&#24102;&#26469;&#30340;&#20248;&#21183;&#65292;&#20363;&#22914;&#25968;&#25454;&#35775;&#38382;&#12289;&#29983;&#21629;&#26159;&#20107;&#21153;&#31649;&#29702;&#20197;&#21450;&#28789;&#27963;&#30340;&#37197;&#32622;&#21644;&#24212;&#29992;&#38598;&#25104;,&#21516;&#26102;&#32487;&#32493;&#20351;&#29992;&#20197;&#21069;&#24456;&#29087;&#24713;&#30340;
+&#26694;&#26550;&#26469;&#21457;&#25381;&#20316;&#29992;,&#20363;&#22914;JSF.</p>
+<p>&#21435;&#25481;&#37027;&#20123;&#25512;&#38144;&#30340;&#36190;&#32654;&#20043;&#35789;(&#20063;&#23601;&#26159;&#21069;&#38754;&#37027;&#27573;),&#22312;&#36825;&#19968;&#31456;&#30340;&#21097;&#20313;&#37096;&#20998;&#25105;&#20204;&#23558;&#19987;&#24515;&#22320;&#20171;&#32461;&#22914;&#20309;&#23558;&#20320;&#21916;&#29233;&#30340;web&#26694;&#26550;&#21516;Spring&#38598;&#25104;&#36215;&#26469;. &#19968;&#20214;&#32463;&#24120;&#34987;&#20174;
+&#20854;&#20182;&#35821;&#35328;&#26469;&#23398;&#20064;Java&#30340;&#24320;&#21457;&#32773;&#25552;&#36215;&#30340;&#20107;&#23601;&#26159;Java&#35980;&#20284;&#26377;&#22823;&#37327;&#30340;web&#26694;&#26550;&#21487;&#20197;&#29992;. &#22312;Java&#19990;&#30028;&#37324;&#30830;&#23454;&#26377;&#24456;&#22823;&#25968;&#30446;&#30340;web&#26694;&#26550;;&#20107;&#23454;&#19978;,&#24050;&#32463;
+&#22810;&#21040;&#20102;&#26080;&#27861;&#22312;&#19968;&#31456;&#37324;&#38754;&#20840;&#37096;&#28085;&#30422;&#23436;. &#26412;&#31456;&#37324;&#38754;&#23558;&#36873;&#21462;Java web&#27604;&#36739;&#27969;&#34892;&#30340;4&#20010;&#26694;&#26550;,&#39318;&#20808;&#20171;&#32461;Spring&#25903;&#25345;&#30340;&#25152;&#26377;&#26694;&#26550;&#30340;&#37197;&#32622;, &#28982;&#21518;&#20171;&#32461;
+&#27599;&#19968;&#20010;web&#26694;&#26550;&#30340;&#37197;&#32622;&#30340;&#29305;&#21035;&#20043;&#22788;.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Please note that this chapter does not attempt to explain how to use any of the
-supported web frameworks. For example, if you want to use JSF for the presentation
-layer of your web application, the assumption is that you are already familiar with
-JSF itself. If you need further details about any of the supported web frameworks
-themselves, please do consult <a class="xref" href="web-integration.html#web-integration-resources" title="18.6&nbsp;Further Resources">Section&nbsp;18.6, &#8220;Further Resources&#8221;</a> at the end of this chapter.</p>
+<p>&#35831;&#35760;&#20303;,&#26412;&#31456;&#19981;&#20934;&#22791;&#20171;&#32461;&#24590;&#26679;&#20351;&#20351;&#29992;&#25903;&#25345;&#30340;web&#26694;&#26550;. &#20363;&#22914;, &#22914;&#26524;&#20320;&#24819;&#20351;&#29992;JSF&#26469;&#20316;&#20026;&#20320;&#30340;&#21069;&#31471;&#23637;&#31034;&#23618;, &#25105;&#20204;&#23601;&#20551;&#35774;&#20320;&#24050;&#32463;&#29087;&#32451;&#20110;&#20351;&#29992;JSF&#26412;&#36523;&#20102;.
+&#22914;&#26524;&#20320;&#24819;&#33719;&#21462;&#36825;&#20123;&#25903;&#25345;&#26694;&#26550;&#30340;&#26356;&#22810;&#20869;&#23481;,&#35831;&#26597;&#30475;&#26412;&#31456;&#26411;&#23614;&#30340;<a class="xref" href="web-integration.html#web-integration-resources" title="18.6&nbsp;&#26356;&#22810;&#36164;&#28304;">Section&nbsp;18.6, &#8220;&#26356;&#22810;&#36164;&#28304;&#8221;</a>.</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-common" href="#web-integration-common"></a>18.2&nbsp;Common configuration</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-common" href="#web-integration-common"></a>18.2&nbsp;&#36890;&#29992;&#37197;&#32622;</h2></div></div></div>
 
-<p>Before diving into the integration specifics of each supported web framework, let us
-first take a look at the Spring configuration that is <span class="emphasis"><em>not</em></span> specific to any one web
-framework. (This section is equally applicable to Spring&#8217;s own web framework, Spring
-MVC.)</p>
-<p>One of the concepts (for want of a better word) espoused by (Spring&#8217;s) lightweight
-application model is that of a layered architecture. Remember that in a <span class="emphasis"><em>classic</em></span>
-layered architecture, the web layer is but one of many layers; it serves as one of the
-entry points into a server side application and it delegates to service objects
-(facades) defined in a service layer to satisfy business specific (and
-presentation-technology agnostic) use cases. In Spring, these service objects, any other
-business-specific objects, data access objects, etc. exist in a distinct <span class="emphasis"><em>business
-context</em></span>, which contains <span class="emphasis"><em>no</em></span> web or presentation layer objects (presentation objects
-such as Spring MVC controllers are typically configured in a distinct <span class="emphasis"><em>presentation
-context</em></span>). This section details how one configures a Spring container (a
-<code class="literal">WebApplicationContext</code>) that contains all of the <span class="emphasis"><em>business beans</em></span> in one&#8217;s application.</p>
-<p>On to specifics: all that one need do is to declare a
+<p>&#22312;&#24320;&#22987;&#20171;&#32461;&#27599;&#19968;&#20010;&#25152;&#25903;&#25345;&#30340;web&#26694;&#26550;&#30340;&#29305;&#26377;&#37197;&#32622;&#20043;&#21069;, &#35753;&#25105;&#20204;&#20808;&#26469;&#30475;&#19968;&#19979;&#23545;&#27599;&#19968;&#20010;web&#26694;&#26550;&#26469;&#35828;&#37117;<span class="emphasis"><em>&#19981;</em></span>&#29305;&#27530;&#30340;&#37197;&#32622;. (&#36825;&#37096;&#20998;&#37197;&#32622;&#20063;&#21516;&#26679;
+&#36866;&#29992;&#20110;Spring&#33258;&#24049;&#30340;web&#26694;&#26550;, Spring MVC.)</p>
+<p>&#23545;&#20110;(Spring)&#25512;&#23815;&#30340;&#36731;&#37327;&#32423;&#27169;&#22411;&#26469;&#35828;,&#19968;&#20010;&#27010;&#24565;(&#20026;&#20102;&#24819;&#19968;&#20010;&#26356;&#22909;&#30340;&#35789;)&#23601;&#26159;&#20998;&#23618;&#26550;&#26500;. &#35831;&#35760;&#20303;,&#22312;<span class="emphasis"><em>&#20256;&#32479;</em></span>&#20998;&#23618;&#26550;&#26500;&#20013;,web&#23618;&#21482;&#26159;&#35768;&#22810;&#23618;&#20013;&#30340;&#19968;&#23618;;
+&#23427;&#21482;&#26159;&#20316;&#20026;&#26381;&#21153;&#31471;&#31243;&#24207;&#30340;&#20837;&#21475;&#26469;&#24037;&#20316;, &#23427;&#25226;&#35831;&#27714;&#22996;&#25176;&#32473;&#26381;&#21153;&#23618;(&#34920;&#38754;&#19978;&#30340;)&#26381;&#21153;&#23545;&#35937;&#26469;&#28385;&#36275;&#23450;&#20041;&#22909;(&#24182;&#19988;&#19982;&#23637;&#31034;&#25216;&#26415;&#26080;&#20851;)&#30340;&#29992;&#20363;. &#22312;Spring&#20013;,
+&#25152;&#26377;&#30340;&#36825;&#20123;&#26381;&#21153;&#23545;&#35937;&#12289;&#19994;&#21153;&#23450;&#20041;&#23545;&#35937;&#12289;&#25968;&#25454;&#35775;&#38382;&#23545;&#35937;&#31561;&#31561;&#37117;&#23384;&#22312;&#20110;&#19968;&#20010;&#26126;&#30830;&#30340;<span class="emphasis"><em>&#19994;&#21153;&#19978;&#19979;&#25991;</em></span>&#20013;, &#36825;&#26159;&#19968;&#20010; <span class="emphasis"><em>&#27809;&#26377;</em></span> web &#25110;&#32773;&#23637;&#29616;&#23618;&#23545;&#35937;
+(&#23637;&#29616;&#23618;&#23545;&#35937;,&#22914;Spring MVC&#30340;&#25511;&#21046;&#22120;,&#37117;&#26159;&#20856;&#22411;&#30340;&#37197;&#32622;&#22312;&#19968;&#20010;&#26126;&#30830;&#30340;<span class="emphasis"><em>&#23637;&#29616;&#19978;&#19979;&#25991;</em></span>&#20013;). &#36825;&#19968;&#33410;&#23558;&#21521;&#20320;&#23637;&#31034;&#24590;&#26679;&#22312;&#19968;&#20010;&#24212;&#29992;&#30340;&#19968;&#20010;Spring
+&#23481;&#22120;(&#19968;&#20010;<code class="literal">WebApplicationContext</code>)&#20013;&#21253;&#21547;&#25152;&#26377;&#30340;<span class="emphasis"><em>&#19994;&#21153;bean</em></span>.</p>
+<p>&#25805;&#20316;&#22914;&#19979;: &#25152;&#26377;&#38656;&#35201;&#20570;&#30340;&#23601;&#26159;&#22312;&#19968;&#20010;web&#24212;&#29992;&#30340;<code class="literal">web.xml</code>&#25991;&#20214;&#20013;&#23450;&#20041;&#19968;&#20010;
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/ContextLoaderListener.html" target="_top"><code class="literal">ContextLoaderListener</code></a>
-in the standard Java EE servlet <code class="literal">web.xml</code> file of one&#8217;s web application, and add a
-<code class="literal">contextConfigLocation</code>&lt;context-param/&gt; section (in the same file) that defines which
-set of Spring XML configuration files to load.</p>
-<p>Find below the &lt;listener/&gt; configuration:</p>
+, &#24182;&#19988;&#36824;&#35201;(&#22312;&#36825;&#20010;&#25991;&#20214;&#20013;)&#28155;&#21152;&#19968;&#20010;<code class="literal">contextConfigLocation</code>&lt;context-param/&gt; &#33410;&#26469;&#25351;&#23450;&#21738;&#20123;Spring&#30340;XML&#37197;&#32622;&#38656;&#35201;&#21152;&#36733;.</p>
+<p>&#25214;&#21040;&#19979;&#38754;&#30340;&lt;listener/&gt;&#37197;&#32622;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;listener&gt;</span>
     <span class="hl-tag">&lt;listener-class&gt;</span>org.springframework.web.context.ContextLoaderListener<span class="hl-tag">&lt;/listener-class&gt;</span>
 <span class="hl-tag">&lt;/listener&gt;</span></pre>
 
-<p>Find below the &lt;context-param/&gt; configuration:</p>
+<p>&#25214;&#21040;&#19979;&#38754;&#30340;&lt;context-param/&gt;&#37197;&#32622;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;context-param&gt;</span>
     <span class="hl-tag">&lt;param-name&gt;</span>contextConfigLocation<span class="hl-tag">&lt;/param-name&gt;</span>
     <span class="hl-tag">&lt;param-value&gt;</span>/WEB-INF/applicationContext*.xml<span class="hl-tag">&lt;/param-value&gt;</span>
 <span class="hl-tag">&lt;/context-param&gt;</span></pre>
 
-<p>If you don&#8217;t specify the <code class="literal">contextConfigLocation</code> context parameter, the
-<code class="literal">ContextLoaderListener</code> will look for a file called <code class="literal">/WEB-INF/applicationContext.xml</code> to
-load. Once the context files are loaded, Spring creates a
+<p>&#22914;&#26524;&#20320;&#27809;&#26377;&#25351;&#23450;<code class="literal">contextConfigLocation</code>&#30340;&#19978;&#19979;&#25991;&#21442;&#25968;, &#37027;&#20040;<code class="literal">ContextLoaderListener</code>&#23558;&#20250;&#23547;&#25214;&#24182;&#21152;&#36733;
+&#19968;&#20010;&#21517;&#20026;<code class="literal">/WEB-INF/applicationContext.xml</code>&#30340;&#25991;&#20214;. &#19968;&#26086;&#19978;&#19979;&#25991;&#25991;&#20214;&#21152;&#36733;&#20102;, Spring&#23601;&#20250;&#26681;&#25454;bean&#30340;&#23450;&#20041;&#26469;&#21019;&#24314;&#19968;&#20010;
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/WebApplicationContext.html" target="_top"><code class="literal">WebApplicationContext</code></a>
-object based on the bean definitions and stores it in the <code class="literal">ServletContext</code> of the web
-application.</p>
-<p>All Java web frameworks are built on top of the Servlet API, and so one can use the
-following code snippet to get access to this <span class="emphasis"><em>business context</em></span> <code class="literal">ApplicationContext</code>
-created by the <code class="literal">ContextLoaderListener</code>.</p>
+&#23545;&#35937;&#24182;&#19988;&#23558;&#23427;&#23384;&#20648;&#22312;web&#24212;&#29992;&#30340;<code class="literal">ServletContext</code>&#20013;.</p>
+<p>&#25152;&#26377;&#30340;Java web &#26694;&#26550;&#37117;&#26159;&#26500;&#24314;&#22312;Servlet API&#20043;&#19978;&#30340;, &#25152;&#20197;&#20219;&#20309;&#19968;&#20010;&#37117;&#21487;&#20197;&#36890;&#36807;&#19979;&#38754;&#30340;&#20195;&#30721;&#29255;&#27573;&#26469;&#35775;&#38382;&#30001;<code class="literal">ContextLoaderListener</code>
+&#21019;&#24314;&#30340;<span class="emphasis"><em>&#19994;&#21153;&#19978;&#19979;&#25991;</em></span> <code class="literal">ApplicationContext</code>.</p>
 <pre class="programlisting">WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);</pre>
 
-<p>The
+<p>&#26377;
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/context/support/WebApplicationContextUtils.html" target="_top"><code class="literal">WebApplicationContextUtils</code></a>
-class is for convenience, so you don&#8217;t have to remember the name of the <code class="literal">ServletContext</code>
-attribute. Its <span class="emphasis"><em>getWebApplicationContext()</em></span> method will return <code class="literal">null</code> if an object
-doesn&#8217;t exist under the <code class="literal">WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>
-key. Rather than risk getting <code class="literal">NullPointerExceptions</code> in your application, it&#8217;s better
-to use the <code class="literal">getRequiredWebApplicationContext()</code> method. This method throws an exception
-when the <code class="literal">ApplicationContext</code> is missing.</p>
-<p>Once you have a reference to the <code class="literal">WebApplicationContext</code>, you can retrieve beans by
-their name or type. Most developers retrieve beans by name and then cast them to one of
-their implemented interfaces.</p>
-<p>Fortunately, most of the frameworks in this section have simpler ways of looking up
-beans. Not only do they make it easy to get beans from a Spring container, but they also
-allow you to use dependency injection on their controllers. Each web framework section
-has more detail on its specific integration strategies.</p>
+&#31867;&#26469;&#25552;&#20379;&#20415;&#21033;, &#20320;&#23601;&#19981;&#38656;&#35201;&#35760;&#20303;<code class="literal">ServletContext</code>&#30340;&#23646;&#24615;&#20102;. &#22914;&#26524;&#27809;&#26377;&#23545;&#24212;&#20110;
+<code class="literal">WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE</code>&#38190;&#30340;&#23545;&#35937;, &#23427;&#30340;
+<span class="emphasis"><em>getWebApplicationContext()</em></span>&#26041;&#27861;&#20250;&#36820;&#22238;<code class="literal">null</code>. &#30456;&#23545;&#31616;&#21333;&#31895;&#26292;&#22320;&#22312;&#20320;&#30340;&#24212;&#29992;&#20013;&#20135;&#29983;<code class="literal">NullPointerExceptions</code>,
+&#26368;&#22909;&#20351;&#29992;<code class="literal">getRequiredWebApplicationContext()</code>&#26041;&#27861;, &#36825;&#20010;&#26041;&#27861;&#20250;&#22312;<code class="literal">ApplicationContext</code>&#25214;&#19981;&#21040;&#30340;&#24773;&#20917;&#19979;&#25243;&#20986;&#24322;&#24120;.</p>
+<p>&#24403;&#20320;&#33719;&#24471;&#20102;<code class="literal">WebApplicationContext</code>&#30340;&#24341;&#29992;&#20043;&#21518;, &#20320;&#23601;&#21487;&#20197;&#36890;&#36807;&#21517;&#23383;&#25110;&#32773;&#31867;&#22411;&#26469;&#33719;&#21462;bean. &#22823;&#22810;&#25968;&#24320;&#21457;&#32773;&#37117;&#36890;&#36807;&#21517;&#23383;&#26469;&#33719;&#21462;bean,
+&#28982;&#21518;&#36716;&#22411;&#20026;&#23427;&#25152;&#23454;&#29616;&#20102;&#30340;&#25509;&#21475;.</p>
+<p>&#24184;&#36816;&#30340;&#26159;, &#22823;&#22810;&#25968;&#30340;&#26694;&#26550;&#22312;&#36825;&#37324;&#37117;&#26377;&#30456;&#20284;&#30340;&#26041;&#27861;&#26469;&#23547;&#25214;bean. &#20182;&#20204;&#19981;&#20165;&#20351;&#24471;&#20174; Spring&#23481;&#22120;&#20013;&#33719;&#21462;bean&#21464;&#24471;&#31616;&#21333;, &#32780;&#19988;&#20801;&#35768;&#20320;&#22312;&#20182;&#20204;&#30340;&#25511;&#21046;&#22120;&#20013;
+&#20351;&#29992;&#20381;&#36182;&#27880;&#20837;. &#27599;&#19968;&#27454;web&#26694;&#26550;&#22312;&#38598;&#25104;&#19978;&#37117;&#26377;&#26356;&#22810;&#30340;&#32454;&#33410;&#29305;&#24615;.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="jsf" href="#jsf"></a>18.3&nbsp;JavaServer Faces 1.2</h2></div></div></div>
 
-<p>JavaServer Faces (JSF) is the JCP&#8217;s standard component-based, event-driven web user
-interface framework. As of Java EE 5, it is an official part of the Java EE umbrella.</p>
-<p>For a popular JSF runtime as well as for popular JSF component libraries, check out the
-<a class="ulink" href="http://myfaces.apache.org/" target="_top">Apache MyFaces project</a>. The MyFaces project also provides
-common JSF extensions such as <a class="ulink" href="http://myfaces.apache.org/orchestra/" target="_top">MyFaces Orchestra</a>:
-a Spring-based JSF extension that provides rich conversation scope support.</p>
+<p>JavaServer Faces (JSF) &#26159; JCP&#30340;&#26631;&#20934;&#30340;&#22522;&#20110;&#32452;&#20214;&#30340;, &#20107;&#20214;&#39537;&#21160;&#30340;web&#29992;&#25143;&#23637;&#29616;&#26694;&#26550;. &#20174; Java EE 5&#24320;&#22987;, &#23427;&#23601;&#26159;
+Java EE&#30340;&#23448;&#26041;&#27491;&#24335;&#32452;&#20214;&#20043;&#19968;.</p>
+<p>&#36873;&#21462;http://myfaces.apache.org/[Apache MyFaces&#39033;&#30446;]&#20316;&#20026;&#27969;&#34892;&#30340;JSF&#36816;&#34892;&#26102;&#21644;&#27969;&#34892;&#30340;JSF&#32452;&#20214;&#24211;.
+MyFaces&#39033;&#30446;&#21516;&#26679;&#25552;&#20379;&#36890;&#29992;&#30340;JSF&#25193;&#23637;&#20363;&#22914; <a class="ulink" href="http://myfaces.apache.org/orchestra/" target="_top">MyFaces Orchestra</a>:
+&#19968;&#20010;&#22522;&#20110;Spring&#30340;&#25552;&#20379;&#20016;&#23500;&#30340;&#20250;&#35805;&#20316;&#29992;&#22495;&#25903;&#25345;&#30340;JSF&#25193;&#23637;.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Spring Web Flow 2.0 provides rich JSF support through its newly established Spring Faces
-module, both for JSF-centric usage (as described in this section) and for Spring-centric
-usage (using JSF views within a Spring MVC dispatcher). Check out the
-<a class="ulink" href="http://projects.spring.io/spring-webflow" target="_top">Spring Web Flow website</a> for details!</p>
+<p>Spring Web Flow 2.0&#36890;&#36807;&#26032;&#24314;&#31435;&#30340;Spring Faces&#32452;&#20214;&#25552;&#20379;&#20016;&#23500;&#30340;JSF&#25903;&#25345;, &#21516;&#26102;&#25903;&#25345;JSF-centric&#26041;&#24335; (&#22914;&#26412;&#33410;&#20171;&#32461;)
+&#21644;Spring-centric&#26041;&#24335;(&#22312;Spring MVC&#25511;&#21046;&#36339;&#36716;,&#20351;&#29992;JSF&#36827;&#34892;&#23637;&#29616;). &#26597;&#30475;
+<a class="ulink" href="http://projects.spring.io/spring-webflow" target="_top">Spring Web Flow&#31449;&#28857;</a> &#33719;&#21462;&#35814;&#32454;&#20449;&#24687;!</p>
 </td></tr></table></div>
 
-<p>The key element in Spring&#8217;s JSF integration is the JSF <code class="literal">ELResolver</code> mechanism.</p>
+<p>Spring&#19982;JSF&#38598;&#25104;&#30340;&#20851;&#38190;&#28857;&#22312;&#20110;JSF&#30340;<code class="literal">ELResolver</code>&#26426;&#21046;.</p>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jsf-springbeanfaceselresolver" href="#jsf-springbeanfaceselresolver"></a>18.3.1&nbsp;SpringBeanFacesELResolver (JSF 1.2+)</h3></div></div></div>
 
-<p><code class="literal">SpringBeanFacesELResolver</code> is a JSF 1.2 compliant <code class="literal">ELResolver</code> implementation,
-integrating with the standard Unified EL as used by JSF 1.2 and JSP 2.1. Like
-<code class="literal">SpringBeanVariableResolver</code>, it delegates to the Spring&#8217;s <span class="emphasis"><em>business context</em></span>
-<code class="literal">WebApplicationContext</code> <span class="emphasis"><em>first</em></span>, then to the default resolver of the underlying JSF
-implementation.</p>
-<p>Configuration-wise, simply define <code class="literal">SpringBeanFacesELResolver</code> in your JSF 1.2
-<span class="emphasis"><em>faces-context.xml</em></span> file:</p>
+<p><code class="literal">SpringBeanFacesELResolver</code> &#26159;&#19968;&#20010;&#19982;JSF 1.2 <code class="literal">ELResolver</code>&#30456;&#20860;&#23481;&#30340;&#23454;&#29616;,&#19982;&#22312;JSF 1.2&#21644;JSP 2.1
+&#20013;&#20351;&#29992;&#30340;&#26631;&#20934;&#32479;&#19968;EL&#38598;&#25104;. &#23601;&#20687;<code class="literal">SpringBeanVariableResolver</code>, &#23427;<span class="emphasis"><em>&#39318;&#20808;</em></span>&#22996;&#25176;Spring&#30340;
+<span class="emphasis"><em>&#19994;&#21153;&#19978;&#19979;&#25991;</em></span><code class="literal">WebApplicationContext</code>, &#28982;&#21518;&#20132;&#32473;&#40664;&#35748;&#30340;&#24213;&#23618;JSF&#23454;&#29616;&#21457;&#29616;&#26426;&#21046;.</p>
+<p>&#22312;&#20320;JSF 1.2&#30340;<span class="emphasis"><em>faces-context.xml</em></span>&#25991;&#20214;&#20013;&#24555;&#36895;&#31616;&#21333;&#23450;&#20041;<code class="literal">SpringBeanFacesELResolver</code>&#30340;&#37197;&#32622;&#26679;&#20363;:</p>
 <pre class="programlisting"><span class="hl-tag">&lt;faces-config&gt;</span>
     <span class="hl-tag">&lt;application&gt;</span>
         <span class="hl-tag">&lt;el-resolver&gt;</span>org.springframework.web.jsf.el.SpringBeanFacesELResolver<span class="hl-tag">&lt;/el-resolver&gt;</span>
@@ -147,49 +104,42 @@ implementation.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="jsf-facescontextutils" href="#jsf-facescontextutils"></a>18.3.2&nbsp;FacesContextUtils</h3></div></div></div>
 
-<p>A custom <code class="literal">VariableResolver</code> works well when mapping one&#8217;s properties to beans
-in <span class="emphasis"><em>faces-config.xml</em></span>, but at times one may need to grab a bean explicitly. The
+<p>&#23613;&#31649;&#22312;<span class="emphasis"><em>faces-config.xml</em></span>&#25991;&#20214;&#20013;&#23558;&#29305;&#24615;&#21521;bean&#26144;&#23556;&#30340;&#26102;&#20505;, &#19968;&#20010;&#33258;&#23450;&#20041;&#30340;<code class="literal">VariableResolver</code>&#24037;&#20316;&#24471;&#24456;&#22909;,
+&#20294;&#26377;&#26102;&#20505;&#20154;&#20204;&#38656;&#35201;&#26126;&#30830;&#22320;&#20105;&#22842;bean.
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/jsf/FacesContextUtils.html" target="_top"><code class="literal">FacesContextUtils</code></a>
-class makes this easy. It is similar to <code class="literal">WebApplicationContextUtils</code>, except that it
-takes a <code class="literal">FacesContext</code> parameter rather than a <code class="literal">ServletContext</code> parameter.</p>
+&#36825;&#20010;&#31867;&#20351;&#24471;&#36825;&#19968;&#20999;&#24456;&#31616;&#21333;. &#23427;&#21644;<code class="literal">WebApplicationContextUtils</code>&#24456;&#30456;&#20687;, &#38500;&#20102;&#23427;&#38656;&#35201;&#19968;&#20010;<code class="literal">FacesContext</code>&#21442;&#25968;&#32780;&#19981;&#26159;&#19968;&#20010;
+<code class="literal">ServletContext</code>&#21442;&#25968;.</p>
 <pre class="programlisting">ApplicationContext ctx = FacesContextUtils.getWebApplicationContext(FacesContext.getCurrentInstance());</pre>
 
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="struts" href="#struts"></a>18.4&nbsp;Apache Struts 2.x</h2></div></div></div>
 
-<p>Invented by Craig McClanahan, <a class="ulink" href="http://struts.apache.org" target="_top">Struts</a> is an open source project
-hosted by the Apache Software Foundation. At the time, it greatly simplified the
-JSP/Servlet programming paradigm and won over many developers who were using proprietary
-frameworks. It simplified the programming model, it was open source (and thus free as in
-beer), and it had a large community, which allowed the project to grow and become popular
-among Java web developers.</p>
-<p>Check out the Struts
-<a class="ulink" href="https://struts.apache.org/release/2.3.x/docs/spring-plugin.html" target="_top">Spring Plugin</a> for the
-built-in Spring integration shipped with Struts.</p>
+<p>&#30001;Craig McClanahan&#21019;&#24314;, <a class="ulink" href="http://struts.apache.org" target="_top">Struts</a> &#26159;&#19968;&#20010;&#30001;Apache&#22522;&#37329;&#20250;&#31649;&#29702;&#30340;&#24320;&#28304;&#39033;&#30446;. &#22914;&#20170;,
+&#23427;&#22823;&#22823;&#22320;&#31616;&#21270;&#20102;JSP/Servlet&#32534;&#31243;&#26679;&#24335;&#24182;&#19988;&#36194;&#24471;&#20102;&#22823;&#37327;&#30340;&#21407;&#20808;&#20351;&#29992;&#31169;&#26377;&#26694;&#26550;&#30340;&#24320;&#21457;&#32773;. &#23427;&#31616;&#21270;&#20102;&#24320;&#21457;&#27169;&#22411;, &#23427;&#24320;&#25918;&#28304;&#20195;&#30721;(&#20110;&#26159;&#23601;&#22914;&#21516;&#20813;&#36153;&#21860;&#37202;&#19968;&#26679;),
+&#24182;&#19988;&#26377;&#19968;&#20010;&#30456;&#24403;&#22823;&#30340;&#31038;&#21306;, &#23427;&#20801;&#35768;&#39033;&#30446;&#22686;&#38271;&#24182;&#19988;&#22312;Java web&#24320;&#21457;&#32773;&#20013;&#24456;&#27969;&#34892;.</p>
+<p>&#26597;&#30475;Struts&#30340;
+<a class="ulink" href="https://struts.apache.org/release/2.3.x/docs/spring-plugin.html" target="_top">Spring Plugin</a> &#20102;&#35299;Struts
+&#20869;&#24314;&#30340;&#23545;Spring&#38598;&#25104;&#30340;&#25903;&#25345;.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="tapestry" href="#tapestry"></a>18.5&nbsp;Tapestry 5.x</h2></div></div></div>
 
-<p>From the <a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry homepage</a>:</p>
-<p>Tapestry is a "<span class="emphasis"><em>Component oriented framework for creating dynamic, robust,
-highly scalable web applications in Java.</em></span>"</p>
-<p>While Spring has its own <a class="link" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;">powerful web layer</a>, there are a number of unique
-advantages to building an enterprise Java application using a combination of Tapestry
-for the web user interface and the Spring container for the lower layers.</p>
-<p>For more information, check out Tapestry&#8217;s dedicated
-<a class="ulink" href="https://tapestry.apache.org/integrating-with-spring-framework.html" target="_top">integration module for
-Spring</a>.</p>
+<p>&#26469;&#33258;&#20110; <a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry &#20027;&#39029;</a>&#30340;&#20449;&#24687;:</p>
+<p>Tapestry &#26159;&#19968;&#20010; "<span class="emphasis"><em>&#23450;&#20301;&#20110;&#21019;&#24314;&#21160;&#24577;&#30340;, &#24378;&#22766;&#30340;,&#39640;&#21487;&#25193;&#23637;&#24615;&#30340;web&#24212;&#29992;&#30340;Java&#26694;&#26550;.</em></span>"</p>
+<p>&#23613;&#31649;Spring&#25317;&#26377;&#20182;&#33258;&#24049;&#30340;<a class="link" href="mvc.html" title="16.&nbsp;Web MVC &#26694;&#26550;">&#24378;&#21170;&#30340;web&#23618;</a>, &#20294;&#20173;&#28982;&#26377;&#24456;&#22810;&#27491;&#24403;&#29702;&#30001;&#26469;&#20351;&#29992;&#19968;&#20010;&#29992;Tapestry&#20316;&#20026;&#29992;&#25143;&#23637;&#29616;&#23618;, &#20351;&#29992;Spring&#23481;&#22120;&#26469;&#20316;&#20026;
+&#26356;&#20302;&#23618;&#27425;&#30340;&#32452;&#21512;&#26469;&#26500;&#24314;&#20225;&#19994;&#32423;&#24212;&#29992;.</p>
+<p>&#26597;&#30475;
+<a class="ulink" href="https://tapestry.apache.org/integrating-with-spring-framework.html" target="_top">&#21516;Spring&#38598;&#25104;&#27169;&#22359;</a>&#33719;&#21462;&#26356;&#22810;&#20449;&#24687;.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-resources" href="#web-integration-resources"></a>18.6&nbsp;Further Resources</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="web-integration-resources" href="#web-integration-resources"></a>18.6&nbsp;&#26356;&#22810;&#36164;&#28304;</h2></div></div></div>
 
-<p>Find below links to further resources about the various web frameworks described in this
-chapter.</p>
+<p>&#28857;&#20987;&#19979;&#38754;&#30340;&#38142;&#25509;&#26469;&#33719;&#21462;&#26412;&#31456;&#25152;&#25552;&#21040;&#30340;web&#26694;&#26550;&#30340;&#26356;&#22810;&#36164;&#28304;.</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-The <a class="ulink" href="http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html" target="_top">JSF</a> homepage
+<a class="ulink" href="http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html" target="_top">JSF&#30340;&#20027;&#39029;</a>
 </li><li class="listitem">
-The <a class="ulink" href="http://struts.apache.org/" target="_top">Struts</a> homepage
+<a class="ulink" href="http://struts.apache.org/" target="_top">Struts&#30340;&#20027;&#39029;</a>
 </li><li class="listitem">
-The <a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry</a> homepage
+<a class="ulink" href="http://tapestry.apache.org/" target="_top">Tapestry&#30340;&#20027;&#39029;</a>
 </li></ul></div>
 
 </div>

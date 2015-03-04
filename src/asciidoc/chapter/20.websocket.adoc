@@ -1,35 +1,41 @@
 [[websocket]]
 == WebSocket 支持
-This part of the reference documentation covers Spring Framework's support for
-WebSocket-style messaging in web applications including use of STOMP as an
-application level WebSocket sub-protocol.
+这部分的参考文档涵盖了Spring框架的支持
+websocket式消息传递在web应用程序中包括利用STOMP作为
+应用程序级别的WebSocket子协议.
 
-<<websocket-intro>> establishes a frame of mind in which to think about
+<<websocket-介绍>> establishes a frame of mind in which to think about
 WebSocket, covering adoption challenges, design considerations, and thoughts on
 when it is a good fit.
 
-<<websocket-server>> reviews the Spring WebSocket API on the
+<<websocket-服务器>>
+回顾在服务器端的Spring WebSocket API,当<<websocket-可靠性>>解释sockJS协议和演示如何设置和使用它
+reviews the Spring WebSocket API on the
 server-side while <<websocket-fallback>> explains the SockJS protocol and shows
 how to configure and use it.
 
-<<websocket-stomp-overview>> introduces the STOMP messaging protocol.
-<<websocket-stomp-enable>> demonstrates how to configure STOMP support in Spring.
-<<websocket-stomp-handle-annotations>> and the following sections explain how to
-write annotated message handling methods, send messages, choose message broker
-options, as well as work with the special "user" destinations. Finally,
-<<websocket-stomp-testing>> lists three approaches to testing STOMP/WebSocket
-applications.
+<<websocket-stomp-overview>> 介绍 STOMP 消息 protocol.
+
+<<websocket-stomp-enable>> 示范如果在spring中配置STOMP
+
+<<websocket-stomp-handle-annotations>> 
+接下来的章节来阐述如何给消息处理函数,发送消息函数,选择消息服务实例选项,以及使用特殊的“用户”的目的地来添加注解
+
+
+<<websocket-stomp-testing>> 
+展示三种测试STOMP/WebSocket应用的处理方式
 
 
 
 [[websocket-intro]]
-=== Introduction
-The WebSocket protocol http://tools.ietf.org/html/rfc6455[RFC 6455] defines an important
-new capability for web applications: full-duplex, two-way communication between client
-and server. It is an exciting new capability on the heels of a long history of
+=== 介绍
+WebSocket协议 http://tools.ietf.org/html/rfc6455[RFC 6455] 为web应用定义了
+一项重要的能力: 全双工, 双向沟通 在客户端和服务器端.
+It is an exciting new capability on the heels of a long history of
 techniques to make the web more interactive including Java applets, XMLHttpRequest,
 Adobe Flash, ActiveXObject, various Comet techniques, server-sent events, and others.
 
+一个完整的WebSocket 协议的介绍超出了这个文档的范围.不管怎样
 A proper introduction of the WebSocket protocol is beyond the scope of this
 document. At a minimum however it's important to understand that HTTP is used only for
 the initial handshake, which relies on a mechanism built into HTTP to request
@@ -38,23 +44,19 @@ HTTP status 101 (switching protocols) if it agrees. Assuming the handshake succe
 the TCP socket underlying the HTTP upgrade request remains open and both client and
 server can use it to send messages to each other.
 
-Spring Framework 4 includes a new `spring-websocket` module with comprehensive
-WebSocket support. It is compatible with the Java WebSocket API standard
-(http://jcp.org/en/jsr/detail?id=356[JSR-356])
-and also provides additional value-add as explained in the rest of the introduction.
+Spring Framework 4 包含了一个新的对WebSocket提供全面支持的 'spring-websocket' 模块
+兼容了标准的Java WebSocket API(http://jcp.org/en/jsr/detail?id=356[JSR-356])
+而且也提供了额外增值的一些支持比如说其他的一些介绍
+
 
 
 
 [[websocket-into-fallback-options]]
 ==== WebSocket Fallback Options
-An important challenge to adoption is the lack of support for WebSocket in some
-browsers. Notably the first Internet Explorer version to support WebSocket is
-version 10 (see http://caniuse.com/websockets for support by browser versions).
-Furthermore, some restrictive proxies
-may be configured in ways that either preclude the attempt to do HTTP upgrade
-or otherwise break connection after some time because it has remained opened
-for too long. A good overview on this topic from Peter Lubbers is available in
-the InfoQ article
+一个严重的挑战是在一些浏览器对WebSocket支持的不足.尤其是第一个支持websocket的IE是版本10
+(see http://caniuse.com/websockets 查找浏览器版本对websocket支持的帮助).
+此外,一些使用严格限制的代理的情况也存在这样的问题,比如用来阻止HTTP upgrade的尝试或者因为保持连接太长而被断开连接
+一个良好的关于这个主题的综述来自Peter Lubbers你可以在InFoQ 查看文章
 http://www.infoq.com/articles/Web-Sockets-Proxy-Servers["How HTML5 Web Sockets Interact With Proxy Servers"].
 
 
@@ -68,10 +70,11 @@ modifying the application otherwise.
 
 
 [[websocket-intro-architecture]]
-==== A Messaging Architecture
+==== 基于消息的架构
 Aside from short-to-midterm adoption challenges, using WebSocket
 brings up important design considerations that are important to recognize
 early on, especially in contrast to what we know about building web applications today.
+
 
 Today REST is a widely accepted, understood, and supported
 architecture for building web applications. It is an architecture that relies
@@ -128,7 +131,7 @@ WebSocket and over the web.
 
 
 [[websocket-intro-when-to-use]]
-==== Should I Use WebSocket?
+==== 我应该使用websocket吗?
 With all the design considerations surrounding the use of WebSocket, it is
 reasonable to ask when is it appropriate to use?
 
@@ -172,7 +175,8 @@ WebSocket clients or to a specific user.
 
 [[websocket-server]]
 === WebSocket API
-The Spring Framework provides a WebSocket API designed to adapt to various WebSocket engines.
+Spring Framework提供用来适应多种WebSocket引擎的WebSocket API
+
 Currently the list includes WebSocket runtimes such as Tomcat 7.0.47+, Jetty 9.1+,
 GlassFish 4.1+, WebLogic 12.1.3+, and Undertow 1.0+ (and WildFly 8.0+). Additional support
 may be added as more WebSocket runtimes become available.
@@ -194,9 +198,10 @@ directly.
 
 
 [[websocket-server-handler]]
-==== Create and Configure a WebSocketHandler
-Creating a WebSocket server is as simple as implementing `WebSocketHandler` or more
-likely extending either `TextWebSocketHandler` or `BinaryWebSocketHandler`:
+==== 创建并配置一个WebSocketHandler  
+创建一个WebSocket 服务器就像实现一个 'WebsocketHandler'一样简单,
+或者更像继承'TextWebSocketHandler'或'BinaryWebSocketHandler':
+
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -274,7 +279,7 @@ into other HTTP serving environments with the help of
 
 
 [[websocket-server-handshake]]
-==== Customizing the WebSocket Handshake
+==== 自定义Websocket Handshake 
 The easiest way to customize the initial HTTP WebSocket handshake request is through
 a `HandshakeInterceptor`, which exposes "before" and "after" the handshake methods.
 Such an interceptor can be used to preclude the handshake or to make any attributes
@@ -335,7 +340,7 @@ Both the Java-config and XML namespace make it possible to configure a custom
 
 
 [[websocket-server-decorators]]
-==== WebSocketHandler Decoration
+==== WebSocketHandler 的装饰器
 Spring provides a `WebSocketHandlerDecorator` base class that can be used to decorate
 a `WebSocketHandler` with additional behavior. Logging and exception handling
 implementations are provided and added by default when using the WebSocket Java-config
@@ -346,11 +351,18 @@ session with status `1011` that indicates a server error.
 
 
 [[websocket-server-deployment]]
-==== Deployment Considerations
+==== 部署注意事项
+Spring WebSocket API 可以很方便的继承到那些使用'DispatcherServlet'服务于WebSocket
+握手或者其他http请求的springMVC的应用
+
 The Spring WebSocket API is easy to integrate into a Spring MVC application where
 the `DispatcherServlet` serves both HTTP WebSocket handshake as well as other
-HTTP requests. It is also easy to integrate into other HTTP processing scenarios
-by invoking `WebSocketHttpRequestHandler`. This is convenient and easy to
+HTTP requests. 
+它同样可以很方便的集成到其他的通过调用'WebSocketHttpRequestHandler'来处理Http的情况
+It is also easy to integrate into other HTTP processing scenarios
+by invoking `WebSocketHttpRequestHandler`. 
+这是实用和易懂的.尽管,
+This is convenient and easy to
 understand. However, special considerations apply with regards to JSR-356 runtimes.
 
 The Java WebSocket API (JSR-356) provides two deployment mechanisms. The first
@@ -419,7 +431,7 @@ Java initialization API, if required:
 ----
 
 [[websocket-server-runtime-configuration]]
-==== Configuring the WebSocket Engine
+==== 配置WebSocket 引擎
 
 Each underlying WebSocket engine exposes configuration properties that control
 runtime characteristics such as the size of message buffer sizes, idle timeout,
@@ -470,10 +482,10 @@ or WebSocket XML namespace:
 
 [NOTE]
 ====
-For client side WebSocket configuration, you should use `WebSocketContainerFactoryBean`
-(XML) or `ContainerProvider.getWebSocketContainer()` (Java config).
+对于客户端Websocket的配置来说, 你应该使用 `WebSocketContainerFactoryBean`
+(XML) 或者 `ContainerProvider.getWebSocketContainer()` (Java config).
 ====
-
+对于Jetty来说,你将需要提供一个预设置的 Jetty 'WebSocketServerFactory' 和 
 For Jetty, you'll need to supply a pre-configured Jetty `WebSocketServerFactory` and plug
 that into Spring's `DefaultHandshakeHandler` through your WebSocket Java config:
 
@@ -616,7 +628,7 @@ http://sockjs.github.io/sockjs-protocol/sockjs-protocol-0.3.3.html[narrated test
 
 
 [[websocket-fallback-sockjs-enable]]
-==== Enable SockJS
+==== 启用 SockJS
 SockJS is easy to enable through a configuration:
 
 [source,java,indent=0]
@@ -759,7 +771,7 @@ https://github.com/sockjs/sockjs-client[SockJS client] page.
 ====
 
 [[websocket-fallback-sockjs-heartbeat]]
-==== Heartbeat Messages
+==== 心跳消息 Heartbeat Messages
 
 The SockJS protocol requires servers to send heartbeat messages to preclude proxies
 from concluding a connection is hung. The Spring SockJS configuiration has a property
@@ -780,7 +792,7 @@ with default settings based on the number of available processors. Applications
 should consider customizing the settings according to their specific needs.
 
 [[websocket-fallback-sockjs-servlet3-async]]
-==== Servlet 3 Async Requests
+==== Servlet 3 异步请求 Servlet 3 Async Requests
 
 HTTP streaming and HTTP long polling SockJS transports require a connection to remain
 open longer than usual. For an overview of these techniques see
@@ -835,7 +847,7 @@ SockJS endpoint prefix thus letting Spring's SockJsService handle it.
 
 
 [[websocket-fallback-sockjs-client]]
-==== SockJS Client
+==== SockJS 客户端
 
 A SockJS Java client is provided in order to connect to remote SockJS endpoints without
 using a browser. This can be especially useful when there is a need of bidirectional
@@ -2047,18 +2059,27 @@ SockJS Task Scheduler:: stats from thread pool of the SockJS task scheduler whic
     STOMP level the SockJS heartbeats are disabled.
 
 [[websocket-stomp-testing]]
-==== Testing Annotated Controller Methods
+==== 测试带注解的控制器方法 Testing Annotated Controller Methods
+
+有两个主要的方法来测试使用Spring STOMP来提供WebSocket支持的应用.
+第一个就是写一个服务器端的测试来验证控制器的函数和那些注解的消息处理方法.
+第二个是写一个完整的端到端的测试包含了运行的客户端和服务器端
 
 There are two main approaches to testing applications using Spring's STOMP over
 WebSocket support. The first is to write server-side tests verifying the functionality
 of controllers and their annotated message handling methods. The second is to write
 full end-to-end tests that involve running a client and a server.
 
+这两种方式并不是相互的独立的.相反在一个完成的测试策略里面他们各司其职.
+服务器端的测试更受到关注也更容易编写和维护.端到端的集成测试从另一个方便
+讲更加的完成和测试更多的地方但是它们同样更多的包含编写测试和维护.
+
 The two approaches are not mutually exclusive. On the contrary each has a place
 in an overall test strategy. Server-side tests are more focused and easier to write
 and maintain. End-to-end integration tests on the other hand are more complete and
 test much more but they're also more involved to write and maintain.
 
+服务器端测试最简单的形式是写一个控制器单元测试.
 The simplest form of server-side tests is to write controller unit tests. However
 this is not useful enough since much of what a controller does depends on its
 annotations. Pure unit tests simply can't test that.
@@ -2069,9 +2090,14 @@ framework. i.e. without running a Servlet container but relying on the Spring Fr
 to invoke the annotated controllers. Just like with Spring MVC Test here there are two
 two possible alternatives, either using a "context-based" or "standalone" setup:
 
+1.使用spring testContext framework 来帮助加载现行的spring配置文件,
+注入"clientInboundChannel"作为一个试验田,使用它来发送被控制器方法处理的消息
+
 1. Load the actual Spring configuration with the help of the
 Spring TestContext framework, inject "clientInboundChannel" as a test field, and
 use it to send messages to be handled by controller methods.
+
+
 
 2. Manually set up the minimum Spring framework infrastructure required to invoke
 controllers (namely the `SimpAnnotationMethodMessageHandler`) and pass messages for

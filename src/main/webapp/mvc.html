@@ -89,7 +89,7 @@ described in <a class="xref" href="beans.html#beans-factory-scopes-other" title=
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-introduction-pluggability" href="#mvc-introduction-pluggability"></a>16.1.2&nbsp;Pluggability of other MVC implementations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-introduction-pluggability" href="#mvc-introduction-pluggability"></a>16.1.2&nbsp;&#20854;&#20182; MVC &#23454;&#29616;&#30340;&#21487;&#25554;&#20837;&#24615;</h3></div></div></div>
 
 <p>Non-Spring MVC implementations are preferable for some projects. Many teams expect to
 leverage their existing investment in skills and tools, for example with JSF.</p>
@@ -117,7 +117,7 @@ The request processing workflow of the Spring Web MVC <code class="literal">Disp
 in the following diagram. The pattern-savvy reader will recognize that the
 <code class="literal">DispatcherServlet</code> is an expression of the "Front Controller" design pattern (this is a
 pattern that Spring Web MVC shares with many other leading web frameworks).</p>
-<div class="figure"><a name="d5e13940" href="#d5e13940"></a><p class="title"><b>Figure&nbsp;16.1.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e13912" href="#d5e13912"></a><p class="title"><b>Figure&nbsp;16.1.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/mvc.png" alt="mvc"></div>
 </div></div><br class="figure-break">
 
@@ -206,7 +206,7 @@ image::images/mvc-contexts.gif[width=400]
 <p><code class="literal">DispatcherServlet</code>  &#20351;&#29992;&#20102;&#20854;&#19987;&#29992;&#30340; bean &#26469;&#22788;&#29702;&#35831;&#27714;&#21644;&#28210;&#26579;&#35270;&#22270;&#12290;&#36825;&#20123; bean &#26159; Spring &#30340;&#32452;&#25104;&#37096;&#20998;&#20043;&#19968;&#65292;&#20320;&#21487;&#20197;&#36873;&#25321;&#22312; <code class="literal">WebApplicationContext</code>&#37197;&#32622;&#25152;&#20351;&#29992;&#19968;&#20010;&#25110;&#22810;&#20010;&#19987;&#29992;&#30340;bean&#12290;&#24403;&#28982;&#65292;&#27604;&#24182;&#19981;&#38656;&#35201;&#19968;&#24320;&#22987;&#23601;&#21435;&#37197;&#32622;&#36825;&#20123;&#19987;&#29992;&#30340; bean&#65292;&#22240;&#20026;&#22312;&#20320;&#19981;&#37197;&#32622;&#36825;&#20123; bean&#26102;&#65292;Spring &#20250;&#32500;&#25252;&#19968;&#31995;&#21015;&#40664;&#35748;&#30340; bean&#12290;&#39318;&#20808;&#25105;&#20204;&#30475;&#19968;&#19979;  <code class="literal">DispatcherServlet</code> &#20381;&#36182;&#20102;&#21738;&#20123;&#19987;&#29992;&#30340; bean&#65292;&#21518;&#32493;&#20877;&#20316;&#35814;&#35299;&#12290;</p>
 <div class="table"><a name="mvc-webappctx-special-beans-tbl" href="#mvc-webappctx-special-beans-tbl"></a><p class="title"><b>Table&nbsp;16.1.&nbsp;WebApplicationContext &#19987;&#29992; bean &#21015;&#34920;</b></p><div class="table-contents">
 
-  <table summary="WebApplicationContext &#19987;&#29992; bean &#21015;&#34920;" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Bean &#31867;&#22411;</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">&#35299;&#37322;</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-handlermapping" title="16.4&nbsp;Handler mappings">HandlerMapping</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#20256;&#20837;&#30340;&#35831;&#27714;&#26144;&#23556;&#21040;&#22788;&#29702;&#22120;&#65292;&#19982;&#19968;&#31995;&#21015;&#22522;&#20110;&#21508;&#31181;&#26465;&#20214;&#30340; pre- &#21644; post- &#22788;&#29702;&#22120;&#65292;&#36825;&#20123;&#22788;&#29702;&#22120;&#26681;&#25454; <code class="literal">HandlerMapping</code> &#23454;&#29616;&#30340;&#19981;&#21516;&#32780;&#20250;&#26377;&#25152;&#24046;&#24322;&#12290;&#26368;&#20250;&#27426;&#36814;&#30340; <code class="literal">HandlerMapping</code> &#23454;&#29616;&#25552;&#20379;&#27880;&#35299;&#25511;&#21046;&#22120;&#65292;&#20294;&#20854;&#20182;&#23454;&#29616;&#20063;&#20173;&#28982;&#26159;&#23384;&#22312;&#30340;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>HandlerAdapter</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#24110;&#21161; <code class="literal">DispatcherServlet</code> &#21435;&#35843;&#29992;&#35831;&#27714;&#25152;&#26144;&#23556;&#30340; handler&#65292;&#19981;&#31649;hadler &#26368;&#32456;&#26159;&#21542;&#20250;&#34987;&#35843;&#29992;&#65292;&#36825;&#20010;&#22788;&#29702;&#36807;&#31243;&#37117;&#20250;&#23384;&#22312;&#30340;&#12290;&#27604;&#22914;&#65292;&#35843;&#29992;&#27880;&#35299;&#25511;&#21046;&#22120;&#21069;&#38656;&#35201;&#35299;&#26512;&#21508;&#31181; annotations&#12290;&#22240;&#27492;&#65292;<code class="literal">HandlerAdapter</code> &#30340;&#20027;&#35201;&#30446;&#30340;&#23601;&#26159;&#20174; <code class="literal">DispatcherServlet</code> &#20013;&#23631;&#34109;&#36825;&#20123;&#22788;&#29702;&#32454;&#33410;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-exceptionhandlers" title="16.11&nbsp;Handling exceptions">HandlerExceptionResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#24322;&#24120;&#26144;&#23556;&#21040;&#25351;&#23450;&#35270;&#22270;&#65292;&#20063;&#25903;&#25345;&#33258;&#23450;&#20041;&#26356;&#21152;&#22797;&#26434;&#30340;&#24322;&#24120;&#22788;&#29702;&#27969;&#31243;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-viewresolver" title="16.5&nbsp;Resolving views">ViewResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#21512;&#29702;&#30340;&#35270;&#22270;&#21517;&#31216;&#35299;&#37322;&#20026;&#30495;&#23454;&#30340;&#35270;&#22270;&#31867;&#22411;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-localeresolver" title="16.8&nbsp;Using locales">LocaleResolver</a> &amp; <a class="link" href="mvc.html#mvc-timezone" title="16.8.1&nbsp;Obtaining Time Zone Information">LocaleContextResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322;&#23458;&#25143;&#31471;&#25152;&#22312;&#22320;&#21306;&#21644;&#20854;&#26102;&#21306;(&#26412;&#22320;&#21270;)&#65292;&#20197;&#20415;&#25552;&#20379;&#22269;&#38469;&#21270;&#30340;&#35270;&#22270;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-themeresolver" title="16.9&nbsp;Using themes">ThemeResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322; web &#31243;&#24207;&#21487;&#29992;&#30340;&#20027;&#39064;&#65292;&#27604;&#22914;&#65292;&#25552;&#20379;&#20010;&#24615;&#21270;&#30340;&#24067;&#23616;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-multipart" title="16.10&nbsp;Spring&#8217;s multipart (file upload) support">MultipartResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322; multi-part &#35831;&#27714;&#65292;&#27604;&#22914;&#65292;&#22312; html form &#37324;&#25903;&#25345;&#25991;&#20214;&#19978;&#20256;</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-flash-attributes" title="16.6&nbsp;Using flash attributes">FlashMapManager</a></p></td><td style="" align="left" valign="top"><p>Stores and retrieves the "input" and the "output" <code class="literal">FlashMap</code> that can be used to pass
+  <table summary="WebApplicationContext &#19987;&#29992; bean &#21015;&#34920;" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">Bean &#31867;&#22411;</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">&#35299;&#37322;</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-handlermapping" title="16.4&nbsp;Handler &#26144;&#23556;">HandlerMapping</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#20256;&#20837;&#30340;&#35831;&#27714;&#26144;&#23556;&#21040;&#22788;&#29702;&#22120;&#65292;&#19982;&#19968;&#31995;&#21015;&#22522;&#20110;&#21508;&#31181;&#26465;&#20214;&#30340; pre- &#21644; post- &#22788;&#29702;&#22120;&#65292;&#36825;&#20123;&#22788;&#29702;&#22120;&#26681;&#25454; <code class="literal">HandlerMapping</code> &#23454;&#29616;&#30340;&#19981;&#21516;&#32780;&#20250;&#26377;&#25152;&#24046;&#24322;&#12290;&#26368;&#20250;&#27426;&#36814;&#30340; <code class="literal">HandlerMapping</code> &#23454;&#29616;&#25552;&#20379;&#27880;&#35299;&#25511;&#21046;&#22120;&#65292;&#20294;&#20854;&#20182;&#23454;&#29616;&#20063;&#20173;&#28982;&#26159;&#23384;&#22312;&#30340;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p>HandlerAdapter</p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#24110;&#21161; <code class="literal">DispatcherServlet</code> &#21435;&#35843;&#29992;&#35831;&#27714;&#25152;&#26144;&#23556;&#30340; handler&#65292;&#19981;&#31649;hadler &#26368;&#32456;&#26159;&#21542;&#20250;&#34987;&#35843;&#29992;&#65292;&#36825;&#20010;&#22788;&#29702;&#36807;&#31243;&#37117;&#20250;&#23384;&#22312;&#30340;&#12290;&#27604;&#22914;&#65292;&#35843;&#29992;&#27880;&#35299;&#25511;&#21046;&#22120;&#21069;&#38656;&#35201;&#35299;&#26512;&#21508;&#31181; annotations&#12290;&#22240;&#27492;&#65292;<code class="literal">HandlerAdapter</code> &#30340;&#20027;&#35201;&#30446;&#30340;&#23601;&#26159;&#20174; <code class="literal">DispatcherServlet</code> &#20013;&#23631;&#34109;&#36825;&#20123;&#22788;&#29702;&#32454;&#33410;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-exceptionhandlers" title="16.11&nbsp;Handling exceptions">HandlerExceptionResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#24322;&#24120;&#26144;&#23556;&#21040;&#25351;&#23450;&#35270;&#22270;&#65292;&#20063;&#25903;&#25345;&#33258;&#23450;&#20041;&#26356;&#21152;&#22797;&#26434;&#30340;&#24322;&#24120;&#22788;&#29702;&#27969;&#31243;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-viewresolver" title="16.5&nbsp;&#35270;&#22270;&#35299;&#26512;">ViewResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#23558;&#21512;&#29702;&#30340;&#35270;&#22270;&#21517;&#31216;&#35299;&#37322;&#20026;&#30495;&#23454;&#30340;&#35270;&#22270;&#31867;&#22411;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-localeresolver" title="16.8&nbsp;Using locales">LocaleResolver</a> &amp; <a class="link" href="mvc.html#mvc-timezone" title="16.8.1&nbsp;Obtaining Time Zone Information">LocaleContextResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322;&#23458;&#25143;&#31471;&#25152;&#22312;&#22320;&#21306;&#21644;&#20854;&#26102;&#21306;(&#26412;&#22320;&#21270;)&#65292;&#20197;&#20415;&#25552;&#20379;&#22269;&#38469;&#21270;&#30340;&#35270;&#22270;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-themeresolver" title="16.9&nbsp;Using themes">ThemeResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322; web &#31243;&#24207;&#21487;&#29992;&#30340;&#20027;&#39064;&#65292;&#27604;&#22914;&#65292;&#25552;&#20379;&#20010;&#24615;&#21270;&#30340;&#24067;&#23616;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-multipart" title="16.10&nbsp;Spring&#8217;s multipart (file upload) support">MultipartResolver</a></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#35299;&#37322; multi-part &#35831;&#27714;&#65292;&#27604;&#22914;&#65292;&#22312; html form &#37324;&#25903;&#25345;&#25991;&#20214;&#19978;&#20256;</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><a class="link" href="mvc.html#mvc-flash-attributes" title="16.6&nbsp;&#20351;&#29992; flash &#23646;&#24615;">FlashMapManager</a></p></td><td style="" align="left" valign="top"><p>Stores and retrieves the "input" and the "output" <code class="literal">FlashMap</code> that can be used to pass
   attributes from one request to another, usually across a redirect.</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
@@ -701,7 +701,7 @@ Session &#23545;&#35937; (Servlet API):&#38656;&#35201;&#26159; <code class="lit
 </td></tr></table></div>
 
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">org.springframework.web.context.request.WebRequest</code> o&#25110;
+<code class="literal">org.springframework.web.context.request.WebRequest</code> &#25110;
 <code class="literal">org.springframework.web.context.request.NativeWebRequest</code>.&#20801;&#35768;&#36890;&#36807;&#35831;&#27714;&#21442;&#25968;&#35775;&#38382;&#21644; request/session &#23646;&#24615;&#35775;&#38382;&#65292;&#27809;&#26377;&#19982;&#21407;&#22987;&#30340; Servlet/Portlet API &#32465;&#23450;&#12290;
 </li><li class="listitem">
 <code class="literal">java.util.Locale</code> &#32473;&#24403;&#21069;&#35831;&#27714;&#26412;&#22320;&#21270;&#65292;&#21462;&#20915;&#20110;&#26368;&#20855;&#20307;&#30340;&#26412;&#22320;&#21270;&#35299;&#26512;&#22120;&#65292;&#23454;&#38469;&#19978;&#21462;&#20915;&#19982;&#26159; Servlet &#29615;&#22659;&#37197;&#32622;&#30340; <code class="literal">LocaleResolver</code> &#12290;
@@ -928,7 +928,7 @@ Converters</a>&#12290;&#20063;&#25552;&#37266;&#19968;&#19979;&#65292;&#24403;&#
 
 <p>&#19968;&#31181;&#27604;&#36739;&#24120;&#35265;&#30340;&#22330;&#26223;&#65292;&#25511;&#21046;&#22120;&#23454;&#29616; REST API&#65292;&#21482;&#20250;&#36820;&#22238; JSON&#12289;XML &#25110;&#20854;&#20182;&#33258;&#23450;&#20041;&#23186;&#20307;&#31867;&#22411;&#12290;&#20026;&#20102;&#26041;&#20415;&#65292;&#20320;&#21487;&#20197;&#22312;&#25511;&#21046;&#22120;&#19978;&#28155;&#21152; <code class="literal">@RestController</code> &#27880;&#35299;&#65292;&#32780;&#19981;&#26159;&#22312;&#27599;&#19968;&#20010; <code class="literal">@RequestMapping</code> &#19978;&#20351;&#29992; <code class="literal">@ResponseBody</code>&#12290;</p>
 <p><a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/RestController.html" target="_top"><code class="literal">@RestController</code></a> &#26159;&#19968;&#20010;&#32467;&#21512;&#20102; <code class="literal">@ResponseBody</code> &#21644; <code class="literal">@Controller</code> &#30340;&#27880;&#35299;&#12290;&#19981;&#20165;&#22914;&#27492;&#65292;<code class="literal">@RestController</code> &#36171;&#20104;&#20102;&#25511;&#21046;&#22120;&#26356;&#22810;&#30340;&#24847;&#20041;&#65292;&#22312;&#26410;&#26469;&#30340;&#29256;&#26412;&#20013;&#21487;&#33021;&#20250;&#25658;&#24102;&#39069;&#22806;&#30340;&#35821;&#20041;&#12290;&#12290;</p>
-<p>&#19982;&#24120;&#35268; <code class="literal">@Controller</code> &#19968;&#26679;&#65292;<code class="literal">@RestController</code> &#21487;&#20197;&#21327;&#21161; <code class="literal">@ControllerAdvice</code> bean&#12290;&#35814;&#32454;&#20449;&#24687;&#21487;&#26597;&#30475;<a class="xref" href="mvc.html#mvc-ann-controller-advice" title="Advising controllers with the @ControllerAdvice annotation">the section called &#8220;Advising controllers with the <code class="literal">@ControllerAdvice</code> annotation&#8221;</a>&#12290;</p>
+<p>&#19982;&#24120;&#35268; <code class="literal">@Controller</code> &#19968;&#26679;&#65292;<code class="literal">@RestController</code> &#21487;&#20197;&#21327;&#21161; <code class="literal">@ControllerAdvice</code> bean&#12290;&#35814;&#32454;&#20449;&#24687;&#21487;&#26597;&#30475;<a class="xref" href="mvc.html#mvc-ann-controller-advice" title="&#20351;&#29992; @ControllerAdvice &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;">the section called &#8220;&#20351;&#29992; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;&#8221;</a>&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-httpentity" href="#mvc-ann-httpentity"></a>&#20351;&#29992; HttpEntity</h4></div></div></div>
 
@@ -972,7 +972,7 @@ Converters</a>&#12290;&#20063;&#25552;&#37266;&#19968;&#19979;&#65292;&#24403;&#
 <p><code class="literal">@ModelAttribute</code> &#29992;&#26469;&#23558;&#24120;&#29992;&#23646;&#24615;&#22635;&#20805;&#21040;&#27169;&#22411;&#37324;&#12290;&#22914;&#65306;&#22635;&#20805;&#19979;&#25289;&#26694;&#38472;&#36848;&#12289;&#23456;&#29289;&#31867;&#22411;&#12289;&#25110;&#21629;&#20196;&#23545;&#35937;&#65288;&#22914; Account&#65292;&#29992;&#20110;&#34920;&#31034; HTML &#34920;&#21333;&#25968;&#25454;&#65289;&#12290;&#26368;&#21518;&#19968;&#31181;&#24773;&#20917;&#20250;&#22312;&#19979;&#19968;&#37096;&#20998;&#28145;&#20837;&#35848;&#35770;&#12290;</p>
 <p>&#30041;&#24847;&#19968;&#19979; <code class="literal">@ModelAttribute</code> &#26041;&#27861;&#30340;&#20004;&#31181;&#20351;&#29992;&#26041;&#24335;&#12290;&#31532;&#19968;&#31181;&#65292;&#22312;&#26041;&#27861;&#37324;&#38544;&#24335;&#28155;&#21152;&#19968;&#20010;&#23646;&#24615;&#24182;&#36820;&#22238;&#65307;&#31532;&#20108;&#31181;&#65292;&#26041;&#27861;&#37324;&#25509;&#25910; <code class="literal">Model</code> &#21442;&#25968;&#65292;&#24182;&#23558;&#20219;&#24847;&#20010;&#23646;&#24615;&#28155;&#21152;&#21040; <code class="literal">Model</code>&#20013;&#12290;&#20320;&#21487;&#20197;&#26681;&#25454;&#33258;&#36523;&#38656;&#35201;&#36873;&#25321;&#20854;&#20013;&#19968;&#31181;&#20351;&#29992;&#26041;&#24335;&#12290;</p>
 <p>&#19968;&#20010;&#25511;&#21046;&#22120;&#21487;&#20197;&#26377;&#22810;&#20010; <code class="literal">@ModelAttribute</code> &#26041;&#27861;&#12290;&#22312;&#21516;&#19968;&#20010;&#25511;&#21046;&#22120;&#20013;&#65292;&#25152;&#26377; <code class="literal">@ModelAttribute</code> &#26041;&#27861;&#37117;&#20250;&#22312; <code class="literal">@RequestMapping</code> &#26041;&#27861;&#20043;&#21069;&#35843;&#29992;&#12290;</p>
-<p><code class="literal">@ModelAttribute</code> &#26041;&#27861;&#20063;&#21487;&#20197;&#22312;  <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#30340;&#31867;&#20013;&#20351;&#29992;&#65292;&#31867;&#20284;&#30340;&#21487;&#24212;&#29992;&#20110;&#20854;&#20182;&#25511;&#21046;&#22120;&#65292;&#35814;&#32454;&#20449;&#24687;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="Advising controllers with the @ControllerAdvice annotation">the section called &#8220;Advising controllers with the <code class="literal">@ControllerAdvice</code> annotation&#8221;</a>&#12290;</p>
+<p><code class="literal">@ModelAttribute</code> &#26041;&#27861;&#20063;&#21487;&#20197;&#22312;  <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#30340;&#31867;&#20013;&#20351;&#29992;&#65292;&#31867;&#20284;&#30340;&#21487;&#24212;&#29992;&#20110;&#20854;&#20182;&#25511;&#21046;&#22120;&#65292;&#35814;&#32454;&#20449;&#24687;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="&#20351;&#29992; @ControllerAdvice &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;">the section called &#8220;&#20351;&#29992; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;&#8221;</a>&#12290;</p>
 <div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
 <p>&#24403;&#27169;&#22411;&#23646;&#24615;&#21517;&#31216;&#27809;&#26377;&#26174;&#24335;&#23450;&#20041;&#65292;&#20250;&#26159;&#19968;&#31181;&#20160;&#20040;&#26679;&#30340;&#24773;&#20917;&#65311;&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#40664;&#35748;&#20351;&#29992;&#21442;&#25968;&#31867;&#22411;&#21517;&#31216;&#20316;&#20026;&#27169;&#22411;&#23646;&#24615;&#21517;&#31216;&#12290;&#22914;&#65292;&#24403;&#26041;&#27861;&#36820;&#22238; <code class="literal">Account</code> &#23545;&#35937;&#26102;&#65292;&#20854;&#40664;&#35748;&#30340;&#27169;&#22411;&#23646;&#24615;&#21517;&#31216;&#26159; "account"&#12290;&#20320;&#21487;&#20197;&#36890;&#36807;&#35774;&#32622;<code class="literal">@ModelAttribute</code> &#27880;&#35299;&#30340; "value" &#23646;&#24615;&#26469;&#33258;&#23450;&#20041;&#12290;&#24403;&#30452;&#25509;&#24448; <code class="literal">Model</code> &#28155;&#21152;&#23646;&#24615;&#26102;&#65292;&#35831;&#27491;&#30830;&#20351;&#29992; <code class="literal">addAttribute(..)</code> &#30340;&#37325;&#36733;&#26041;&#27861; &#8212;&#8212; &#22914;&#65292;&#26159;&#21542;&#22312;&#26041;&#27861;&#20013;&#24102;&#23646;&#24615;&#21517;&#12290;</p>
 </td></tr></table></div>
@@ -1062,7 +1062,7 @@ Converters</a>&#12290;&#20063;&#25552;&#37266;&#19968;&#19979;&#65292;&#24403;&#
 <p>&#22312;&#37325;&#23450;&#21521; URL &#20013;&#65292;&#25152;&#26377;&#27169;&#22411;&#23646;&#24615;&#40664;&#35748;&#26292;&#38706;&#32473; URI &#27169;&#29256;&#21464;&#37327;&#65292;&#21097;&#19979;&#30340;&#23646;&#24615;(&#21407;&#22987;&#31867;&#22411;&#25110;&#21407;&#22987;&#31867;&#22411;&#38598;&#21512;/&#25968;&#32452;)&#20250;&#33258;&#21160;&#25340;&#25509;&#21040;&#26597;&#35810;&#21442;&#25968;&#20013;&#12290;</p>
 <p>&#28982;&#32780;&#65292;&#22312;&#19968;&#20010;&#24102;&#27880;&#35299;&#30340;&#25511;&#21046;&#22120;&#20013;&#65292;&#27169;&#22411;&#20063;&#35768;&#21253;&#21547;&#20102;&#39069;&#22806;&#30340;&#23646;&#24615;&#65288;&#29992;&#20110;&#28210;&#26579;&#65292;&#22914;&#19979;&#25289;&#26694;&#23646;&#24615;&#65289;&#12290;&#22312;&#37325;&#23450;&#21521;&#22330;&#26223;&#20013;&#65292;&#35201;&#20934;&#30830;&#25511;&#21046;&#36825;&#20123;&#23646;&#24615;&#65292;&#21487;&#22312; <code class="literal">@RequestMapping</code> &#26041;&#27861;&#20013;&#22768;&#26126; <code class="literal">RedirectAttributes</code> &#31867;&#22411;&#21442;&#25968;&#65292;&#24182;&#24448;&#20854;&#28155;&#21152; <code class="literal">RedirectView</code> &#20351;&#29992;&#30340;&#23646;&#24615;&#12290;&#22914;&#26524;&#36825;&#20010;&#25511;&#21046;&#26041;&#27861;&#27809;&#26377;&#37325;&#23450;&#21521;&#65292;&#23558;&#20351;&#29992; <code class="literal">RedirectAttributes</code> &#30340;&#20869;&#23481;&#65292;&#21542;&#21017;&#20351;&#29992;&#40664;&#35748; <code class="literal">Model</code> &#30340;&#20869;&#23481;&#12290;</p>
 <p><code class="literal">RequestMappingHandlerAdapter</code> &#25552;&#20379;&#20102;&#19968;&#20010; <code class="literal">"ignoreDefaultModelOnRedirect"</code> &#26631;&#24535;&#65292;&#29992;&#26469;&#35774;&#32622;&#22312;&#25511;&#21046;&#26041;&#27861;&#37325;&#23450;&#21521;&#26102;&#65292;&#40664;&#35748;<code class="literal">Model</code> &#30340;&#20869;&#23481;&#26159;&#21542;&#20174;&#19981;&#20351;&#29992;&#12290;&#30456;&#21453;&#65292;&#25511;&#21046;&#22120;&#26041;&#27861;&#24212;&#35813;&#22768;&#26126; <code class="literal">RedirectAttributes</code> &#31867;&#22411;&#23646;&#24615;&#65292;&#21542;&#21017;&#20250;&#27809;&#26377;&#20219;&#20309;&#23646;&#24615;&#20256;&#36882;&#32473; <code class="literal">RedirectView</code>&#12290;&#20026;&#20102;&#21521;&#21518;&#20860;&#23481;&#65292;MVC &#21629;&#21517;&#31354;&#38388;&#21644; MVC Java &#37197;&#32622;&#37117;&#23558; <code class="literal">"ignoreDefaultModelOnRedirect"</code> &#35774;&#32622;&#20026; false&#12290;&#21487;&#25105;&#20204;&#36824;&#26159;&#24314;&#35758;&#20320;&#22312;&#26032;&#24212;&#29992;&#37324;&#23558;&#20854;&#35774;&#32622;&#20026; true&#12290;</p>
-<p><code class="literal">RedirectAttributes</code> &#25509;&#21475;&#20063;&#21487;&#20197;&#29992;&#26469;&#28155;&#21152; flash &#23646;&#24615;&#12290;&#19982;&#20854;&#20182;&#37325;&#23450;&#21521;&#23646;&#24615;&#65288;&#22312;&#37325;&#23450;&#21521; URL &#20013;&#38144;&#27585;&#65289;&#19981;&#21516;&#30340;&#26159;&#65292;flash &#23646;&#24615;&#20250;&#20445;&#23384;&#21040; HTTP session&#65288;&#22240;&#27492; flash &#23646;&#24615;&#20063;&#19981;&#20250;&#22312; URL &#19978;&#20986;&#29616;&#65289;&#12290;&#20316;&#29992;&#20110;&#37325;&#23450;&#21521; URL &#30340;&#25511;&#21046;&#22120;&#37324;&#30340;&#27169;&#22411;&#20250;&#33258;&#21160;&#25509;&#25910;&#36825;&#20123; flash &#23646;&#24615;&#65292;&#20043;&#21518;&#65292;flash &#23646;&#24615;&#20250;&#20174; session &#20013;&#31227;&#38500;&#12290;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-flash-attributes" title="16.6&nbsp;Using flash attributes">Section&nbsp;16.6, &#8220;Using flash attributes&#8221;</a>&#65292;&#20102;&#35299; Spring MVC &#23545; flash &#23646;&#24615;&#30340;&#24120;&#35268;&#25903;&#25345;&#12290;</p>
+<p><code class="literal">RedirectAttributes</code> &#25509;&#21475;&#20063;&#21487;&#20197;&#29992;&#26469;&#28155;&#21152; flash &#23646;&#24615;&#12290;&#19982;&#20854;&#20182;&#37325;&#23450;&#21521;&#23646;&#24615;&#65288;&#22312;&#37325;&#23450;&#21521; URL &#20013;&#38144;&#27585;&#65289;&#19981;&#21516;&#30340;&#26159;&#65292;flash &#23646;&#24615;&#20250;&#20445;&#23384;&#21040; HTTP session&#65288;&#22240;&#27492; flash &#23646;&#24615;&#20063;&#19981;&#20250;&#22312; URL &#19978;&#20986;&#29616;&#65289;&#12290;&#20316;&#29992;&#20110;&#37325;&#23450;&#21521; URL &#30340;&#25511;&#21046;&#22120;&#37324;&#30340;&#27169;&#22411;&#20250;&#33258;&#21160;&#25509;&#25910;&#36825;&#20123; flash &#23646;&#24615;&#65292;&#20043;&#21518;&#65292;flash &#23646;&#24615;&#20250;&#20174; session &#20013;&#31227;&#38500;&#12290;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-flash-attributes" title="16.6&nbsp;&#20351;&#29992; flash &#23646;&#24615;">Section&nbsp;16.6, &#8220;&#20351;&#29992; flash &#23646;&#24615;&#8221;</a>&#65292;&#20102;&#35299; Spring MVC &#23545; flash &#23646;&#24615;&#30340;&#24120;&#35268;&#25903;&#25345;&#12290;</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-form-urlencoded-data" href="#mvc-ann-form-urlencoded-data"></a>&#22788;&#29702; "application/x-www-form-urlencoded" &#25968;&#25454;</h4></div></div></div>
 
@@ -1143,7 +1143,7 @@ Keep-Alive              300</pre>
 <p>To customize request parameter binding with PropertyEditors through Spring&#8217;s
 <code class="literal">WebDataBinder</code>, you can use <code class="literal">@InitBinder</code>-annotated methods within your controller,
 <code class="literal">@InitBinder</code> methods within an <code class="literal">@ControllerAdvice</code> class, or provide a custom
-<code class="literal">WebBindingInitializer</code>. See the <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="Advising controllers with the @ControllerAdvice annotation">the section called &#8220;Advising controllers with the <code class="literal">@ControllerAdvice</code> annotation&#8221;</a> section for more details.</p>
+<code class="literal">WebBindingInitializer</code>. See the <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="&#20351;&#29992; @ControllerAdvice &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;">the section called &#8220;&#20351;&#29992; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;&#8221;</a> section for more details.</p>
 <div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="mvc-ann-initbinder" href="#mvc-ann-initbinder"></a>&#20351;&#29992; @InitBinder &#33258;&#23450;&#20041;&#25968;&#25454;&#32465;&#23450;</h5></div></div></div>
 
 <p>&#20351;&#29992; @InitBinder &#27880;&#35299;&#30340;&#25511;&#21046;&#22120;&#65292;&#21487;&#20197;&#30452;&#25509;&#37197;&#32622;&#32465;&#23450; web &#25968;&#25454;&#12290;<code class="literal">@InitBinder</code> &#34920;&#31034;&#37027;&#20123;&#29992;&#20110;&#21021;&#22987;&#21270; <code class="literal">WebDataBinder</code> &#30340;&#26041;&#27861;&#65292;&#23558;&#29992;&#20110;&#22635;&#20805; &#27880;&#35299; handler &#26041;&#27861;&#30340;&#21629;&#21517;/&#34920;&#21333;&#23545;&#35937;&#21442;&#25968;&#12290;</p>
@@ -1175,72 +1175,57 @@ Keep-Alive              300</pre>
     <span class="hl-tag">&lt;/property&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p><code class="literal">@InitBinder</code> &#26041;&#27861;&#20063;&#21487;&#22312; <code class="literal">@ControllerAdvice</code>- &#27880;&#35299;&#30340;&#31867;&#20013;&#20351;&#29992;&#65292; &#36825;&#31181;&#24773;&#20917;&#19979;&#65292;<code class="literal">@InitBinder</code> &#29992;&#20110;&#26144;&#23556;&#25511;&#21046;&#22120;&#12290;&#36825;&#20063;&#25552;&#20379;&#21478;&#22806;&#19968;&#31181;&#36873;&#25321; &#8212;&#8212; &#20351;&#29992; <code class="literal">WebBindingInitializer</code>&#65292;&#35814;&#24773;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="Advising controllers with the @ControllerAdvice annotation">the section called &#8220;Advising controllers with the <code class="literal">@ControllerAdvice</code> annotation&#8221;</a>&#12290;</p>
+<p><code class="literal">@InitBinder</code> &#26041;&#27861;&#20063;&#21487;&#22312; <code class="literal">@ControllerAdvice</code>- &#27880;&#35299;&#30340;&#31867;&#20013;&#20351;&#29992;&#65292; &#36825;&#31181;&#24773;&#20917;&#19979;&#65292;<code class="literal">@InitBinder</code> &#29992;&#20110;&#26144;&#23556;&#25511;&#21046;&#22120;&#12290;&#36825;&#20063;&#25552;&#20379;&#21478;&#22806;&#19968;&#31181;&#36873;&#25321; &#8212;&#8212; &#20351;&#29992; <code class="literal">WebBindingInitializer</code>&#65292;&#35814;&#24773;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-ann-controller-advice" title="&#20351;&#29992; @ControllerAdvice &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;">the section called &#8220;&#20351;&#29992; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;&#8221;</a>&#12290;</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-lastmodified" href="#mvc-ann-lastmodified"></a>Support for the Last-Modified Response Header To Facilitate Content Caching</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-lastmodified" href="#mvc-ann-lastmodified"></a>&#25903;&#25345; Last-Modified &#21709;&#24212;&#22836;&#65292;&#26041;&#20415;&#32531;&#23384;&#20869;&#23481;</h4></div></div></div>
 
-<p>An <code class="literal">@RequestMapping</code> method may wish to support <code class="literal">'Last-Modified'</code> HTTP requests, as
-defined in the contract for the Servlet API&#8217;s <code class="literal">getLastModified</code> method, to facilitate
-content caching. This involves calculating a lastModified <code class="literal">long</code> value for a given
-request, comparing it against the <code class="literal">'If-Modified-Since'</code> request header value, and
-potentially returning a response with status code 304 (Not Modified). An annotated
-controller method can achieve that as follows:</p>
+<p>&#20381;&#25454; Servlet API &#23545; <code class="literal">getLastModified</code> &#26041;&#27861;&#30340;&#23450;&#20041;&#65292;<code class="literal">@RequestMapping</code> &#26041;&#27861;&#20063;&#21487;&#20197;&#25903;&#25345; <code class="literal">'Last-Modified'</code> HTTP &#35831;&#27714;&#65292;&#20197;&#26041;&#20415;&#20869;&#23481;&#32531;&#23384;&#65292;&#21152;&#24555;&#21709;&#24212;&#12290;<code class="literal">getLastModified</code>  &#26041;&#27861;&#30340;&#35843;&#29992;&#65292;&#38656;&#35201;&#35745;&#31639;&#32473;&#23450;&#35831;&#27714;&#30340; lastModified &#20540;&#65288;long &#31867;&#22411;&#65289;&#65292;&#24182;&#23558;&#20854;&#19982;&#35831;&#27714;&#22836; <code class="literal">'If-Modified-Since'</code> &#30456;&#20114;&#27604;&#36739;&#65292;&#33509;&#35748;&#20026;&#20854;&#27809;&#26377;&#26356;&#26032;&#65292;&#36820;&#22238;&#29366;&#24577;&#30721;&#20026; 304 &#30340; response&#12290;&#27880;&#35299;&#25511;&#21046;&#22120;&#21487;&#22914;&#27492;&#23454;&#29616;&#36825;&#19968;&#38656;&#27714;&#65306;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RequestMapping</span></em>
 <span class="hl-keyword">public</span> String myHandleMethod(WebRequest webRequest, Model model) {
 
-    <span class="hl-keyword">long</span> lastModified = <span class="hl-comment">// 1. application-specific calculation</span>
+    <span class="hl-keyword">long</span> lastModified = <span class="hl-comment">// 1. &#24212;&#29992;&#25351;&#23450;&#30340;&#35745;&#31639;&#20540;</span>
 
     <span class="hl-keyword">if</span> (request.checkNotModified(lastModified)) {
-        <span class="hl-comment">// 2. shortcut exit - no further processing necessary</span>
+        <span class="hl-comment">// 2. &#24555;&#36895;&#36864;&#20986; &#8212;&#8212; &#19981;&#20316;&#36827;&#19968;&#27493;&#22788;&#29702;</span>
         <span class="hl-keyword">return</span> null;
     }
-
-    <span class="hl-comment">// 3. or otherwise further request processing, actually preparing content</span>
+    <span class="hl-comment">// 3. &#21542;&#21017;&#65292;&#36827;&#19968;&#27493;&#22788;&#29702;&#35831;&#27714;&#65292;&#26412;&#36136;&#26159;&#20934;&#22791;&#20869;&#23481;</span>
     model.addAttribute(...);
     <span class="hl-keyword">return</span> <span class="hl-string">"myViewName"</span>;
 }</pre>
 
-<p>There are two key elements to note: calling <code class="literal">request.checkNotModified(lastModified)</code> and
-returning <code class="literal">null</code>. The former sets the response status to 304 before it returns <code class="literal">true</code>.
-The latter, in combination with the former, causes Spring MVC to do no further
-processing of the request.</p>
+<p>&#27880;&#24847;&#20004;&#20010;&#20851;&#38190;&#28857;&#65306;&#35843;&#29992; <code class="literal">request.checkNotModified(lastModified)</code> &#21644; &#36820;&#22238; <code class="literal">null</code>&#12290;&#21069;&#32773;&#23558; response &#30340;&#29366;&#24577;&#35774;&#32622;&#20026; 304 &#21518;&#25165;&#36820;&#22238; <code class="literal">true</code>&#12290;&#21518;&#32773;&#65292;&#19982;&#21069;&#32773;&#30340;&#20351;&#29992;&#32467;&#21512;&#65292;&#21578;&#30693; Spring MVC &#19981;&#23545;&#35831;&#27714;&#20316;&#36827;&#19968;&#27493;&#30340;&#22788;&#29702;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-controller-advice" href="#mvc-ann-controller-advice"></a>Advising controllers with the <code class="literal">@ControllerAdvice</code> annotation</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-controller-advice" href="#mvc-ann-controller-advice"></a>&#20351;&#29992; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#22686;&#24378;&#25511;&#21046;&#22120;</h4></div></div></div>
 
-<p>The <code class="literal">@ControllerAdvice</code> annotation is a component annotation allowing implementation
-classes to be auto-detected through classpath scanning. It is automatically enabled when
-using the MVC namespace or the MVC Java config.</p>
+<p><code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#21487;&#20197;&#35753;&#23454;&#29616;&#31867;&#36890;&#36807;&#31867;&#36335;&#24452;&#33258;&#21160;&#26816;&#27979;&#20986;&#26469;&#12290;&#24403;&#20351;&#29992; MVC &#21629;&#21517;&#31354;&#38388;&#25110; MVC Java &#37197;&#32622;&#26102;&#65292;&#27492;&#27492;&#21151;&#33021;&#26159;&#40664;&#35748;&#21551;&#21160;&#30340;&#12290;</p>
+<p>&#24102;&#26377; <code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#30340;&#31867;&#65292;&#21487;&#20197;&#21253;&#21547; <code class="literal">@ExceptionHandler</code>&#12289;<code class="literal">@InitBinder</code>, &#21644; <code class="literal">@ModelAttribute</code> &#27880;&#35299;&#30340;&#26041;&#27861;&#65292;&#24182;&#19988;&#36825;&#20123;&#27880;&#35299;&#30340;&#26041;&#27861;&#20250;&#36890;&#36807;&#25511;&#21046;&#22120;&#23618;&#27425;&#24212;&#29992;&#21040;&#25152;&#26377; <code class="literal">@RequestMapping</code> &#26041;&#27861;&#20013;&#65292;&#32780;&#19981;&#29992;&#19968;&#19968;&#22312;&#25511;&#21046;&#22120;&#20869;&#37096;&#22768;&#26126;&#12290;</p>
 <p>Classes annotated with <code class="literal">@ControllerAdvice</code> can contain <code class="literal">@ExceptionHandler</code>,
 <code class="literal">@InitBinder</code>, and <code class="literal">@ModelAttribute</code> annotated methods, and these methods will apply to
 <code class="literal">@RequestMapping</code> methods across all controller hierarchies as opposed to the controller
 hierarchy within which they are declared.</p>
-<p>The <code class="literal">@ControllerAdvice</code> annotation can also target a subset of controllers with its
-attributes:</p>
-<pre class="programlisting"><span class="hl-comment">// Target all Controllers annotated with @RestController</span>
+<p><code class="literal">@ControllerAdvice</code> &#27880;&#35299;&#20063;&#21487;&#22312;&#23646;&#24615;&#20013;&#27880;&#26126;&#65292;&#23558;&#24212;&#29992;&#21040;&#21738;&#20123;&#30446;&#26631;&#25511;&#21046;&#22120;&#65306;</p>
+<pre class="programlisting"><span class="hl-comment">// &#24212;&#29992;&#21040;&#25152;&#26377; @RestController &#25511;&#21046;&#22120;</span>
 <em><span class="hl-annotation" style="color: gray">@ControllerAdvice(annotations = RestController.class)</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AnnotationAdvice {}
 
-<span class="hl-comment">// Target all Controllers within specific packages</span>
+<span class="hl-comment">// &#24212;&#29992;&#21040;&#25351;&#23450;&#21253;&#19979;&#30340;&#25511;&#21046;&#22120;</span>
 <em><span class="hl-annotation" style="color: gray">@ControllerAdvice("org.example.controllers")</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> BasePackageAdvice {}
 
-<span class="hl-comment">// Target all Controllers assignable to specific classes</span>
+<span class="hl-comment">// &#24212;&#29992;&#21040;&#25351;&#23450;&#31867;&#22411;&#30340;&#25511;&#21046;&#22120;</span>
 <em><span class="hl-annotation" style="color: gray">@ControllerAdvice(assignableTypes = {ControllerInterface.class, AbstractController.class})</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> AssignableTypesAdvice {}</pre>
 
-<p>Check out the
+<p>&#24076;&#26395;&#21152;&#28145;&#20102;&#35299;&#30340;&#65292;&#21487;&#20197; Check out
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/bind/annotation/ControllerAdvice.html" target="_top"><code class="literal">@ControllerAdvice</code>
-documentation</a> for more details.</p>
+&#25991;&#26723;</a>&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-jsonview" href="#mvc-ann-jsonview"></a>Jackson Serialization View Support</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-jsonview" href="#mvc-ann-jsonview"></a>&#25903;&#25345; Jackson &#24207;&#21015;&#21270;&#35270;&#22270;</h4></div></div></div>
 
-<p>It can sometimes be useful to filter contextually the object that will be serialized to the
-HTTP response body. In order to provide such capability, Spring MVC has built-in support for
-rendering with <a class="ulink" href="http://wiki.fasterxml.com/JacksonJsonViews" target="_top">Jackson&#8217;s Serialization Views</a>.</p>
-<p>To use it with an <code class="literal">@ResponseBody</code> controller method or controller methods that return
-<code class="literal">ResponseEntity</code>, simply add the <code class="literal">@JsonView</code> annotation with a class argument specifying
-the view class or interface to be used:</p>
+<p>&#22312;&#23558;&#23545;&#35937;&#24207;&#21015;&#21270;&#21040;&#21709;&#24212;&#20307;&#26102;&#65292;&#20598;&#23572;&#38656;&#35201;&#36807;&#28388;&#25935;&#24863;&#30340;&#25968;&#25454;&#12290;&#20026;&#20102;&#25552;&#20379;&#36825;&#19968;&#21151;&#33021;&#65292;Spring MVC &#20869;&#32622;&#25903;&#25345;&#20351;&#29992; <a class="ulink" href="http://wiki.fasterxml.com/JacksonJsonViews" target="_top">Jackson &#24207;&#21015;&#21270;&#35270;&#22270;</a>&#12290;</p>
+<p>&#21487;&#22312;&#24102;&#26377; <code class="literal">@ResponseBody</code> &#27880;&#35299;&#30340;&#26041;&#27861;&#25110;&#36820;&#22238;<code class="literal">ResponseEntity</code> &#30340;&#26041;&#27861;&#20013;&#20351;&#29992;Jackson &#24207;&#21015;&#21270;&#35270;&#22270;&#65292;&#21482;&#38656;&#35201;&#28155;&#21152;&#19968;&#20010;&#24102; class &#21442;&#25968;&#30340;<code class="literal">@JsonView</code>&#21363;&#21487;&#65288;class &#21442;&#25968;&#25351;&#23450;&#25152;&#20351;&#29992;&#30340;&#35270;&#22270;&#31867;&#25110;&#25509;&#21475;&#65289;&#12290;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RestController</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> UserController {
 
@@ -1279,14 +1264,10 @@ the view class or interface to be used:</p>
 }</pre>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Note that despite <code class="literal">@JsonView</code> allowing for more than one class to
-be specified, the use on a controller method is only supported with
-exactly one class argument. Consider the use of a composite interface
-if you need to enable multiple views.</p>
+<p>&#27880;&#24847;&#65306;&#23613;&#31649; <code class="literal">@JsonView</code> &#25903;&#25345;&#24207;&#21015;&#21270;&#22810;&#20010;&#31867;&#65292;&#20294;&#25511;&#21046;&#22120;&#26041;&#27861;&#21482;&#25903;&#25345; <code class="literal">@JsonView</code> &#24207;&#21015;&#21270;&#19968;&#20010;&#31867;&#12290;&#22914;&#26524;&#38656;&#35201;&#24207;&#21015;&#21270;&#22810;&#20010;&#35270;&#22270;&#65292;&#21487;&#20197;&#20351;&#29992;&#22810;&#20010;&#25509;&#21475;&#32452;&#21512;&#30340;&#26041;&#24335;&#12290;</p>
 </td></tr></table></div>
 
-<p>For controllers relying on view resolution, simply add the serialization view class
-to the model:</p>
+<p>&#23545;&#20110;&#25511;&#21046;&#22120;&#20381;&#36182;&#20110;&#35270;&#22270;&#35299;&#26512;&#30340;&#24773;&#20917;&#65292;&#21482;&#38656;&#23558;&#24207;&#21015;&#21270;&#30340;&#35270;&#22270;&#31867;&#28155;&#21152;&#21040;&#27169;&#22411;&#37324;&#65292;&#21363;&#21487;&#12290;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> UserController <span class="hl-keyword">extends</span> AbstractController {
 
@@ -1299,12 +1280,9 @@ to the model:</p>
 }</pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-jsonp" href="#mvc-ann-jsonp"></a>Jackson JSONP Support</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-jsonp" href="#mvc-ann-jsonp"></a>&#25903;&#25345; Jackson JSONP</h4></div></div></div>
 
-<p>In order to enable <a class="ulink" href="http://en.wikipedia.org/wiki/JSONP" target="_top">JSONP</a> support for <code class="literal">@ResponseBody</code>
-and <code class="literal">ResponseEntity</code> methods, declare an <code class="literal">@ControllerAdvice</code> bean that extends
-<code class="literal">AbstractJsonpResponseBodyAdvice</code> as shown below where the constructor argument indicates
-the JSONP query parameter name(s):</p>
+<p>&#33509;&#38656;&#35201;&#25903;&#25345;&#22312; <code class="literal">@ResponseBody</code> &#21644; <code class="literal">ResponseEntity</code> &#26041;&#27861;&#20013;&#25903;&#25345; <a class="ulink" href="http://en.wikipedia.org/wiki/JSONP" target="_top">JSONP</a> &#30340;&#20351;&#29992;&#65292;&#21487;&#20197;&#23450;&#19968;&#20010; <code class="literal">@ControllerAdvice</code> bean &#24182;&#32487;&#25215; <code class="literal">AbstractJsonpResponseBodyAdvice</code> &#31867;&#12290;<code class="literal">AbstractJsonpResponseBodyAdvice</code> &#30340;&#26500;&#36896;&#22120;&#35828;&#26126; JSONP &#30340;&#26597;&#35810;&#21442;&#25968;&#12290;&#20855;&#20307;&#20363;&#23376;&#22914;&#19979;&#65306;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@ControllerAdvice</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> JsonpAdvice <span class="hl-keyword">extends</span> AbstractJsonpResponseBodyAdvice {
 
@@ -1313,21 +1291,12 @@ the JSONP query parameter name(s):</p>
     }
 }</pre>
 
-<p>For controllers relying on view resolution, JSONP is automatically enabled when the
-request has a query parameter named <code class="literal">jsonp</code> or <code class="literal">callback</code>. Those names can be
-customized through <code class="literal">jsonpParameterNames</code> property.</p>
+<p>&#23545;&#20110;&#25511;&#21046;&#22120;&#20381;&#36182;&#20110;&#35270;&#22270;&#35299;&#26512;&#30340;&#24773;&#20917;&#65292;&#21482;&#38656;&#35201;&#35831;&#27714;&#24102;&#26377; <code class="literal">jsonp</code> &#25110; <code class="literal">callback</code> &#26597;&#35810;&#21442;&#25968;&#65292;JSONP &#20250;&#33258;&#21160;&#28608;&#27963;&#12290;JSONP &#26597;&#35810;&#21442;&#25968;&#21487;&#20197;&#36890;&#36807; <code class="literal">jsonpParameterNames</code> &#23646;&#24615;&#33258;&#23450;&#20041;&#12290;</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-ann-async" href="#mvc-ann-async"></a>16.3.4&nbsp;Asynchronous Request Processing</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-ann-async" href="#mvc-ann-async"></a>16.3.4&nbsp;&#24322;&#27493;&#35831;&#27714;&#22788;&#29702;</h3></div></div></div>
 
-<p>Spring MVC 3.2 introduced Servlet 3 based asynchronous request processing. Instead of
-returning a value, as usual, a controller method can now return a
-<code class="literal">java.util.concurrent.Callable</code> and produce the return value from a separate thread.
-Meanwhile the main Servlet container thread is released and allowed to process other
-requests. Spring MVC invokes the <code class="literal">Callable</code> in a separate thread with the help of a
-<code class="literal">TaskExecutor</code> and when the <code class="literal">Callable</code> returns, the request is dispatched back to the
-Servlet container to resume processing with the value returned by the <code class="literal">Callable</code>. Here
-is an example controller method:</p>
+<p>Spring MVC &#24341;&#20837;&#20102;&#22522;&#20110;&#24322;&#27493;&#35831;&#27714;&#30340; Servlet 3&#12290;&#22312;&#24322;&#27493;&#35831;&#27714;&#20013;&#65292;&#25511;&#21046;&#22120;&#26041;&#27861;&#36890;&#24120;&#20250;&#36820;&#22238; <code class="literal">java.util.concurrent.Callable</code> &#23545;&#35937;&#21518;&#20877;&#20351;&#29992;&#19968;&#20010;&#29420;&#31435;&#30340;&#32447;&#31243;&#20135;&#29983;&#36820;&#22238;&#20540;&#65292;&#32780;&#19981;&#26159;&#30452;&#25509;&#36820;&#22238;&#19968;&#20010;&#20540;&#12290;&#21516;&#26102;&#37322;&#25918; Servlet &#23481;&#22120;&#30340;&#20027;&#32447;&#31243;&#21644;&#20801;&#35768;&#22788;&#29702;&#20854;&#20182;&#35831;&#27714;&#12290;Spring MVC &#20511;&#21161; <code class="literal">TaskExecutor</code> &#65292;&#22312;&#19968;&#20010;&#29420;&#31435;&#32447;&#31243;&#20013;&#35843;&#29992; <code class="literal">Callable</code>&#65292;&#24403; <code class="literal">Callable</code> &#36820;&#22238;&#26102;&#65292;&#23558;&#35831;&#27714;&#36716;&#21457;&#21040; Servlet &#23481;&#22120;&#24182;&#32487;&#32493;&#22788;&#29702; <code class="literal">Callable</code> &#36820;&#22238;&#20540;&#12290;&#20363;&#23376;&#22914;&#19979;&#65306;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RequestMapping(method=RequestMethod.POST)</span></em>
 <span class="hl-keyword">public</span> Callable&lt;String&gt; processUpload(<span class="hl-keyword">final</span> MultipartFile file) {
 
@@ -1340,109 +1309,51 @@ is an example controller method:</p>
 
 }</pre>
 
-<p>A second option is for the controller to return an instance of <code class="literal">DeferredResult</code>. In this
-case the return value will also be produced from a separate thread. However, that thread
-is not known to Spring MVC. For example the result may be produced in response to some
-external event such as a JMS message, a scheduled task, etc. Here is an example
-controller method:</p>
+<p>&#24322;&#27493;&#35831;&#27714;&#30340;&#21478;&#22806;&#19968;&#31181;&#26041;&#24335;&#65292;&#26159;&#35753;&#25511;&#21046;&#22120;&#36820;&#22238; <code class="literal">DeferredResult</code> &#23454;&#20363;&#12290;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#20381;&#28982;&#26159;&#20174;&#19968;&#20010;&#29420;&#31435;&#32447;&#31243;&#22788;&#29702;&#24182;&#20135;&#29983;&#36820;&#22238;&#20540;&#12290;&#28982;&#32780;&#65292;Spring MVC &#24182;&#19981;&#30693;&#26195;&#36825;&#20010;&#32447;&#31243;&#30340;&#21518;&#32493;&#22788;&#29702;&#12290;&#27604;&#22914;&#35828;&#65292;&#36825;&#20010;&#36820;&#22238;&#32467;&#26524;&#21487;&#20197;&#29992;&#26469;&#21709;&#24212;&#26576;&#20123;&#22806;&#37096;&#20107;&#20214;&#65288;&#22914; JMS &#20449;&#24687;&#65292;&#35745;&#21010;&#20219;&#21153;&#31561;&#65289;&#12290;&#20363;&#23376;&#22914;&#19979;&#65306;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@RequestMapping("/quotes")</span></em>
 <em><span class="hl-annotation" style="color: gray">@ResponseBody</span></em>
 <span class="hl-keyword">public</span> DeferredResult&lt;String&gt; quotes() {
     DeferredResult&lt;String&gt; deferredResult = <span class="hl-keyword">new</span> DeferredResult&lt;String&gt;();
-    <span class="hl-comment">// Save the deferredResult in in-memory queue ...</span>
+    <span class="hl-comment">// &#23558; deferredResult &#20445;&#23384;&#21040;&#20869;&#23384;&#38431;&#21015;</span>
     <span class="hl-keyword">return</span> deferredResult;
 }
 
-<span class="hl-comment">// In some other thread...</span>
+<span class="hl-comment">// &#22312;&#20854;&#20182;&#32447;&#31243;&#20013;...</span>
 deferredResult.setResult(data);</pre>
 
-<p>This may be difficult to understand without any knowledge of the Servlet 3 async
-processing feature. It would certainly help to read up on it. At a very minimum consider
-the following basic facts:</p>
+<p>&#22914;&#26524;&#19981;&#20102;&#35299; Servlet 3 &#24322;&#27493;&#22788;&#29702;&#30340;&#32454;&#33410;&#65292;&#29702;&#35299;&#36215;&#26469;&#21487;&#33021;&#20250;&#19968;&#23450;&#30340;&#38590;&#24230;&#12290;&#24403;&#28982;&#65292;&#36825;&#37324;&#20250;&#24110;&#21161;&#20320;&#21435;&#29702;&#35299;&#12290;&#25105;&#20204;&#26368;&#23569;&#38656;&#35201;&#30693;&#36947;&#20197;&#19979;&#20107;&#23454;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-A <code class="literal">ServletRequest</code> can be put in asynchronous mode by calling <code class="literal">request.startAsync()</code>.
-The main effect of doing so is that the Servlet, as well as any Filters, can exit but
-the response will remain open allowing some other thread to complete processing.
+&#19968;&#20010; <code class="literal">ServletRequest</code> &#35831;&#27714;&#21487;&#36890;&#36807;&#35843;&#29992; <code class="literal">request.startAsync()</code> &#26041;&#27861;&#35774;&#32622;&#20026;&#24322;&#27493;&#27169;&#24335;&#12290;&#27492;&#27493;&#39588;&#26368;&#20027;&#35201;&#30340;&#20316;&#29992;&#26159;&#65292;&#22312;&#27492; Servlet &#21644;&#20854;&#20182;&#36807;&#28388;&#22120;&#36864;&#20986;&#30340;&#24773;&#20917;&#19979;&#65292;response &#20381;&#28982;&#21487;&#20197;&#20445;&#25345;&#25171;&#24320;&#29366;&#24577;&#65292;&#20197;&#20415;&#20854;&#20182;&#32447;&#31243;&#26469;&#23436;&#25104;&#22788;&#29702;&#12290;
 </li><li class="listitem">
-The call to <code class="literal">request.startAsync()</code> returns an <code class="literal">AsyncContext</code>, which can be used for
-further control over async processing. For example it provides the method <code class="literal">dispatch</code>,
-which can be called from an application thread in order to "dispatch" the request back
-to the Servlet container. An async dispatch is similar to a forward except it is made
-from one (application) thread to another (Servlet container) thread whereas a forward
-occurs synchronously in the same (Servlet container) thread.
+&#35843;&#29992; <code class="literal">request.startAsync()</code> &#26041;&#27861;&#36820;&#22238;&#19968;&#20010; <code class="literal">AsyncContext</code>&#12290;&#22312;&#24322;&#27493;&#22788;&#29702;&#20013;&#65292;<code class="literal">AsyncContext</code> &#21487;&#20197;&#29992;&#26469;&#20570;&#36827;&#19968;&#27493;&#30340;&#25511;&#21046;&#12290;&#27604;&#22914;&#35828;&#65292;<code class="literal">AsyncContext</code> &#25552;&#20379;&#30340; <code class="literal">dispatch</code> &#26041;&#27861;&#65292;&#21487;&#20197;&#22312;&#24212;&#29992;&#32447;&#31243;&#20013;&#35843;&#29992;&#65292;&#23558;&#35831;&#27714;&#36716;&#21457;&#22238; Servlet &#23481;&#22120;&#12290;&#24322;&#27493; dispatch(&#36716;&#21457;)&#31867;&#20284;&#20110;&#24179;&#26102;&#20351;&#29992;&#30340; forward &#26041;&#27861;&#12290;&#19981;&#21516;&#30340;&#26159;&#65292;&#24322;&#27493; dispatch(&#36716;&#21457;)&#26159;&#20174;&#24212;&#29992;&#37324;&#30340;&#19968;&#20010;&#32447;&#31243;&#36716;&#21457;&#21040; Servlet &#23481;&#22120;&#20013;&#30340;&#21478;&#19968;&#20010;&#32447;&#31243;&#65292;&#32780; forward &#26041;&#27861;&#21017;&#26159;&#22312; Servlet &#23481;&#22120;&#37324;&#30340;&#21516;&#19968;&#20010;&#32447;&#31243;&#38388;&#36716;&#21457;&#12290;
 </li><li class="listitem">
-<code class="literal">ServletRequest</code> provides access to the current <code class="literal">DispatcherType</code>, which can be used to
-distinguish if a <code class="literal">Servlet</code> or a <code class="literal">Filter</code> is processing on the initial request
-processing thread and when it is processing in an async dispatch.
+<code class="literal">ServletRequest</code> &#21487;&#20197;&#26041;&#20301;&#24403;&#21069;&#30340; <code class="literal">DispatcherType</code>&#65288;&#36716;&#21457;&#31867;&#22411;&#65289;&#65292;&#27492;&#21151;&#33021;&#21487;&#20197;&#29992;&#20110;&#21028;&#26029; <span class="emphasis"><em>Servlet</em></span> &#25110; <span class="emphasis"><em>Filter</em></span> &#26159;&#22312;&#21407;&#22987;&#35831;&#27714;&#32447;&#31243;&#19978;&#22788;&#29702;&#35831;&#27714;&#65292;&#36824;&#26159;&#22312;&#24322;&#27493;&#36716;&#21457;&#32447;&#31243;&#20013;&#22788;&#29702;&#12290;
 </li></ul></div>
 
-<p>With the above in mind, the following is the sequence of events for async request
-processing with a <code class="literal">Callable</code>: (1) Controller returns a <code class="literal">Callable</code>, (2) Spring MVC starts
-async processing and submits the <code class="literal">Callable</code> to a <code class="literal">TaskExecutor</code> for processing in a
-separate thread, (3) the <code class="literal">DispatcherServlet</code> and all Filter&#8217;s exit the request
-processing thread but the response remains open, (4) the <code class="literal">Callable</code> produces a result
-and Spring MVC dispatches the request back to the Servlet container, (5) the
-<code class="literal">DispatcherServlet</code> is invoked again and processing resumes with the asynchronously
-produced result from the <code class="literal">Callable</code>. The exact sequencing of (2), (3), and (4) may vary
-depending on the speed of execution of the concurrent threads.</p>
-<p>The sequence of events for async request processing with a <code class="literal">DeferredResult</code> is the same
-in principal except it&#8217;s up to the application to produce the asynchronous result from
-some thread: (1) Controller returns a <code class="literal">DeferredResult</code> and saves it in some in-memory
-queue or list where it can be accessed, (2) Spring MVC starts async processing, (3) the
-<code class="literal">DispatcherServlet</code> and all configured Filter&#8217;s exit the request processing thread but
-the response remains open, (4) the application sets the <code class="literal">DeferredResult</code> from some
-thread and Spring MVC dispatches the request back to the Servlet container, (5) the
-<code class="literal">DispatcherServlet</code> is invoked again and processing resumes with the asynchronously
-produced result.</p>
-<p>Explaining the motivation for async request processing and when or why to use it are
-beyond the scope of this document. For further information you may wish to read
-<a class="ulink" href="https://spring.io/blog/2012/05/07/spring-mvc-3-2-preview-introducing-servlet-3-async-support" target="_top">this
-blog post series</a>.</p>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-exceptions" href="#mvc-ann-async-exceptions"></a>Exception Handling for Async Requests</h4></div></div></div>
+<p>&#35760;&#20303;&#20197;&#19978;&#20107;&#23454;&#20043;&#21518;&#65292;&#25509;&#30528;&#20102;&#35299;&#19968;&#19979;&#24322;&#27493;&#35831;&#27714;&#22788;&#29702; <code class="literal">Callable</code> &#30340;&#36807;&#31243;&#65306;(1) &#25511;&#21046;&#22120;&#36820;&#22238;&#19968;&#20010; <code class="literal">Callable</code> ,(2) Spring MVC &#24320;&#22987;&#24322;&#27493;&#22788;&#29702;&#65292;&#23558; <code class="literal">Callable</code> &#25552;&#20132;&#32473; <code class="literal">TaskExecutor</code>&#65292;<code class="literal">TaskExecutor</code> &#22312;&#19968;&#20010;&#29420;&#31435;&#32447;&#31243;&#20013;&#22788;&#29702;&#65292;(3) <code class="literal">DispatcherServlet</code> &#21644;&#25152;&#26377;&#36807;&#28388;&#22120;&#36864;&#20986;&#35831;&#27714;&#22788;&#29702;&#32447;&#31243;&#65292;&#19981;&#36807;&#20445;&#25345; response &#20026;&#25171;&#24320;&#29366;&#24577;&#65292;(4) <code class="literal">Callable</code> &#20135;&#29983;&#19968;&#20010;&#32467;&#26524;&#20043;&#21518;&#65292;Spring MVC &#23558;&#36825;&#20010;&#35831;&#27714;&#36716;&#21457;&#22238; Servlet &#23481;&#22120;&#65292;(5) &#20877;&#27425;&#35843;&#29992; <code class="literal">DispatcherServlet</code>&#65292;&#24182;&#37325;&#26032;&#22788;&#29702; <code class="literal">Callable</code> &#24322;&#27493;&#20135;&#29983;&#30340;&#32467;&#26524;&#12290;(2),(3),(4) &#30340;&#20934;&#30830;&#39034;&#24207;&#22312;&#19981;&#21516;&#24773;&#20917;&#19979;&#21487;&#33021;&#26377;&#25152;&#19981;&#21516;&#65292;&#36825;&#20010;&#21462;&#20915;&#20110;&#24182;&#21457;&#32447;&#31243;&#30340;&#22788;&#29702;&#36895;&#24230;&#12290;</p>
+<p>&#24322;&#27493;&#35831;&#27714;&#22788;&#29702; <code class="literal">DeferredResult</code> &#30340;&#20107;&#20214;&#39034;&#24207;&#22823;&#20307;&#19978;&#21644;&#22788;&#29702; <code class="literal">Callable</code> &#30340;&#39034;&#24207;&#30456;&#21516;&#12290;&#19981;&#21516;&#30340;&#26159;&#65292;&#36825;&#37324;&#26159;&#30001;&#24212;&#29992;&#31243;&#24207;&#30340;&#26576;&#20123;&#32447;&#31243;&#26469;&#22788;&#29702;&#24322;&#27493;&#32467;&#26524;:(1) &#25511;&#21046;&#22120;&#36820;&#22238;&#19968;&#20010; <code class="literal">DeferredResult</code> &#23545;&#35937;&#65292;&#24182;&#23558;&#20854;&#20445;&#23384;&#21040;&#21487;&#35775;&#38382;&#30340;&#20869;&#23384;&#38431;&#21015;&#25110;&#21015;&#34920;&#20013;&#65292;(2) Spring MVC &#24320;&#22987;&#24322;&#27493;&#22788;&#29702;&#65292;(3) <code class="literal">DispatcherServlet</code> &#21644;&#25152;&#26377;&#36807;&#28388;&#22120;&#36864;&#20986;&#35831;&#27714;&#22788;&#29702;&#32447;&#31243;&#65292;&#19981;&#36807;&#20445;&#25345; response &#20026;&#25171;&#24320;&#29366;&#24577;&#65292;(4) &#24212;&#29992;&#31243;&#24207;&#22312;&#26576;&#20123;&#32447;&#31243;&#20013;&#35774;&#32622; <code class="literal">DeferredResult</code>&#65292;&#20043;&#21518; Spring MVC &#23558;&#36825;&#20010;&#35831;&#27714;&#36716;&#21457;&#22238; Servlet &#23481;&#22120;&#65292;(5) &#20877;&#27425;&#35843;&#29992; <code class="literal">DispatcherServlet</code>&#65292;&#24182;&#37325;&#26032;&#22788;&#29702;&#24322;&#27493;&#20135;&#29983;&#30340;&#32467;&#26524;&#12290;</p>
+<p>&#35299;&#37322;&#20102;&#24322;&#27493;&#35831;&#27714;&#22788;&#29702;&#30340;&#26426;&#21046;&#65292;&#33267;&#20110;&#20309;&#26102;&#21644;&#20026;&#20160;&#20040;&#20351;&#29992;&#24322;&#24120;&#35831;&#27714;&#22788;&#29702;&#65292;&#23601;&#36229;&#20986;&#20102;&#27492;&#25991;&#26723;&#30340;&#20171;&#32461;&#33539;&#22260;&#12290;&#38656;&#35201;&#28145;&#20837;&#20102;&#35299;&#30340;&#65292;&#21487;&#20197;&#26597;&#30475; <a class="ulink" href="https://spring.io/blog/2012/05/07/spring-mvc-3-2-preview-introducing-servlet-3-async-support" target="_top">&#36825;&#19968;&#31995;&#21015;&#21338;&#23458;</a>.</p>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-exceptions" href="#mvc-ann-async-exceptions"></a>&#24322;&#27493;&#35831;&#27714;&#30340;&#24322;&#24120;&#22788;&#29702;</h4></div></div></div>
 
-<p>What happens if a <code class="literal">Callable</code> returned from a controller method raises an Exception while
-being executed? The effect is similar to what happens when any controller method raises
-an exception. It is handled by a matching <code class="literal">@ExceptionHandler</code> method in the same
-controller or by one of the configured <code class="literal">HandlerExceptionResolver</code> instances.</p>
+<p>&#24403;&#25511;&#21046;&#22120;&#36820;&#22238;&#30340; <code class="literal">Callable</code> &#22312;&#25191;&#34892;&#26102;&#21453;&#29983;&#20102;&#24322;&#24120;&#65292;&#20250;&#20986;&#29616;&#20160;&#20040;&#24773;&#20917;&#65311;&#36825;&#31181;&#24773;&#20917;&#31867;&#20284;&#20110;&#25511;&#21046;&#22120;&#21457;&#29983;&#24322;&#24120;&#26102;&#30340;&#24773;&#20917;&#12290;&#25152;&#20986;&#29616;&#30340;&#24322;&#24120;&#20250;&#30001;&#21516;&#19968;&#25511;&#21046;&#22120;&#37324;&#30340; <code class="literal">@ExceptionHandler</code> &#26041;&#27861;&#22788;&#29702;&#65292;&#25110;&#30001;&#25152;&#37197;&#32622;&#30340; <code class="literal">HandlerExceptionResolver</code> &#23454;&#20363;&#26469;&#22788;&#29702;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Under the covers, when a <code class="literal">Callable</code> raises an Exception, Spring MVC still dispatches to
-the Servlet container to resume processing. The only difference is that the result of
-executing the <code class="literal">Callable</code> is an <code class="literal">Exception</code> that must be processed with the configured
-<code class="literal">HandlerExceptionResolver</code> instances.</p>
+<p>&#22312;&#21518;&#21488;&#65292;&#24403; <code class="literal">Callable</code> &#25191;&#34892;&#21457;&#29983;&#20102;&#24322;&#24120;&#26102;&#65292;Spring MVC &#20173;&#28982;&#20250;&#23601;&#23558;&#20854;&#36716;&#21457;&#20250; Servlet &#23481;&#22120;&#65292;&#32487;&#32493;&#22120;&#21518;&#32493;&#22788;&#29702;&#12290;&#21807;&#19968;&#19981;&#21516;&#30340;&#26159;&#65292;&#25191;&#34892; <code class="literal">Callable</code> &#36820;&#22238;&#30340;&#32467;&#26524;&#26159;&#19968;&#20010;&#24322;&#24120;&#65292;&#27492;&#24322;&#24120;&#24517;&#39035;&#26377;&#25152;&#37197;&#32622;&#30340; <code class="literal">HandlerExceptionResolver</code> &#23454;&#20363;&#26469;&#22788;&#29702;&#12290;</p>
 </td></tr></table></div>
 
-<p>When using a <code class="literal">DeferredResult</code>, you have a choice of calling its <code class="literal">setErrorResult(Object)</code>
-method and provide an <code class="literal">Exception</code> or any other Object you&#8217;d like to use as the result.
-If the result is an <code class="literal">Exception</code>, it will be processed with a matching
-<code class="literal">@ExceptionHandler</code> method in the same controller or with any configured
-<code class="literal">HandlerExceptionResolver</code> instance.</p>
+<p>&#22914;&#26524;&#26159;&#25191;&#34892; <code class="literal">DeferredResult</code> &#26102;&#20986;&#29616;&#24322;&#24120;&#65292;&#20320;&#21487;&#20197;&#36873;&#25321;&#35843;&#29992; <code class="literal">DeferredResult</code> &#25552;&#20379;&#30340; <code class="literal">setErrorResult(Object)</code> &#26041;&#27861;&#65292;&#35813;&#26041;&#27861;&#39035;&#25552;&#20379;&#19968;&#20010;&#24322;&#24120;&#25110;&#20854;&#20182;&#20320;&#35774;&#32622;&#35774;&#32622;&#30340;&#23545;&#35937;&#12290; &#24403;&#32467;&#26524;&#26159;&#19968;&#20010; <code class="literal">Exception</code> &#26102;&#65292;&#20250;&#30001;&#21516;&#19968;&#25511;&#21046;&#22120;&#37324;&#30340; <code class="literal">@ExceptionHandler</code> &#26041;&#27861;&#22788;&#29702;&#65292;&#25110;&#30001;&#25152;&#37197;&#32622;&#30340; <code class="literal">HandlerExceptionResolver</code> &#23454;&#20363;&#26469;&#22788;&#29702;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-interception" href="#mvc-ann-async-interception"></a>Intercepting Async Requests</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-interception" href="#mvc-ann-async-interception"></a>&#25318;&#25130;&#24322;&#27493;&#35831;&#27714;</h4></div></div></div>
 
-<p>An existing <code class="literal">HandlerInterceptor</code> can implement <code class="literal">AsyncHandlerInterceptor</code>, which provides
-one additional method <code class="literal">afterConcurrentHandlingStarted</code>. It is invoked after async
-processing starts and when the initial request processing thread is being exited. See
-the <code class="literal">AsyncHandlerInterceptor</code> javadocs for more details on that.</p>
-<p>Further options for async request lifecycle callbacks are provided directly on
-<code class="literal">DeferredResult</code>, which has the methods <code class="literal">onTimeout(Runnable)</code> and
-<code class="literal">onCompletion(Runnable)</code>. Those are called when the async request is about to time out
-or has completed respectively. The timeout event can be handled by setting the
-<code class="literal">DeferredResult</code> to some value. The completion callback however is final and the result
-can no longer be set.</p>
-<p>Similar callbacks are also available with a <code class="literal">Callable</code>. However, you will need to wrap
-the <code class="literal">Callable</code> in an instance of <code class="literal">WebAsyncTask</code> and then use that to register the
-timeout and completion callbacks. Just like with <code class="literal">DeferredResult</code>, the timeout event can
-be handled and a value can be returned while the completion event is final.</p>
-<p>You can also register a <code class="literal">CallableProcessingInterceptor</code> or a
-<code class="literal">DeferredResultProcessingInterceptor</code> globally through the MVC Java config or the MVC
-namespace. Those interceptors provide a full set of callbacks and apply every time a
-<code class="literal">Callable</code> or a <code class="literal">DeferredResult</code> is used.</p>
+<p><code class="literal">HandlerInterceptor</code> &#21487;&#20197;&#23454;&#29616; <code class="literal">AsyncHandlerInterceptor</code> &#25509;&#21475;&#65292;&#27492;&#25509;&#21475;&#39069;&#22806;&#25552;&#20379;&#19968;&#20010; <code class="literal">afterConcurrentHandlingStarted</code> &#26041;&#27861;&#12290;&#35813;&#26041;&#27861;&#20250;&#22312;&#21021;&#22987;&#35831;&#27714;&#22788;&#32447;&#31243;&#36864;&#20986; &#21644; &#24322;&#27493;&#22788;&#29702;&#24320;&#22987;&#20043;&#21518;&#35843;&#29992;&#12290;&#35814;&#32454;&#20449;&#24687;&#21487;&#21442;&#32771; <code class="literal">AsyncHandlerInterceptor</code> javadocs &#12290;</p>
+<p>&#20063;&#21487;&#20197;&#36873;&#25321;&#20351;&#29992; <code class="literal">DeferredResult</code> &#30452;&#25509;&#25552;&#20379;&#30340;&#24322;&#27493;&#35831;&#27714;&#29983;&#21629;&#21608;&#26399;&#22238;&#35843;&#20989;&#25968;&#65292;&#24403;&#20013;&#21253;&#25324;&#20102; <code class="literal">onTimeout(Runnable)</code> &#21644; <code class="literal">onCompletion(Runnable)</code> &#26041;&#27861;&#12290;&#36825;&#20004;&#20010;&#26041;&#27861;&#20250;&#20998;&#21035;&#22312;&#24322;&#27493;&#35831;&#27714;&#36229;&#26102;&#25110;&#23436;&#25104;&#26102;&#35843;&#29992;&#12290;&#36229;&#26102;&#20107;&#20214;&#21487;&#36890;&#36807;&#35774;&#32622; <code class="literal">DeferredResult</code> &#37096;&#20998;&#20540;&#26469;&#22788;&#29702;&#65292;&#28982;&#32780;&#65292;&#23436;&#25104;&#26102;&#30340;&#22238;&#35843;&#24847;&#21619;&#30528;&#32467;&#26463;&#65292;&#21363;&#19981;&#33021;&#20877;&#35774;&#32622;&#36820;&#22238;&#32467;&#26524;&#12290;</p>
+<p><code class="literal">Callable</code> &#20063;&#21487;&#20197;&#20351;&#29992;&#31867;&#20284;&#30340;&#22238;&#35843;&#21151;&#33021;&#12290;&#21487;&#26159;&#65292;&#20320;&#38656;&#35201;&#23558; <code class="literal">Callable</code> &#23553;&#35013;&#25104; <code class="literal">WebAsyncTask</code> &#23454;&#20363;&#65292;&#25509;&#30528;&#20351;&#29992;&#36825;&#20010;&#23454;&#20363;&#27880;&#20876;&#36229;&#26102;&#21644;&#23436;&#25104;&#26102;&#20107;&#20214;&#12290;&#22914;&#27492;&#20415;&#21487;&#20687; <code class="literal">DeferredResult</code> &#37027;&#26679;&#65292;&#22788;&#29702;&#36229;&#26102;&#26102;&#38388;&#21644;&#22312;&#23436;&#25104;&#26102;&#36820;&#22238;&#19968;&#20010;&#20540;&#12290;</p>
+<p>&#20320;&#21487;&#20197;&#36890;&#36807; MVC Java &#37197;&#32622;&#25110; MVC &#21629;&#21517;&#31354;&#38388;&#65292;&#27880;&#20876;&#20840;&#23616;&#24615;&#30340; <code class="literal">CallableProcessingInterceptor</code> &#25110; <code class="literal">DeferredResultProcessingInterceptor</code>&#12290;&#36825;&#20004;&#20010;&#25318;&#25130;&#22120;&#25552;&#20379;&#20102;&#23436;&#25104;&#30340;&#22238;&#35843;&#26426;&#21046;&#65292;&#32780;&#19988;&#27599;&#27425;&#20351;&#29992; <code class="literal">Callable</code> &#25110; <code class="literal">DeferredResult</code> &#37117;&#20250;&#24212;&#29992;&#36825;&#20004;&#20010;&#25318;&#25130;&#22120;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-configuration" href="#mvc-ann-async-configuration"></a>Configuration for Async Request Processing</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-ann-async-configuration" href="#mvc-ann-async-configuration"></a>&#19968;&#27493;&#35831;&#27714;&#22788;&#29702;&#30340;&#37197;&#32622;</h4></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="mvc-ann-async-configuration-servlet3" href="#mvc-ann-async-configuration-servlet3"></a>Servlet 3 Async Config</h5></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="mvc-ann-async-configuration-servlet3" href="#mvc-ann-async-configuration-servlet3"></a>Servlet 3 &#24322;&#27493;&#37197;&#32622;</h5></div></div></div>
 
-<p>To use Servlet 3 async request processing, you need to update <code class="literal">web.xml</code> to version 3.0:</p>
+<p>&#20351;&#29992; Servlet 3 &#30340;&#24322;&#27493;&#35831;&#27714;&#22788;&#29702;&#65292;&#38656;&#35201;&#23558; <code class="literal">web.xml</code> &#30340;&#29256;&#26412;&#26356;&#26032;&#20026; 3.0&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;web-app</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://java.sun.com/xml/ns/javaee"</span>
     <span class="hl-attribute">xmlns:xsi</span>=<span class="hl-value">"http://www.w3.org/2001/XMLSchema-instance"</span>
             <span class="hl-attribute">http://java.sun.com/xml/ns/javaee</span>
@@ -1453,18 +1364,10 @@ namespace. Those interceptors provide a full set of callbacks and apply every ti
 
 <span class="hl-tag">&lt;/web-app&gt;</span></pre>
 
-<p>The <code class="literal">DispatcherServlet</code> and any <code class="literal">Filter</code> configuration need to have the
-<code class="literal">&lt;async-supported&gt;true&lt;/async-supported&gt;</code> sub-element. Additionally, any <code class="literal">Filter</code> that
-also needs to get involved in async dispatches should also be configured to support the
-ASYNC dispatcher type. Note that it is safe to enable the ASYNC dispatcher type for all
-filters provided with the Spring Framework since they will not get involved in async
-dispatches unless needed.</p>
+<p><code class="literal">DispatcherServlet</code> &#21644;&#20219;&#24847; <code class="literal">Filter</code> &#30340;&#37197;&#32622;&#37117;&#38656;&#35201;&#26377; <code class="literal">&lt;async-supported&gt;true&lt;/async-supported&gt;</code> &#23376;&#20803;&#20214;&#12290;&#21478;&#22806;&#65292;&#20219;&#24847;&#20250;&#22312;&#24322;&#27493;&#36716;&#21457;&#20013;&#35843;&#29992;&#30340; <span class="emphasis"><em>Filter</em></span> &#37117;&#38656;&#35201;&#25903;&#25345; ASYNC &#36716;&#21457;&#31867;&#22411;&#12290;&#25552;&#31034;&#65292;&#20351;&#29992; Spring &#26694;&#26550;&#26102;&#65292;&#35753;&#25152;&#26377;&#36807;&#28388;&#22120;&#37117;&#25903;&#25345; ASYNC &#36716;&#21457;&#31867;&#22411;&#26159;&#23433;&#20840;&#30340;&#65292;&#22240;&#20026;&#38500;&#38750;&#26159;&#38656;&#35201;&#29992;&#21040;&#65292;&#21542;&#21017;&#20182;&#20204;&#22312;&#24322;&#27493;&#36716;&#21457;&#20013;&#20063;&#19981;&#20250;&#34987;&#35843;&#29992;&#12290;</p>
 <div class="warning" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Warning"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Warning]" src="images/warning.png"></td><th align="left">Warning</th></tr><tr><td align="left" valign="top">
-<p>Note that for some Filters it is absolutely critical to ensure they are mapped to
-be invoked during asynchronous dispatches. For example if a filter such as the
-<code class="literal">OpenEntityManagerInViewFilter</code> is responsible for releasing database connection
-resources and must be invoked at the end of an async request.</p>
-<p>Below is an example of a propertly configured filter:</p>
+<p>&#27880;&#24847;&#65292;&#23545;&#37096;&#20998;&#36807;&#28388;&#22120;&#26469;&#35828;&#65292;&#35831;&#30830;&#20445;&#23427;&#20204;&#20250;&#22312;&#24322;&#27493;&#36716;&#21457;&#26102;&#34987;&#26144;&#23556;&#35843;&#29992;&#12290;&#27604;&#22914;&#65292;&#24403;&#19968;&#20010;&#36807;&#28388;&#22120;&#26159;&#36127;&#36131;&#37322;&#25918;&#25968;&#25454;&#24211;&#36830;&#25509;&#30340;&#65288;&#22914;<code class="literal">OpenEntityManagerInViewFilter</code>&#65289;&#65292;&#36825;&#20010;&#36807;&#28388;&#22120;&#24517;&#39035;&#22312;&#24322;&#27493;&#35831;&#27714;&#26368;&#21518;&#19968;&#27493;&#25165;&#35843;&#29992;&#12290;</p>
+<p>&#22914;&#19979;&#65292;&#26159;&#19968;&#20010;&#36807;&#28388;&#22120;&#37197;&#32622;&#30340;&#26679;&#20363;&#65306;</p>
 </td></tr></table></div>
 
 <pre class="programlisting"><span class="hl-tag">&lt;web-app</span> <span class="hl-attribute">xmlns</span>=<span class="hl-value">"http://java.sun.com/xml/ns/javaee"</span>
@@ -1491,73 +1394,38 @@ resources and must be invoked at the end of an async request.</p>
 
 </pre>
 
-<p>If using Servlet 3, Java based configuration, e.g. via <code class="literal">WebApplicationInitializer</code>,
-you&#8217;ll also need to set the "asyncSupported" flag as well as the ASYNC dispatcher type
-just like with <code class="literal">web.xml</code>. To simplify all this configuration, consider extending
-<code class="literal">AbstractDispatcherServletInitializer</code> or
-<code class="literal">AbstractAnnotationConfigDispatcherServletInitializer</code>, which automatically set those
-options and make it very easy to register <code class="literal">Filter</code> instances.</p>
+<p>&#22914;&#26524;&#20351;&#29992; Servlet 3&#65292;Java &#22522;&#30784;&#37197;&#32622;&#65288;&#22914;&#20351;&#29992; <code class="literal">WebApplicationInitializer</code>&#65289;&#31561;&#65292;&#38500;&#20102;&#38656;&#35201;&#22312; '<code class="literal">web.xml</code> &#37197;&#32622; ASYNC &#36716;&#21457;&#31867;&#22411;&#65292;&#20320;&#36824;&#38656;&#35201;&#35774;&#32622; "asyncSupported" &#26631;&#35782;&#12290;&#22914;&#26524;&#24819;&#31616;&#21270;&#36825;&#20123;&#37197;&#32622;&#30340;&#65292;&#21487;&#20197;&#32487;&#25215; <code class="literal">AbstractDispatcherServletInitializer</code>&#25110;<code class="literal">AbstractAnnotationConfigDispatcherServletInitializer</code>&#65292;&#36825;&#20004;&#20010;&#25277;&#35937;&#31867;&#25110;&#35774;&#32622;&#20197;&#19978;&#26631;&#35782;&#65292;&#22914;&#27492;&#20415;&#21487;&#36731;&#26494;&#22320;&#27880;&#20876; <code class="literal">Filter</code> &#23454;&#20363;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="mvc-ann-async-configuration-spring-mvc" href="#mvc-ann-async-configuration-spring-mvc"></a>Spring MVC Async Config</h5></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h5 class="title"><a name="mvc-ann-async-configuration-spring-mvc" href="#mvc-ann-async-configuration-spring-mvc"></a>Spring MVC &#24322;&#27493;&#37197;&#32622;</h5></div></div></div>
 
-<p>The MVC Java config and the MVC namespace both provide options for configuring async
-request processing. <code class="literal">WebMvcConfigurer</code> has the method <code class="literal">configureAsyncSupport</code> while
-&lt;mvc:annotation-driven&gt; has an &lt;async-support&gt; sub-element.</p>
-<p>Those allow you to configure the default timeout value to use for async requests, which
-if not set depends on the underlying Servlet container (e.g. 10 seconds on Tomcat). You
-can also configure an <code class="literal">AsyncTaskExecutor</code> to use for executing <code class="literal">Callable</code> instances
-returned from controller methods. It is highly recommended to configure this property
-since by default Spring MVC uses <code class="literal">SimpleAsyncTaskExecutor</code>. The MVC Java config and the
-MVC namespace also allow you to register <code class="literal">CallableProcessingInterceptor</code> and
-<code class="literal">DeferredResultProcessingInterceptor</code> instances.</p>
-<p>If you need to override the default timeout value for a specific <code class="literal">DeferredResult</code>, you
-can do so by using the appropriate class constructor. Similarly, for a <code class="literal">Callable</code>, you
-can wrap it in a <code class="literal">WebAsyncTask</code> and use the appropriate class constructor to customize
-the timeout value. The class constructor of <code class="literal">WebAsyncTask</code> also allows providing an
-<code class="literal">AsyncTaskExecutor</code>.</p>
+<p>MVC Java &#37197;&#32622;&#21644; MVC &#21629;&#21517;&#31354;&#38388;&#37117;&#25552;&#20379;&#20102;&#24322;&#27493;&#35831;&#27714;&#22788;&#29702;&#37197;&#32622;&#30340;&#36873;&#39033;&#12290;<code class="literal">WebMvcConfigurer</code> &#21487;&#20197;&#36890;&#36807; <code class="literal">configureAsyncSupport</code> &#26041;&#27861;&#35774;&#32622;&#65292;&lt;mvc:annotation-driven&gt;&#21017;&#21487;&#36890;&#36807;&#23376;&#20803;&#20214; &lt;async-support&gt; &#35774;&#32622;&#12290;</p>
+<p>&#22914;&#26524;&#27809;&#26377;&#37197;&#32622;&#24322;&#27493;&#35831;&#27714;&#36229;&#26102;&#26102;&#38388;&#65292;&#20197;&#19978;&#20004;&#31181;&#37197;&#32622;&#37117;&#20250;&#20351;&#29992;&#40664;&#35748;&#30340;&#36229;&#26102;&#26102;&#38388;&#20540;(&#21462;&#20915;&#20110;&#24213;&#23618; Servlet &#23481;&#22120;&#65292;&#22914; Tomcat &#26159; 10 &#31186;)&#12290;&#20063;&#21487;&#20197;&#37197;&#32622; <code class="literal">AsyncTaskExecutor</code>&#65292;&#29992;&#26469;&#25191;&#34892;&#25511;&#21046;&#22120;&#26041;&#27861;&#36820;&#22238;&#30340; <code class="literal">Callable</code> &#23454;&#20363;&#12290;&#21478;&#22806;&#65292;&#24378;&#28872;&#25512;&#33616;&#20320;&#37197;&#32622; <code class="literal">AsyncTaskExecutor</code> &#23646;&#24615;,&#22240;&#20026; Spring MVC &#40664;&#35748;&#26159;&#20351;&#29992; <code class="literal">SimpleAsyncTaskExecutor</code>&#12290;MVC Java &#37197;&#32622;&#21644; MVC &#21629;&#21517;&#31354;&#38388;&#37117;&#20801;&#35768;&#27880;&#20876; <code class="literal">CallableProcessingInterceptor</code>&#21644;<code class="literal">DeferredResultProcessingInterceptor</code>&#23454;&#20363;&#12290;</p>
+<p>&#22914;&#26524;&#38656;&#35201;&#35206;&#30422;&#25351;&#23450; <code class="literal">DeferredResult</code> &#30340;&#40664;&#35748;&#36229;&#26102;&#20540;&#65292;&#21487;&#20197;&#20351;&#29992;&#20854;&#21512;&#36866;&#30340;&#26500;&#36896;&#22120;&#12290;&#31867;&#20284;&#22320;&#65292;&#22914;&#26524;&#26159;&#35206;&#30422; <code class="literal">Callable</code> &#30340;&#40664;&#35748;&#36229;&#26102;&#20540;&#65292;&#21487;&#20197;&#23558;&#20854;&#23553;&#35013;&#20026; <code class="literal">WebAsyncTask</code> &#23545;&#35937;&#24182;&#20351;&#29992;&#21512;&#36866;&#30340;&#26500;&#36896;&#22120;&#26469;&#33258;&#23450;&#20041;&#36229;&#26102;&#20540;&#12290;<code class="literal">WebAsyncTask</code> &#26500;&#36896;&#22120;&#20063;&#25552;&#20379;&#20102;  <code class="literal">AsyncTaskExecutor</code>&#12290;</p>
 </div>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-ann-tests" href="#mvc-ann-tests"></a>16.3.5&nbsp;Testing Controllers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-ann-tests" href="#mvc-ann-tests"></a>16.3.5&nbsp;&#27979;&#35797;&#25511;&#21046;&#22120;</h3></div></div></div>
 
-<p>The <code class="literal">spring-test</code> module offers first class support for testing annotated controllers.
-See <a class="xref" href="aop-api.html#spring-mvc-test-framework" title="10.15.6&nbsp;Spring MVC Test Framework">Section&nbsp;10.15.6, &#8220;Spring MVC Test Framework&#8221;</a>.</p>
+<p><code class="literal">spring-test</code> &#27169;&#22359;&#25552;&#20379;&#20102;&#19968;&#27969;&#30340;&#27979;&#35797;&#31867;&#65292;&#25903;&#25345;&#27979;&#35797;&#27880;&#35299;&#25511;&#21046;&#22120;&#12290;&#35814;&#24773;&#21487;&#26597;&#30475;<a class="xref" href="aop-api.html#spring-mvc-test-framework" title="10.15.6&nbsp;Spring MVC Test Framework">Section&nbsp;10.15.6, &#8220;Spring MVC Test Framework&#8221;</a>.</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-handlermapping" href="#mvc-handlermapping"></a>16.4&nbsp;Handler mappings</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-handlermapping" href="#mvc-handlermapping"></a>16.4&nbsp;Handler &#26144;&#23556;</h2></div></div></div>
 
-<p>In previous versions of Spring, users were required to define one or more
-<code class="literal">HandlerMapping</code> beans in the web application context to map incoming web requests to
-appropriate handlers. With the introduction of annotated controllers, you generally
-don&#8217;t need to do that because the <code class="literal">RequestMappingHandlerMapping</code> automatically looks for
-<code class="literal">@RequestMapping</code> annotations on all <code class="literal">@Controller</code> beans. However, do keep in mind that
-all <code class="literal">HandlerMapping</code> classes extending from <code class="literal">AbstractHandlerMapping</code> have the following
-properties that you can use to customize their behavior:</p>
+<p>Spring &#30340;&#21069;&#20960;&#20010;&#29256;&#26412;&#65292;&#24320;&#21457;&#32773;&#37117;&#38656;&#35201;&#22312; web &#24212;&#29992;&#30340;&#19978;&#19979;&#25991;&#23450;&#20041;(&#22810;&#20010;) <code class="literal">HandlerMapping</code> bean&#65292;&#29992;&#26469;&#23558; web &#35831;&#27714;&#26144;&#23556;&#21040;&#25351;&#23450;&#30340; handler&#12290;&#21487;&#24403;&#24341;&#20837;&#27880;&#35299;&#25511;&#21046;&#22120;&#26102;&#65292;&#24320;&#21457;&#32773;&#22522;&#26412;&#19981;&#20877;&#38656;&#35201;&#36825;&#26679;&#37197;&#32622;&#12290;&#22240;&#20026; <code class="literal">RequestMappingHandlerMapping</code> &#20250;&#33258;&#21160;&#23547;&#25214;&#25152;&#26377; <code class="literal">@Controller</code> bean &#20013;&#30340; <code class="literal">@RequestMapping</code> &#27880;&#35299;&#12290;&#21478;&#22806;&#25552;&#37266;&#19968;&#19979;&#65292;&#25152;&#26377;&#20174; <code class="literal">AbstractHandlerMapping</code> &#32487;&#25215;&#36807;&#26469;&#30340; <code class="literal">HandlerMapping</code> &#31867;&#65292;&#37117;&#20197;&#36890;&#36807;&#35774;&#32622;&#20197;&#19979;&#23646;&#24615;&#26469;&#33258;&#23450;&#20041;&#20854;&#34892;&#20026;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<code class="literal">interceptors</code> List of interceptors to use. <code class="literal">HandlerInterceptor</code>s are discussed in
-<a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;16.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a>.
+<code class="literal">interceptors</code> &#25318;&#25130;&#22120;&#38142;&#12290; <code class="literal">HandlerInterceptor</code>s &#20250;&#22312;
+<a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;">Section&nbsp;16.4.1, &#8220;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;&#8221;</a> &#35848;&#35770;&#12290;
 </li><li class="listitem">
-<code class="literal">defaultHandler</code> Default handler to use, when this handler mapping does not result in
-a matching handler.
+<code class="literal">defaultHandler</code> &#40664;&#35748; handler&#12290;&#27492; handler &#19981;&#24433;&#21709;&#20854;&#20182; handler &#30340;&#20351;&#29992;&#12290;
 </li><li class="listitem">
-<code class="literal">order</code> Based on the value of the order property (see the
-<code class="literal">org.springframework.core.Ordered</code> interface), Spring sorts all handler mappings
-available in the context and applies the first matching handler.
+<code class="literal">order</code> order &#23646;&#24615; (&#21487;&#26597;&#30475; <code class="literal">org.springframework.core.Ordered</code> &#25509;&#21475;), 	Spring&#20250;&#23545;&#21487;&#21305;&#37197;&#30340; handler &#36827;&#34892;&#25490;&#24207;&#65292;&#24182;&#24212;&#29992;&#31532;&#19968;&#20010;&#21305;&#37197;&#21040; handler&#12290;
 </li><li class="listitem">
-<code class="literal">alwaysUseFullPath</code> If <code class="literal">true</code> , Spring uses the full path within the current Servlet
-context to find an appropriate handler. If <code class="literal">false</code> (the default), the path within the
-current Servlet mapping is used. For example, if a Servlet is mapped using
-<code class="literal">/testing/*</code> and the <code class="literal">alwaysUseFullPath</code> property is set to true,
-<code class="literal">/testing/viewPage.html</code> is used, whereas if the property is set to false,
-<code class="literal">/viewPage.html</code> is used.
+<code class="literal">alwaysUseFullPath</code> &#24403;&#27492;&#23646;&#24615;&#20026; <code class="literal">true</code> &#26102;&#65292;Spring &#20250;&#20351;&#29992;&#24403;&#21069; Servlet &#19978;&#19979;&#25991;&#30340;&#20840;&#36335;&#24452;&#21435;&#23547;&#25214;&#21512;&#36866;&#30340; handler&#12290;&#24403;&#20026; <code class="literal">false</code> &#26102;(&#40664;&#35748;&#20540;)&#65292;Spring &#20250;&#20351;&#29992;&#30456;&#23545;&#36335;&#24452;&#26469;&#23547;&#25214;&#21512;&#36866;&#30340; handler&#12290;&#20030;&#20010;&#20363;&#23376;&#65292;&#24403; &#26576;&#20010; Servlet &#26144;&#23556; <code class="literal">/testing/*</code> &#35831;&#27714;&#26102;&#65292;&#33509; <code class="literal">alwaysUseFullPath</code> &#23646;&#24615;&#20026; <code class="literal">true</code>,&#20250;&#20351;&#29992; <code class="literal">/testing/viewPage.html</code>&#65307;&#21453;&#20043;&#65292;&#20351;&#29992; <code class="literal">/viewPage.html</code>&#12290;
 </li><li class="listitem">
-<code class="literal">urlDecode</code> Defaults to <code class="literal">true</code>, as of Spring 2.5. If you prefer to compare encoded
-paths, set this flag to <code class="literal">false</code>. However, the <code class="literal">HttpServletRequest</code> always exposes the
-Servlet path in decoded form. Be aware that the Servlet path will not match when
-compared with encoded paths.
+<code class="literal">urlDecode</code> &#20174; Spring 2.5 &#24320;&#22987;&#65292;&#27492;&#23646;&#24615;&#40664;&#35748;&#20026; <code class="literal">true</code>&#12290;&#22914;&#26524;&#20320;&#26356;&#38656;&#35201;&#32534;&#30721;&#36335;&#22522;&#36335;&#24452;&#65292;&#21487;&#23558;&#27492;&#23646;&#24615;&#35774;&#32622;&#20026; true&#12290;&#28982;&#32780;&#65292;<code class="literal">HttpServletRequest</code> &#24635;&#20250;&#26292;&#38706;&#35299;&#30721;&#21518;&#30340; Servlet &#36335;&#24452;&#12290;&#21478;&#22806;&#27880;&#24847;&#30340;&#26159;&#65292;&#24403;&#27604;&#36739;&#32534;&#30721;&#21518;&#30340;&#36335;&#24452;&#26102;&#65292;Servlet &#36335;&#24452;&#26159;&#19981;&#20250;&#20877;&#21305;&#37197;&#30340;&#12290;
 </li></ul></div>
 
-<p>The following example shows how to configure an interceptor:</p>
+<p>&#22914;&#19979;&#20363;&#23376;&#65292;&#28436;&#31034;&#20102;&#22914;&#20309;&#37197;&#32622;&#19968;&#20010;&#25318;&#25130;&#22120;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"handlerMapping"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"interceptors"</span><span class="hl-tag">&gt;</span>
@@ -1566,26 +1434,18 @@ compared with encoded paths.
     <span class="hl-tag">&lt;/bean&gt;</span>
 <span class="hl-tag">&lt;beans&gt;</span></pre>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-handlermapping-interceptor" href="#mvc-handlermapping-interceptor"></a>16.4.1&nbsp;Intercepting requests with a HandlerInterceptor</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-handlermapping-interceptor" href="#mvc-handlermapping-interceptor"></a>16.4.1&nbsp;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;</h3></div></div></div>
 
-<p>Spring&#8217;s handler mapping mechanism includes handler interceptors, which are useful when
-you want to apply specific functionality to certain requests, for example, checking for
-a principal.</p>
-<p>Interceptors located in the handler mapping must implement <code class="literal">HandlerInterceptor</code> from the
-<code class="literal">org.springframework.web.servlet</code> package. This interface defines three methods:
-<code class="literal">preHandle(..)</code> is called <span class="emphasis"><em>before</em></span> the actual handler is executed; <code class="literal">postHandle(..)</code> is
-called <span class="emphasis"><em>after</em></span> the handler is executed; and <code class="literal">afterCompletion(..)</code> is called <span class="emphasis"><em>after
-the complete request has finished</em></span>. These three methods should provide enough
-flexibility to do all kinds of preprocessing and postprocessing.</p>
-<p>The <code class="literal">preHandle(..)</code> method returns a boolean value. You can use this method to break or
-continue the processing of the execution chain. When this method returns <code class="literal">true</code>, the
-handler execution chain will continue; when it returns false, the <code class="literal">DispatcherServlet</code>
-assumes the interceptor itself has taken care of requests (and, for example, rendered an
-appropriate view) and does not continue executing the other interceptors and the actual
-handler in the execution chain.</p>
-<p>Interceptors can be configured using the <code class="literal">interceptors</code> property, which is present on
-all <code class="literal">HandlerMapping</code> classes extending from <code class="literal">AbstractHandlerMapping</code>. This is shown in
-the example below:</p>
+<p>Spring &#30340; handler &#26144;&#23556;&#26426;&#21046;&#21253;&#21547;&#20102; handler &#25318;&#25130;&#22120;&#12290;&#20351;&#29992;handler &#25318;&#25130;&#22120;&#65292;&#21487;&#20197;&#22312;&#26576;&#20123;&#30340;&#35831;&#27714;&#20013;&#24212;&#29992;&#30340;&#29305;&#27530;&#30340;&#21151;&#33021;&#65292;&#27604;&#22914;&#35828;&#65292;&#26816;&#26597;&#26435;&#38480;&#12290;</p>
+<p>handler &#26144;&#23556;&#30340;&#25318;&#25130;&#22120;&#24517;&#39035;&#23454;&#29616; <code class="literal">HandlerInterceptor</code> &#25509;&#21475;(&#27492;&#33410;&#25509;&#21475;&#20301;&#20110; <code class="literal">org.springframework
+.web.servlet</code> &#21253;&#20013;)&#12290;&#36825;&#20010;&#25509;&#21475;&#23450;&#20041;&#20102;&#19977;&#20010;&#26041;&#27861;&#65306;<code class="literal">preHandle(..)</code> &#22312; handler
+&#25191;&#34892;&#21069;&#35843;&#29992;&#65307;<code class="literal">postHandle(..)</code> &#22312;handler &#25191;&#34892;&#21518;&#35843;&#29992;&#65307;<code class="literal">afterCompletion(..)</code>
+&#22312;&#25972;&#19968;&#20010;&#35831;&#27714;&#23436;&#25104;&#21518;&#35843;&#29992;&#12290;&#36825;&#19977;&#20010;&#26041;&#27861;&#22522;&#26412;&#36275;&#22815;&#24212;&#23545;&#21508;&#31181;&#39044;&#22788;&#29702;&#21644;&#21518;&#22788;&#29702;&#30340;&#29366;&#20917;&#12290;</p>
+<p><code class="literal">preHandle(..)</code> &#26041;&#27861;&#36820;&#22238;&#19968;&#20010; boolean &#20540;&#12290;&#20320;&#21487;&#20197;&#20351;&#29992;&#36825;&#20010;&#26041;&#27861;&#26469;&#20013;&#26029;&#25110;&#32487;&#32493;&#22788;&#29702; handler
+&#25191;&#34892;&#38142;&#12290;&#24403;&#27492;&#26041;&#27861;&#36820;&#22238; <code class="literal">true</code> &#26102;&#65292;hadler &#25191;&#34892;&#38142;&#20250;&#32487;&#32493;&#25191;&#34892;&#65307;&#21453;&#20043;&#65292;<code class="literal">DispatcherServlet</code>
+&#20250;&#35748;&#20026;&#27492;&#25318;&#25130;&#22120;&#24050;&#22788;&#29702;&#23436;&#25104;&#35813;&#35831;&#27714;(&#21644;&#28210;&#26579;&#19968;&#20010;&#35270;&#22270;)&#65292;&#20043;&#21518;&#19981;&#20877;&#25191;&#34892;&#20313;&#19979;&#30340;&#25318;&#25130;&#22120;&#65292;&#20063;&#19981;&#22312;&#25191;&#34892;
+handler &#25191;&#34892;&#38142;&#12290;</p>
+<p>&#21487;&#20197;&#20351;&#29992; <code class="literal">interceptors</code> &#23646;&#24615;&#37197;&#32622;&#25318;&#25130;&#22120;&#12290;&#25152;&#26377;&#20174;  <code class="literal">AbstractHandlerMapping</code> &#32487;&#25215;&#36807;&#26469;&#30340; <code class="literal">HandlerMapping</code> &#31867;&#37117;&#25317;&#26377;&#27492;&#23646;&#24615;&#12290;&#28436;&#31034;&#20363;&#23376;&#22914;&#19979;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;beans&gt;</span>
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"handlerMapping"</span>
             <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"</span><span class="hl-tag">&gt;</span>
@@ -1630,71 +1490,40 @@ the example below:</p>
     }
 }</pre>
 
-<p>Any request handled by this mapping is intercepted by the <code class="literal">TimeBasedAccessInterceptor</code>.
-If the current time is outside office hours, the user is redirected to a static HTML
-file that says, for example, you can only access the website during office hours.</p>
-<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>When using the <code class="literal">RequestMappingHandlerMapping</code> the actual handler is an instance of
-<code class="literal">HandlerMethod</code> which identifies the specific controller method that will be invoked.</p>
-</td></tr></table></div>
+<p>&#36890;&#36807;&#36825;&#26679;&#30340;&#37197;&#32622;&#65292;&#25152;&#26377;&#35831;&#27714; handler &#37117;&#20250;&#34987; <code class="literal">TimeBasedAccessInterceptor</code> &#25318;&#25130;&#12290;&#22914;&#26524;&#24403;&#21069;&#26102;&#38388;&#26159;&#19979;&#29677;&#26102;&#38388;&#65292;&#29992;&#25143;&#20250;&#37325;&#23450;&#21521;&#21040;&#19968;&#20010;&#38745;&#24577;&#39029;&#38754;&#65292;&#25442;&#21477;&#35805;&#35828;&#23601;&#26159;&#65292;&#20320;&#21482;&#33021;&#22312;&#19978;&#29677;&#26102;&#38388;&#35775;&#38382;&#35813;&#32593;&#31449;&#12290;</p>
+<p>[&#25552;&#31034;]</p>
+<div class="informalexample">
+<p>&#24403;&#20351;&#29992; <code class="literal">RequestMappingHandlerMapping</code> &#26102;&#65292;&#30495;&#23454;&#30340; handler &#26159;&#19968;&#20010;<code class="literal">HandlerMethod</code> &#23454;&#20363;&#65292;&#35813;&#23454;&#20363;&#25351;&#23450;&#20102;&#20250;&#34987;&#35843;&#29992;&#30340;&#25511;&#21046;&#22120;&#26041;&#27861;&#12290;</p>
+</div>
 
-<p>As you can see, the Spring adapter class <code class="literal">HandlerInterceptorAdapter</code> makes it easier to
-extend the <code class="literal">HandlerInterceptor</code> interface.</p>
+<p>&#22914;&#20320;&#25152;&#35265;&#65292;Spring &#30340;&#36866;&#37197;&#22120;&#31867; <code class="literal">HandlerInterceptorAdapter</code>&#65292;&#20351;&#32487;&#25215; <code class="literal">HandlerInterceptor</code> &#25509;&#21475;&#21464;&#24471;&#26356;&#21152;&#31616;&#21333;&#12290;</p>
 <div class="tip" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Tip"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Tip]" src="images/tip.png"></td><th align="left">Tip</th></tr><tr><td align="left" valign="top">
-<p>In the example above, the configured interceptor will apply to all requests handled with
-annotated controller methods. If you want to narrow down the URL paths to which an
-interceptor applies, you can use the MVC namespace or the MVC Java config, or declare
-bean instances of type <code class="literal">MappedInterceptor</code> to do that. See <a class="xref" href="mvc.html#mvc-config-enable" title="16.16.1&nbsp;Enabling the MVC Java Config or the MVC XML Namespace">Section&nbsp;16.16.1, &#8220;Enabling the MVC Java Config or the MVC XML Namespace&#8221;</a>.</p>
+<p>&#22312;&#19978;&#36848;&#20363;&#23376;&#20013;&#65292;&#25152;&#37197;&#32622;&#30340;&#25318;&#25130;&#22120;&#20250;&#24212;&#29992;&#21040;&#25152;&#26377;&#24102;&#27880;&#35299;&#30340;&#35831;&#27714;&#22788;&#29702;&#22120;&#12290;&#22914;&#26524;&#38656;&#35201;&#32553;&#31364;&#25318;&#25130;&#22120;&#30340;&#25318;&#25130; url &#36335;&#24452;&#33539;&#22260;&#65292;&#21487;&#20197;&#20351;&#29992; MVC &#21629;&#21517;&#31354;&#38388;&#25110; MVC Java &#37197;&#32622;&#65292;&#25110;&#22768;&#26126; <code class="literal">MappedInterceptor</code> &#31867;&#22411;&#30340; bean &#26469;&#32553;&#31364;&#25318;&#25130;&#22120;&#30340;&#25318;&#25130;&#33539;&#22260;&#65292;&#35814;&#24773;&#21487;&#21442;&#32771; <a class="xref" href="mvc.html#mvc-config-enable" title="16.16.1&nbsp;Enabling the MVC Java Config or the MVC XML Namespace">Section&nbsp;16.16.1, &#8220;Enabling the MVC Java Config or the MVC XML Namespace&#8221;</a>&#12290;</p>
 </td></tr></table></div>
 
-<p>Note that the <code class="literal">postHandle</code> method of <code class="literal">HandlerInterceptor</code> is not always ideally suited for
-use with <code class="literal">@ResponseBody</code> and <code class="literal">ResponseEntity</code> methods. In such cases an <code class="literal">HttpMessageConverter</code>
-writes to and commits the response before <code class="literal">postHandle</code> is called which makes it impossible
-to change the response, for example to add a header. Instead an application can implement
-<code class="literal">ResponseBodyAdvice</code> and either declare it as an <code class="literal">@ControllerAdvice</code> bean or configure it
-directly on <code class="literal">RequestMappingHandlerAdapter</code>.</p>
+<p>&#27880;&#24847;&#65292;<code class="literal">HandlerInterceptor</code> &#30340; <code class="literal">postHandle</code> &#26041;&#27861;&#19981;&#19968;&#23450;&#36866;&#29992;&#20110;<code class="literal">@ResponseBody</code>&#21644;<code class="literal">ResponseEntity</code>&#26041;&#27861;&#12290;&#22312;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;<code class="literal">HttpMessageConverter</code> &#23454;&#20363;&#20250;&#22312; <code class="literal">postHandle</code> &#26041;&#27861;&#25191;&#34892;&#20043;&#21069;&#23601;&#23558;&#25968;&#25454;&#20889;&#21040; response &#24182;&#25552;&#20132; response&#65292;&#25152;&#20197; <code class="literal">postHandle</code> &#26041;&#27861;&#19981;&#21487;&#33021;&#20877;&#22788;&#29702; response&#65288;&#22914;&#28155;&#21152;&#19968;&#20010; Header&#65289;&#12290;&#30456;&#21453;&#65292;&#24212;&#29992;&#31243;&#24207;&#21487;&#20197;&#23454;&#29616; <code class="literal">ResponseBodyAdvice</code> &#65292;&#23558;&#20854;&#22768;&#26126;&#20026; <code class="literal">@ControllerAdvice</code> bean &#25110;&#23558;&#20854;&#30452;&#25509;&#22312; <code class="literal">RequestMappingHandlerAdapter</code> &#20013;&#37197;&#32622;&#23427;&#12290;</p>
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-viewresolver" href="#mvc-viewresolver"></a>16.5&nbsp;Resolving views</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-viewresolver" href="#mvc-viewresolver"></a>16.5&nbsp;&#35270;&#22270;&#35299;&#26512;</h2></div></div></div>
 
-<p>All MVC frameworks for web applications provide a way to address views. Spring provides
-view resolvers, which enable you to render models in a browser without tying you to a
-specific view technology. Out of the box, Spring enables you to use JSPs, Velocity
-templates and XSLT views, for example. See <a class="xref" href="view.html" title="17.&nbsp;View technologies">Chapter&nbsp;17, <i>View technologies</i></a> for a discussion of how to integrate
-and use a number of disparate view technologies.</p>
-<p>The two interfaces that are important to the way Spring handles views are <code class="literal">ViewResolver</code>
-and <code class="literal">View</code>. The <code class="literal">ViewResolver</code> provides a mapping between view names and actual views.
-The <code class="literal">View</code> interface addresses the preparation of the request and hands the request over
-to one of the view technologies.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-viewresolver-resolver" href="#mvc-viewresolver-resolver"></a>16.5.1&nbsp;Resolving views with the ViewResolver interface</h3></div></div></div>
+<p>&#25152;&#26377; web &#24212;&#29992;&#30340; MVC &#26694;&#26550;&#37117;&#20250;&#25552;&#20102;&#35270;&#22270;&#35299;&#26512;&#30340;&#26041;&#26696;&#65292;Spring &#25552;&#20379;&#30340;&#35270;&#22270;&#35299;&#26512;&#65292;&#21487;&#20197;&#35753;&#20320;&#22312;&#19981;&#25351;&#23450;&#29305;&#23450;&#35270;&#22270;&#25216;&#26415;&#30340;&#21069;&#25552;&#19979;&#65292;&#20415;&#21487;&#22312;&#27983;&#35272;&#22120;&#20013;&#28210;&#26579;&#27169;&#22411;&#12290;Spring &#25903;&#25345;&#20351;&#29992; USP&#65292;Veloctiy &#27169;&#26495;&#21644; XSLT &#35270;&#22270;&#25216;&#26415;&#65292;&#36825;&#20123;&#35270;&#22270;&#25216;&#26415;&#37117;&#26159;&#24320;&#31665;&#21363;&#29992;&#30340;&#12290;&#26597;&#30475;<a class="xref" href="view.html" title="17.&nbsp;View technologies">Chapter&nbsp;17, <i>View technologies</i></a>&#65292;&#21487;&#20197;&#20102;&#35299;&#21040;&#22914;&#20309;&#38598;&#25104;&#21644;&#20351;&#29992;&#22810;&#31181;&#19981;&#21516;&#30340;&#35270;&#22270;&#25216;&#26415;&#12290;</p>
+<p><code class="literal">ViewResolver</code> &#21644; <code class="literal">View</code> &#26159; Spring &#22788;&#29702;&#35270;&#22270;&#30340;&#20004;&#20010;&#37325;&#35201;&#25509;&#21475;&#12290;&#24403;&#20013;&#65292;<code class="literal">ViewResolver</code> &#25552;&#20379;&#20102;&#35270;&#22270;&#21517;&#31216;&#21644;&#30495;&#23454;&#35270;&#22270;&#20043;&#38388;&#30340;&#26144;&#23556;&#65292;<code class="literal">View</code> &#21017;&#26159;&#36127;&#36131;&#35299;&#20915;&#26576;&#20010;&#35270;&#22270;&#30340;&#25216;&#26415;&#30340;&#35831;&#27714;&#39044;&#22788;&#29702;&#21644;&#35831;&#27714;&#30340;&#21518;&#32493;&#22788;&#29702;&#12290;</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-viewresolver-resolver" href="#mvc-viewresolver-resolver"></a>16.5.1&nbsp;&#20351;&#29992; ViewResolver &#25509;&#21475;&#35299;&#26512;&#35270;&#22270;</h3></div></div></div>
 
-<p>As discussed in <a class="xref" href="mvc.html#mvc-controller" title="16.3&nbsp;Implementing Controllers">Section&nbsp;16.3, &#8220;Implementing Controllers&#8221;</a>, all handler methods in the Spring Web MVC
-controllers must resolve to a logical view name, either explicitly (e.g., by returning a
-<code class="literal">String</code>, <code class="literal">View</code>, or <code class="literal">ModelAndView</code>) or implicitly (i.e., based on conventions). Views
-in Spring are addressed by a logical view name and are resolved by a view resolver.
-Spring comes with quite a few view resolvers. This table lists most of them; a couple of
-examples follow.</p>
-<div class="table"><a name="mvc-view-resolvers-tbl" href="#mvc-view-resolvers-tbl"></a><p class="title"><b>Table&nbsp;16.3.&nbsp;View resolvers</b></p><div class="table-contents">
+<p>&#22914; <a class="xref" href="mvc.html#mvc-controller" title="16.3&nbsp;Implementing Controllers">Section&nbsp;16.3, &#8220;Implementing Controllers&#8221;</a> &#25152;&#36848;&#65292;Spring web MVC &#20013;&#30340;&#25152;&#26377; handler &#26041;&#27861;&#37117;&#38656;&#35201;&#35299;&#26512;&#26576;&#19968;&#20010;&#36923;&#36753;&#35270;&#22270;&#21517;&#31216;&#65292;&#21487;&#20197;&#26159;&#26174;&#24335;&#30340;&#65292;&#22914;&#22914;&#36820;&#22238; <code class="literal">String</code>, <code class="literal">View</code>, &#25110; <code class="literal">ModelAndView</code> &#23454;&#20363;&#65292;&#20063;&#21487;&#20197;&#26159;&#38544;&#24335;&#30340;(&#36825;&#20010;&#38656;&#22522;&#20110;&#20107;&#20808;&#32422;&#23450;&#65289;&#12290;Spring &#20013;&#35270;&#22270;&#36890;&#36807;&#36923;&#36753;&#35270;&#22270;&#21517;&#31216;&#26469;&#23450;&#20301;&#65292;&#24182;&#20351;&#29992;&#35270;&#22270;&#35299;&#26512;&#22120;&#35299;&#26512;&#12290;Spring &#25552;&#20379;&#20102;&#19968;&#31995;&#21015;&#30340;&#35270;&#22270;&#35299;&#26512;&#20854;&#65292;&#22914;&#19979;&#34920;&#65306;</p>
+<div class="table"><a name="mvc-view-resolvers-tbl" href="#mvc-view-resolvers-tbl"></a><p class="title"><b>Table&nbsp;16.3.&nbsp;&#35270;&#22270;&#35299;&#26512;&#22120;</b></p><div class="table-contents">
 
-  <table summary="View resolvers" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">ViewResolver</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">Description</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">AbstractCachingViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Abstract view resolver that caches views. Often views need preparation before they can
-  be used; extending this view resolver provides caching.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">XmlViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Implementation of <code class="literal">ViewResolver</code> that accepts a configuration file written in XML with
-  the same DTD as Spring&#8217;s XML bean factories. The default configuration file is
-  <code class="literal">/WEB-INF/views.xml</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ResourceBundleViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Implementation of <code class="literal">ViewResolver</code> that uses bean definitions in a <code class="literal">ResourceBundle</code>,
-  specified by the bundle base name. Typically you define the bundle in a properties
-  file, located in the classpath. The default file name is <code class="literal">views.properties</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">UrlBasedViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Simple implementation of the <code class="literal">ViewResolver</code> interface that effects the direct
+  <table summary="&#35270;&#22270;&#35299;&#26512;&#22120;" style="border-collapse: collapse;border-top: 0.5pt solid ; border-bottom: 0.5pt solid ; border-left: 0.5pt solid ; border-right: 0.5pt solid ; "><colgroup><col class="col_1"><col class="col_2"></colgroup><thead><tr><th style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top">&#35270;&#22270;&#35299;&#26512;&#22120;</th><th style="border-bottom: 0.5pt solid ; " align="left" valign="top">&#25551;&#36848;</th></tr></thead><tbody><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">AbstractCachingViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>&#25277;&#35937;&#35270;&#22270;&#35299;&#26512;&#22120;&#29992;&#20110;&#32531;&#23384;&#35270;&#22270;&#12290;&#36890;&#24120;&#65292;&#22312;&#35270;&#22270;&#20351;&#29992;&#20043;&#21069;&#65292;&#37117;&#38656;&#35201;&#32463;&#36807;&#39044;&#22788;&#29702;&#65307;&#32487;&#25215;&#27492;&#35299;&#26512;&#22120;&#21487;&#29992;&#26469;&#32531;&#23384;&#35270;&#22270;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">XmlViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ViewResolver</code> &#30340;&#23454;&#29616;&#31867;&#65292;&#25509;&#25910;&#19968;&#20010; xml &#30340;&#37197;&#32622;&#25991;&#20214;&#65288;&#20351;&#29992;&#19982; Spring xml bean &#24037;&#21378;&#19968;&#30452;&#30340; dtd&#65289;&#12290;&#40664;&#35748;&#30340;&#37197;&#32622;&#25991;&#20214;&#36335;&#24452;&#26159;<code class="literal">/WEB-INF/views.xml</code>.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ResourceBundleViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ViewResolver</code> &#23454;&#29616;&#31867;&#65292;&#20351;&#29992;<code class="literal">ResourceBundle</code> &#20013;&#30340; bean &#23450;&#20041;&#65292;&#20854;&#36890;&#36807; bundle &#21517;&#31216;&#26469;&#25351;&#23450;&#12290;&#36890;&#24120;&#65292;&#20320;&#21487;&#20197;&#36873;&#25321;&#22312;&#31867;&#36335;&#24452;&#20013;&#65292;&#36890;&#36807; properties &#25991;&#20214;&#26469;&#23450;&#20041; bundle&#12290;&#40664;&#35748;&#30340;&#25991;&#20214;&#21517;&#26159; <code class="literal">views.properties</code>&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">UrlBasedViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ViewResolver</code> &#30340;&#31616;&#26131;&#23454;&#29616;&#12290;
+Simple implementation of the <code class="literal">ViewResolver</code> interface that effects the direct
   resolution of logical view names to URLs, without an explicit mapping definition. This
   is appropriate if your logical names match the names of your view resources in a
   straightforward manner, without the need for arbitrary mappings.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">InternalResourceViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Convenient subclass of <code class="literal">UrlBasedViewResolver</code> that supports <code class="literal">InternalResourceView</code> (in
   effect, Servlets and JSPs) and subclasses such as <code class="literal">JstlView</code> and <code class="literal">TilesView</code>. You can
   specify the view class for all views generated by this resolver by using
-  <code class="literal">setViewClass(..)</code>. See the <code class="literal">UrlBasedViewResolver</code> javadocs for details.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">VelocityViewResolver</code> / <code class="literal">FreeMarkerViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p>Convenient subclass of <code class="literal">UrlBasedViewResolver</code> that supports <code class="literal">VelocityView</code> (in effect,
-  Velocity templates) or <code class="literal">FreeMarkerView</code> ,respectively, and custom subclasses of them.</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ContentNegotiatingViewResolver</code></p></td><td style="" align="left" valign="top"><p>Implementation of the <code class="literal">ViewResolver</code> interface that resolves a view based on the
-  request file name or <code class="literal">Accept</code> header. See <a class="xref" href="mvc.html#mvc-multiple-representations" title="16.5.4&nbsp;ContentNegotiatingViewResolver">Section&nbsp;16.5.4, &#8220;ContentNegotiatingViewResolver&#8221;</a>.</p></td></tr></tbody></table>
+  <code class="literal">setViewClass(..)</code>. See the <code class="literal">UrlBasedViewResolver</code> javadocs for details.</p></td></tr><tr><td style="border-right: 0.5pt solid ; border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">VelocityViewResolver</code> / <code class="literal">FreeMarkerViewResolver</code></p></td><td style="border-bottom: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">UrlBasedViewResolver</code> &#30340;&#23376;&#31867;&#65292;&#20998;&#21035;&#25903;&#25345; <code class="literal">VelocityView</code>&#65288;Velocity &#27169;&#29256;&#65289;&#21644; <code class="literal">FreeMarkerView</code>&#65292;&#20063;&#25903;&#25345;&#33258;&#23450;&#20041;&#23427;&#20204;&#30340;&#23376;&#31867;&#12290;</p></td></tr><tr><td style="border-right: 0.5pt solid ; " align="left" valign="top"><p><code class="literal">ContentNegotiatingViewResolver</code></p></td><td style="" align="left" valign="top"><p><code class="literal">ViewResolver</code> &#30340;&#23454;&#29616;&#31867;&#65292;&#27492;&#35299;&#26512;&#22120;&#21487;&#36890;&#36807;&#35831;&#27714;&#25991;&#20214;&#21517;&#25110; <code class="literal">Accept</code> &#22836;&#23383;&#27573;&#20540;&#26469;&#35299;&#26512;&#35270;&#22270;&#12290;&#35814;&#24773;&#21487;&#26597;&#30475; <a class="xref" href="mvc.html#mvc-multiple-representations" title="16.5.4&nbsp;ContentNegotiatingViewResolver">Section&nbsp;16.5.4, &#8220;ContentNegotiatingViewResolver&#8221;</a>&#12290;</p></td></tr></tbody></table>
 </div></div><br class="table-break">
 
-<p>As an example, with JSP as a view technology, you can use the <code class="literal">UrlBasedViewResolver</code>.
-This view resolver translates a view name to a URL and hands the request over to the
-RequestDispatcher to render the view.</p>
+<p>&#20030;&#20010;&#20363;&#23376;&#65292;&#35299;&#26512; JSP &#35270;&#22270;&#25216;&#26415;&#65292;&#21487;&#20197;&#20351;&#29992; <code class="literal">UrlBasedViewResolver</code> &#35299;&#26512;&#22120;&#12290;&#27492;&#35299;&#26512;&#22120;&#20250;&#23558;&#35270;&#22270;&#21517;&#31216;&#36716;&#25442;&#20026; url&#65292;&#21644;&#20256;&#36882;&#35831;&#27714;&#21040; RequestDispatcher&#65292;&#20197;&#20415;&#28210;&#26579;&#35270;&#22270;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"viewResolver"</span>
         <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.view.UrlBasedViewResolver"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"viewClass"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"org.springframework.web.servlet.view.JstlView"</span><span class="hl-tag">/&gt;</span>
@@ -1702,10 +1531,8 @@ RequestDispatcher to render the view.</p>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"suffix"</span> <span class="hl-attribute">value</span>=<span class="hl-value">".jsp"</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/bean&gt;</span></pre>
 
-<p>When returning <code class="literal">test</code> as a logical view name, this view resolver forwards the request to
-the <code class="literal">RequestDispatcher</code> that will send the request to <code class="literal">/WEB-INF/jsp/test.jsp</code>.</p>
-<p>When you combine different view technologies in a web application, you can use the
-<code class="literal">ResourceBundleViewResolver</code>:</p>
+<p>&#24403;&#36820;&#22238; <code class="literal">test</code> &#36923;&#36753;&#36923;&#36753;&#35270;&#22270;&#21517;&#26102;&#65292;&#27492;&#35270;&#22270;&#35299;&#26512;&#22120;&#20250;&#23558;&#35831;&#27714;&#36716;&#21457;&#21040; <code class="literal">RequestDispatcher</code>&#65292;&#25509;&#30528; <code class="literal">RequestDispatcher</code> &#23558;&#35831;&#27714;&#21457;&#36865;&#21040; <code class="literal">/WEB-INF/jsp/test.jsp</code>&#12290;</p>
+<p>&#24403;&#20320;&#38656;&#35201;&#22312; web &#24212;&#29992;&#20013;&#32852;&#21512;&#20351;&#29992;&#19981;&#21516;&#30340;&#35270;&#22270;&#25216;&#26415;&#26102;&#65292;&#21487;&#20197;&#20351;&#29992; <code class="literal">ResourceBundleViewResolver</code> &#35299;&#26512;&#22120;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"viewResolver"</span>
         <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.view.ResourceBundleViewResolver"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"basename"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"views"</span><span class="hl-tag">/&gt;</span>
@@ -1719,25 +1546,14 @@ the view url. Examples can be found in the next chapter which covers view techno
 As you can see, you can identify a parent view, from which all views in the properties
 file "extend". This way you can specify a default view class, for example.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>Subclasses of <code class="literal">AbstractCachingViewResolver</code> cache view instances that they resolve.
-Caching improves performance of certain view technologies. It&#8217;s possible to turn off the
-cache by setting the <code class="literal">cache</code> property to <code class="literal">false</code>. Furthermore, if you must refresh a
-certain view at runtime (for example when a Velocity template is modified), you can use
-the <code class="literal">removeFromCache(String viewName, Locale loc)</code> method.</p>
+<p><code class="literal">AbstractCachingViewResolver</code> &#30340;&#23376;&#31867;&#20250;&#32531;&#23384;&#20854;&#35299;&#26512;&#30340;&#35270;&#22270;&#23454;&#20363;&#12290;&#32531;&#23384;&#25552;&#39640;&#26576;&#20123;&#35270;&#22270;&#25216;&#26415;&#30340;&#24615;&#33021;&#12290;&#24403;&#28982;&#65292;&#20063;&#21487;&#20197;&#25918;&#24323;&#35813;&#32531;&#23384;&#21151;&#33021;&#65292;&#21482;&#38656;&#23558; <code class="literal">cache</code> &#23646;&#24615;&#35774;&#32622;&#20026; <code class="literal">false</code> &#21363;&#21487;&#12290;&#27492;&#22806;&#65292;&#22914;&#26524;&#24517;&#39035;&#22312;&#36816;&#34892;&#26102;&#21047;&#26032;&#35270;&#22270;&#30340;(&#22914; Veloctiy &#27169;&#29256;&#26356;&#26032;)&#65292;&#21487;&#20197;&#20351;&#29992; <code class="literal">removeFromCache(String viewName, Locale loc)</code> &#26041;&#27861;&#12290;</p>
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-viewresolver-chaining" href="#mvc-viewresolver-chaining"></a>16.5.2&nbsp;Chaining ViewResolvers</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-viewresolver-chaining" href="#mvc-viewresolver-chaining"></a>16.5.2&nbsp;&#35270;&#22270;&#35299;&#26512;&#22120;&#38142;</h3></div></div></div>
 
-<p>Spring supports multiple view resolvers. Thus you can chain resolvers and, for example,
-override specific views in certain circumstances. You chain view resolvers by adding
-more than one resolver to your application context and, if necessary, by setting the
-<code class="literal">order</code> property to specify ordering. Remember, the higher the order property, the later
-the view resolver is positioned in the chain.</p>
-<p>In the following example, the chain of view resolvers consists of two resolvers, an
-<code class="literal">InternalResourceViewResolver</code>, which is always automatically positioned as the last
-resolver in the chain, and an <code class="literal">XmlViewResolver</code> for specifying Excel views. Excel views
-are not supported by the <code class="literal">InternalResourceViewResolver</code>.</p>
+<p>Spring &#25552;&#20379;&#22810;&#31181;&#35270;&#22270;&#25216;&#26415;&#12290;&#22240;&#27492;&#65292;&#20320;&#21487;&#20197;&#23450;&#20041;&#35299;&#26512;&#22120;&#38142;&#65292;&#27604;&#22914;&#65292;&#21487;&#22312;&#26576;&#20123;&#24773;&#20917;&#19979;&#35206;&#30422;&#25351;&#23450;&#35270;&#22270;&#12290;&#21487;&#36890;&#36807;&#22312;&#24212;&#29992;&#19978;&#19979;&#25991;&#20013;&#28155;&#21152;&#22810;&#20010;&#35299;&#26512;&#22120;&#26469;&#23450;&#20041;&#35299;&#26512;&#22120;&#38142;&#65292;&#22914;&#26377;&#38656;&#35201;&#30340;&#65292;&#20063;&#21487;&#25351;&#23450;&#36825;&#20123;&#35299;&#26512;&#22120;&#30340;&#39034;&#24207;&#12290;&#35760;&#20303;&#65292;order &#23646;&#24615;&#36234;&#39640;&#65292;&#35299;&#26512;&#22120;&#30340;&#38142;&#19978;&#20301;&#32622;&#32422;&#38752;&#21518;&#12290;</p>
+<p>&#22914;&#19979;&#20363;&#23376;&#65292;&#23450;&#20041;&#20102;&#21253;&#21547;&#20004;&#20010;&#35299;&#26512;&#22120;&#30340;&#35299;&#26512;&#22120;&#38142;&#12290;&#24403;&#20013;&#19968;&#20010;&#26159; <code class="literal">InternalResourceViewResolver</code>&#65292;&#27492;&#35299;&#26512;&#22120;&#24635;&#26159;&#33258;&#21160;&#23450;&#20301;&#21040;&#35299;&#26512;&#22120;&#38142;&#20013;&#26368;&#21518;&#19968;&#20010;&#65307;&#21478;&#22806;&#19968;&#20010;&#26159; <code class="literal">XmlViewResolver</code>&#65292;&#29992;&#26469;&#25351;&#23450; Excel &#35270;&#22270;&#12290;<code class="literal">InternalResourceViewResolver</code> &#19981;&#25903;&#25345; Excel &#35270;&#22270;&#12290;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"jspViewResolver"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.view.InternalResourceViewResolver"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"viewClass"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"org.springframework.web.servlet.view.JstlView"</span><span class="hl-tag">/&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"prefix"</span> <span class="hl-attribute">value</span>=<span class="hl-value">"/WEB-INF/jsp/"</span><span class="hl-tag">/&gt;</span>
@@ -1755,10 +1571,8 @@ are not supported by the <code class="literal">InternalResourceViewResolver</cod
     <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">name</span>=<span class="hl-value">"report"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.example.ReportExcelView"</span><span class="hl-tag">/&gt;</span>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
-<p>If a specific view resolver does not result in a view, Spring examines the context for
-other view resolvers. If additional view resolvers exist, Spring continues to inspect
-them until a view is resolved. If no view resolver returns a view, Spring throws a
-<code class="literal">ServletException</code>.</p>
+<p>&#22914;&#26524;&#19968;&#20010;&#35270;&#22270;&#35299;&#26512;&#22120;&#19981;&#33021;&#23548;&#20986;&#19968;&#20010;&#35270;&#22270;&#65292;Spring &#20250;&#26816;&#32034;&#19978;&#19979;&#25991;&#65292;&#26597;&#25214;&#20854;&#20182;&#35270;&#22270;&#35299;&#26512;&#22120;&#12290;&#22914;&#26524;&#26597;&#25214;&#21040;&#20854;&#20182;&#35270;&#22270;&#35299;&#26512;&#22120;&#65292;Spring &#20250;&#32487;&#32493;&#22788;&#29702;&#65292;&#30452;&#21040;&#26377;&#35299;&#26512;&#22120;&#23548;&#20986;&#19968;&#20010;&#35270;&#22270;&#12290;&#22914;&#26524;&#27809;&#26377;&#35299;&#26512;&#22120;&#36820;&#22238;&#19968;&#20010;&#35270;&#22270;&#65292;Spring &#20250;&#25243;&#20986; <code class="literal">ServletException</code>&#12290;</p>
+<p>&#35270;&#22270;&#35299;&#26512;&#21327;&#35758;&#35268;&#23450;&#35270;&#22270;&#35299;&#26512;&#22120;&#21487;&#20197;&#36820;&#22238; null&#65292;&#34920;&#31034;&#27809;&#26377;&#25214;&#21040;&#25351;&#23450;&#30340;&#35270;&#22270;&#12290;&#28982;&#32780;&#65292;&#19981;&#26159;&#25152;&#26377;&#30340;&#35270;&#22270;&#35299;&#26512;&#22120;&#36820;&#22238;null&#65292;&#37117;&#34920;&#31034;&#27809;&#26377;&#25214;&#21040;&#35270;&#22270;&#12290;&#22240;&#20026;&#26576;&#20123;&#24773;&#20917;&#19979;&#65292;&#35270;&#22270;&#35299;&#26512;&#22120;&#20063;&#26080;&#27861;&#26816;&#27979;&#35270;&#22270;&#26159;&#21542;&#23384;&#22312;&#12290;&#27604;&#22914;&#65292;<code class="literal">InternalResourceViewResolver</code> &#22312;&#20869;&#37096;&#36923;&#36753;&#37324;&#20351;&#29992; <code class="literal">RequestDispatcher</code>&#65292;&#22914;&#26524; JSP &#25991;&#20214;&#23384;&#22312;&#65292;&#37027;&#20998;&#21457;&#26159;&#21807;&#19968;&#21487;&#20197;&#25214;&#21040; JSP &#25991;&#20214;&#30340;&#26041;&#24335;&#65292;&#21487;&#20998;&#21457;&#21482;&#33021;&#25191;&#34892;&#19968;&#27425;&#12290;<code class="literal">VelocityViewResolver</code> &#21644;&#20854;&#20182;&#35299;&#26512;&#22120;&#20063;&#31867;&#20284;&#12290;&#21487;&#26597;&#30475;&#23545;&#24212;&#35270;&#22270;&#35299;&#26512;&#22120;&#30340; javaDoc &#25991;&#20214;&#65292;&#29702;&#35299;&#20854;&#26159;&#21542;&#25253;&#21578;&#19981;&#23384;&#22312;&#30340;&#35270;&#22270;&#12290;</p>
 <p>The contract of a view resolver specifies that a view resolver <span class="emphasis"><em>can</em></span> return null to
 indicate the view could not be found. Not all view resolvers do this, however, because
 in some cases, the resolver simply cannot detect whether or not the view exists. For
@@ -1770,30 +1584,10 @@ Thus, putting an <code class="literal">InternalResourceViewResolver</code> in th
 the last results in the chain not being fully inspected, because the
 <code class="literal">InternalResourceViewResolver</code> will <span class="emphasis"><em>always</em></span> return a view!</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-redirecting" href="#mvc-redirecting"></a>16.5.3&nbsp;Redirecting to views</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-redirecting" href="#mvc-redirecting"></a>16.5.3&nbsp;&#37325;&#23450;&#21521;&#21040;&#35270;&#22270;</h3></div></div></div>
 
-<p>As mentioned previously, a controller typically returns a logical view name, which a
-view resolver resolves to a particular view technology. For view technologies such as
-JSPs that are processed through the Servlet or JSP engine, this resolution is usually
-handled through the combination of <code class="literal">InternalResourceViewResolver</code> and
-<code class="literal">InternalResourceView</code>, which issues an internal forward or include via the Servlet
-API&#8217;s <code class="literal">RequestDispatcher.forward(..)</code> method or <code class="literal">RequestDispatcher.include()</code> method.
-For other view technologies, such as Velocity, XSLT, and so on, the view itself writes
-the content directly to the response stream.</p>
-<p>It is sometimes desirable to issue an HTTP redirect back to the client, before the view
-is rendered. This is desirable, for example, when one controller has been called with
-<code class="literal">POST</code> data, and the response is actually a delegation to another controller (for
-example on a successful form submission). In this case, a normal internal forward will
-mean that the other controller will also see the same <code class="literal">POST</code> data, which is potentially
-problematic if it can confuse it with other expected data. Another reason to perform a
-redirect before displaying the result is to eliminate the possibility of the user
-submitting the form data multiple times. In this scenario, the browser will first send
-an initial <code class="literal">POST</code>; it will then receive a response to redirect to a different URL; and
-finally the browser will perform a subsequent <code class="literal">GET</code> for the URL named in the redirect
-response. Thus, from the perspective of the browser, the current page does not reflect
-the result of a <code class="literal">POST</code> but rather of a <code class="literal">GET</code>. The end effect is that there is no way the
-user can accidentally re- <code class="literal">POST</code> the same data by performing a refresh. The refresh
-forces a <code class="literal">GET</code> of the result page, not a resend of the initial <code class="literal">POST</code> data.</p>
+<p>&#22914;&#21069;&#25991;&#25152;&#36848;&#65292;&#25511;&#21046;&#22120;&#36890;&#24120;&#36820;&#22238;&#19968;&#20010;&#36923;&#36753;&#35270;&#22270;&#21517;&#65292;&#20877;&#30001;&#23545;&#24212;&#35270;&#22270;&#35299;&#26512;&#22120;&#35299;&#26512;&#12290;&#23545;&#20110;&#36890;&#36807; Servlet &#25110; JSP &#24341;&#25806;&#26469;&#22788;&#29702;&#30340;&#35270;&#22270;&#25216;&#26415;(&#22914; JSP)&#65292;&#20854;&#35299;&#20915;&#26041;&#24335;&#36890;&#24120;&#20250;&#32467;&#21512;  <code class="literal">InternalResourceViewResolver</code> &#21644; <code class="literal">InternalResourceView</code>&#26469;&#22788;&#29702;&#65292;&#20351;&#29992; Servlet API &#30340; <code class="literal">RequestDispatcher.forward(..)</code> &#26041;&#27861;&#25110; <code class="literal">RequestDispatcher.include()</code> &#26041;&#27861;&#21457;&#20986;&#20869;&#37096;&#36339;&#36716;&#25110;&#21253;&#21547;&#30340;&#21160;&#20316;&#12290;&#23545;&#20110;&#20854;&#20182;&#35270;&#22270;&#25216;&#26415;(&#22914;Velocity, XSLT &#31561;)&#65292;&#35270;&#22270;&#20250;&#33258;&#36523;&#20869;&#23481;&#30452;&#25509;&#20889;&#21040;&#21709;&#24212;&#27969;&#12290;</p>
+<p>&#22312;&#28210;&#26579;&#35270;&#22270;&#21069;&#65292;&#26377;&#26102;&#20505;&#38656;&#35201;&#23558; HTTP &#35831;&#27714;&#37325;&#23450;&#21521;&#22238;&#23458;&#25143;&#31471;&#12290;&#27604;&#22914;&#65306;&#24403;&#19968;&#20010;&#25511;&#21046;&#22120;&#22788;&#29702;&#23436; <span class="emphasis"><em>POST</em></span> &#25968;&#25454;&#65292;&#24182;&#23558;&#21709;&#24212;&#22996;&#25176;&#32473;&#21478;&#19968;&#20010;&#25511;&#21046;&#22120;&#65288;&#22914;&#25104;&#21151;&#25552;&#20132;&#34920;&#21333;&#26102;&#65289;&#12290;&#36825;&#31181;&#24773;&#20917;&#19979;&#65292;&#20351;&#29992;&#27491;&#35268;&#30340;&#20869;&#37096;&#36339;&#36716;&#20250;&#35753;&#21478;&#19968;&#20010;&#25511;&#21046;&#22120;&#20063;&#21487;&#26816;&#32034;&#21040; <code class="literal">POST</code> &#25968;&#25454;&#65292;&#33509;&#21478;&#19968;&#20010;&#25511;&#21046;&#22120;&#26399;&#24453;&#30340;&#25968;&#25454;&#19982; <code class="literal">POST</code> &#25968;&#25454;&#28151;&#28102;&#65292;&#21017;&#20250;&#24050;&#21457;&#19968;&#20123;&#28508;&#22312;&#30340;&#38382;&#39064;&#12290;&#22312;&#26174;&#31034;&#25968;&#25454;&#21069;&#25191;&#34892;&#37325;&#23450;&#21521;&#30340;&#21478;&#19968;&#20010;&#19968;&#20010;&#21407;&#22240;&#26159;&#65306;&#25490;&#38500;&#29992;&#25143;&#22810;&#27425;&#25552;&#20132;&#34920;&#21333;&#30340;&#21487;&#33021;&#24615;&#12290;&#36825;&#31181;&#24773;&#22659;&#19979;&#65292;&#27983;&#35272;&#22120;&#39318;&#20808;&#21457;&#36865;&#21021;&#22987;&#21270;&#22909;&#30340; <code class="literal">POST</code> &#35831;&#27714;&#65292;&#25509;&#30528;&#27983;&#35272;&#22120;&#25509;&#25910;&#19968;&#20010;&#37325;&#23450;&#21521;&#21040;&#21478;&#19968;&#20010; URL &#30340;&#21709;&#24212;&#65292;&#26368;&#21518;&#65292;&#27983;&#35272;&#22120;&#23545;&#21518;&#32493; URL(&#19978;&#19968;&#27493;&#21709;&#24212;&#37324;&#30340; URL) &#25191;&#34892; <code class="literal">GET</code> &#35831;&#27714;&#12290;&#22240;&#27492;&#65292;&#20174;&#27983;&#35272;&#22120;&#35282;&#24230;&#26469;&#30475;&#65292;&#24403;&#21069;&#39029;&#38754;&#23545;&#24212;&#30340;&#19981;&#26159; <code class="literal">POST</code> &#30340;&#32467;&#26524;&#65292;&#32780;&#26159; <code class="literal">GET</code> &#30340;&#32467;&#26524;&#12290;&#26368;&#32456;&#30340;&#25928;&#26524;&#23601;&#26159;&#29992;&#25143;&#19981;&#20250;&#22240;&#21047;&#26032;&#32780;&#19981;&#23567;&#24515;&#37325;&#26032;&#25552;&#20132;&#19968;&#27425; <code class="literal">POST</code> &#25968;&#25454; &#8212;&#8212; &#21047;&#26032;&#26159; <code class="literal">GET</code> &#19968;&#27425;&#32467;&#26524;&#30340;&#39029;&#38754;&#65292;&#32780;&#19981;&#26159;&#37325;&#26032;&#21457;&#36865; <code class="literal">POST</code> &#25968;&#25454;&#12290;</p>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-redirecting-redirect-view" href="#mvc-redirecting-redirect-view"></a>RedirectView</h4></div></div></div>
 
 <p>One way to force a redirect as the result of a controller response is for the controller
@@ -1828,25 +1622,15 @@ recommended that you configure the redirect URL to be injected into the controll
 that it is not baked into the controller but configured in the context along with the
 view names. The next section discusses this process.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-redirecting-redirect-prefix" href="#mvc-redirecting-redirect-prefix"></a>The redirect: prefix</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-redirecting-redirect-prefix" href="#mvc-redirecting-redirect-prefix"></a>redirect: &#21069;&#32512;</h4></div></div></div>
 
-<p>While the use of <code class="literal">RedirectView</code> works fine, if the controller itself creates the
-<code class="literal">RedirectView</code>, there is no avoiding the fact that the controller is aware that a
-redirection is happening. This is really suboptimal and couples things too tightly. The
-controller should not really care about how the response gets handled. In general it
-should operate only in terms of view names that have been injected into it.</p>
-<p>The special <code class="literal">redirect:</code> prefix allows you to accomplish this. If a view name is returned
-that has the prefix <code class="literal">redirect:</code>, the <code class="literal">UrlBasedViewResolver</code> (and all subclasses) will
-recognize this as a special indication that a redirect is needed. The rest of the view
-name will be treated as the redirect URL.</p>
-<p>The net effect is the same as if the controller had returned a <code class="literal">RedirectView</code>, but now
-the controller itself can simply operate in terms of logical view names. A logical view
-name such as <code class="literal">redirect:/myapp/some/resource</code> will redirect relative to the current
-Servlet context, while a name such as <code class="literal">redirect:http://myhost.com/some/arbitrary/path</code>
-will redirect to an absolute URL.</p>
+<p>&#23613;&#31649;&#20351;&#29992; <code class="literal">RedirectView</code> &#24037;&#20316;&#27491;&#24120;&#65292;&#21487;&#25511;&#21046;&#22120;&#26412;&#36523;&#21019;&#24314; <code class="literal">RedirectView</code> &#36825;&#19968;&#20107;&#23454;&#65292;&#19981;&#21487;&#21542;&#35748;&#20854;&#26159;&#22312;&#25191;&#34892;&#37325;&#23450;&#21521;&#25805;&#20316;&#12290;&#36825;&#26159;&#19981;&#22815;&#29702;&#24819;&#30340;&#65292;&#20004;&#32773;&#20043;&#38388;&#30340;&#20851;&#31995;&#32806;&#21512;&#20005;&#37325;&#12290;&#25511;&#21046;&#22120;&#19981;&#24212;&#35813;&#20851;&#24515;&#21709;&#24212;&#22914;&#20309;&#22788;&#29702;&#12290;&#19968;&#33324;&#32780;&#35328;&#65292;&#25511;&#21046;&#22120;&#21482;&#38656;&#25805;&#20316;&#27880;&#20837;&#30340;&#36923;&#36753;&#30340;&#35270;&#22270;&#21517;&#21363;&#21487;&#12290;</p>
+<p><code class="literal">redirect:</code> &#21069;&#32512;&#20801;&#35768;&#20320;&#36798;&#21040;&#19978;&#36848;&#25928;&#26524;&#12290;&#24403;&#36923;&#36753;&#35270;&#22270;&#21517;&#24102;&#19978; <code class="literal">redirect:</code> &#21069;&#32512;&#26102;&#65292;<code class="literal">UrlBasedViewResolver</code> &#21450;&#20854;&#23376;&#31867;&#20250;&#35782;&#21035;&#35813;&#21069;&#32512;&#25191;&#34892;&#37325;&#23450;&#21521;&#25805;&#20316;&#12290;&#35270;&#22270;&#21517;&#30340;&#20313;&#19979;&#37096;&#20998;&#20250;&#23558;&#37325;&#23450;&#21521;&#30340; url&#12290;</p>
+<p><code class="literal">redirect:</code> &#30340;&#20316;&#29992;&#19982;&#25511;&#21046;&#22120;&#36820;&#22238; <code class="literal">RedirectView</code> &#30340;&#25928;&#26524;&#19968;&#33268;&#65292;&#19981;&#36807;&#20351;&#29992; <code class="literal">redirect:</code>&#65292;&#25511;&#21046;&#22120;&#26412;&#36523;&#21482;&#38656;&#25805;&#20316;&#36923;&#36753;&#35270;&#22270;&#21517;&#21363;&#21487;&#12290;&#36923;&#36753;&#35270;&#22270;&#21517;&#65288;&#22914; <code class="literal">redirect:/myapp/some/resource</code>&#65289;&#20250;&#30456;&#23545;&#24403;&#21069; Servlet &#23481;&#22120;&#37325;&#23450;&#21521;&#65292;&#21478;&#22806;&#22914; <code class="literal">redirect:http://myhost.com/some/arbitrary/path</code> &#30340;&#36923;&#36753;&#35270;&#22270;&#65292;&#20250;&#26681;&#25454;&#32477;&#23545; url &#37325;&#23450;&#21521;&#12290;</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-redirecting-forward-prefix" href="#mvc-redirecting-forward-prefix"></a>The forward: prefix</h4></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="mvc-redirecting-forward-prefix" href="#mvc-redirecting-forward-prefix"></a>forward: &#21069;&#32512;</h4></div></div></div>
 
+<p>&#20063;&#21487;&#22312;&#36923;&#36753;&#35270;&#22270;&#21517;&#21069;&#20351;&#29992; <code class="literal">forward:</code>&#65292;<code class="literal">forward:</code> &#21069;&#32512;&#26412;&#36136;&#20063;&#26159;&#30001;<code class="literal">UrlBasedViewResolver</code>&#21450;&#20854;&#23376;&#31867;&#25152;&#22788;&#29702;&#12290;&#20351;&#29992; <code class="literal">forward:</code> &#21069;&#32512;&#65292;&#20250;&#26681;&#25454;&#36923;&#36753;&#35270;&#22270;&#21517;&#30340;&#20313;&#19979;&#37096;&#20998;(url)&#21019;&#24314;<code class="literal">InternalResourceView</code> &#23545;&#35937;&#65288;&#26412;&#36136;&#26159;&#20351;&#29992; <code class="literal">RequestDispatcher.forward()</code>&#65289;.</p>
 <p>It is also possible to use a special <code class="literal">forward:</code> prefix for view names that are
 ultimately resolved by <code class="literal">UrlBasedViewResolver</code> and subclasses. This creates an
 <code class="literal">InternalResourceView</code> (which ultimately does a <code class="literal">RequestDispatcher.forward()</code>) around
@@ -1855,48 +1639,28 @@ useful with <code class="literal">InternalResourceViewResolver</code> and <code 
 example). But the prefix can be helpful when you are primarily using another view
 technology, but still want to force a forward of a resource to be handled by the
 Servlet/JSP engine. (Note that you may also chain multiple view resolvers, instead.)</p>
-<p>As with the <code class="literal">redirect:</code> prefix, if the view name with the <code class="literal">forward:</code> prefix is injected
-into the controller, the controller does not detect that anything special is happening
-in terms of handling the response.</p>
+<p>&#19982; <code class="literal">redirect:</code> &#21069;&#32512;&#31867;&#22411;&#65292;&#24403;&#24102;&#19978; <code class="literal">forward:</code> &#21069;&#32512;&#30340;&#35270;&#22270;&#21517;&#27880;&#20837;&#25511;&#21046;&#22120;&#26102;&#65292;&#25511;&#21046;&#22120;&#19981;&#20250;&#23519;&#35273;&#23558;&#22914;&#20309;&#22788;&#29702;&#21709;&#24212;&#12290;</p>
 </div>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-multiple-representations" href="#mvc-multiple-representations"></a>16.5.4&nbsp;ContentNegotiatingViewResolver</h3></div></div></div>
 
-<p>The <code class="literal">ContentNegotiatingViewResolver</code> does not resolve views itself but rather delegates
-to other view resolvers, selecting the view that resembles the representation requested
-by the client. Two strategies exist for a client to request a representation from the
-server:</p>
+<p><code class="literal">ContentNegotiatingViewResolver</code> &#33258;&#36523;&#24182;&#27809;&#26377;&#21435;&#35299;&#26512;&#35270;&#22270;&#65292;&#32780;&#26159;&#23558;&#20854;&#22996;&#27966;&#32473;&#20854;&#20182;&#35270;&#22270;&#35299;&#26512;&#22120;&#65292;&#36873;&#25321;&#25351;&#23450;&#21709;&#24212;&#34920;&#36848;&#36820;&#22238;&#32473;&#23458;&#25143;&#31471;&#12290;&#26377;&#20197;&#19979;&#20004;&#31181;&#31574;&#30053;&#65292;&#20801;&#35768;&#23458;&#25143;&#31471;&#35831;&#27714;&#25351;&#23450;&#34920;&#36848;&#26041;&#24335;&#30340;&#36164;&#28304;&#65306;</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Use a distinct URI for each resource, typically by using a different file extension in
-the URI. For example, the URI <code class="literal">http://www.example.com/users/fred.pdf</code> requests a PDF
-representation of the user fred, and <code class="literal">http://www.example.com/users/fred.xml</code> requests
-an XML representation.
+&#19981;&#21516;&#30340;&#36164;&#28304;&#20351;&#29992;&#19981;&#21516;&#30340; URI &#34920;&#31034;&#65306;&#36890;&#24120;&#20351;&#29992;&#25991;&#20214;&#25299;&#23637;&#21517;&#26469;&#34920;&#31034;&#19981;&#21516;&#30340;&#21709;&#24212;&#34920;&#36848;&#65292;&#22914; <code class="literal">http://www.example.com/users/fred.pdf</code> &#35831;&#27714;&#29992;&#25143; fred &#30340; pdf &#35270;&#22270;&#34920;&#36848;&#65292;<code class="literal">http://www.example.com/users/fred.xml</code> &#21017;&#26159;&#35831;&#27714;&#29992;&#25143; fred &#30340; xml &#35270;&#22270;&#34920;&#36848;&#12290;
 </li><li class="listitem">
-Use the same URI for the client to locate the resource, but set the <code class="literal">Accept</code> HTTP
-request header to list the <a class="ulink" href="http://en.wikipedia.org/wiki/Internet_media_type" target="_top">media
-types</a> that it understands. For example, an HTTP request for
-<code class="literal">http://www.example.com/users/fred</code> with an <code class="literal">Accept</code> header set to <code class="literal">application/pdf</code>
-requests a PDF representation of the user fred, while
-<code class="literal">http://www.example.com/users/fred</code> with an <code class="literal">Accept</code> header set to <code class="literal">text/xml</code> requests
-an XML representation. This strategy is known as
-<a class="ulink" href="http://en.wikipedia.org/wiki/Content_negotiation" target="_top">content negotiation</a>.
+&#20351;&#29992;&#30456;&#21516;&#30340; uri &#21152;&#36733;&#25351;&#23450;&#36164;&#28304;&#65292;&#19981;&#36807;&#20351;&#29992; <code class="literal">Accept</code> HTTP &#35831;&#27714;&#22836;&#34920;&#31034;&#20854;&#35831;&#27714;&#30340;http://en.wikipedia.org/wiki/Internet_media_type[&#23186;&#20307;&#31867;&#22411;]&#12290;&#22914;uri <code class="literal">http://www.example.com/users/fred</code>&#65292;&#24403; <code class="literal">Accept</code> &#20026; <code class="literal">application/pdf</code> &#65292;&#34920;&#31034;&#35831;&#27714;&#29992;&#25143; fred &#30340;pdf&#35270;&#22270;&#34920;&#36848;&#65292;&#24403; <code class="literal">Accept</code> &#20026; <code class="literal">application/xml</code> &#34920;&#31034;&#35831;&#27714;&#29992;&#25143; fred &#30340;xml &#35270;&#22270;&#34920;&#36848;&#12290;&#36825;&#31181;&#31574;&#30053;&#20063;&#21487;&#31216;&#20026; <a class="ulink" href="http://en.wikipedia.org/wiki/Content_negotiation" target="_top">&#20869;&#23481;&#21327;&#21830;</a>.
 </li></ul></div>
 
-<div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>One issue with the <code class="literal">Accept</code> header is that it is impossible to set it in a web browser
-within HTML. For example, in Firefox, it is fixed to:</p>
+<p>[&#25552;&#31034;]</p>
+<div class="informalexample">
+<p>&#19982; <code class="literal">Accept</code> &#22836;&#23383;&#27573;&#30340;&#26377;&#20851;&#19968;&#20010; issue&#65292;&#23601;&#22312;&#19981;&#33021;&#36890;&#36807; web &#27983;&#35272;&#22120;&#35774;&#32622; <code class="literal">Accept</code> &#22836;&#23383;&#27573;&#20540;&#12290;&#27604;&#22914;&#35828;&#65292;&#22312; firefox&#65292;<code class="literal">Accept</code> &#23383;&#27573;&#26159;&#22266;&#23450;&#30340;&#65306;</p>
 
 <pre class="literallayout">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8</pre>
 
-<p>For this reason it is common to see the use of a distinct URI for each representation
-when developing browser based web applications.</p>
-</td></tr></table></div>
+<p>&#30001;&#20110;&#36825;&#20010;&#21407;&#22240;&#65292;&#22312;&#24320;&#21457;&#22522;&#20110;&#27983;&#35272;&#22120;&#30340;web&#24212;&#29992;&#26102;&#65292;&#36890;&#24120;&#20250;&#36873;&#25321;&#20351;&#29992;&#19981;&#21516;&#30340;uri&#26469;&#34920;&#31034;&#19981;&#21516;&#30340;&#35270;&#22270;&#34920;&#36848;.</p>
+</div>
 
-<p>To support multiple representations of a resource, Spring provides the
-<code class="literal">ContentNegotiatingViewResolver</code> to resolve a view based on the file extension or
-<code class="literal">Accept</code> header of the HTTP request. <code class="literal">ContentNegotiatingViewResolver</code> does not perform
-the view resolution itself but instead delegates to a list of view resolvers that you
-specify through the bean property <code class="literal">ViewResolvers</code>.</p>
+<p>&#20026;&#20102;&#25903;&#25345;&#21516;&#19968;&#36164;&#28304;&#30340;&#22810;&#31181;&#34920;&#36848;,Spring &#25552;&#20379;&#20102; <code class="literal">ContentNegotiatingViewResolver</code>,&#21487;&#26681;&#25454;&#25991;&#20214;&#25299;&#23637;&#21517;&#25110; <code class="literal">Accept</code> &#22836;&#23383;&#27573;&#20540;&#36873;&#25321;&#25351;&#23450;&#36164;&#28304;&#30340;&#34920;&#36848;.<code class="literal">ContentNegotiatingViewResolver</code> &#33258;&#36523;&#24182;&#35299;&#37322;&#35270;&#22270;,&#32780;&#26159;&#23558;&#20854;&#36716;&#21457;&#32473;&#36890;&#36807; <code class="literal">ViewResolvers</code> &#23646;&#24615;&#37197;&#32622;&#30340;&#35270;&#22270;&#35299;&#26512;&#22120;.</p>
 <p>The <code class="literal">ContentNegotiatingViewResolver</code> selects an appropriate <code class="literal">View</code> to handle the request
 by comparing the request media type(s) with the media type (also known as
 <code class="literal">Content-Type</code>) supported by the <code class="literal">View</code> associated with each of its <code class="literal">ViewResolvers</code>. The
@@ -1907,11 +1671,8 @@ latter option is appropriate for singleton <code class="literal">Views</code> th
 representation of the current resource regardless of the logical view name. The <code class="literal">Accept</code>
 header may include wild cards, for example <code class="literal">text/*</code>, in which case a <code class="literal">View</code> whose
 Content-Type was <code class="literal">text/xml</code> is a compatible match.</p>
-<p>To support the resolution of a view based on a file extension, use the
-<code class="literal">ContentNegotiatingViewResolver</code> bean property <code class="literal">mediaTypes</code> to specify a mapping of file
-extensions to media types. For more information on the algorithm used to determine the
-request media type, refer to the API documentation for <code class="literal">ContentNegotiatingViewResolver</code>.</p>
-<p>Here is an example configuration of a <code class="literal">ContentNegotiatingViewResolver:</code></p>
+<p>&#20026;&#20102;&#25903;&#25345;&#22522;&#20110;&#25991;&#20214;&#25299;&#23637;&#21517;&#30340;&#35299;&#26512;&#65292;&#21487;&#20197;&#20351;&#29992; <code class="literal">ContentNegotiatingViewResolver</code> &#30340;&#23646;&#24615; <code class="literal">mediaTypes</code> &#37197;&#32622;&#21487;&#21305;&#37197;&#30340;&#23186;&#20307;&#31867;&#22411;&#12290;&#20851;&#20110;&#36873;&#25321;&#21738;&#19968;&#31181;&#23186;&#20307;&#31867;&#22411;&#30340;&#31639;&#27861;&#30340;&#35814;&#32454;&#20449;&#24687;&#65292;&#21487;&#21442;&#32771; <code class="literal">ContentNegotiatingViewResolver</code> API &#25991;&#26723;&#12290;</p>
+<p>&#22914;&#19979;&#65292;&#26159;&#19968;&#20010; <code class="literal">ContentNegotiatingViewResolver</code> &#37197;&#32622;&#26679;&#20363;&#65306;</p>
 <pre class="programlisting"><span class="hl-tag">&lt;bean</span> <span class="hl-attribute">class</span>=<span class="hl-value">"org.springframework.web.servlet.view.ContentNegotiatingViewResolver"</span><span class="hl-tag">&gt;</span>
     <span class="hl-tag">&lt;property</span> <span class="hl-attribute">name</span>=<span class="hl-value">"mediaTypes"</span><span class="hl-tag">&gt;</span>
         <span class="hl-tag">&lt;map&gt;</span>
@@ -1938,32 +1699,13 @@ request media type, refer to the API documentation for <code class="literal">Con
 
 <span class="hl-tag">&lt;bean</span> <span class="hl-attribute">id</span>=<span class="hl-value">"content"</span> <span class="hl-attribute">class</span>=<span class="hl-value">"com.foo.samples.rest.SampleContentAtomView"</span><span class="hl-tag">/&gt;</span></pre>
 
-<p>The <code class="literal">InternalResourceViewResolver</code> handles the translation of view names and JSP pages,
-while the <code class="literal">BeanNameViewResolver</code> returns a view based on the name of a bean. (See
-"<a class="link" href="mvc.html#mvc-viewresolver-resolver" title="16.5.1&nbsp;Resolving views with the ViewResolver interface">Resolving views with the ViewResolver interface</a>" for more
-details on how Spring looks up and instantiates a view.) In this example, the <code class="literal">content</code>
-bean is a class that inherits from <code class="literal">AbstractAtomFeedView</code>, which returns an Atom RSS
-feed. For more information on creating an Atom Feed representation, see the section Atom
-Views.</p>
-<p>In the above configuration, if a request is made with an <code class="literal">.html</code> extension, the view
-resolver looks for a view that matches the <code class="literal">text/html</code> media type. The
-<code class="literal">InternalResourceViewResolver</code> provides the matching view for <code class="literal">text/html</code>. If the
-request is made with the file extension <code class="literal">.atom</code>, the view resolver looks for a view that
-matches the <code class="literal">application/atom+xml</code> media type. This view is provided by the
-<code class="literal">BeanNameViewResolver</code> that maps to the <code class="literal">SampleContentAtomView</code> if the view name
-returned is <code class="literal">content</code>. If the request is made with the file extension <code class="literal">.json</code>, the
-<code class="literal">MappingJackson2JsonView</code> instance from the <code class="literal">DefaultViews</code> list will be selected
-regardless of the view name. Alternatively, client requests can be made without a file
-extension but with the <code class="literal">Accept</code> header set to the preferred media-type, and the same
-resolution of request to views would occur.</p>
+<p><code class="literal">InternalResourceViewResolver</code> &#22788;&#29702;&#35797;&#22270;&#21517;&#31216;&#30340;&#35299;&#26512;&#21644; JSP &#39029;&#38754;&#65292;&#21478;&#22806;&#65292;<code class="literal">BeanNameViewResolver</code>&#20250;&#36820;&#22238;&#22522;&#20110; bean &#21517;&#31216;&#30340;&#35270;&#22270;&#65288;&#21487;&#21442;&#32771; "<a class="link" href="mvc.html#mvc-viewresolver-resolver" title="16.5.1&nbsp;&#20351;&#29992; ViewResolver &#25509;&#21475;&#35299;&#26512;&#35270;&#22270;">&#20351;&#29992; ViewResolver &#35299;&#26512;&#35270;&#22270;</a>&#65292;&#20102;&#35299; Spring &#22914;&#20309;&#23547;&#25214;&#21644;&#21021;&#22987;&#21270;&#19968;&#20010;&#35270;&#22270;"&#65289;&#12290;&#22312;&#19978;&#36848;&#20363;&#23376;&#20013;&#65292;<code class="literal">content</code> bean &#26159;&#19968;&#20010;&#32487;&#25215; <code class="literal">AbstractAtomFeedView</code> &#30340;&#31867;&#65292;&#36825;&#20010;bean &#21487;&#20197;&#36820;&#22238;&#19968;&#20010; RSS &#21407;&#23376;&#12290;&#21019;&#24314; &#19968;&#20010;&#21407;&#23376;&#34920;&#36848;&#30340;&#35814;&#32454;&#20449;&#24687;&#65292;&#21487;&#21442;&#32771;&#21407;&#23376;&#35270;&#22270;&#30340;&#37027;&#19968;&#31456;&#12290;</p>
+<p>&#22312;&#19978;&#36848;&#37197;&#32622;&#20013;&#65292;&#24403;&#35831;&#27714;&#26159;&#30001; <code class="literal">.html</code>&#25299;&#23637;&#21517;&#32452;&#25104;&#26102;&#65292;&#35270;&#22270;&#35299;&#26512;&#22120;&#20250;&#21435;&#23547;&#25214;&#19968;&#20010;&#21305;&#37197; <code class="literal">text/html</code> &#30340;&#35270;&#22270;&#12290;<code class="literal">InternalResourceViewResolver</code> &#25552;&#20379;&#20102; <code class="literal">text/html</code> &#30340;&#26144;&#23556;&#12290;&#24403;&#35831;&#27714;&#26159;&#30001; <code class="literal">.atom</code> &#25299;&#23637;&#21517;&#32452;&#25104;&#26102;&#65292;&#35270;&#22270;&#35299;&#26512;&#22120;&#20250;&#21435;&#23547;&#25214;&#19968;&#20010;&#21305;&#37197; <code class="literal">.atom</code> &#30340;&#35270;&#22270;&#12290;&#36825;&#20010;&#35270;&#22270; <code class="literal">BeanNameViewResolver</code> &#26377;&#25552;&#20379;&#65292;&#33509;&#35270;&#22270;&#21517;&#31216;&#20026; <code class="literal">content</code>,&#21017;&#26144;&#23556;&#21040; <code class="literal">SampleContentAtomView</code>&#12290;&#24403;&#35831;&#27714;&#26159;&#30001; <code class="literal">.json</code>&#25299;&#23637;&#21517;&#32452;&#25104;&#26102;&#65292;&#20250;&#36873;&#25321; <code class="literal">DefaultViews</code> &#25552;&#20379;&#30340; <code class="literal">MappingJackson2JsonView</code> &#25509;&#21475;&#65292;&#27880;&#24847;&#36825;&#20010;&#26144;&#23556;&#19982;&#35270;&#22270;&#21517;&#31216;&#26080;&#20851;&#12290;&#21478;&#22806;&#65292;&#23458;&#25143;&#31471;&#30340;&#35831;&#27714;&#19981;&#24102;&#25299;&#23637;&#21517;&#65292;&#36890;&#36807; <code class="literal">Accept</code> &#22836;&#23383;&#27573;&#25351;&#23450;&#23186;&#20307;&#31867;&#22411;&#26102;&#65292;&#20063;&#20250;&#25191;&#34892;&#21644;&#25991;&#20214;&#25299;&#23637;&#21517;&#19968;&#26679;&#30340;&#22788;&#29702;&#36923;&#36753;&#12290;</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>If <code class="literal">ContentNegotiatingViewResolver</code>'s list of ViewResolvers is not configured
-explicitly, it automatically uses any ViewResolvers defined in the application context.</p>
+<p>&#24403; <code class="literal">ContentNegotiatingViewResolver</code> &#27809;&#26377;&#26126;&#30830;&#23450;&#20041;&#19968;&#31995;&#21015;&#35270;&#22270;&#35299;&#26512;&#22120;&#26102;&#65292;&#20250;&#38543;&#26426;&#20351;&#29992;&#24212;&#29992;&#19978;&#19979;&#25991;&#30340;&#20219;&#19968;&#35299;&#26512;&#22120;&#12290;</p>
 </td></tr></table></div>
 
-<p>The corresponding controller code that returns an Atom RSS feed for a URI of the form
-<code class="literal">http://localhost/content.atom</code> or <code class="literal">http://localhost/content</code> with an <code class="literal">Accept</code> header of
-application/atom+xml is shown below.</p>
+<p>&#21487;&#20197;&#26681;&#25454; <code class="literal">http://localhost/content.atom</code> &#25110; <code class="literal">http://localhost/content</code>&#21644;<code class="literal">Accept</code>&#23383;&#27573;&#20540;&#20026; application/atom+xml &#20004;&#31181;&#24773;&#20917;&#65292;&#36820;&#22238;&#21407;&#23376;&#35270;&#22270;&#30340;&#25511;&#21046;&#22120;&#20195;&#30721;&#22914;&#19979;&#65306;</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> ContentController {
 
@@ -1981,7 +1723,7 @@ application/atom+xml is shown below.</p>
 
 </div>
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-flash-attributes" href="#mvc-flash-attributes"></a>16.6&nbsp;Using flash attributes</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-flash-attributes" href="#mvc-flash-attributes"></a>16.6&nbsp;&#20351;&#29992; flash &#23646;&#24615;</h2></div></div></div>
 
 <p>Flash attributes provide a way for one request to store attributes intended for use in
 another. This is most commonly needed when redirecting&#8201;&#8212;&#8201;for example, the
@@ -2020,60 +1762,58 @@ Therefore the use of flash attributes is recommended mainly for redirect scenari
 </div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-uri-building" href="#mvc-uri-building"></a>16.7&nbsp;Building URIs</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="mvc-uri-building" href="#mvc-uri-building"></a>16.7&nbsp;&#26500;&#24314; URI</h2></div></div></div>
 
-<p>Spring MVC provides a mechanism for building and encoding a URI using
-<code class="literal">UriComponentsBuilder</code> and <code class="literal">UriComponents</code>.</p>
-<p>For example you can expand and encode a URI template string:</p>
+<p>Spring MVC &#25552;&#20379;&#20102;&#26500;&#24314;&#21644;&#32534;&#30721; URI &#30340;&#26426;&#21046;&#65292;&#36825;&#31181;&#26426;&#21046;&#30340;&#20351;&#29992;&#38656;&#35201;&#36890;&#36807; <code class="literal">UriComponentsBuilder</code> &#21644; <code class="literal">UriComponents</code>.</p>
+<p>&#22914;&#19979;&#65292;&#20320;&#21487;&#20197;&#22914;&#27492;&#23637;&#24320;&#21644;&#32534;&#30721; URI &#27169;&#29256;&#23383;&#31526;&#20018;&#65306;
+For example you can expand and encode a URI template string:</p>
 <pre class="programlisting">UriComponents uriComponents = UriComponentsBuilder.fromUriString(
         <span class="hl-string">"http://example.com/hotels/{hotel}/bookings/{booking}"</span>).build();
 
 URI uri = uriComponents.expand(<span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>).encode().toUri();</pre>
 
-<p>Note that <code class="literal">UriComponents</code> is immutable and the <code class="literal">expand()</code> and <code class="literal">encode()</code> operations
+<p>&#27880;&#24847;&#65292;<code class="literal">UriComponents</code> &#26159;&#19981;&#21487;&#21464;&#30340;&#65307;&#22914;&#26524;&#26377;&#38656;&#35201;&#30340;&#65292;<code class="literal">expand()</code> &#21644; <code class="literal">encode()</code> &#25805;&#20316;&#20250;&#36820;&#22238;&#19968;&#20010;&#26032;&#30340;&#23454;&#20363;&#12290;
+Note that <code class="literal">UriComponents</code> is immutable and the <code class="literal">expand()</code> and <code class="literal">encode()</code> operations
 return new instances if necessary.</p>
-<p>You can also expand and encode using individual URI components:</p>
+<p>&#20320;&#21487;&#20197;&#21333;&#29420;&#20351;&#29992;&#19968;&#20010; URI &#21407;&#20214;&#23637;&#24320;&#21644;&#32534;&#30721; URI &#27169;&#29256;&#23383;&#31526;&#20018;&#65306;</p>
 <pre class="programlisting">UriComponents uriComponents = UriComponentsBuilder.newInstance()
         .scheme(<span class="hl-string">"http"</span>).host(<span class="hl-string">"example.com"</span>).path(<span class="hl-string">"/hotels/{hotel}/bookings/{booking}"</span>).build()
         .expand(<span class="hl-string">"42"</span>, <span class="hl-string">"21"</span>)
         .encode();</pre>
 
-<p>In a Servlet environment the <code class="literal">ServletUriComponentsBuilder</code> sub-class provides static
-factory methods to copy available URL information from a Servlet requests:</p>
+<p>Servlet &#29615;&#22659;&#20013;&#65292;<code class="literal">ServletUriComponentsBuilder</code> &#30340;&#23376;&#31867;&#25552;&#20379;&#20102;&#20174; Servlet &#35831;&#27714;&#22797;&#21046; URL &#20449;&#24687;&#30340;&#38745;&#24577;&#26041;&#27861;&#65306;</p>
 <pre class="programlisting">HttpServletRequest request = ...
 
-<span class="hl-comment">// Re-use host, scheme, port, path and query string</span>
-<span class="hl-comment">// Replace the "accountId" query param</span>
+<span class="hl-comment">// &#37325;&#29992; host, scheme, port, path &#21644; query</span>
+<span class="hl-comment">// &#26367;&#25442; "accountId" &#26597;&#35810;&#21442;&#25968;</span>
 
 ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromRequest(request)
         .replaceQueryParam(<span class="hl-string">"accountId"</span>, <span class="hl-string">"{id}"</span>).build()
         .expand(<span class="hl-string">"123"</span>)
         .encode();</pre>
 
-<p>Alternatively, you may choose to copy a subset of the available information up to and
-including the context path:</p>
-<pre class="programlisting"><span class="hl-comment">// Re-use host, port and context path</span>
-<span class="hl-comment">// Append "/accounts" to the path</span>
+<p>&#21478;&#22806;&#65292;&#20320;&#20063;&#21487;&#20197;&#22797;&#21046;&#19978;&#19979;&#25991;&#21644;&#36335;&#24452;&#20449;&#24687;&#30340;&#26576;&#20010;&#23376;&#38598;&#65292;</p>
+<pre class="programlisting"><span class="hl-comment">// &#37325;&#29992; host&#65292;port &#21644; &#19978;&#19979;&#25991;&#36335;&#24452;</span>
+<span class="hl-comment">// &#23558; "/accounts" &#38468;&#21152;&#21040;&#36335;&#24452;&#20013;</span>
 
 ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromContextPath(request)
         .path(<span class="hl-string">"/accounts"</span>).build()</pre>
 
-<p>Or in cases where the <code class="literal">DispatcherServlet</code> is mapped by name (e.g. <code class="literal">/main/*</code>), you can
-also have the literal part of the servlet mapping included:</p>
-<pre class="programlisting"><span class="hl-comment">// Re-use host, port, context path</span>
-<span class="hl-comment">// Append the literal part of the servlet mapping to the path</span>
-<span class="hl-comment">// Append "/accounts" to the path</span>
+<p>&#33509; <code class="literal">DispatcherServlet</code> &#26159;&#36890;&#36807;&#21517;&#31216;&#26144;&#23556;&#30340;&#65288;&#22914;&#65292;<code class="literal">/main/*</code>),&#20320;&#20063;&#21487;&#33719;&#21462;&#21040; servlet &#26144;&#23556;&#30340;&#25991;&#23383;&#37096;&#20998;&#65306;</p>
+<pre class="programlisting"><span class="hl-comment">// &#37325;&#29992; host&#65292;port &#21644; &#19978;&#19979;&#25991;&#36335;&#24452;</span>
+<span class="hl-comment">// &#23558; Servlet &#26144;&#23556;&#30340;&#25991;&#23383;&#37096;&#20998;&#38468;&#21152;&#21040;&#36335;&#24452;&#20013;</span>
+<span class="hl-comment">// &#23558; "/accounts" &#38468;&#21152;&#21040;&#36335;&#24452;&#20013;</span>
 
 ServletUriComponentsBuilder ucb = ServletUriComponentsBuilder.fromServletMapping(request)
         .path(<span class="hl-string">"/accounts"</span>).build()</pre>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-links-to-controllers" href="#mvc-links-to-controllers"></a>16.7.1&nbsp;Building URIs to Controllers and methods</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-links-to-controllers" href="#mvc-links-to-controllers"></a>16.7.1&nbsp;&#26681;&#25454;&#25511;&#21046;&#22120;&#21644;&#26041;&#27861;&#26500;&#24314; URI</h3></div></div></div>
 
+<p>Spring MVC &#36824;&#25552;&#20379;&#20102;&#21478;&#22806;&#19968;&#31181;&#26500;&#24314;&#21644;&#32534;&#30721; URI &#30340;&#26426;&#21046;&#65292;&#36825;&#31181;&#26426;&#21046;&#21487;&#26681;&#25454;&#24212;&#29992;&#20013;&#23545;&#24212;&#30340;&#25511;&#21046;&#22120;&#21644;&#26041;&#27861;&#26469;&#29983;&#25104; URI&#12290;</p>
 <p>Spring MVC provides another mechanism for building and encoding URIs that link to
 Controllers and methods defined within an application.
-<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/MvcUriComponentsBuilder.html" target="_top"><code class="literal">MvcUriComponentsBuilder</code></a>
-extends <code class="literal">UriComponentsBuilder</code> and provides such possibilities.</p>
-<p>Given this Controller:</p>
+<a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/mvc/method/annotation/MvcUriComponentsBuilder.html" target="_top"><code class="literal">MvcUriComponentsBuilder</code></a> &#25552;&#20379;&#20102;&#36825;&#31181;&#26426;&#21046;&#65292;&#36825;&#20010;&#31867;&#32487;&#25215;&#20102; <code class="literal">UriComponentsBuilder</code>&#12290;</p>
+<p>&#20551;&#35774;&#25511;&#21046;&#22120;&#30340;&#23450;&#20041;&#22914;&#19979;:</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Controller</span></em>
 <em><span class="hl-annotation" style="color: gray">@RequestMapping("/hotels/{hotel}")</span></em>
 <span class="hl-keyword">public</span> <span class="hl-keyword">class</span> BookingController {
@@ -2085,14 +1825,13 @@ extends <code class="literal">UriComponentsBuilder</code> and provides such poss
 
 }</pre>
 
-<p>and using the <code class="literal">MvcUriComponentsBuilder</code>, the previous example is now:</p>
+<p>&#29616;&#22312;&#20351;&#29992; <code class="literal">MvcUriComponentsBuilder</code> &#65292;&#21069;&#38754;&#26500;&#24314;&#30340;&#20363;&#23376;&#21487;&#20197;&#36825;&#26679;&#20889;&#65306;</p>
 <pre class="programlisting">UriComponents uriComponents = MvcUriComponentsBuilder
     .fromMethodName(BookingController.<span class="hl-keyword">class</span>, <span class="hl-string">"getBooking"</span>,<span class="hl-number">21</span>).buildAndExpand(<span class="hl-number">42</span>);
 
 URI uri = uriComponents.encode().toUri();</pre>
 
-<p>The <code class="literal">MvcUriComponentsBuilder</code> can also create "mock Controllers", thus enabling to create
-URIs by coding against the actual Controller&#8217;s API:</p>
+<p><code class="literal">MvcUriComponentsBuilder</code> &#20063;&#21487;&#20197;&#21019;&#24314; "&#27169;&#25311;&#25511;&#21046;&#22120;"&#65292;&#30456;&#23545;&#25511;&#21046;&#22120; API &#26469;&#35828;&#65292;<code class="literal">MvcUriComponentsBuilder</code>&#21487;&#36890;&#36807;&#20195;&#30721;&#26469;&#21019;&#24314; URI&#12290;</p>
 <pre class="programlisting">UriComponents uriComponents = MvcUriComponentsBuilder
     .fromMethodCall(on(BookingController.<span class="hl-keyword">class</span>).getBooking(<span class="hl-number">21</span>)).buildAndExpand(<span class="hl-number">42</span>);
 
@@ -2140,7 +1879,7 @@ using the client&#8217;s locale. This is done with <code class="literal">LocaleR
 finds one it tries to use it to set the locale. Using the <code class="literal">RequestContext.getLocale()</code>
 method, you can always retrieve the locale that was resolved by the locale resolver.</p>
 <p>In addition to automatic locale resolution, you can also attach an interceptor to the
-handler mapping (see <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;16.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a> for more information on handler
+handler mapping (see <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;">Section&nbsp;16.4.1, &#8220;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;&#8221;</a> for more information on handler
 mapping interceptors) to change the locale under specific circumstances, for example,
 based on a parameter in the request.</p>
 <p>Locale resolvers and interceptors are defined in the
@@ -2196,7 +1935,7 @@ session that might be associated with the user&#8217;s request.</p>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="mvc-localeresolver-interceptor" href="#mvc-localeresolver-interceptor"></a>16.8.5&nbsp;LocaleChangeInterceptor</h3></div></div></div>
 
 <p>You can enable changing of locales by adding the <code class="literal">LocaleChangeInterceptor</code> to one of the
-handler mappings (see <a class="xref" href="mvc.html#mvc-handlermapping" title="16.4&nbsp;Handler mappings">Section&nbsp;16.4, &#8220;Handler mappings&#8221;</a>). It will detect a parameter in the request
+handler mappings (see <a class="xref" href="mvc.html#mvc-handlermapping" title="16.4&nbsp;Handler &#26144;&#23556;">Section&nbsp;16.4, &#8220;Handler &#26144;&#23556;&#8221;</a>). It will detect a parameter in the request
 and change the locale. It calls <code class="literal">setLocale()</code> on the <code class="literal">LocaleResolver</code> that also exists
 in the context. The following example shows that calls to all <code class="literal">*.view</code> resources
 containing a parameter named <code class="literal">siteLanguage</code> will now change the locale. So, for example,

@@ -1,95 +1,65 @@
 [[web-integration]]
-== Integrating with other web frameworks
+== 同其他web框架集成
 
 
 
 
 [[intro]]
-=== Introduction
+=== 简介
 
 .Spring Web Flow
 ****
-Spring Web Flow (SWF) aims to be the best solution for the management of web application
-page flow.
+Spring Web Flow (SWF) 定位于成为web管理应用开发的最佳选择.
 
-SWF integrates with existing frameworks like Spring MVC and JSF, in both Servlet and
-Portlet environments. If you have a business process (or processes) that would benefit
-from a conversational model as opposed to a purely request model, then SWF may be the
-solution.
+SWF 可以同现有的框架集成，例如Spring MVC 或者 JSF, 不管是在 Servlet 还是 Portlet 环境中. 如果你有一个(或许多个)业务
+需要一个健壮的可交互的模型,而不是一个单纯的请求模型,那么SWF是你需要的选择.
 
-SWF allows you to capture logical page flows as self-contained modules that are reusable
-in different situations, and as such is ideal for building web application modules that
-guide the user through controlled navigations that drive business processes.
+SWF 允许你捕获逻辑页面流作为独立的模块,在不同的情况下是可重用的,因此是理想的用于构建web应用程序模块,引导用户使用可控制的导航,
+驱动业务流程控制.
 
-For more information about SWF, consult the
-http://projects.spring.io/spring-webflow/[Spring Web Flow website].
+获取 SWF更多的信息, 请浏览
+http://projects.spring.io/spring-webflow/[Spring Web Flow 站点].
 ****
 
-This chapter details Spring's integration with third party web frameworks, such as
+本章详细介绍了Spring和其他第三方框架的集成，例如
 http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html[JSF].
 
-One of the core value propositions of the Spring Framework is that of enabling
-__choice__. In a general sense, Spring does not force one to use or buy into any
-particular architecture, technology, or methodology (although it certainly recommends
-some over others). This freedom to pick and choose the architecture, technology, or
-methodology that is most relevant to a developer and their development team is
-arguably most evident in the web area, where Spring provides its own web framework
-(<<mvc,Spring MVC>>), while at the same time providing integration with a number of
-popular third party web frameworks. This allows one to continue to leverage any and all
-of the skills one may have acquired in a particular web framework such as JSF, while
-at the same time being able to enjoy the benefits afforded by Spring in other areas such
-as data access, declarative transaction management, and flexible configuration and
-application assembly.
+Sping框架的核心使命之一就是提供__选择__. 通俗说, Spring 不会强迫任何人去使用或者融入任何具体的架构、技术或者方法
+(尽管它确实是会推荐一些给你). 这种在挑选架构、技术或者方法上的自由,是在web领域的开发者和开发团队成员之间争论时最显而易见
+的, 当 Spring 推出它自己的web框架(<<mvc,Spring MVC>>)的时候, 同时也推出了同其他众多流行第三方web框架集成的方案.
+这样就允许人们可以一方面享用由Spring带来的优势，例如数据访问、生命是事务管理以及灵活的配置和应用集成,同时继续使用以前很熟悉的
+框架来发挥作用,例如JSF.
 
-Having dispensed with the woolly sales patter (c.f. the previous paragraph), the
-remainder of this chapter will concentrate upon the meaty details of integrating your
-favorite web framework with Spring. One thing that is often commented upon by developers
-coming to Java from other languages is the seeming super-abundance of web frameworks
-available in Java. There are indeed a great number of web frameworks in the Java space;
-in fact there are far too many to cover with any semblance of detail in a single
-chapter. This chapter thus picks four of the more popular web frameworks in Java,
-starting with the Spring configuration that is common to all of the supported web
-frameworks, and then detailing the specific integration options for each supported web
-framework.
+去掉那些推销的赞美之词(也就是前面那段),在这一章的剩余部分我们将专心地介绍如何将你喜爱的web框架同Spring集成起来. 一件经常被从
+其他语言来学习Java的开发者提起的事就是Java貌似有大量的web框架可以用. 在Java世界里确实有很大数目的web框架;事实上,已经
+多到了无法在一章里面全部涵盖完. 本章里面将选取Java web比较流行的4个框架,首先介绍Spring支持的所有框架的配置, 然后介绍
+每一个web框架的配置的特别之处.
 
 [NOTE]
 ====
-Please note that this chapter does not attempt to explain how to use any of the
-supported web frameworks. For example, if you want to use JSF for the presentation
-layer of your web application, the assumption is that you are already familiar with
-JSF itself. If you need further details about any of the supported web frameworks
-themselves, please do consult <<web-integration-resources>> at the end of this chapter.
+请记住,本章不准备介绍怎样使使用支持的web框架. 例如, 如果你想使用JSF来作为你的前端展示层, 我们就假设你已经熟练于使用JSF本身了.
+如果你想获取这些支持框架的更多内容,请查看本章末尾的<<web-integration-resources>>.
 ====
 
 
 
 
 [[web-integration-common]]
-=== Common configuration
-Before diving into the integration specifics of each supported web framework, let us
-first take a look at the Spring configuration that is __not__ specific to any one web
-framework. (This section is equally applicable to Spring's own web framework, Spring
-MVC.)
+=== 通用配置
+在开始介绍每一个所支持的web框架的特有配置之前, 让我们先来看一下对每一个web框架来说都__不__特殊的配置. (这部分配置也同样
+适用于Spring自己的web框架, Spring MVC.)
 
-One of the concepts (for want of a better word) espoused by (Spring's) lightweight
-application model is that of a layered architecture. Remember that in a 'classic'
-layered architecture, the web layer is but one of many layers; it serves as one of the
-entry points into a server side application and it delegates to service objects
-(facades) defined in a service layer to satisfy business specific (and
-presentation-technology agnostic) use cases. In Spring, these service objects, any other
-business-specific objects, data access objects, etc. exist in a distinct 'business
-context', which contains __no__ web or presentation layer objects (presentation objects
-such as Spring MVC controllers are typically configured in a distinct 'presentation
-context'). This section details how one configures a Spring container (a
-`WebApplicationContext`) that contains all of the 'business beans' in one's application.
+对于(Spring)推崇的轻量级模型来说,一个概念(为了想一个更好的词)就是分层架构. 请记住,在'传统'分层架构中,web层只是许多层中的一层;
+它只是作为服务端程序的入口来工作, 它把请求委托给服务层(表面上的)服务对象来满足定义好(并且与展示技术无关)的用例. 在Spring中,
+所有的这些服务对象、业务定义对象、数据访问对象等等都存在于一个明确的'业务上下文'中, 这是一个 __没有__ web 或者展现层对象
+(展现层对象,如Spring MVC的控制器,都是典型的配置在一个明确的'展现上下文'中). 这一节将向你展示怎样在一个应用的一个Spring
+容器(一个`WebApplicationContext`)中包含所有的'业务bean'.
 
-On to specifics: all that one need do is to declare a
+操作如下: 所有需要做的就是在一个web应用的`web.xml`文件中定义一个
 {javadoc-baseurl}/org/springframework/web/context/ContextLoaderListener.html[`ContextLoaderListener`]
-in the standard Java EE servlet `web.xml` file of one's web application, and add a
-`contextConfigLocation`<context-param/> section (in the same file) that defines which
-set of Spring XML configuration files to load.
+, 并且还要(在这个文件中)添加一个`contextConfigLocation`<context-param/> 节来指定哪些Spring的XML配置需要加载.
 
-Find below the <listener/> configuration:
+找到下面的<listener/>配置:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -99,7 +69,7 @@ Find below the <listener/> configuration:
 	</listener>
 ----
 
-Find below the <context-param/> configuration:
+找到下面的<context-param/>配置:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -110,16 +80,13 @@ Find below the <context-param/> configuration:
 	</context-param>
 ----
 
-If you don't specify the `contextConfigLocation` context parameter, the
-`ContextLoaderListener` will look for a file called `/WEB-INF/applicationContext.xml` to
-load. Once the context files are loaded, Spring creates a
+如果你没有指定`contextConfigLocation`的上下文参数, 那么`ContextLoaderListener`将会寻找并加载
+一个名为`/WEB-INF/applicationContext.xml`的文件. 一旦上下文文件加载了, Spring就会根据bean的定义来创建一个
 {javadoc-baseurl}/org/springframework/web/context/WebApplicationContext.html[`WebApplicationContext`]
-object based on the bean definitions and stores it in the `ServletContext` of the web
-application.
+对象并且将它存储在web应用的`ServletContext`中.
 
-All Java web frameworks are built on top of the Servlet API, and so one can use the
-following code snippet to get access to this 'business context' `ApplicationContext`
-created by the `ContextLoaderListener`.
+所有的Java web 框架都是构建在Servlet API之上的, 所以任何一个都可以通过下面的代码片段来访问由`ContextLoaderListener`
+创建的'业务上下文' `ApplicationContext`.
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -127,57 +94,47 @@ created by the `ContextLoaderListener`.
 	WebApplicationContext ctx = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 ----
 
-The
+有
 {javadoc-baseurl}/org/springframework/web/context/support/WebApplicationContextUtils.html[`WebApplicationContextUtils`]
-class is for convenience, so you don't have to remember the name of the `ServletContext`
-attribute. Its __getWebApplicationContext()__ method will return `null` if an object
-doesn't exist under the `WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE`
-key. Rather than risk getting `NullPointerExceptions` in your application, it's better
-to use the `getRequiredWebApplicationContext()` method. This method throws an exception
-when the `ApplicationContext` is missing.
+类来提供便利, 你就不需要记住`ServletContext`的属性了. 如果没有对应于
+`WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE`键的对象, 它的
+__getWebApplicationContext()__方法会返回`null`. 相对简单粗暴地在你的应用中产生`NullPointerExceptions`,
+最好使用`getRequiredWebApplicationContext()`方法, 这个方法会在`ApplicationContext`找不到的情况下抛出异常.
 
-Once you have a reference to the `WebApplicationContext`, you can retrieve beans by
-their name or type. Most developers retrieve beans by name and then cast them to one of
-their implemented interfaces.
+当你获得了`WebApplicationContext`的引用之后, 你就可以通过名字或者类型来获取bean. 大多数开发者都通过名字来获取bean,
+然后转型为它所实现了的接口.
 
-Fortunately, most of the frameworks in this section have simpler ways of looking up
-beans. Not only do they make it easy to get beans from a Spring container, but they also
-allow you to use dependency injection on their controllers. Each web framework section
-has more detail on its specific integration strategies.
+幸运的是, 大多数的框架在这里都有相似的方法来寻找bean. 他们不仅使得从 Spring容器中获取bean变得简单, 而且允许你在他们的控制器中
+使用依赖注入. 每一款web框架在集成上都有更多的细节特性.
 
 
 
 
 [[jsf]]
 === JavaServer Faces 1.2
-JavaServer Faces (JSF) is the JCP's standard component-based, event-driven web user
-interface framework. As of Java EE 5, it is an official part of the Java EE umbrella.
+JavaServer Faces (JSF) 是 JCP的标准的基于组件的, 事件驱动的web用户展现框架. 从 Java EE 5开始, 它就是
+Java EE的官方正式组件之一.
 
-For a popular JSF runtime as well as for popular JSF component libraries, check out the
-http://myfaces.apache.org/[Apache MyFaces project]. The MyFaces project also provides
-common JSF extensions such as http://myfaces.apache.org/orchestra/[MyFaces Orchestra]:
-a Spring-based JSF extension that provides rich conversation scope support.
+选取http://myfaces.apache.org/[Apache MyFaces项目]作为流行的JSF运行时和流行的JSF组件库.
+MyFaces项目同样提供通用的JSF扩展例如 http://myfaces.apache.org/orchestra/[MyFaces Orchestra]:
+一个基于Spring的提供丰富的会话作用域支持的JSF扩展.
 
 [NOTE]
 ====
-Spring Web Flow 2.0 provides rich JSF support through its newly established Spring Faces
-module, both for JSF-centric usage (as described in this section) and for Spring-centric
-usage (using JSF views within a Spring MVC dispatcher). Check out the
-http://projects.spring.io/spring-webflow[Spring Web Flow website] for details!
+Spring Web Flow 2.0通过新建立的Spring Faces组件提供丰富的JSF支持, 同时支持JSF-centric方式 (如本节介绍)
+和Spring-centric方式(在Spring MVC控制跳转,使用JSF进行展现). 查看
+http://projects.spring.io/spring-webflow[Spring Web Flow站点] 获取详细信息!
 ====
 
-The key element in Spring's JSF integration is the JSF `ELResolver` mechanism.
+Spring与JSF集成的关键点在于JSF的`ELResolver`机制.
 
 [[jsf-springbeanfaceselresolver]]
 ==== SpringBeanFacesELResolver (JSF 1.2+)
-`SpringBeanFacesELResolver` is a JSF 1.2 compliant `ELResolver` implementation,
-integrating with the standard Unified EL as used by JSF 1.2 and JSP 2.1. Like
-`SpringBeanVariableResolver`, it delegates to the Spring's 'business context'
-`WebApplicationContext` __first__, then to the default resolver of the underlying JSF
-implementation.
+`SpringBeanFacesELResolver` 是一个与JSF 1.2 `ELResolver`相兼容的实现,与在JSF 1.2和JSP 2.1
+中使用的标准统一EL集成. 就像`SpringBeanVariableResolver`, 它__首先__委托Spring的
+'业务上下文'`WebApplicationContext`, 然后交给默认的底层JSF实现发现机制.
 
-Configuration-wise, simply define `SpringBeanFacesELResolver` in your JSF 1.2
-__faces-context.xml__ file:
+在你JSF 1.2的__faces-context.xml__文件中快速简单定义`SpringBeanFacesELResolver`的配置样例:
 
 [source,xml,indent=0]
 [subs="verbatim,quotes"]
@@ -193,11 +150,11 @@ __faces-context.xml__ file:
 
 [[jsf-facescontextutils]]
 ==== FacesContextUtils
-A custom `VariableResolver` works well when mapping one's properties to beans
-in __faces-config.xml__, but at times one may need to grab a bean explicitly. The
+尽管在__faces-config.xml__文件中将特性向bean映射的时候, 一个自定义的`VariableResolver`工作得很好,
+但有时候人们需要明确地争夺bean. 
 {javadoc-baseurl}/org/springframework/web/jsf/FacesContextUtils.html[`FacesContextUtils`]
-class makes this easy. It is similar to `WebApplicationContextUtils`, except that it
-takes a `FacesContext` parameter rather than a `ServletContext` parameter.
+这个类使得这一切很简单. 它和`WebApplicationContextUtils`很相像, 除了它需要一个`FacesContext`参数而不是一个
+`ServletContext`参数.
 
 [source,java,indent=0]
 [subs="verbatim,quotes"]
@@ -209,44 +166,37 @@ takes a `FacesContext` parameter rather than a `ServletContext` parameter.
 
 [[struts]]
 === Apache Struts 2.x
-Invented by Craig McClanahan, http://struts.apache.org[Struts] is an open source project
-hosted by the Apache Software Foundation. At the time, it greatly simplified the
-JSP/Servlet programming paradigm and won over many developers who were using proprietary
-frameworks. It simplified the programming model, it was open source (and thus free as in
-beer), and it had a large community, which allowed the project to grow and become popular
-among Java web developers.
+由Craig McClanahan创建, http://struts.apache.org[Struts] 是一个由Apache基金会管理的开源项目. 如今,
+它大大地简化了JSP/Servlet编程样式并且赢得了大量的原先使用私有框架的开发者. 它简化了开发模型, 它开放源代码(于是就如同免费啤酒一样),
+并且有一个相当大的社区, 它允许项目增长并且在Java web开发者中很流行.
 
-Check out the Struts
-https://struts.apache.org/release/2.3.x/docs/spring-plugin.html[Spring Plugin] for the
-built-in Spring integration shipped with Struts.
+查看Struts的
+https://struts.apache.org/release/2.3.x/docs/spring-plugin.html[Spring Plugin] 了解Struts
+内建的对Spring集成的支持.
 
 
 
 [[tapestry]]
 === Tapestry 5.x
-From the http://tapestry.apache.org/[Tapestry homepage]:
+来自于 http://tapestry.apache.org/[Tapestry 主页]的信息:
 
-Tapestry is a "__Component oriented framework for creating dynamic, robust,
-highly scalable web applications in Java.__"
+Tapestry 是一个 "__定位于创建动态的, 强壮的,高可扩展性的web应用的Java框架.__"
 
-While Spring has its own <<mvc,powerful web layer>>, there are a number of unique
-advantages to building an enterprise Java application using a combination of Tapestry
-for the web user interface and the Spring container for the lower layers.
+尽管Spring拥有他自己的<<mvc,强劲的web层>>, 但仍然有很多正当理由来使用一个用Tapestry作为用户展现层, 使用Spring容器来作为
+更低层次的组合来构建企业级应用.
 
-For more information, check out Tapestry's dedicated
-https://tapestry.apache.org/integrating-with-spring-framework.html[integration module for
-Spring].
+查看
+https://tapestry.apache.org/integrating-with-spring-framework.html[同Spring集成模块]获取更多信息.
 
 
 
 [[web-integration-resources]]
-=== Further Resources
-Find below links to further resources about the various web frameworks described in this
-chapter.
+=== 更多资源
+点击下面的链接来获取本章所提到的web框架的更多资源.
 
-* The http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html[JSF] homepage
-* The http://struts.apache.org/[Struts] homepage
-* The http://tapestry.apache.org/[Tapestry] homepage
+* http://www.oracle.com/technetwork/java/javaee/javaserverfaces-139869.html[JSF的主页]
+* http://struts.apache.org/[Struts的主页]
+* http://tapestry.apache.org/[Tapestry的主页]
 
 
 

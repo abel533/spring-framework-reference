@@ -2,50 +2,47 @@
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
    <title>20.&nbsp;WebSocket &#25903;&#25345;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-web.html" title="Part&nbsp;V.&nbsp;The Web"><link rel="prev" href="portlet.html" title="19.&nbsp;Portlet MVC Framework"><link rel="next" href="spring-integration.html" title="Part&nbsp;VI.&nbsp;Integration"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">20.&nbsp;WebSocket &#25903;&#25345;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="portlet.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;V.&nbsp;The Web</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="spring-integration.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="websocket" href="#websocket"></a>20.&nbsp;WebSocket &#25903;&#25345;</h2></div></div></div>
 
-<p>This part of the reference documentation covers Spring Framework&#8217;s support for
-WebSocket-style messaging in web applications including use of STOMP as an
-application level WebSocket sub-protocol.</p>
-<p><a class="xref" href="websocket.html#websocket-intro" title="20.1&nbsp;Introduction">Section&nbsp;20.1, &#8220;Introduction&#8221;</a> establishes a frame of mind in which to think about
+<p>&#36825;&#37096;&#20998;&#30340;&#21442;&#32771;&#25991;&#26723;&#28085;&#30422;&#20102;Spring&#26694;&#26550;&#30340;&#25903;&#25345;
+websocket&#24335;&#28040;&#24687;&#20256;&#36882;&#22312;web&#24212;&#29992;&#31243;&#24207;&#20013;&#21253;&#25324;&#21033;&#29992;STOMP&#20316;&#20026;
+&#24212;&#29992;&#31243;&#24207;&#32423;&#21035;&#30340;WebSocket&#23376;&#21327;&#35758;.</p>
+<p><a class="xref" href="">???</a> establishes a frame of mind in which to think about
 WebSocket, covering adoption challenges, design considerations, and thoughts on
 when it is a good fit.</p>
-<p><a class="xref" href="websocket.html#websocket-server" title="20.2&nbsp;WebSocket API">Section&nbsp;20.2, &#8220;WebSocket API&#8221;</a> reviews the Spring WebSocket API on the
+<p><a class="xref" href="">???</a>
+&#22238;&#39038;&#22312;&#26381;&#21153;&#22120;&#31471;&#30340;Spring WebSocket API,&#24403;<a class="xref" href="">???</a>&#35299;&#37322;sockJS&#21327;&#35758;&#21644;&#28436;&#31034;&#22914;&#20309;&#35774;&#32622;&#21644;&#20351;&#29992;&#23427;
+reviews the Spring WebSocket API on the
 server-side while <a class="xref" href="websocket.html#websocket-fallback" title="20.3&nbsp;SockJS Fallback Options">Section&nbsp;20.3, &#8220;SockJS Fallback Options&#8221;</a> explains the SockJS protocol and shows
 how to configure and use it.</p>
-<p><a class="xref" href="websocket.html#websocket-stomp-overview" title="20.4.1&nbsp;Overview of STOMP">Section&nbsp;20.4.1, &#8220;Overview of STOMP&#8221;</a> introduces the STOMP messaging protocol.
-<a class="xref" href="websocket.html#websocket-stomp-enable" title="20.4.2&nbsp;Enable STOMP over WebSocket">Section&nbsp;20.4.2, &#8220;Enable STOMP over WebSocket&#8221;</a> demonstrates how to configure STOMP support in Spring.
-<a class="xref" href="websocket.html#websocket-stomp-handle-annotations" title="20.4.4&nbsp;Annotation Message Handling">Section&nbsp;20.4.4, &#8220;Annotation Message Handling&#8221;</a> and the following sections explain how to
-write annotated message handling methods, send messages, choose message broker
-options, as well as work with the special "user" destinations. Finally,
-<a class="xref" href="websocket.html#websocket-stomp-testing" title="20.4.16&nbsp;Testing Annotated Controller Methods">Section&nbsp;20.4.16, &#8220;Testing Annotated Controller Methods&#8221;</a> lists three approaches to testing STOMP/WebSocket
-applications.</p>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-intro" href="#websocket-intro"></a>20.1&nbsp;Introduction</h2></div></div></div>
+<p><a class="xref" href="websocket.html#websocket-stomp-overview" title="20.4.1&nbsp;Overview of STOMP">Section&nbsp;20.4.1, &#8220;Overview of STOMP&#8221;</a> &#20171;&#32461; STOMP &#28040;&#24687; protocol.</p>
+<p><a class="xref" href="websocket.html#websocket-stomp-enable" title="20.4.2&nbsp;Enable STOMP over WebSocket">Section&nbsp;20.4.2, &#8220;Enable STOMP over WebSocket&#8221;</a> &#31034;&#33539;&#22914;&#26524;&#22312;spring&#20013;&#37197;&#32622;STOMP</p>
+<p><a class="xref" href="websocket.html#websocket-stomp-handle-annotations" title="20.4.4&nbsp;Annotation Message Handling">Section&nbsp;20.4.4, &#8220;Annotation Message Handling&#8221;</a>
+&#25509;&#19979;&#26469;&#30340;&#31456;&#33410;&#26469;&#38416;&#36848;&#22914;&#20309;&#32473;&#28040;&#24687;&#22788;&#29702;&#20989;&#25968;,&#21457;&#36865;&#28040;&#24687;&#20989;&#25968;,&#36873;&#25321;&#28040;&#24687;&#26381;&#21153;&#23454;&#20363;&#36873;&#39033;,&#20197;&#21450;&#20351;&#29992;&#29305;&#27530;&#30340;&#8220;&#29992;&#25143;&#8221;&#30340;&#30446;&#30340;&#22320;&#26469;&#28155;&#21152;&#27880;&#35299;</p>
+<p><a class="xref" href="websocket.html#websocket-stomp-testing" title="20.4.16&nbsp;&#27979;&#35797;&#24102;&#27880;&#35299;&#30340;&#25511;&#21046;&#22120;&#26041;&#27861; Testing Annotated Controller Methods">Section&nbsp;20.4.16, &#8220;&#27979;&#35797;&#24102;&#27880;&#35299;&#30340;&#25511;&#21046;&#22120;&#26041;&#27861; Testing Annotated Controller Methods&#8221;</a>
+&#23637;&#31034;&#19977;&#31181;&#27979;&#35797;STOMP/WebSocket&#24212;&#29992;&#30340;&#22788;&#29702;&#26041;&#24335;</p>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-intro" href="#websocket-intro"></a>20.1&nbsp;&#20171;&#32461;</h2></div></div></div>
 
-<p>The WebSocket protocol <a class="ulink" href="http://tools.ietf.org/html/rfc6455" target="_top">RFC 6455</a> defines an important
-new capability for web applications: full-duplex, two-way communication between client
-and server. It is an exciting new capability on the heels of a long history of
+<p>WebSocket&#21327;&#35758; <a class="ulink" href="http://tools.ietf.org/html/rfc6455" target="_top">RFC 6455</a> &#20026;web&#24212;&#29992;&#23450;&#20041;&#20102;
+&#19968;&#39033;&#37325;&#35201;&#30340;&#33021;&#21147;: &#20840;&#21452;&#24037;, &#21452;&#21521;&#27807;&#36890; &#22312;&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#31471;.
+It is an exciting new capability on the heels of a long history of
 techniques to make the web more interactive including Java applets, XMLHttpRequest,
 Adobe Flash, ActiveXObject, various Comet techniques, server-sent events, and others.</p>
-<p>A proper introduction of the WebSocket protocol is beyond the scope of this
+<p>&#19968;&#20010;&#23436;&#25972;&#30340;WebSocket &#21327;&#35758;&#30340;&#20171;&#32461;&#36229;&#20986;&#20102;&#36825;&#20010;&#25991;&#26723;&#30340;&#33539;&#22260;.&#19981;&#31649;&#24590;&#26679;
+A proper introduction of the WebSocket protocol is beyond the scope of this
 document. At a minimum however it&#8217;s important to understand that HTTP is used only for
 the initial handshake, which relies on a mechanism built into HTTP to request
 a protocol upgrade (or in this case a protocol switch) to which the server can respond with
 HTTP status 101 (switching protocols) if it agrees. Assuming the handshake succeeds
 the TCP socket underlying the HTTP upgrade request remains open and both client and
 server can use it to send messages to each other.</p>
-<p>Spring Framework 4 includes a new <code class="literal">spring-websocket</code> module with comprehensive
-WebSocket support. It is compatible with the Java WebSocket API standard
-(<a class="ulink" href="http://jcp.org/en/jsr/detail?id=356" target="_top">JSR-356</a>)
-and also provides additional value-add as explained in the rest of the introduction.</p>
+<p>Spring Framework 4 &#21253;&#21547;&#20102;&#19968;&#20010;&#26032;&#30340;&#23545;WebSocket&#25552;&#20379;&#20840;&#38754;&#25903;&#25345;&#30340; <span class="emphasis"><em>spring-websocket</em></span> &#27169;&#22359;
+&#20860;&#23481;&#20102;&#26631;&#20934;&#30340;Java WebSocket API(<a class="ulink" href="http://jcp.org/en/jsr/detail?id=356" target="_top">JSR-356</a>)
+&#32780;&#19988;&#20063;&#25552;&#20379;&#20102;&#39069;&#22806;&#22686;&#20540;&#30340;&#19968;&#20123;&#25903;&#25345;&#27604;&#22914;&#35828;&#20854;&#20182;&#30340;&#19968;&#20123;&#20171;&#32461;</p>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-into-fallback-options" href="#websocket-into-fallback-options"></a>20.1.1&nbsp;WebSocket Fallback Options</h3></div></div></div>
 
-<p>An important challenge to adoption is the lack of support for WebSocket in some
-browsers. Notably the first Internet Explorer version to support WebSocket is
-version 10 (see <a class="ulink" href="http://caniuse.com/websockets" target="_top">http://caniuse.com/websockets</a> for support by browser versions).
-Furthermore, some restrictive proxies
-may be configured in ways that either preclude the attempt to do HTTP upgrade
-or otherwise break connection after some time because it has remained opened
-for too long. A good overview on this topic from Peter Lubbers is available in
-the InfoQ article
+<p>&#19968;&#20010;&#20005;&#37325;&#30340;&#25361;&#25112;&#26159;&#22312;&#19968;&#20123;&#27983;&#35272;&#22120;&#23545;WebSocket&#25903;&#25345;&#30340;&#19981;&#36275;.&#23588;&#20854;&#26159;&#31532;&#19968;&#20010;&#25903;&#25345;websocket&#30340;IE&#26159;&#29256;&#26412;10
+(see <a class="ulink" href="http://caniuse.com/websockets" target="_top">http://caniuse.com/websockets</a> &#26597;&#25214;&#27983;&#35272;&#22120;&#29256;&#26412;&#23545;websocket&#25903;&#25345;&#30340;&#24110;&#21161;).
+&#27492;&#22806;,&#19968;&#20123;&#20351;&#29992;&#20005;&#26684;&#38480;&#21046;&#30340;&#20195;&#29702;&#30340;&#24773;&#20917;&#20063;&#23384;&#22312;&#36825;&#26679;&#30340;&#38382;&#39064;,&#27604;&#22914;&#29992;&#26469;&#38459;&#27490;HTTP upgrade&#30340;&#23581;&#35797;&#25110;&#32773;&#22240;&#20026;&#20445;&#25345;&#36830;&#25509;&#22826;&#38271;&#32780;&#34987;&#26029;&#24320;&#36830;&#25509;
+&#19968;&#20010;&#33391;&#22909;&#30340;&#20851;&#20110;&#36825;&#20010;&#20027;&#39064;&#30340;&#32508;&#36848;&#26469;&#33258;Peter Lubbers&#20320;&#21487;&#20197;&#22312;InFoQ &#26597;&#30475;&#25991;&#31456;
 <a class="ulink" href="http://www.infoq.com/articles/Web-Sockets-Proxy-Servers" target="_top">"How HTML5 Web Sockets Interact With Proxy Servers"</a>.</p>
 <p>Therefore to build a WebSocket application today, fallback options are required
 to simulate the WebSocket API where necessary.
@@ -54,7 +51,7 @@ options based on the <a class="ulink" href="https://github.com/sockjs/sockjs-pro
 These options can be enabled through configuration and do not require
 modifying the application otherwise.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-architecture" href="#websocket-intro-architecture"></a>20.1.2&nbsp;A Messaging Architecture</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-architecture" href="#websocket-intro-architecture"></a>20.1.2&nbsp;&#22522;&#20110;&#28040;&#24687;&#30340;&#26550;&#26500;</h3></div></div></div>
 
 <p>Aside from short-to-midterm adoption challenges, using WebSocket
 brings up important design considerations that are important to recognize
@@ -104,7 +101,7 @@ originally created for use in scripting languages with frames inspired
 by HTTP. STOMP is widely support and well suited for use over
 WebSocket and over the web.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-when-to-use" href="#websocket-intro-when-to-use"></a>20.1.4&nbsp;Should I Use WebSocket?</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-intro-when-to-use" href="#websocket-intro-when-to-use"></a>20.1.4&nbsp;&#25105;&#24212;&#35813;&#20351;&#29992;websocket&#21527;?</h3></div></div></div>
 
 <p>With all the design considerations surrounding the use of WebSocket, it is
 reasonable to ask when is it appropriate to use?</p>
@@ -142,8 +139,8 @@ WebSocket clients or to a specific user.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="websocket-server" href="#websocket-server"></a>20.2&nbsp;WebSocket API</h2></div></div></div>
 
-<p>The Spring Framework provides a WebSocket API designed to adapt to various WebSocket engines.
-Currently the list includes WebSocket runtimes such as Tomcat 7.0.47+, Jetty 9.1+,
+<p>Spring Framework&#25552;&#20379;&#29992;&#26469;&#36866;&#24212;&#22810;&#31181;WebSocket&#24341;&#25806;&#30340;WebSocket API</p>
+<p>Currently the list includes WebSocket runtimes such as Tomcat 7.0.47+, Jetty 9.1+,
 GlassFish 4.1+, WebLogic 12.1.3+, and Undertow 1.0+ (and WildFly 8.0+). Additional support
 may be added as more WebSocket runtimes become available.</p>
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
@@ -158,10 +155,10 @@ when using HTTP. Nevertheless this section covers the details of using WebSocket
 directly.</p>
 </td></tr></table></div>
 
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handler" href="#websocket-server-handler"></a>20.2.1&nbsp;Create and Configure a WebSocketHandler</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handler" href="#websocket-server-handler"></a>20.2.1&nbsp;&#21019;&#24314;&#24182;&#37197;&#32622;&#19968;&#20010;WebSocketHandler</h3></div></div></div>
 
-<p>Creating a WebSocket server is as simple as implementing <code class="literal">WebSocketHandler</code> or more
-likely extending either <code class="literal">TextWebSocketHandler</code> or <code class="literal">BinaryWebSocketHandler</code>:</p>
+<p>&#21019;&#24314;&#19968;&#20010;WebSocket &#26381;&#21153;&#22120;&#23601;&#20687;&#23454;&#29616;&#19968;&#20010; <span class="emphasis"><em>WebsocketHandler</em></span>&#19968;&#26679;&#31616;&#21333;,
+&#25110;&#32773;&#26356;&#20687;&#32487;&#25215;<span class="emphasis"><em>TextWebSocketHandler</em></span>&#25110;<span class="emphasis"><em>BinaryWebSocketHandler</em></span>:</p>
 <pre class="programlisting"><span class="hl-keyword">import</span> org.springframework.web.socket.WebSocketHandler;
 <span class="hl-keyword">import</span> org.springframework.web.socket.WebSocketSession;
 <span class="hl-keyword">import</span> org.springframework.web.socket.TextMessage;
@@ -221,7 +218,7 @@ support does not depend on Spring MVC. It is relatively simple to integrate a <c
 into other HTTP serving environments with the help of
 <a class="ulink" href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/socket/server/support/WebSocketHttpRequestHandler.html" target="_top">WebSocketHttpRequestHandler</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handshake" href="#websocket-server-handshake"></a>20.2.2&nbsp;Customizing the WebSocket Handshake</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-handshake" href="#websocket-server-handshake"></a>20.2.2&nbsp;&#33258;&#23450;&#20041;Websocket Handshake</h3></div></div></div>
 
 <p>The easiest way to customize the initial HTTP WebSocket handshake request is through
 a <code class="literal">HandshakeInterceptor</code>, which exposes "before" and "after" the handshake methods.
@@ -266,11 +263,11 @@ the steps of the WebSocket handshake, including validating the client origin,
 negotiating a sub-protocol, and others. An application may also need to use this
 option if it needs to configure a custom <code class="literal">RequestUpgradeStrategy</code> in order to
 adapt to a WebSocket server engine and version that is not yet supported
-(also see <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;Deployment Considerations">Section&nbsp;20.2.4, &#8220;Deployment Considerations&#8221;</a> for more on this subject).
+(also see <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;&#37096;&#32626;&#27880;&#24847;&#20107;&#39033;">Section&nbsp;20.2.4, &#8220;&#37096;&#32626;&#27880;&#24847;&#20107;&#39033;&#8221;</a> for more on this subject).
 Both the Java-config and XML namespace make it possible to configure a custom
 <code class="literal">HandshakeHandler</code>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-decorators" href="#websocket-server-decorators"></a>20.2.3&nbsp;WebSocketHandler Decoration</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-decorators" href="#websocket-server-decorators"></a>20.2.3&nbsp;WebSocketHandler &#30340;&#35013;&#39280;&#22120;</h3></div></div></div>
 
 <p>Spring provides a <code class="literal">WebSocketHandlerDecorator</code> base class that can be used to decorate
 a <code class="literal">WebSocketHandler</code> with additional behavior. Logging and exception handling
@@ -279,12 +276,18 @@ or XML namespace. The <code class="literal">ExceptionWebSocketHandlerDecorator</
 exceptions arising from any WebSocketHandler method and closes the WebSocket
 session with status <code class="literal">1011</code> that indicates a server error.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-deployment" href="#websocket-server-deployment"></a>20.2.4&nbsp;Deployment Considerations</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-deployment" href="#websocket-server-deployment"></a>20.2.4&nbsp;&#37096;&#32626;&#27880;&#24847;&#20107;&#39033;</h3></div></div></div>
 
+<p>Spring WebSocket API &#21487;&#20197;&#24456;&#26041;&#20415;&#30340;&#32487;&#25215;&#21040;&#37027;&#20123;&#20351;&#29992;<span class="emphasis"><em>DispatcherServlet</em></span>&#26381;&#21153;&#20110;WebSocket
+&#25569;&#25163;&#25110;&#32773;&#20854;&#20182;http&#35831;&#27714;&#30340;springMVC&#30340;&#24212;&#29992;</p>
 <p>The Spring WebSocket API is easy to integrate into a Spring MVC application where
 the <code class="literal">DispatcherServlet</code> serves both HTTP WebSocket handshake as well as other
-HTTP requests. It is also easy to integrate into other HTTP processing scenarios
-by invoking <code class="literal">WebSocketHttpRequestHandler</code>. This is convenient and easy to
+HTTP requests.
+&#23427;&#21516;&#26679;&#21487;&#20197;&#24456;&#26041;&#20415;&#30340;&#38598;&#25104;&#21040;&#20854;&#20182;&#30340;&#36890;&#36807;&#35843;&#29992;<span class="emphasis"><em>WebSocketHttpRequestHandler</em></span>&#26469;&#22788;&#29702;Http&#30340;&#24773;&#20917;
+It is also easy to integrate into other HTTP processing scenarios
+by invoking <code class="literal">WebSocketHttpRequestHandler</code>.
+&#36825;&#26159;&#23454;&#29992;&#21644;&#26131;&#25026;&#30340;.&#23613;&#31649;,
+This is convenient and easy to
 understand. However, special considerations apply with regards to JSR-356 runtimes.</p>
 <p>The Java WebSocket API (JSR-356) provides two deployment mechanisms. The first
 involves a Servlet container classpath scan (Servlet 3 feature) at startup; and
@@ -339,7 +342,7 @@ Java initialization API, if required:</p>
 <span class="hl-tag">&lt;/web-app&gt;</span></pre>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-runtime-configuration" href="#websocket-server-runtime-configuration"></a>20.2.5&nbsp;Configuring the WebSocket Engine</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-server-runtime-configuration" href="#websocket-server-runtime-configuration"></a>20.2.5&nbsp;&#37197;&#32622;WebSocket &#24341;&#25806;</h3></div></div></div>
 
 <p>Each underlying WebSocket engine exposes configuration properties that control
 runtime characteristics such as the size of message buffer sizes, idle timeout,
@@ -378,11 +381,12 @@ WebSocket Java config:</p>
 <span class="hl-tag">&lt;/beans&gt;</span></pre>
 
 <div class="note" style="margin-left: 0.5in; margin-right: 0.5in;"><table border="0" summary="Note"><tr><td rowspan="2" align="center" valign="top" width="25"><img alt="[Note]" src="images/note.png"></td><th align="left">Note</th></tr><tr><td align="left" valign="top">
-<p>For client side WebSocket configuration, you should use <code class="literal">WebSocketContainerFactoryBean</code>
-(XML) or <code class="literal">ContainerProvider.getWebSocketContainer()</code> (Java config).</p>
+<p>&#23545;&#20110;&#23458;&#25143;&#31471;Websocket&#30340;&#37197;&#32622;&#26469;&#35828;, &#20320;&#24212;&#35813;&#20351;&#29992; <code class="literal">WebSocketContainerFactoryBean</code>
+(XML) &#25110;&#32773; <code class="literal">ContainerProvider.getWebSocketContainer()</code> (Java config).</p>
 </td></tr></table></div>
 
-<p>For Jetty, you&#8217;ll need to supply a pre-configured Jetty <code class="literal">WebSocketServerFactory</code> and plug
+<p>&#23545;&#20110;Jetty&#26469;&#35828;,&#20320;&#23558;&#38656;&#35201;&#25552;&#20379;&#19968;&#20010;&#39044;&#35774;&#32622;&#30340; Jetty <span class="emphasis"><em>WebSocketServerFactory</em></span> &#21644;
+For Jetty, you&#8217;ll need to supply a pre-configured Jetty <code class="literal">WebSocketServerFactory</code> and plug
 that into Spring&#8217;s <code class="literal">DefaultHandshakeHandler</code> through your WebSocket Java config:</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
 <em><span class="hl-annotation" style="color: gray">@EnableWebSocket</span></em>
@@ -509,7 +513,7 @@ TRACE logging for <code class="literal">org.springframework.web.socket</code>.
 For even more detail refer to the SockJS protocol
 <a class="ulink" href="http://sockjs.github.io/sockjs-protocol/sockjs-protocol-0.3.3.html" target="_top">narrated test</a>.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-enable" href="#websocket-fallback-sockjs-enable"></a>20.3.2&nbsp;Enable SockJS</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-enable" href="#websocket-fallback-sockjs-enable"></a>20.3.2&nbsp;&#21551;&#29992; SockJS</h3></div></div></div>
 
 <p>SockJS is easy to enable through a configuration:</p>
 <pre class="programlisting"><em><span class="hl-annotation" style="color: gray">@Configuration</span></em>
@@ -628,7 +632,7 @@ be cached. For details on how to enable it see the
 </td></tr></table></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-heartbeat" href="#websocket-fallback-sockjs-heartbeat"></a>20.3.4&nbsp;Heartbeat Messages</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-heartbeat" href="#websocket-fallback-sockjs-heartbeat"></a>20.3.4&nbsp;&#24515;&#36339;&#28040;&#24687; Heartbeat Messages</h3></div></div></div>
 
 <p>The SockJS protocol requires servers to send heartbeat messages to preclude proxies
 from concluding a connection is hung. The Spring SockJS configuiration has a property
@@ -646,7 +650,7 @@ for scheduling heartbeats tasks. The task scheduler is backed by a thread pool
 with default settings based on the number of available processors. Applications
 should consider customizing the settings according to their specific needs.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-servlet3-async" href="#websocket-fallback-sockjs-servlet3-async"></a>20.3.5&nbsp;Servlet 3 Async Requests</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-servlet3-async" href="#websocket-fallback-sockjs-servlet3-async"></a>20.3.5&nbsp;Servlet 3 &#24322;&#27493;&#35831;&#27714; Servlet 3 Async Requests</h3></div></div></div>
 
 <p>HTTP streaming and HTTP long polling SockJS transports require a connection to remain
 open longer than usual. For an overview of these techniques see
@@ -697,7 +701,7 @@ as the <code class="literal">TransportType</code> enum in the source code.</p>
 <p>Alternatively if the CORS configuration allows it consider excluding URLs with the
 SockJS endpoint prefix thus letting Spring&#8217;s SockJsService handle it.</p>
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-client" href="#websocket-fallback-sockjs-client"></a>20.3.7&nbsp;SockJS Client</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-fallback-sockjs-client" href="#websocket-fallback-sockjs-client"></a>20.3.7&nbsp;SockJS &#23458;&#25143;&#31471;</h3></div></div></div>
 
 <p>A SockJS Java client is provided in order to connect to remote SockJS endpoints without
 using a browser. This can be especially useful when there is a need of bidirectional
@@ -1305,7 +1309,7 @@ when the user has not formally authenticated. For example a mobile app might
 assign some identity to anonymous users, perhaps based on geographical location.
 The do that currently, an application can sub-class <code class="literal">DefaultHandshakeHandler</code>
 and override the <code class="literal">determineUser</code> method. The custom handshake handler can then
-be plugged in (see examples in <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;Deployment Considerations">Section&nbsp;20.2.4, &#8220;Deployment Considerations&#8221;</a>).</p>
+be plugged in (see examples in <a class="xref" href="websocket.html#websocket-server-deployment" title="20.2.4&nbsp;&#37096;&#32626;&#27880;&#24847;&#20107;&#39033;">Section&nbsp;20.2.4, &#8220;&#37096;&#32626;&#27880;&#24847;&#20107;&#39033;&#8221;</a>).</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-user-destination" href="#websocket-stomp-user-destination"></a>20.4.11&nbsp;User Destinations</h3></div></div></div>
 
@@ -1732,17 +1736,24 @@ STOMP level the SockJS heartbeats are disabled.
 </dd></dl></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-testing" href="#websocket-stomp-testing"></a>20.4.16&nbsp;Testing Annotated Controller Methods</h3></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="websocket-stomp-testing" href="#websocket-stomp-testing"></a>20.4.16&nbsp;&#27979;&#35797;&#24102;&#27880;&#35299;&#30340;&#25511;&#21046;&#22120;&#26041;&#27861; Testing Annotated Controller Methods</h3></div></div></div>
 
+<p>&#26377;&#20004;&#20010;&#20027;&#35201;&#30340;&#26041;&#27861;&#26469;&#27979;&#35797;&#20351;&#29992;Spring STOMP&#26469;&#25552;&#20379;WebSocket&#25903;&#25345;&#30340;&#24212;&#29992;.
+&#31532;&#19968;&#20010;&#23601;&#26159;&#20889;&#19968;&#20010;&#26381;&#21153;&#22120;&#31471;&#30340;&#27979;&#35797;&#26469;&#39564;&#35777;&#25511;&#21046;&#22120;&#30340;&#20989;&#25968;&#21644;&#37027;&#20123;&#27880;&#35299;&#30340;&#28040;&#24687;&#22788;&#29702;&#26041;&#27861;.
+&#31532;&#20108;&#20010;&#26159;&#20889;&#19968;&#20010;&#23436;&#25972;&#30340;&#31471;&#21040;&#31471;&#30340;&#27979;&#35797;&#21253;&#21547;&#20102;&#36816;&#34892;&#30340;&#23458;&#25143;&#31471;&#21644;&#26381;&#21153;&#22120;&#31471;</p>
 <p>There are two main approaches to testing applications using Spring&#8217;s STOMP over
 WebSocket support. The first is to write server-side tests verifying the functionality
 of controllers and their annotated message handling methods. The second is to write
 full end-to-end tests that involve running a client and a server.</p>
+<p>&#36825;&#20004;&#31181;&#26041;&#24335;&#24182;&#19981;&#26159;&#30456;&#20114;&#30340;&#29420;&#31435;&#30340;.&#30456;&#21453;&#22312;&#19968;&#20010;&#23436;&#25104;&#30340;&#27979;&#35797;&#31574;&#30053;&#37324;&#38754;&#20182;&#20204;&#21508;&#21496;&#20854;&#32844;.
+&#26381;&#21153;&#22120;&#31471;&#30340;&#27979;&#35797;&#26356;&#21463;&#21040;&#20851;&#27880;&#20063;&#26356;&#23481;&#26131;&#32534;&#20889;&#21644;&#32500;&#25252;.&#31471;&#21040;&#31471;&#30340;&#38598;&#25104;&#27979;&#35797;&#20174;&#21478;&#19968;&#20010;&#26041;&#20415;
+&#35762;&#26356;&#21152;&#30340;&#23436;&#25104;&#21644;&#27979;&#35797;&#26356;&#22810;&#30340;&#22320;&#26041;&#20294;&#26159;&#23427;&#20204;&#21516;&#26679;&#26356;&#22810;&#30340;&#21253;&#21547;&#32534;&#20889;&#27979;&#35797;&#21644;&#32500;&#25252;.</p>
 <p>The two approaches are not mutually exclusive. On the contrary each has a place
 in an overall test strategy. Server-side tests are more focused and easier to write
 and maintain. End-to-end integration tests on the other hand are more complete and
 test much more but they&#8217;re also more involved to write and maintain.</p>
-<p>The simplest form of server-side tests is to write controller unit tests. However
+<p>&#26381;&#21153;&#22120;&#31471;&#27979;&#35797;&#26368;&#31616;&#21333;&#30340;&#24418;&#24335;&#26159;&#20889;&#19968;&#20010;&#25511;&#21046;&#22120;&#21333;&#20803;&#27979;&#35797;.
+The simplest form of server-side tests is to write controller unit tests. However
 this is not useful enough since much of what a controller does depends on its
 annotations. Pure unit tests simply can&#8217;t test that.</p>
 <p>Ideally controllers under test should be invoked as they are at runtime, much like
@@ -1750,6 +1761,8 @@ the approach to testing controllers handling HTTP requests using the Spring MVC 
 framework. i.e. without running a Servlet container but relying on the Spring Framework
 to invoke the annotated controllers. Just like with Spring MVC Test here there are two
 two possible alternatives, either using a "context-based" or "standalone" setup:</p>
+<p>1.&#20351;&#29992;spring testContext framework &#26469;&#24110;&#21161;&#21152;&#36733;&#29616;&#34892;&#30340;spring&#37197;&#32622;&#25991;&#20214;,
+&#27880;&#20837;"clientInboundChannel"&#20316;&#20026;&#19968;&#20010;&#35797;&#39564;&#30000;,&#20351;&#29992;&#23427;&#26469;&#21457;&#36865;&#34987;&#25511;&#21046;&#22120;&#26041;&#27861;&#22788;&#29702;&#30340;&#28040;&#24687;</p>
 <div class="orderedlist"><ol class="orderedlist" type="1"><li class="listitem">
 Load the actual Spring configuration with the help of the
 Spring TestContext framework, inject "clientInboundChannel" as a test field, and

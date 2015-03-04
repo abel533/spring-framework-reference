@@ -64,15 +64,15 @@ Jackson&#8217;s <code class="literal">@JsonView</code> is supported directly on 
 controller methods for serializing different amounts of detail for the same POJO (e.g.
 summary vs. detail page). This is also supported with View-based rendering by
 adding the serialization view type as a model attribute under a special key.
-See <a class="xref" href="mvc.html#mvc-ann-jsonview" title="Jackson Serialization View Support">the section called &#8220;Jackson Serialization View Support&#8221;</a> for details.
+See <a class="xref" href="mvc.html#mvc-ann-jsonview" title="&#25903;&#25345; Jackson &#24207;&#21015;&#21270;&#35270;&#22270;">the section called &#8220;&#25903;&#25345; Jackson &#24207;&#21015;&#21270;&#35270;&#22270;&#8221;</a> for details.
 </li><li class="listitem">
-JSONP is now supported with Jackson. See <a class="xref" href="mvc.html#mvc-ann-jsonp" title="Jackson JSONP Support">the section called &#8220;Jackson JSONP Support&#8221;</a>.
+JSONP is now supported with Jackson. See <a class="xref" href="mvc.html#mvc-ann-jsonp" title="&#25903;&#25345; Jackson JSONP">the section called &#8220;&#25903;&#25345; Jackson JSONP&#8221;</a>.
 </li><li class="listitem">
 A new lifecycle option is available for intercepting <code class="literal">@ResponseBody</code> and <code class="literal">ResponseEntity</code>
 methods just after the controller method returns and before the response is written.
 To take advantage declare an <code class="literal">@ControllerAdvice</code> bean that implements <code class="literal">ResponseBodyAdvice</code>.
 The built-in support for <code class="literal">@JsonView</code> and JSONP take advantage of this.
-See <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;Intercepting requests with a HandlerInterceptor">Section&nbsp;16.4.1, &#8220;Intercepting requests with a HandlerInterceptor&#8221;</a>.
+See <a class="xref" href="mvc.html#mvc-handlermapping-interceptor" title="16.4.1&nbsp;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;">Section&nbsp;16.4.1, &#8220;&#20351;&#29992; HandlerInterceptor &#25318;&#25130;&#35831;&#27714;&#8221;</a>.
 </li><li class="listitem">
 <p class="simpara">There are three new <code class="literal">HttpMessageConverter</code> options:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: circle; "><li class="listitem">
