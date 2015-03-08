@@ -1,68 +1,51 @@
 <html><head>
       <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-   <title>11.&nbsp;Transaction Management</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="prev" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;Data Access"><link rel="next" href="dao.html" title="12.&nbsp;DAO support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.&nbsp;Transaction Management</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;Data Access</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="transaction" href="#transaction"></a>11.&nbsp;Transaction Management</h2></div></div></div>
+   <title>11.&nbsp;&#20107;&#21153;&#31649;&#29702;</title><link rel="stylesheet" type="text/css" href="css/manual-multipage.css"><meta name="generator" content="DocBook XSL Stylesheets V1.78.1"><link rel="home" href="index.html" title="Spring Framework Reference Documentation"><link rel="up" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;&#25968;&#25454;&#35775;&#38382;"><link rel="prev" href="spring-data-tier.html" title="Part&nbsp;IV.&nbsp;&#25968;&#25454;&#35775;&#38382;"><link rel="next" href="dao.html" title="12.&nbsp;DAO support"></head><body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF"><div class="navheader"><table width="100%" summary="Navigation header"><tr><th colspan="3" align="center">11.&nbsp;&#20107;&#21153;&#31649;&#29702;</th></tr><tr><td width="20%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><th width="60%" align="center">Part&nbsp;IV.&nbsp;&#25968;&#25454;&#35775;&#38382;</th><td width="20%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr></table><hr></div><div class="chapter"><div class="titlepage"><div><div><h2 class="title"><a name="transaction" href="#transaction"></a>11.&nbsp;&#20107;&#21153;&#31649;&#29702;</h2></div></div></div>
 
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-intro" href="#transaction-intro"></a>11.1&nbsp;Introduction to Spring Framework transaction management</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-intro" href="#transaction-intro"></a>11.1&nbsp;Spring Framework&#20107;&#21153;&#31649;&#29702;&#20171;&#32461;</h2></div></div></div>
 
-<p>Comprehensive transaction support is among the most compelling reasons to use the Spring
-Framework. The Spring Framework provides a consistent abstraction for transaction
-management that delivers the following benefits:</p>
+<p>&#24191;&#27867;&#30340;&#20107;&#21153;&#25903;&#25345;&#26159;Spring Framework&#21560;&#24341;&#20154;&#20204;&#20351;&#29992;&#30340;&#21407;&#22240;&#20043;&#19968;. Spring Framework&#25552;&#20379;&#30340;&#23545;&#20107;&#21153;&#30340;&#19968;&#33268;&#24615;&#25277;&#35937;&#30340;
+&#22909;&#22788;&#20307;&#29616;&#22312;&#22914;&#19979;&#26041;&#38754;:</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-Consistent programming model across different transaction APIs such as Java
-Transaction API (JTA), JDBC, Hibernate, Java Persistence API (JPA), and Java Data
-Objects (JDO).
+&#22312;&#19981;&#21516;&#30340;API&#20043;&#38388;&#20351;&#29992;&#19968;&#33268;&#30340;&#32534;&#31243;&#27169;&#22411;, &#22914;Java Transaction API (JTA), JDBC, Hibernate,
+Java Persistence API (JPA), &#20197;&#21450; Java Data Objects (JDO).
 </li><li class="listitem">
-Support for <a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management">declarative transaction management</a>.
+&#25903;&#25345;<a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management">&#22768;&#26126;&#24335;&#20107;&#21153;&#31649;&#29702;</a>.
 </li><li class="listitem">
-Simpler API for <a class="link" href="transaction.html#transaction-programmatic" title="11.6&nbsp;Programmatic transaction management">programmatic</a> transaction management than
-complex transaction APIs such as JTA.
+&#23545;<a class="link" href="transaction.html#transaction-programmatic" title="11.6&nbsp;Programmatic transaction management">&#21487;&#32534;&#31243;&#20107;&#21153;&#31649;&#29702;</a>&#27604;&#22797;&#26434;&#30340;API, &#22914;JTA,&#25552;&#20379;&#26356;&#31616;&#21333;&#30340;API.
 </li><li class="listitem">
-Excellent integration with Spring&#8217;s data access abstractions.
+&#19982;Spring&#30340;&#25968;&#25454;&#35775;&#38382;&#23618;&#25277;&#35937;&#30340;&#23436;&#32654;&#38598;&#25104;.
 </li></ul></div>
 
-<p>The following sections describe the Spring Framework&#8217;s transaction value-adds and
-technologies. (The chapter also includes discussions of best practices, application
-server integration, and solutions to common problems.)</p>
+<p>&#19979;&#38754;&#30340;&#31456;&#33410;&#21521;&#20320;&#20171;&#32461;Spring Framework&#30340;&#20107;&#21153;&#20215;&#20540;&#25552;&#21319;&#21644;&#25216;&#26415;. (&#26412;&#31456;&#21516;&#26679;&#22218;&#25324;&#20102;&#26368;&#20339;&#23454;&#36341;, &#24212;&#29992;&#38598;&#25104;, &#21644;&#23545;&#24120;&#35265;&#38382;&#39064;&#30340;&#35299;&#20915;&#26041;&#26696;.)</p>
 <div class="itemizedlist"><ul class="itemizedlist" style="list-style-type: disc; "><li class="listitem">
-<a class="link" href="transaction.html#transaction-motivation" title="11.2&nbsp;Advantages of the Spring Framework&#8217;s transaction support model">Advantages of the Spring Framework&#8217;s transaction support
-model</a> describes <span class="emphasis"><em>why</em></span> you would use the Spring Framework&#8217;s transaction abstraction
-instead of EJB Container-Managed Transactions (CMT) or choosing to drive local
-transactions through a proprietary API such as Hibernate.
+<a class="link" href="transaction.html#transaction-motivation" title="11.2&nbsp;Spring Framework&#30340;&#20107;&#21153;&#25903;&#25345;&#27169;&#22411;&#30340;&#20248;&#28857;">Spring Framework&#30340;&#20107;&#21153;&#25903;&#25345;&#27169;&#22411;&#30340;&#20248;&#28857;</a> &#25551;&#36848;&#20102;&#20320; <span class="emphasis"><em>&#20026;&#20160;&#20040;</em></span> &#38656;&#35201;&#22312;
+EJB &#30340;&#23481;&#22120;&#31649;&#29702;&#20107;&#21153;(Container-Managed Transactions,CMT)&#20013;&#25110;&#32773;&#20351;&#29992;&#26412;&#22320;&#30340;&#21333;&#29420;API, &#22914;Hibernate, &#26102;&#20351;&#29992;
+Spring Framework&#30340;&#20107;&#21153;&#25277;&#35937;&#26469;&#20195;&#26367;Hibernate.
 </li><li class="listitem">
-<a class="link" href="transaction.html#transaction-strategies" title="11.3&nbsp;Understanding the Spring Framework transaction abstraction">Understanding the Spring Framework transaction abstraction</a>
-outlines the core classes and describes how to configure and obtain <code class="literal">DataSource</code>
-instances from a variety of sources.
+<a class="link" href="transaction.html#transaction-strategies" title="11.3&nbsp;Understanding the Spring Framework transaction abstraction">&#29702;&#35299;Spring Framework&#20107;&#21153;&#25277;&#35937;</a> &#32473;&#20986;&#20102;&#26680;&#24515;&#31867;, &#24182;&#19988;&#35828;&#26126;&#20102;&#24590;&#26679;&#20174;&#21508;&#31181;&#25968;&#25454;&#28304;&#20013;
+&#37197;&#32622;&#21644;&#33719;&#21462;<code class="literal">DataSource</code>&#23454;&#20363;.
 </li><li class="listitem">
-<a class="link" href="transaction.html#tx-resource-synchronization" title="11.4&nbsp;Synchronizing resources with transactions">Synchronizing resources with transactions</a>describes
-how the application code ensures that resources are created, reused, and cleaned up
-properly.
+<a class="link" href="transaction.html#tx-resource-synchronization" title="11.4&nbsp;Synchronizing resources with transactions">&#20107;&#21153;&#20013;&#30340;&#36164;&#28304;&#21516;&#27493;</a> &#25551;&#36848;&#20102;&#24212;&#29992;&#20195;&#30721;&#24590;&#20040;&#30830;&#20445;&#36164;&#28304;&#26159;created, reused, &#21644;
+cleaned up&#23436;&#25104;&#20102;.
 </li><li class="listitem">
-<a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management">Declarative transaction management</a> describes support for
-declarative transaction management.
+<a class="link" href="transaction.html#transaction-declarative" title="11.5&nbsp;Declarative transaction management">&#22768;&#26126;&#24335;&#20107;&#21153;&#31649;&#29702;</a> &#25551;&#36848;&#20102;&#23545;&#22768;&#26126;&#24335;&#20107;&#21153;&#31649;&#29702;&#30340;&#25903;&#25345;.
 </li><li class="listitem">
-<a class="link" href="transaction.html#transaction-programmatic" title="11.6&nbsp;Programmatic transaction management">Programmatic transaction management</a> covers support for
-programmatic (that is, explicitly coded) transaction management.
+<a class="link" href="transaction.html#transaction-programmatic" title="11.6&nbsp;Programmatic transaction management">&#21487;&#32534;&#31243;&#20107;&#21153;&#31649;&#29702;</a> &#28085;&#30422;&#20102;&#23545;&#32534;&#31243;&#24335;(&#20063;&#23601;&#26159;&#30452;&#25509;&#20889;&#20195;&#30721;)&#20107;&#21153;&#31649;&#29702;&#30340;&#25903;&#25345;.
 </li></ul></div>
 
 </div>
-<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-motivation" href="#transaction-motivation"></a>11.2&nbsp;Advantages of the Spring Framework&#8217;s transaction support model</h2></div></div></div>
+<div class="section"><div class="titlepage"><div><div><h2 class="title" style="clear: both"><a name="transaction-motivation" href="#transaction-motivation"></a>11.2&nbsp;Spring Framework&#30340;&#20107;&#21153;&#25903;&#25345;&#27169;&#22411;&#30340;&#20248;&#28857;</h2></div></div></div>
 
-<p>Traditionally, Java EE developers have had two choices for transaction management:
-<span class="emphasis"><em>global</em></span> or <span class="emphasis"><em>local</em></span> transactions, both of which have profound limitations. Global
-and local transaction management is reviewed in the next two sections, followed by a
-discussion of how the Spring Framework&#8217;s transaction management support addresses the
-limitations of the global and local transaction models.</p>
-<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-global" href="#transaction-global"></a>11.2.1&nbsp;Global transactions</h3></div></div></div>
+<p>&#20256;&#32479;&#19978;, Java EE &#24320;&#21457;&#32773;&#22312;&#20107;&#21153;&#31649;&#29702;&#19978;&#26377;&#20004;&#20010;&#36873;&#25321;:<span class="emphasis"><em>&#20840;&#23616;</em></span> &#25110;&#32773; <span class="emphasis"><em>&#26412;&#22320;</em></span> &#20107;&#21153;, &#27599;&#19968;&#20010;&#37117;&#26377;&#20005;&#37325;&#30340;&#23616;&#38480;&#24615;. &#20851;&#20110;&#20840;&#23616;&#21644;
+&#26412;&#22320;&#20107;&#21153;&#31649;&#29702;&#30340;&#20171;&#32461;&#23558;&#22312;&#25509;&#19979;&#26469;&#30340;&#20004;&#33410;&#32473;&#20986;, &#23601;&#22312;&#35752;&#35770;Spring Framework&#30340;&#20107;&#21153;&#31649;&#29702;&#25903;&#25345;&#26159;&#24590;&#26679;&#24357;&#34917;&#36825;&#20123;&#38480;&#21046;&#20043;&#21518;.</p>
+<div class="section"><div class="titlepage"><div><div><h3 class="title"><a name="transaction-global" href="#transaction-global"></a>11.2.1&nbsp;&#20840;&#23616;&#20107;&#21153;</h3></div></div></div>
 
-<p>Global transactions enable you to work with multiple transactional resources, typically
-relational databases and message queues. The application server manages global
-transactions through the JTA, which is a cumbersome API to use (partly due to its
-exception model). Furthermore, a JTA <code class="literal">UserTransaction</code> normally needs to be sourced from
-JNDI, meaning that you <span class="emphasis"><em>also</em></span> need to use JNDI in order to use JTA. Obviously the use
-of global transactions would limit any potential reuse of application code, as JTA is
-normally only available in an application server environment.</p>
-<p>Previously, the preferred way to use global transactions was via EJB <span class="emphasis"><em>CMT</em></span>
-(<span class="emphasis"><em>Container Managed Transaction</em></span>): CMT is a form of <span class="emphasis"><em>declarative transaction
+<p>&#20840;&#23616;&#24615;&#20107;&#21153;&#21487;&#20197;&#35753;&#20320;&#28151;&#21512;&#20351;&#29992;&#20107;&#21153;&#36164;&#28304;,&#20256;&#32479;&#20851;&#31995;&#22411;&#25968;&#25454;&#24211;&#20197;&#21450;&#28040;&#24687;&#38431;&#21015;. &#24212;&#29992;&#26381;&#21153;&#22120;&#31649;&#29702;&#20107;&#21153;&#26159;&#36890;&#36807;JTA,&#20182;&#30340;API&#29992;&#36215;&#26469;&#24456;&#31528;&#37325;(&#26469;&#28304;&#20110;
+&#20182;&#30340;&#24322;&#24120;&#22788;&#29702;&#27169;&#22411;). &#21478;&#22806;, &#19968;&#20010; JTA &#30340;<code class="literal">UserTransaction</code> &#36890;&#24120;&#38656;&#35201;&#30001;JNDI&#25552;&#20379;, &#24847;&#21619;&#30528;&#20320;&#22312;&#20351;&#29992;JTA&#30340;&#21516;&#26102; <span class="emphasis"><em>&#20063;</em></span>
+&#38656;&#35201;&#20351;&#29992;JNDI. &#24456;&#26126;&#26174;,&#24403;JTA&#26159;&#24212;&#29992;&#26381;&#21153;&#22120;&#19978;&#21807;&#19968;&#21487;&#29992;&#30340;&#20840;&#23616;&#20107;&#21153;&#26102;,&#20351;&#29992;&#23427;&#20250;&#38480;&#21046;&#20320;&#23545;&#24212;&#29992;&#20195;&#30721;&#30340;&#37325;&#29992;.</p>
+<p>&#21407;&#20808;, &#36739;&#20026;&#25552;&#20513;&#30340;&#20351;&#29992;&#20840;&#23616;&#20107;&#21153;&#30340;&#26041;&#24335;&#26159;&#20351;&#29992;EJB &#30340;<span class="emphasis"><em>CMT</em></span>
+(<span class="emphasis"><em>&#23481;&#22120;&#31649;&#29702;&#20107;&#21153;,Container Managed Transaction</em></span>): CMT is a form of <span class="emphasis"><em>declarative transaction
 management</em></span> (as distinguished from <span class="emphasis"><em>programmatic transaction management</em></span>). EJB CMT
 removes the need for transaction-related JNDI lookups, although of course the use of EJB
 itself necessitates the use of JNDI. It removes most but not all of the need to write
@@ -452,7 +435,7 @@ transactions <span class="emphasis"><em>around method invocations</em></span>.</
 </td></tr></table></div>
 
 <p>Conceptually, calling a method on a transactional proxy looks like this&#8230;</p>
-<div class="figure"><a name="d5e10894" href="#d5e10894"></a><p class="title"><b>Figure&nbsp;11.1.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e10848" href="#d5e10848"></a><p class="title"><b>Figure&nbsp;11.1.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/tx.png" alt="tx"></div>
 </div></div><br class="figure-break">
 
@@ -1123,7 +1106,7 @@ details some of the semantics regarding transaction propagation in Spring.</p>
 <span class="emphasis"><em>logical</em></span> transactions, and how the propagation setting applies to this difference.</p>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-propagation-required" href="#tx-propagation-required"></a>Required</h4></div></div></div>
 
-<div class="figure"><a name="d5e11414" href="#d5e11414"></a><p class="title"><b>Figure&nbsp;11.2.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e11368" href="#d5e11368"></a><p class="title"><b>Figure&nbsp;11.2.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/tx_prop_required.png" alt="tx prop required"></div>
 </div></div><br class="figure-break">
 
@@ -1148,7 +1131,7 @@ indicate clearly that a rollback was performed instead.</p>
 </div>
 <div class="section"><div class="titlepage"><div><div><h4 class="title"><a name="tx-propagation-requires_new" href="#tx-propagation-requires_new"></a>RequiresNew</h4></div></div></div>
 
-<div class="figure"><a name="d5e11431" href="#d5e11431"></a><p class="title"><b>Figure&nbsp;11.3.&nbsp;</b></p><div class="figure-contents">
+<div class="figure"><a name="d5e11385" href="#d5e11385"></a><p class="title"><b>Figure&nbsp;11.3.&nbsp;</b></p><div class="figure-contents">
   <div class="mediaobject"><img src="images/tx_prop_requires_new.png" alt="tx prop requires new"></div>
 </div></div><br class="figure-break">
 
@@ -1606,4 +1589,4 @@ and use transactions with both the Spring Framework and EJB3.
 </li></ul></div>
 
 </div>
-</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;IV.&nbsp;Data Access&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;12.&nbsp;DAO support</td></tr></table></div></body></html>
+</div><div class="navfooter"><hr><table width="100%" summary="Navigation footer"><tr><td width="40%" align="left"><a accesskey="p" href="spring-data-tier.html">Prev</a>&nbsp;</td><td width="20%" align="center"><a accesskey="u" href="spring-data-tier.html">Up</a></td><td width="40%" align="right">&nbsp;<a accesskey="n" href="dao.html">Next</a></td></tr><tr><td width="40%" align="left" valign="top">Part&nbsp;IV.&nbsp;&#25968;&#25454;&#35775;&#38382;&nbsp;</td><td width="20%" align="center"><a accesskey="h" href="index.html">Home</a></td><td width="40%" align="right" valign="top">&nbsp;12.&nbsp;DAO support</td></tr></table></div></body></html>
